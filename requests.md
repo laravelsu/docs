@@ -1,14 +1,9 @@
-git f502c5b5edf90b7390a7c010ba1f24b1e440aabb
-
+---
+git: f502c5b5edf90b7390a7c010ba1f24b1e440aabb
 ---
 
 # Запросы и входные данные
 
-- [Текущие входные данные](#basic-input)
-- [Cookies](#cookies)
-- [Старый ввод](#old-input)
-- [Файлы](#files)
-- [Информация о запросе](#request-information)
 
 <a name="basic-input"></a>
 ## Текущие входные данные

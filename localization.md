@@ -1,15 +1,9 @@
-git c980f44735bc13837490716a8b9bdc7681dd9df0
-
+---
+git: c980f44735bc13837490716a8b9bdc7681dd9df0
 ---
 
 # Локализация
 
-- [Введение](#introduction)
-- [Языковые файлы](#language-files)
-- [Основы использования](#basic-usage)
-- [Формы множественного числа](#pluralization)
-- [Сообщения валидации](#validation)
-- [Перекрытие файлов локализации из пакетов](#overriding-package-language-files)
 
 <a name="introduction"></a>
 ## Введение

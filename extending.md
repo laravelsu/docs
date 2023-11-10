@@ -1,17 +1,9 @@
-git 18622cfa68873782b38dbf599c66d6d3f48f79be
-
+---
+git: 18622cfa68873782b38dbf599c66d6d3f48f79be
 ---
 
 # Расширение фреймворка
 
-- [Введение](#introduction)
-- [Managers и Factory](#managers-and-factories)
-- [Где писать код ?](#where-to-extend)
-- [Кэш](#cache)
-- [Сессии](#session)
-- [Аутентификация](#authentication)
-- [Расширения посредством IoC](#ioc-based-extension)
-- [Расширение Request](#request-extension)
 
 <a name="introduction"></a>
 ## Введение

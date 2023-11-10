@@ -1,15 +1,9 @@
-git fb85738c37ef8da3e0b3ed2c6e059b94d3d0dbac
-
+---
+git: fb85738c37ef8da3e0b3ed2c6e059b94d3d0dbac
 ---
 
 # Основы работы с базой данных
 
-- [Настройка](#configuration)
-- [Read / Write Connections](#read-write-connections)
-- [Выполнение запросов](#running-queries)
-- [Транзакции](#database-transactions)
-- [Другие соединения](#accessing-connections)
-- [Журнал запросов](#query-logging)
 
 <a name="configuration"></a>
 ## Настройка

@@ -1,14 +1,8 @@
-git 0a4c010396d3f7663dc72760a2ae11c650ce53d9
-
+---
+git: 0a4c010396d3f7663dc72760a2ae11c650ce53d9
 ---
 
 # Контроллеры
-
-- [Простейшие контроллеры](#basic-controllers)
-- [Фильтры контроллеров](#controller-filters)
-- [Неявные контроллеры](#implicit-controllers)
-- [Контроллеры ресурсов](#restful-resource-controllers)
-- [Обработка неопределённых методов](#handling-missing-methods)
 
 <a name="basic-controllers"></a>
 ## Простейшие контроллеры

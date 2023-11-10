@@ -1,15 +1,8 @@
-git bd98b6ffef5df652e33b79f48c31ef666e3bf71e
-
+---
+git: bd98b6ffef5df652e33b79f48c31ef666e3bf71e
 ---
 
 # Ответ (response) и шаблоны (views)
-
-- [Response (ответ)](#basic-responses)
-- [Редиректы](#redirects)
-- [Вьюхи](#views)
-- [Композеры](#view-composers)
-- [Особые ответы](#special-responses)
-- [Макросы ответов](#response-macros)
 
 <a name="basic-responses"></a>
 ## Response (ответ, вывод в браузер)

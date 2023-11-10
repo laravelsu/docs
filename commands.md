@@ -1,13 +1,9 @@
-git 330469e1b8158c92bc4521e3661292f782cd8a62
-
+---
+git: 330469e1b8158c92bc4521e3661292f782cd8a62
 ---
 
 # Разработка Artisan-команд
 
-- [Введение](#introduction)
-- [Создание Команды](#building-a-command)
-- [Регистрация Команд](#registering-commands)
-- [Вызов Других Команд](#calling-other-commands)
 
 <a name="introduction"></a>
 ## Введение

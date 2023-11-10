@@ -1,13 +1,9 @@
-git d55500c3bc54787ddf2660eb827e19c53422ee1f
-
+---
+git: d55500c3bc54787ddf2660eb827e19c53422ee1f
 ---
 
 # Жизненный цикл запроса
 
-- [Введение](#overview)
-- [Цикл запроса](#request-lifecycle)
-- [Старт-файлы](#start-files)
-- [События приложения](#application-events)
 
 <a name="overview"></a>
 ## Введение

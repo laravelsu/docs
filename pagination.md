@@ -1,14 +1,8 @@
-git e9d876cf2b530347fdd44bad2b00a7ffe1b75c86
-
+---
+git: e9d876cf2b530347fdd44bad2b00a7ffe1b75c86
 ---
 
 # Постраничный вывод данных (пагинация)
-
-- [Настройка](#configuration)
-- [Использование](#usage)
-- [Параметры в ссылках](#appending-to-pagination-links)
-- [Конвертация в JSON](#converting-to-json)
-- [Изменение отображения](#custom-presenters)
 
 <a name="configuration"></a>
 ## Настройка

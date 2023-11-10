@@ -1,14 +1,8 @@
-git e18889e0e4d44885c77af8fb5d08a2c2bd6f9276
-
+---
+git: e18889e0e4d44885c77af8fb5d08a2c2bd6f9276
 ---
 
 # Установка
-
-- [Установка Composer](#install-composer)
-- [Установка Laravel](#install-laravel)
-- [Загрузка архива](#server-requirements)
-- [Настройка](#configuration)
-- [Красивые URL](#pretty-urls)
 
 <a name="install-composer"></a>
 ## Установка Composer

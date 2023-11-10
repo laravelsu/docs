@@ -1,13 +1,9 @@
-git f53f291f67507108dd0f5772a7eb33bc6458d840
-
+---
+git: f53f291f67507108dd0f5772a7eb33bc6458d840
 ---
 
 # Redis
 
-- [Введение](#introduction)
-- [Настройка](#configuration)
-- [Использование](#usage)
-- [Конвейер](#pipelining)
 
 <a name="introduction"></a>
 ## Введение

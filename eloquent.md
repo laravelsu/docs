@@ -1,29 +1,9 @@
-git efcb177130b6097cd6d61a92e455f0e39c91b601
-
+---
+git: efcb177130b6097cd6d61a92e455f0e39c91b601
 ---
 
 # Eloquent ORM
 
-- [Введение](#introduction)
-- [Использование ORM](#basic-usage)
-- [Массовое заполнение](#mass-assignment)
-- [Вставка, обновление, удаление](#insert-update-delete)
-- [Псевдоудаление](#soft-deleting)
-- [Дата и время](#timestamps)
-- [Заготовки запросов (query scopes)](#query-scopes)
-- [Глобальные заготовки запросов (global query scopes)](#query-scopes)
-- [Отношения](#relationships)
-- [Динамические свойства](#querying-relations)
-- [Активная загрузка](#eager-loading)
-- [Вставка связанных моделей](#inserting-related-models)
-- [Обновление времени владельца](#touching-parent-timestamps)
-- [Работа со связующими таблицами](#working-with-pivot-tables)
-- [Коллекции](#collections)
-- [Читатели и преобразователи](#accessors-and-mutators)
-- [Преобразователи дат](#date-mutators)
-- [События моделей](#model-events)
-- [Наблюдатели моделей](#model-observers)
-- [Преобразование в массивы и JSON](#converting-to-arrays-or-json)
 
 <a name="introduction"></a>
 ## Введение

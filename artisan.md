@@ -1,11 +1,8 @@
-git fb85738c37ef8da3e0b3ed2c6e059b94d3d0dbac
-
+---
+git: fb85738c37ef8da3e0b3ed2c6e059b94d3d0dbac
 ---
 
 # Интерфейс Artisan
-
-- [Введение](#introduction)
-- [Использование](#usage)
 
 <a name="introduction"></a>
 ## Введение

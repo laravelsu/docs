@@ -1,18 +1,9 @@
-git f11216c577652d1bedad923b4c3f98c28f520edc
-
+---
+git: f11216c577652d1bedad923b4c3f98c28f520edc
 ---
 
 # Участие в разработке
 
-- [Introduction](#introduction)
-- [Core Development Discussion](#core-development-discussion)
-- [New Features](#new-features)
-- [Bugs](#bugs)
-- [Creating Liferaft Applications](#creating-liferaft-applications)
-- [Grabbing Liferaft Applications](#grabbing-liferaft-applications)
-- [Which Branch?](#which-branch)
-- [Security Vulnerabilities](#security-vulnerabilities)
-- [Coding Style](#coding-style)
 
 <a name="introduction"></a>
 ## Introduction

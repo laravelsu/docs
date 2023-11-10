@@ -1,14 +1,8 @@
-git b7945e56eb9fc0553c6ca18166797fb174bfd061
-
+---
+git: b7945e56eb9fc0553c6ca18166797fb174bfd061
 ---
 
 # Кэш
-
-- [Настройка](#configuration)
-- [Использование кэша](#cache-usage)
-- [Увеличение и уменьшение значений](#increments-and-decrements)
-- [Тэги](#cache-sections)
-- [Кэширование в базе данных](#database-cache)
 
 <a name="configuration"></a>
 ## Настройка

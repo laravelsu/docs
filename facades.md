@@ -1,15 +1,8 @@
-git 8458a8c25e173d53a1778ad7e70f67473a21786e
-
+---
+git: 8458a8c25e173d53a1778ad7e70f67473a21786e
 ---
 
 # Фасады
-
-- [Введение](#introduction)
-- [Описание](#explanation)
-- [Практическое использование](#practical-usage)
-- [Создание фасадов](#creating-facades)
-- [Фасады для тестирования](#mocking-facades)
-- [Facade Class Reference](#facade-class-reference)
 
 <a name="introduction"></a>
 ## Введение

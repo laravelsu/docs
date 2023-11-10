@@ -1,14 +1,8 @@
-git c694fca40eb45a4ab47914f6aa845d6042b601fe
-
+---
+git: c694fca40eb45a4ab47914f6aa845d6042b601fe
 ---
 
 # Работа с e-mail
-
-- [Настройка](#configuration)
-- [Основы использования](#basic-usage)
-- [Добавление встроенных вложений](#embedding-inline-attachments)
-- [Очереди отправки](#queueing-mail)
-- [Локальная разработка](#mail-and-local-development)
 
 <a name="configuration"></a>
 ## Настройка

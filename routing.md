@@ -1,19 +1,8 @@
-git f6dc363c8cea0beb1a303daaa76f455a1914d4df
-
+---
+git: f6dc363c8cea0beb1a303daaa76f455a1914d4df
 ---
 
 # Роуты (маршрутизация)
-
-- [Простейшая маршрутизация](#basic-routing)
-- [Параметры роутов](#route-parameters)
-- [Фильтры роутов](#route-filters)
-- [Именованные роуты](#named-routes)
-- [Группы роутов](#route-groups)
-- [Доменная маршрутизация](#sub-domain-routing)
-- [Префикс пути](#route-prefixing)
-- [Привязка моделей](#route-model-binding)
-- [Ошибки 404](#throwing-404-errors)
-- [Маршрутизация в контроллер](#routing-to-controllers)
 
 <a name="basic-routing"></a>
 ## Простейшая маршрутизация

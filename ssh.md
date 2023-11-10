@@ -1,16 +1,8 @@
-git e5b20ebebceab8c7d64e2ab45ed65966277e2378
-
+---
+git: e5b20ebebceab8c7d64e2ab45ed65966277e2378
 ---
 
 # SSH
-
-- [Настройка](#configuration)
-- [Использование ssh](#basic-usage)
-- [Задачи](#tasks)
-- [SFTP загрузка](#sftp-downloads)
-- [SFTP аплоад](#sftp-uploads)
-- [Показ логов](#tailing-remote-logs)
-- [Envoy](#envoy-task-runner)
 
 <a name="configuration"></a>
 ## Настройка

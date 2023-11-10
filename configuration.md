@@ -1,14 +1,8 @@
-git f1ff23bad37e2d543c258226389452a1a5296a5b
-
+---
+git: f1ff23bad37e2d543c258226389452a1a5296a5b
 ---
 
 # Настройка
-
-- [Вступление](#introduction)
-- [Настройки среды](#environment-configuration)
-- [Дополнительные сервис-провайдеры](#provider-configuration)
-- [Конфиденциальные конфиги](#protecting-sensitive-configuration)
-- [Режим обслуживания](#maintenance-mode)
 
 <a name="introduction"></a>
 ## Вступление

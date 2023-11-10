@@ -1,16 +1,9 @@
-git e8f06b9f904f3dd6b32c10841cb0496a635fa213
-
+---
+git: e8f06b9f904f3dd6b32c10841cb0496a635fa213
 ---
 
 # Очереди
 
-- [Настройка](#configuration)
-- [Использование очередей](#basic-usage)
-- [Добавление функций-замыканий в очередь](#queueing-closures)
-- [Обработчик очереди](#running-the-queue-listener)
-- [Обработчик-демон](#daemon-queue-worker)
-- [Push-очереди](#push-queues)
-- [Незавершенные задачи](#failed-jobs)
 
 <a name="configuration"></a>
 ## Настройка

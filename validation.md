@@ -1,16 +1,9 @@
-git c72a4d0a39d8531bc4a5ebdd8d9fb4728e944dc7
-
+---
+git: c72a4d0a39d8531bc4a5ebdd8d9fb4728e944dc7
 ---
 
 # Валидация
 
-- [Использование валидации](#basic-usage)
-- [Работа с сообщениями об ошибках](#working-with-error-messages)
-- [Ошибки и шаблоны](#error-messages-and-views)
-- [Доступные правила проверки](#available-validation-rules)
-- [Условные правила](#conditionally-adding-rules)
-- [Собственные сообщения об ошибках](#custom-error-messages)
-- [Собственные правила проверки](#custom-validation-rules)
 
 <a name="basic-usage"></a>
 ## Использование валидации

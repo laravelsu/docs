@@ -1,11 +1,8 @@
-git 3e4b5ba202b4d5575d85272c7012a55b295f4aa2
-
+---
+git: 3e4b5ba202b4d5575d85272c7012a55b295f4aa2
 ---
 
 # Описания релизов
-
-- [Laravel 4.2](#laravel-4.2)
-- [Laravel 4.1](#laravel-4.1)
 
 <a name="laravel-4.2"></a>
 ## Laravel 4.2

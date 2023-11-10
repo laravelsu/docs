@@ -1,18 +1,8 @@
-git fa32245255fb1300484f2d2a98e4ed9b67e576c0
-
+---
+git: fa32245255fb1300484f2d2a98e4ed9b67e576c0
 ---
 
 # Безопасность
-
-- [Конфигурация](#configuration)
-- [Хранение паролей](#storing-passwords)
-- [Аутентификация пользователей](#authenticating-users)
-- [Ручная аутентификация](#manually)
-- [Аутенификация и роуты](#protecting-routes)
-- [HTTP-аутентификация](#http-basic-authentication)
-- [Сброс забытого пароля](#password-reminders-and-reset)
-- [Шифрование](#encryption)
-- [Драйвера аутентификации](#authentication-drivers)
 
 <a name="configuration"></a>
 ## Конфигурация

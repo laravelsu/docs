@@ -1,20 +1,8 @@
-git 58fd8036b50635412c299a32772bdab07bc9294f
-
+---
+git: 58fd8036b50635412c299a32772bdab07bc9294f
 ---
 
 # Конструктор таблиц
-
-- [Введение](#introduction)
-- [Создание и удаление таблиц](#creating-and-dropping-tables)
-- [Добавление полей](#adding-columns)
-- [Переименование полей](#renaming-columns)
-- [Удаление полей](#dropping-columns)
-- [Проверка на существование](#checking-existence)
-- [Добавление индексов](#adding-indexes)
-- [Внешние ключи](#foreign-keys)
-- [Удаление индексов](#dropping-indexes)
-- [Удаление столбцов дат создания и псевдоудаления](#dropping-timestamps)
-- [Storage Engines](#storage-engines)
 
 <a name="introduction"></a>
 ## Введение

@@ -1,14 +1,9 @@
-git a55b92e723313ecf50e8fddc83ad868f33028d3e
-
+---
+git: a55b92e723313ecf50e8fddc83ad868f33028d3e
 ---
 
 # Ошибки и логирование
 
-- [Конфигурация](#configuration)
-- [Обработка ошибок](#handling-errors)
-- [HTTP-исключения](#http-exceptions)
-- [Обработка 404](#handling-404-errors)
-- [Логирование](#logging)
 
 <a name="configuration"></a>
 ## Конфигурация

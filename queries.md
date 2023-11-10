@@ -1,21 +1,9 @@
-git e806cccc40a5d0b026a694c0b60cc2622eadaa41
-
+---
+git: e806cccc40a5d0b026a694c0b60cc2622eadaa41
 ---
 
 # Конструктор запросов
 
-- [Введение](#introduction)
-- [Выборка (SELECT)](#selects)
-- [Объединения (JOIN)](#joins)
-- [Сложные выражения WHERE](#advanced-wheres)
-- [Аггрегатные функции](#aggregates)
-- [SQL-выражения](#raw-expressions)
-- [Вставка (INSERT)](#inserts)
-- [Обновление (UPDATE)](#updates)
-- [Удаление (DELETE)](#deletes)
-- [Слияние (UNION)](#unions)
-- [Блокирование (lock) данных](#pessimistic-locking)
-- [Кэширование запросов](#caching-queries)
 
 <a name="introduction"></a>
 ## Введение

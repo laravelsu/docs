@@ -1,13 +1,8 @@
-git f71e28640ff4eaa49134b44a36bd7c4541af9252
-
+---
+git: f71e28640ff4eaa49134b44a36bd7c4541af9252
 ---
 
 # Шаблоны
-
-- [Сборка шаблонов в контроллере](#controller-layouts)
-- [Шаблоны Blade](#blade-templating)
-- [Другие директивы Blade](#other-blade-control-structures)
-- [Расширение Blade](#extending-blade)
 
 <a name="controller-layouts"></a>
 ## Сборка шаблонов в контроллере

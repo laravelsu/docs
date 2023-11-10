@@ -1,15 +1,8 @@
-git 8f9202241c9fff4d46b54ce2e48f6899ad7bb93a
-
+---
+git: 8f9202241c9fff4d46b54ce2e48f6899ad7bb93a
 ---
 
 # Быстрый старт
-
-- [Установка](#installation)
-- [Маршрутизация](#routing)
-- [Создаём шаблон](#creating-a-view)
-- [Создаём миграцию](#creating-a-migration)
-- [Eloquent ORM](#eloquent-orm)
-- [Отображаем данные](#displaying-data)
 
 <a name="installation"></a>
 ## Установка

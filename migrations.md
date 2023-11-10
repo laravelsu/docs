@@ -1,14 +1,8 @@
-git e4985c9eb3aa22b29961d89d84e761575fa5de07
-
+---
+git: e4985c9eb3aa22b29961d89d84e761575fa5de07
 ---
 
 # Миграции и начальные данные
-
-- [Введение](#introduction)
-- [Создание миграций](#creating-migrations)
-- [Применение миграций](#running-migrations)
-- [Откат миграций](#rolling-back-migrations)
-- [Загрузка начальных данных в БД](#database-seeding)
 
 <a name="introduction"></a>
 ## Введение

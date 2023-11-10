@@ -1,16 +1,8 @@
-git fb85738c37ef8da3e0b3ed2c6e059b94d3d0dbac
-
+---
+git: fb85738c37ef8da3e0b3ed2c6e059b94d3d0dbac
 ---
 
 # Inversion of Control (IoC-контейнер)
-
-- [Введение](#introduction)
-- [Использование](#basic-usage)
-- [Где писать код ?](#where-to-register)
-- [Автоматическое определение](#automatic-resolution)
-- [Практическое использование](#practical-usage)
-- [Сервис-провайдеры](#service-providers)
-- [События контейнераs](#container-events)
 
 <a name="introduction"></a>
 ## Введение

@@ -1,13 +1,9 @@
-git c86c602e7567092ebeff5ba1e3ecbf947a09382f
-
+---
+git: c86c602e7567092ebeff5ba1e3ecbf947a09382f
 ---
 
 # Upgrade Guide
 
-- [Upgrading To 4.2 From 4.1](#upgrade-4.2)
-- [Upgrading To 4.1.29 From <= 4.1.x](#upgrade-4.1.29)
-- [Upgrading To 4.1.26 From <= 4.1.25](#upgrade-4.1.26)
-- [Upgrading To 4.1 From 4.0](#upgrade-4.1)
 
 <a name="upgrade-4.2"></a>
 ## Upgrading To 4.2 From 4.1

@@ -1,14 +1,8 @@
-git 1a55def4d49605ea2953796b7fef1792bc106a18
-
+---
+git: 1a55def4d49605ea2953796b7fef1792bc106a18
 ---
 
 # Сессии
-
-- [Настройка](#configuration)
-- [Использование сессий](#session-usage)
-- [Одноразовые flash-данные](#flash-data)
-- [Сессии в базах данных](#database-sessions)
-- [Драйверы](#session-drivers)
 
 <a name="configuration"></a>
 ## Настройка

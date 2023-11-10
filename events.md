@@ -1,14 +1,9 @@
-git 79aa1c4699d8f5e9c5844b834cd55e933fc2c9ba
-
+---
+git: 79aa1c4699d8f5e9c5844b834cd55e933fc2c9ba
 ---
 
 # События
 
-- [Использование](#basic-usage)
-- [Обработчики по шаблону (wildcard)](#wildcard-listeners)
-- [Классы-обработчики](#using-classes-as-listeners)
-- [Запланированные события](#queued-events)
-- [Классы-подписчики](#event-subscribers)
 
 <a name="basic-usage"></a>
 ## Использование

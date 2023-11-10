@@ -1,22 +1,8 @@
-git fb85738c37ef8da3e0b3ed2c6e059b94d3d0dbac
-
+---
+git: fb85738c37ef8da3e0b3ed2c6e059b94d3d0dbac
 ---
 
 # Разработка пакетов
-
-- [Введение](#introduction)
-- [Создание пакета](#creating-a-package)
-- [Структура пакетов](#package-structure)
-- [Сервис-провайдеры](#service-providers)
-- [Отложенные сервис-провайдеры](#deferred-providers)
-- [Соглашения](#package-conventions)
-- [Процесс разработки](#development-workflow)
-- [Маршрутизация в пакетах](#package-routing)
-- [Конфиги в пакетах](#package-configuration)
-- [Шаблоны пакетов](#package-views)
-- [Миграции пакетов](#package-migrations)
-- [Статические файлы пакетов](#package-assets)
-- [Публикация пакетов](#publishing-packages)
 
 <a name="introduction"></a>
 ## Введение

@@ -1,17 +1,8 @@
-git e329f8f4dec6ca9d415112f011b2e5916867c6b0
-
+---
+git: e329f8f4dec6ca9d415112f011b2e5916867c6b0
 ---
 
 # Тестирование
-
-- [Введение](#introduction)
-- [Написание и запуск тестов](#defining-and-running-tests)
-- [Тестовое окружение](#test-environment)
-- [Обращение к URL](#calling-routes-from-tests)
-- [Тестирование фасадов](#mocking-facades)
-- [Проверки (assertions)](#framework-assertions)
-- [Вспомогательные методы](#helper-methods)
-- [Ресет IoC-контейнера Laravel](#refreshing-the-application)
 
 <a name="introduction"></a>
 ## Введение

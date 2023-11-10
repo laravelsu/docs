@@ -1,21 +1,9 @@
-git f86e85a041b70f62efe8e9a303be68dfaca7f566
-
+---
+git: f86e85a041b70f62efe8e9a303be68dfaca7f566
 ---
 
 # Формы и HTML
 
-- [Открытие формы](#opening-a-form)
-- [Защита от CRSF](#csrf-protection)
-- [Привязка модели к форме](#form-model-binding)
-- [Метки](#labels)
-- [Текстовые и скрытые поля](#text)
-- [Чекбоксы и радиокнопки](#checkboxes-and-radio-buttons)
-- [Числовое поле](#number)
-- [Загрузка файлов](#file-input)
-- [Выпадающие списки](#drop-down-lists)
-- [Кнопки](#buttons)
-- [Макросы](#custom-macros)
-- [Формирование URL](#generating-urls)
 
 <a name="opening-a-form"></a>
 ## Открытие формы

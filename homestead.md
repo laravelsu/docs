@@ -1,14 +1,9 @@
-git 93d5f274a7a98d013e579864a4a85a0c8711c02a
-
+---
+git: 93d5f274a7a98d013e579864a4a85a0c8711c02a
 ---
 
 # Laravel Homestead
 
-- [Введение](#introduction)
-- [Что внутри](#included-software)
-- [Установка и настройка](#installation-and-setup)
-- [Повседневное использование](#daily-usage)
-- [Порты](#ports)
 
 <a name="introduction"></a>
 ## Введение

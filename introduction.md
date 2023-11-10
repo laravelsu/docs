@@ -1,11 +1,8 @@
-git 944854856b38062fddc64007b51fc9f27a954b34
-
+---
+git: 944854856b38062fddc64007b51fc9f27a954b34
 ---
 
 # Введение
-
-- [C чего начать](#where-to-start)
-- [Философия Laravel](#laravel-philosophy)
 
 <a name="where-to-start"></a>
 ## С чего начать
