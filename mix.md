@@ -1,30 +1,8 @@
-git f2e84819ebb67adc7f23ec57e334a714e82083e8
-
+---
+git: f2e84819ebb67adc7f23ec57e334a714e82083e8
 ---
 
 # Сборка фронтенда (Laravel Mix)
-
-- [Введение](#introduction)
-- [Установка и настройка](#installation)
-- [Запуск Mix](#running-mix)
-- [Работа с таблицами стилей](#working-with-stylesheets)
-    - [Less](#less)
-    - [Sass](#sass)
-    - [Stylus](#stylus)
-    - [PostCSS](#postcss)
-    - [Простой CSS](#plain-css)
-    - [Обработка URL](#url-processing)
-    - [Source Maps](#css-source-maps)
-- [Работа с JavaScript](#working-with-scripts)
-    - [Извлечение библиотек поставщика](#vendor-extraction)
-    - [React](#react)
-    - [Vanilla JS](#vanilla-js)
-    - [Пользовательская настройка Webpack](#custom-webpack-configuration)
-- [Копирование файлов и директорий](#copying-files-and-directories)
-- [Версии файлов / очистка кэша](#versioning-and-cache-busting)
-- [Перезагрузка Browsersync](#browsersync-reloading)
-- [Переменные среды](#environment-variables)
-- [Уведомления](#notifications)
 
 <a name="introduction"></a>
 ## Введение

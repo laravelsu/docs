@@ -1,16 +1,8 @@
-git fbc4a96bf50642b7ea2180ea7d7a32b8bc0b41ab
-
+---
+git: fbc4a96bf50642b7ea2180ea7d7a32b8bc0b41ab
 ---
 
 # Основы работы с базами данных
-
-- [Введение](#introduction)
-    - [Настройка](#configuration)
-    - [Соединения для чтения и записи](#read-and-write-connections)
-    - [Использование нескольких соединений с БД](#using-multiple-database-connections)
-- [Выполнение сырых SQL-запросов](#running-queries)
-    - [Прослушивание событий запросов](#listening-for-query-events)
-- [Транзакции БД](#database-transactions)
 
 <a name="introduction"></a>
 ## Введение

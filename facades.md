@@ -1,15 +1,9 @@
-git 8407316e748257a6f939b051e450febb316caf14
+---
+git: 8407316e748257a6f939b051e450febb316caf14
 
 ---
 
 # Фасады
-
-- [Введение](#introduction)
-- [Когда использовать фасады](#when-to-use-facades)
-    - [Фасады в сравнении с Внедрением зависимостей](#facades-vs-dependency-injection)
-    - [Фасады в сравнении с Вспомогательными функциями](#facades-vs-helper-functions)
-- [Как работают фасады](#how-facades-work)
-- [Справочное описание классов фасадов](#facade-class-reference)
 
 <a name="introduction"></a>
 ## Введение

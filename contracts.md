@@ -1,16 +1,8 @@
-git 92f1cff9aafb381e5e92eb9e039e3353605106f6
-
+---
+git: 92f1cff9aafb381e5e92eb9e039e3353605106f6
 ---
 
 # Контракты
-
-- [Введение](#introduction)
-    - [Контракты или фасады?](#contracts-vs-facades)
-- [Когда использовать контракты](#when-to-use-contracts)
-    - [Слабая связность](#loose-coupling)
-    - [Упрощение кода](#simplicity)
-- [Как использовать контракты](#how-to-use-contracts)
-- [Таблица основных контрактов](#contract-reference)
 
 <a name="introduction"></a>
 ## Введение

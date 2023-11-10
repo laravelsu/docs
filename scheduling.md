@@ -1,16 +1,9 @@
-git a961d8f357b48489329ce426e20fe7ddd12d4167
-
+---
+git: a961d8f357b48489329ce426e20fe7ddd12d4167
 ---
 
 # Планировщик задач
 
-- [Введение](#introduction)
-- [Определение планировщика](#defining-schedules)
-    - [Настройки частоты планировщика](#schedule-frequency-options)
-    - [Предотвращение перекрытий задач](#preventing-task-overlaps)
-    - [Режим обслуживания](#maintenance-mode)
-- [Выходные данные задачи](#task-output)
-- [Хуки](#task-hooks)
 
 <a name="introduction"></a>
 ## Введение

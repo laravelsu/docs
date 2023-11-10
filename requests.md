@@ -1,19 +1,9 @@
-git 19856e6d4ac3833ba8f3e9c92e191c4a8eb08ea7
-
+---
+git: 19856e6d4ac3833ba8f3e9c92e191c4a8eb08ea7
 ---
 
 # HTTP запросы
 
-- [Получение экземпляра запроса](#accessing-the-request)
-    - [Методы и путь запроса](#request-path-and-method)
-    - [Запросы PSR-7](#psr7-requests)
-- [Обрезка и нормализация ввода](#input-trimming-and-normalization)
-- [Получение ввода](#retrieving-input)
-    - [Старый ввод](#old-input)
-    - [Cookies](#cookies)
-- [Файлы](#files)
-    - [Получение загруженных файлов](#retrieving-uploaded-files)
-    - [Хранение загруженных файлов](#storing-uploaded-files)
 
 <a name="accessing-the-request"></a>
 ## Получение экземпляра запроса

@@ -1,29 +1,8 @@
-git c17544d46cc910f52292f0a103631811a2f3fe07
-
+---
+git: c17544d46cc910f52292f0a103631811a2f3fe07
 ---
 
-# База данных: Конструктор запросов 
-
-- [Введение](#introduction)
-- [Получение результатов](#retrieving-results)
-    - [Разделение результатов на куски](#chunking-results)
-    - [Агрегатные функции](#aggregates)
-- [Выборка (select)](#selects)
-- [Сырые выражения](#raw-expressions)
-- [Объединения (join)](#joins)
-- [Слияния (union)](#unions)
-- [Условия Where](#where-clauses)
-    - [Группировка параметров](#parameter-grouping)
-    - [Условия Where Exists](#where-exists-clauses)
-    - [JSON условия Where](#json-where-clauses)
-- [Упорядочивание, группировка, предел и смещение](#ordering-grouping-limit-and-offset)
-- [Условные выражения](#conditional-clauses)
-- [Вставка (insert)](#inserts)
-- [Обновления (update)](#updates)
-    - [Обновление JSON-столбцов](#updating-json-columns)
-    - [Increment и Decrement](#increment-and-decrement)
-- [Удаления (delete)](#deletes)
-- [Пессимистическое блокирование](#pessimistic-locking)
+# База данных: Конструктор запросов
 
 <a name="introduction"></a>
 ## Введение

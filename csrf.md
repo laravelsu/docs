@@ -1,13 +1,8 @@
-git a41c00001db1f70b8503c7c2427176c353175908
-
+---
+git: a41c00001db1f70b8503c7c2427176c353175908
 ---
 
 # CSRF-защита
-
-- [Введение](#csrf-introduction)
-- [Исключение URI](#csrf-excluding-uris)
-- [X-CSRF-Token](#csrf-x-csrf-token)
-- [X-XSRF-Token](#csrf-x-xsrf-token)
 
 <a name="csrf-introduction"></a>
 ## Введение

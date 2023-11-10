@@ -1,18 +1,8 @@
-git 77b65d7b53a02296011537b8aca1cf5eb19d67d3
-
+---
+git: 77b65d7b53a02296011537b8aca1cf5eb19d67d3
 ---
 
 # Базы данных: страничный вывод
-
-- [Введение](#introduction)
-- [Основы использования](#basic-usage)
-    - [Страничный вывод выборки из БД](#paginating-query-builder-results)
-    - [Страничный вывод запросов Eloquent](#paginating-eloquent-results)
-    - [Ручное создание экземпляра страничного вывода](#manually-creating-a-paginator)
-- [Отображение результатов страничного вывода](#displaying-pagination-results)
-    - [Преобразование результатов в JSON](#converting-results-to-json)
-- [Настройка шаблона страничного вывода](#customizing-the-pagination-view)
-- [Методы экземпляра страничного вывода](#paginator-instance-methods)
 
 <a name="introduction"></a>
 ## Введение

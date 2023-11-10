@@ -1,21 +1,8 @@
-git a743d8c805e5d277c498010e9baae192eb083dc5
-
+---
+git: a743d8c805e5d277c498010e9baae192eb083dc5
 ---
 
 # HTTP сессии
-
-- [Введение](#introduction)
-    - [Настройка](#configuration)
-    - [Требования для драйверов](#driver-prerequisites)
-- [Использование сессий](#using-the-session)
-    - [Получение данных](#retrieving-data)
-    - [Хранение данных](#storing-data)
-    - [Флеш-данные](#flash-data)
-    - [Удаление данных](#deleting-data)
-    - [Обновление ID сессии](#regenerating-the-session-id)
-- [Добавление своих драйверов сессий](#adding-custom-session-drivers)
-    - [Реализация драйвера](#implementing-the-driver)
-    - [Регистрация драйвера](#registering-the-driver)
 
 <a name="introduction"></a>
 ## Введение

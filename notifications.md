@@ -1,46 +1,8 @@
-git c406fc00d091db5638115113ae9ada0557584b49
-
+---
+git: c406fc00d091db5638115113ae9ada0557584b49
 ---
 
 # Уведомления
-
-- [Введение](#introduction)
-- [Создание уведомлений](#creating-notifications)
-- [Отправка уведомлений](#sending-notifications)
-    - [Использование трейта Notifiable](#using-the-notifiable-trait)
-    - [Использование фасада Notification](#using-the-notification-facade)
-    - [Указание каналов доставки](#specifying-delivery-channels)
-    - [Формирование очередей уведомлений](#queueing-notifications)
-- [Mail-уведомления](#mail-notifications)
-    - [Форматирование Mail-сообщений](#formatting-mail-messages)
-    - [Настройка получателя](#customizing-the-recipient)
-    - [Настройка темы](#customizing-the-subject)
-    - [Настройка шаблонов](#customizing-the-templates)
-- [Markdown Mail-уведомления](#markdown-mail-notifications)
-    - [Генерирование сообщения](#generating-the-message)
-    - [Написание сообщения](#writing-the-message)
-    - [Настройка компонентов](#customizing-the-components)
-- [БД-уведомления](#database-notifications)
-    - [Требования](#database-prerequisites)
-    - [Форматирование БД-уведомлений](#formatting-database-notifications)
-    - [Доступ к уведомлениям](#accessing-the-notifications)
-    - [Пометить уведомления как прочитанные](#marking-notifications-as-read)
-- [Уведомления вещания](#broadcast-notifications)
-    - [Требования](#broadcast-prerequisites)
-    - [Форматирование уведомлений вещания](#formatting-broadcast-notifications)
-    - [Слушать уведомления](#listening-for-notifications)
-- [SMS-уведомления](#sms-notifications)
-    - [Требования](#sms-prerequisites)
-    - [Форматирование SMS-уведомлений](#formatting-sms-notifications)
-    - [Настройка номера "From"](#customizing-the-from-number)
-    - [Роутинг SMS-уведомлений](#routing-sms-notifications)
-- [Slack-уведомления](#slack-notifications)
-    - [Требования](#slack-prerequisites)
-    - [Форматирование Slack-уведомлений](#formatting-slack-notifications)
-    - [Slack-вложения](#slack-attachments)
-    - [Роутинг Slack-уведомлений](#routing-slack-notifications)
-- [События уведомлений](#notification-events)
-- [Пользовательские каналы](#custom-channels)
 
 <a name="introduction"></a>
 ## Введение

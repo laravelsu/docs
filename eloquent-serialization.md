@@ -1,15 +1,8 @@
-git 9411838dd55949ab83abc964aa6d8116200bca32
-
+---
+git: 9411838dd55949ab83abc964aa6d8116200bca32
 ---
 
 # Eloquent: Сериализация
-
-- [Введение](#introduction)
-- [Сериализация моделей и коллекций](#serializing-models-and-collections)
-    - [Сериализация в массивы](#serializing-to-arrays)
-    - [Сериализация в JSON](#serializing-to-json)
-- [Скрытие атрибутов от JSON](#hiding-attributes-from-json)
-- [Добавление значений в JSON](#appending-values-to-json)
 
 <a name="introduction"></a>
 ## Введение

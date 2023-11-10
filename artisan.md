@@ -1,26 +1,9 @@
-git 15e0eba9da13300703e0c1bd32dc8ad4c3c029bb
-
+---
+git: 15e0eba9da13300703e0c1bd32dc8ad4c3c029bb
 ---
 
 # Консоль Artisan
 
-- [Введение](#introduction)
-- [Написание команд](#writing-commands)
-    - [Генерация команд](#generating-commands)
-    - [Структура команды](#command-structure)
-    - [Команды анонимных функций](#closure-commands)
-- [Определенние входных данных](#defining-input-expectations)
-    - [Аргументы](#arguments)
-    - [Опции](#options)
-    - [Массивы входных данных](#input-arrays)
-    - [Описания входных данных](#input-descriptions)
-- [Команда ввода/вывода](#command-io)
-    - [Получение входных данных](#retrieving-input)
-    - [Запрашивание входных данных](#prompting-for-input)
-    - [Вывод данных](#writing-output)
-- [Регистрация команд](#registering-commands)
-- [Программное выполнение команд](#programmatically-executing-commands)
-    - [Вызов команд из других команд](#calling-commands-from-other-commands)
 
 <a name="introduction"></a>
 ## Введение

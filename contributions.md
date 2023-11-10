@@ -1,16 +1,9 @@
-git b25d56c2f0551c2865e53819cf66eab94880a1d6
-
+---
+git: b25d56c2f0551c2865e53819cf66eab94880a1d6
 ---
 
 # Помощь в разработке фреймворка
 
-- [Сообщения о багах](#bug-reports)
-- [Обсуждение разработки](#core-development-discussion)
-- [Какая ветка?](#which-branch)
-- [Уязвимости безопасности](#security-vulnerabilities)
-- [Стиль оформления кода](#coding-style)
-    - [PHPDoc](#phpdoc)
-    - [StyleCI](#styleci)
 
 <a name="bug-reports"></a>
 ## Сообщения о багах

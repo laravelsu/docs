@@ -1,32 +1,8 @@
-git 505e561d38b5efac1cdb1aa5e39dd4baa0c95aa4
-
+---
+git: 505e561d38b5efac1cdb1aa5e39dd4baa0c95aa4
 ---
 
 # Eloquent: Отношения
-
-- [Введение](#introduction)
-- [Определение отношений](#defining-relationships)
-    - [Один к одному](#one-to-one)
-    - [Один ко многим](#one-to-many)
-    - [Один ко многим (Обратное отношение)](#one-to-many-inverse)
-    - [Многие ко многим](#many-to-many)
-    - [Ко многим через](#has-many-through)
-    - [Полиморфные отношения](#polymorphic-relations)
-    - [Полиморфные отношения многие ко многим](#many-to-many-polymorphic-relations)
-- [Запросы к отношениям](#querying-relations)
-    - [Методы отношений или динамические свойства](#relationship-methods-vs-dynamic-properties)
-    - [Проверка существования связей при выборке](#querying-relationship-existence)
-    - [Выборка по отсутствию отношения](#querying-relationship-absence)
-    - [Подсчёт моделей в отношении](#counting-related-models)
-- [Жадная загрузка](#eager-loading)
-    - [Ограничение жадных загрузок](#constraining-eager-loads)
-    - [Отложенная (ленивая) жадная загрузка](#lazy-eager-loading)
-- [Вставка и изменение связанных моделей](#inserting-and-updating-related-models)
-    - [Метод `save`](#the-save-method)
-    - [Метод `create`](#the-create-method)
-    - [Отношения "Принадлежит к"](#updating-belongs-to-relationships)
-    - [Отношения многие-ко-многим](#updating-many-to-many-relationships)
-- [Привязка родительских меток времени](#touching-parent-timestamps)
 
 <a name="introduction"></a>
 ## Введение

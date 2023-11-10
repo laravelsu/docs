@@ -1,15 +1,8 @@
-git e4d9d95b06b5a8c63c25cd336130864fe528682e
-
+---
+git: e4d9d95b06b5a8c63c25cd336130864fe528682e
 ---
 
 # Сервис-провайдеры
-
-- [Введение](#introduction)
-- [Использование сервис-провайдеров](#writing-service-providers)
-    - [Метод Register](#the-register-method)
-    - [Метод Boot ](#the-boot-method)
-- [Регистрация провайдеров](#registering-providers)
-- [Отложенные провайдеры](#deferred-providers)
 
 <a name="introduction"></a>
 ## Введение

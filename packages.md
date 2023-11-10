@@ -1,21 +1,8 @@
-git 29715a2563f14e47a1b80a2d5cb58f8650ef80c0
-
+---
+git: 29715a2563f14e47a1b80a2d5cb58f8650ef80c0
 ---
 
 # Разработка пакетов
-
-- [Введение](#introduction)
-    - [Заметка о фасадах](#a-note-on-facades)
-- [Сервис-провайдеры](#service-providers)
-- [Ресурсы](#resources)
-    - [Настройка](#configuration)
-    - [Миграции](#migrations)
-    - [Роуты](#routes)
-    - [Переводы](#translations)
-    - [Шаблоны](#views)
-- [Команды](#commands)
-- [Общие ресурсы](#public-assets)
-- [Публикация групп файлов](#publishing-file-groups)
 
 <a name="introduction"></a>
 ## Введение

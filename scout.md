@@ -1,26 +1,8 @@
-git dac6ce2625b877d4dffc1229a7999bcb720692a3
-
+---
+git: dac6ce2625b877d4dffc1229a7999bcb720692a3
 ---
 
 # Laravel Scout
-
-- [Введение](#introduction)
-- [Установка](#installation)
-    - [Очередь](#queueing)
-    - [Условия для работы драйвера](#driver-prerequisites)
-- [Настройка](#configuration)
-    - [Настройка индексов модели](#configuring-model-indexes)
-    - [Настройка данных для поиска](#configuring-searchable-data)
-- [Индексирование](#indexing)
-    - [Пакетный импорт](#batch-import)
-    - [Добавление записей](#adding-records)
-    - [Обновление записей](#updating-records)
-    - [Удаление записей](#removing-records)
-    - [Приостановка индексирования](#pausing-indexing)
-- [Поиск](#searching)
-    - [Условия Where](#where-clauses)
-    - [Страничный вывод](#pagination)
-- [Пользовательские движки](#custom-engines)
 
 <a name="introduction"></a>
 ## Введение

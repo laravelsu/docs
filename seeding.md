@@ -1,14 +1,8 @@
-git 20dbce7144285b8bab2d99f027c256e4652219ab
-
+---
+git: 20dbce7144285b8bab2d99f027c256e4652219ab
 ---
 
 # База данных: загрузка начальных данных
-
-- [Введение](#introduction)
-- [Создание начальных данных](#writing-seeders)
-    - [Использование фабрик моделей](#using-model-factories)
-    - [Вызов дополнительной загрузки начальных данных](#calling-additional-seeders)
-- [Запуск загрузки начальных данных](#running-seeders)
 
 <a name="introduction"></a>
 ## Введение

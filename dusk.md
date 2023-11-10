@@ -1,38 +1,9 @@
-git 1a9c864883f6ce316c5573e3a50f71d216e0eeb2
-
+---
+git: 1a9c864883f6ce316c5573e3a50f71d216e0eeb2
 ---
 
 # Тесты браузера (Laravel Dusk)
 
-- [Введение](#introduction)
-- [Установка](#installation)
-    - [Использование других браузеров](#using-other-browsers)
-    - [Опции ChromeDriver](#chromedriver-options)
-- [Начало работы](#getting-started)
-    - [Генерация тестов](#generating-tests)
-    - [Выполнение тестов](#running-tests)
-    - [Обработка среды](#environment-handling)
-    - [Создание браузеров](#creating-browsers)
-    - [Аутентификация](#authentication)
-- [Взаимодействие с элементами](#interacting-with-elements)
-    - [Нажатие ссылок](#clicking-links)
-    - [Текст, значения и атрибуты](#text-values-and-attributes)
-    - [Использование форм](#using-forms)
-    - [Прикрепление файлов](#attaching-files)
-    - [Использование клавиатуры](#using-the-keyboard)
-    - [Использование мыши](#using-the-mouse)
-    - [Обзор данных селекторов](#scoping-selectors)
-    - [Ожидание элементов](#waiting-for-elements)
-- [Доступные утверждения](#available-assertions)
-- [Страницы](#pages)
-    - [Генерация страниц](#generating-pages)
-    - [Настройка страниц](#configuring-pages)
-    - [Переход на страницы](#navigating-to-pages)
-    - [Сокращённые селекторы](#shorthand-selectors)
-    - [Методы страниц](#page-methods)
-- [Продолжительная интеграция](#continuous-integration)
-    - [Travis CI](#running-tests-on-travis-ci)
-    - [CircleCI](#running-tests-on-circle-ci)
 
 <a name="introduction"></a>
 ## Введение

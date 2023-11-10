@@ -1,25 +1,9 @@
-git b31cd70738d926ef177eedf943e6eb65f2981fa5
-
+---
+git: b31cd70738d926ef177eedf943e6eb65f2981fa5
 ---
 
 # Авторизация
 
-- [Введение](#introduction)
-- [Шлюзы](#gates)
-    - [Написание шлюзов](#writing-gates)
-    - [Авторизация действий](#authorizing-actions-via-gates)
-- [Создание политик](#creating-policies)
-    - [Генерация политик](#generating-policies)
-    - [Регистрация политик](#registering-policies)
-- [Написание политик](#writing-policies)
-    - [Методы политик](#policy-methods)
-    - [Методы без моделей](#methods-without-models)
-    - [Фильтры политик](#policy-filters)
-- [Авторизация действий с помощью политик](#authorizing-actions-using-policies)
-    - [Через модель пользователя](#via-the-user-model)
-    - [Через посредников](#via-middleware)
-    - [Через хелперы контроллера](#via-controller-helpers)
-    - [Через шаблоны Blade](#via-blade-templates)
 
 <a name="introduction"></a>
 ## Введение

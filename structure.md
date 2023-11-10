@@ -1,32 +1,8 @@
-git 0115cb498bba9dfc1ae30e0863553f2da6f25be2
-
+---
+git: 0115cb498bba9dfc1ae30e0863553f2da6f25be2
 ---
 
 # Структура каталога
-
-- [Введение](#introduction)
-- [Корневой каталог](#the-root-directory)
-    - [каталог `app`](#the-root-app-directory)
-    - [каталог `bootstrap`](#the-bootstrap-directory)
-    - [каталог `config`](#the-config-directory)
-    - [каталог `database`](#the-database-directory)
-    - [каталог `public`](#the-public-directory)
-    - [каталог `resources`](#the-resources-directory)
-    - [каталог `routes`](#the-routes-directory)
-    - [каталог `storage`](#the-storage-directory)
-    - [каталог `tests`](#the-tests-directory)
-    - [каталог `vendor`](#the-vendor-directory)
-- [Каталог App](#the-app-directory)
-    - [каталог `Console`](#the-console-directory)
-    - [каталог `Events`](#the-events-directory)
-    - [каталог `Exceptions`](#the-exceptions-directory)
-    - [каталог `Http`](#the-http-directory)
-    - [каталог `Jobs`](#the-jobs-directory)
-    - [каталог `Listeners`](#the-listeners-directory)
-    - [каталог `Mail`](#the-mail-directory)
-    - [каталог `Notifications`](#the-notifications-directory)
-    - [каталог `Policies`](#the-policies-directory)
-    - [каталог `Providers`](#the-providers-directory)
 
 <a name="introduction"></a>
 ## Введение

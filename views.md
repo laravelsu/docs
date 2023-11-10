@@ -1,13 +1,8 @@
-git bd98b222e3c30ad1d058e14b2e0a0efd4b82d311
-
+---
+git: bd98b222e3c30ad1d058e14b2e0a0efd4b82d311
 ---
 
 # Шаблоны
-
-- [Создание шаблонов](#creating-views)
-- [Передача данных в шаблоны](#passing-data-to-views)
-    - [Передача данных во все шаблоны](#sharing-data-with-all-views)
-- [Вью-композеры](#view-composers)
 
 <a name="creating-views"></a>
 ## Создание шаблонов

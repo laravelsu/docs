@@ -1,13 +1,8 @@
-git 77b00d23559c3c189af74cffc7b477825eba14ea
-
+---
+git: 77b00d23559c3c189af74cffc7b477825eba14ea
 ---
 
 # HTTP редиректы
-
-- [Создание редиректов](#creating-redirects)
-- [Редиректы на именованные роуты](#redirecting-named-routes)
-- [Редиректы на методы контроллера](#redirecting-controller-actions)
-- [Редиректы с данными сессии](#redirecting-with-flashed-session-data)
 
 <a name="creating-redirects"></a>
 ## Создание редиректов

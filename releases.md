@@ -1,21 +1,8 @@
-git b25d56c2f0551c2865e53819cf66eab94880a1d6
-
+---
+git: b25d56c2f0551c2865e53819cf66eab94880a1d6
 ---
 
 # Описание изменений
-
-- [Схема контроля версий](#versioning-scheme)
-- [Политика поддержки](#support-policy)
-- [Laravel 5.4.22](#laravel-5.4.22)
-- [Laravel 5.4](#laravel-5.4)
-- [Laravel 5.3](#laravel-5.3)
-- [Laravel 5.2](#laravel-5.2)
-- [Laravel 5.1.11](#laravel-5.1.11)
-- [Laravel 5.1.4](#laravel-5.1.4)
-- [Laravel 5.1](#laravel-5.1)
-- [Laravel 5.0](#laravel-5.0)
-- [Laravel 4.2](#laravel-4.2)
-- [Laravel 4.1](#laravel-4.1)
 
 <a name="versioning-scheme"></a>
 ## Схема контроля версий

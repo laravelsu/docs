@@ -1,17 +1,8 @@
-git 0c0eddc28608bd2e86d5418d789bb941e3f52490
-
+---
+git: 0c0eddc28608bd2e86d5418d789bb941e3f52490
 ---
 
 # Посредники
-
-- [Введение](#introduction)
-- [Создание посредника](#defining-middleware)
-- [Регистрация посредника](#registering-middleware)
-    - [Глобальный посредник](#global-middleware)
-    - [Назначение посредника роутам](#assigning-middleware-to-routes)
-    - [Группы посредников](#middleware-groups)
-- [Параметры посредника](#middleware-parameters)
-- [Посредник terminable](#terminable-middleware)
 
 <a name="introduction"></a>
 ## Введение

@@ -1,13 +1,8 @@
-git 74953d4d167c28f849ec73565aa1aa9679cca938
-
+---
+git: 74953d4d167c28f849ec73565aa1aa9679cca938
 ---
 
 # JavaScript и CSS 
-
-- [Введение](#introduction)
-- [Написание CSS](#writing-css)
-- [Написание JavaScript](#writing-javascript)
-    - [Написание компонентов Vue](#writing-vue-components)
 
 <a name="introduction"></a>
 ## Введение

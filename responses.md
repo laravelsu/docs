@@ -1,23 +1,8 @@
-git 1255c35731dd6cc815bd261fb5883f12eabd7816
-
+---
+git: 1255c35731dd6cc815bd261fb5883f12eabd7816
 ---
 
 # HTTP-отклики
-
-- [Создание откликов](#creating-responses)
-    - [Добавление заголовков в отклики](#attaching-headers-to-responses)
-    - [Добавление cookie в отклики](#attaching-cookies-to-responses)
-    - [Cookies и шифрование](#cookies-and-encryption)
-- [Редиректы](#redirects)
-    - [Редиректы на именованные роуты](#redirecting-named-routes)
-    - [Редиректы на действие контроллера](#redirecting-controller-actions)
-    - [Редиректы с одноразовыми переменными сессии](#redirecting-with-flashed-session-data)
-- [Другие типы откликов](#other-response-types)
-    - [Отклики шаблона](#view-responses)
-    - [Отклики JSON](#json-responses)
-    - [Скачивания файла](#file-downloads)
-    - [Отклики файла](#file-responses)
-- [Макрос отклика](#response-macros)
 
 <a name="creating-responses"></a>
 ## Создание откликов (response)

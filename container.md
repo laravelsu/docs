@@ -1,19 +1,8 @@
-git 3653b7ab270221d7e45f9d47031faeb4a2cfbeb9
-
+---
+git: 3653b7ab270221d7e45f9d47031faeb4a2cfbeb9
 ---
 
 # Сервис-контейнер
-
-- [Введение](#introduction)
-- [Связывание](#binding)
-    - [Основы связывания](#binding-basics)
-    - [Связывание интерфейса с реализацией](#binding-interfaces-to-implementations)
-    - [Контекстное связывание](#contextual-binding)
-    - [Тегирование](#tagging)
-- [Применение на практике](#resolving)
-    - [Метод Make](#the-make-method)
-    - [Автоматическое внедрение](#automatic-injection)
-- [События контейнера](#container-events)
 
 <a name="introduction"></a>
 ## Введение

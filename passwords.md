@@ -1,15 +1,8 @@
-git 96045517e74b90ac2441e4c8f595229e8c34ab4b
-
+---
+git: 96045517e74b90ac2441e4c8f595229e8c34ab4b
 ---
 
-# Сброс пароля 
-
-- [Введение](#introduction)
-- [О базе данных](#resetting-database)
-- [Роутинг](#resetting-routing)
-- [Шаблоны](#resetting-views)
-- [После сброса паролей](#after-resetting-passwords)
-- [Настройка](#password-customization)
+# Сброс пароля
 
 <a name="introduction"></a>
 ## Введение

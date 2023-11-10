@@ -1,15 +1,8 @@
-git 9c7aa069905c90c415dbcf26a0c7dcf5a59929f1
-
+---
+git: 9c7aa069905c90c415dbcf26a0c7dcf5a59929f1
 ---
 
 # Установка
-
-- [Установка](#installation)
-    - [Требования к серверу](#server-requirements)
-    - [Установка Laravel](#installing-laravel)
-    - [Настройка](#configuration)
-- [Настройка веб-сервера](#web-server-configuration)
-    - ["Красивые" URL](#pretty-urls)
 
 <a name="installation"></a>
 ## Установка

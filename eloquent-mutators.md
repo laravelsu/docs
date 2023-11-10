@@ -1,16 +1,8 @@
-git 25e40a7d2b72b34ab67f46f16b9a67754601b96d
-
+---
+git: 25e40a7d2b72b34ab67f46f16b9a67754601b96d
 ---
 
 # Eloquent: Мутаторы
-
-- [Введение](#introduction)
-- [Аксессоры и мутаторы](#accessors-and-mutators)
-    - [Определение аксессора](#defining-an-accessor)
-    - [Определение мутатора](#defining-a-mutator)
-- [Мутаторы дат](#date-mutators)
-- [Мутаторы атрибутов](#attribute-casting)
-    - [Преобразование в массив и JSON](#array-and-json-casting)
 
 <a name="introduction"></a>
 ## Введение

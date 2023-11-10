@@ -1,27 +1,8 @@
-git a59634ffbf2417aa8cd0050819619996aa1bcd41
-
+---
+git: a59634ffbf2417aa8cd0050819619996aa1bcd41
 ---
 
-# Работа с e-mail 
-
-- [Введение](#introduction)
-    - [Требования для драйверов](#driver-prerequisites)
-- [Генерация Mailables](#generating-mailables)
-- [Написание Mailables](#writing-mailables)
-    - [Настройка отправителя](#configuring-the-sender)
-    - [Настройка шаблона](#configuring-the-view)
-    - [Данные шаблона](#view-data)
-    - [Вложения](#attachments)
-    - [Встроенные вложения](#inline-attachments)
-    - [Настройка сообщения SwiftMailer](#customizing-the-swiftmailer-message)
-- [Markdown Mailables](#markdown-mailables)
-    - [Генерация Markdown Mailables](#generating-markdown-mailables)
-    - [Написание Markdown-сообщений](#writing-markdown-messages)
-    - [Настройка компонентов](#customizing-the-components)
-- [Отправка почты](#sending-mail)
-    - [Очереди отправки](#queueing-mail)
-- [Почта и локальная разработка](#mail-and-local-development)
-- [События](#events)
+# Работа с e-mail
 
 <a name="introduction"></a>
 ## Введение

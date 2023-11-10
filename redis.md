@@ -1,16 +1,9 @@
-git eb78a8b30e07a2f39663e859e8d00afb29788dc0
-
+---
+git: eb78a8b30e07a2f39663e859e8d00afb29788dc0
 ---
 
 # Redis
 
-- [Введение](#introduction)
-    - [Настройка](#configuration)
-    - [Predis](#predis)
-    - [PhpRedis](#phpredis)
-- [Взаимодействие с Redis](#interacting-with-redis)
-    - [Конвейер команд](#pipelining-commands)
-- [Pub / Sub](#pubsub)
 
 <a name="introduction"></a>
 ## Введение

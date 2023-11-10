@@ -1,26 +1,8 @@
-git 18796f22fdbb32a6432e1bce92e36ceb9afb42c8
-
+---
+git: 18796f22fdbb32a6432e1bce92e36ceb9afb42c8
 ---
 
 # База данных: Миграции
-
-- [Введение](#introduction)
-- [Создание миграций](#generating-migrations)
-- [Структура миграций](#migration-structure)
-- [Выполнение миграций](#running-migrations)
-    - [Откат миграций](#rolling-back-migrations)
-- [Таблицы](#tables)
-    - [Создание таблиц](#creating-tables)
-    - [Переименование / удаление таблиц](#renaming-and-dropping-tables)
-- [Столбцы](#columns)
-    - [Создание столбцов](#creating-columns)
-    - [Модификаторы столбцов](#column-modifiers)
-    - [Изменение столбцов](#modifying-columns)
-    - [Удаление столбцов](#dropping-columns)
-- [Индексы](#indexes)
-    - [Создание индексов](#creating-indexes)
-    - [Удаление индексов](#dropping-indexes)
-    - [Ограничения внешнего ключа](#foreign-key-constraints)
 
 <a name="introduction"></a>
 ## Введение

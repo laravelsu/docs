@@ -1,11 +1,8 @@
-git f02fc7e8717a24c160bd4978a0b912aef2a6b52c
-
+---
+git: f02fc7e8717a24c160bd4978a0b912aef2a6b52c
 ---
 
 # Хелперы
-
-- [Введение](#introduction)
-- [Доступные методы](#available-methods)
 
 <a name="introduction"></a>
 ## Введение

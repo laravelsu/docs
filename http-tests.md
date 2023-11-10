@@ -1,14 +1,8 @@
-git 22951bd4bcc7a559cb3d991095ad8c7a087ca010
-
+---
+git: 22951bd4bcc7a559cb3d991095ad8c7a087ca010
 ---
 
 # HTTP тесты
-
-- [Введение](#introduction)
-- [Сессия / Аутентификация](#session-and-authentication)
-- [Тестирование JSON API](#testing-json-apis)
-- [Тестирование загрузки файлов](#testing-file-uploads)
-- [Доступные утверждения](#available-assertions)
 
 <a name="introduction"></a>
 ## Введение

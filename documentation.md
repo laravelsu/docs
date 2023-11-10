@@ -1,5 +1,5 @@
-git dfb5e78dcbb42b2a6093dbe3ae209a9821fbdffa
-
+---
+git: dfb5e78dcbb42b2a6093dbe3ae209a9821fbdffa
 ---
 
 - ## Пролог

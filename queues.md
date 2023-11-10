@@ -1,30 +1,8 @@
-git 8296a6200c65ca62a5ea651ec6596997a56fbd4e
-
+---
+git: 8296a6200c65ca62a5ea651ec6596997a56fbd4e
 ---
 
 # Очереди
-
-- [Введение](#introduction)
-    - [Подключения против Очередей](#connections-vs-queues)
-    - [Требования для драйверов](#driver-prerequisites)
-- [Создание задач](#creating-jobs)
-    - [Генерирование классов задач](#generating-job-classes)
-    - [Структура класса](#class-structure)
-- [Добавление задач в очередь](#dispatching-jobs)
-    - [Отложенные задачи](#delayed-dispatching)
-    - [Настройка очереди и подключения](#customizing-the-queue-and-connection)
-    - [Указание макс. попыток задач / значений таймаута](#max-job-attempts-and-timeout)
-    - [Обработка ошибок](#error-handling)
-- [Выполнение воркера очереди](#running-the-queue-worker)
-    - [Приоритеты очереди](#queue-priorities)
-    - [Воркеры очереди и развертывание](#queue-workers-and-deployment)
-    - [Истечение срока задачи и Таймауты](#job-expirations-and-timeouts)
-- [Настройка Supervisor](#supervisor-configuration)
-- [Проваленные задачи](#dealing-with-failed-jobs)
-    - [Очистка после проваленных задач](#cleaning-up-after-failed-jobs)
-    - [События проваленных задач](#failed-job-events)
-    - [Повторный запуск проваленных задач](#retrying-failed-jobs)
-- [События задач](#job-events)
 
 <a name="introduction"></a>
 ## Введение

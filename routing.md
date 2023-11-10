@@ -1,25 +1,8 @@
-git f395270e33bd0af177f2da1f5411a73ccce22de0
-
+---
+git: f395270e33bd0af177f2da1f5411a73ccce22de0
 ---
 
 # Роутинг
-
-- [Простейший роутинг](#basic-routing)
-- [Параметры роутов](#route-parameters)
-    - [Обязательные параметры](#required-parameters)
-    - [Необязательные параметры](#parameters-optional-parameters)
-    - [Ограничения регулярными выражениями](#parameters-regular-expression-constraints)
-- [Именованные роуты](#named-routes)
-- [Группы роутов](#route-groups)
-    - [Посредники](#route-group-middleware)
-    - [Пространства имён](#route-group-namespaces)
-    - [Доменный роутинг](#route-group-sub-domain-routing)
-    - [Префиксы роута](#route-group-prefixes)
-- [Привязка модели роута](#route-model-binding)
-    - [Неявная привязка](#implicit-binding)
-    - [Явная привязка](#explicit-binding)
-- [Подмена методов](#form-method-spoofing)
-- [Получение текущего роута](#accessing-the-current-route)
 
 <a name="basic-routing"></a>
 ## Простейший роутинг

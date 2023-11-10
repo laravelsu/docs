@@ -1,35 +1,9 @@
-git 1bf77dca97f57287daf890ec7860d500fbafe1b5
-
+---
+git: 1bf77dca97f57287daf890ec7860d500fbafe1b5
 ---
 
 # Laravel Cashier
 
-- [Введение](#introduction)
-- [Настройка](#configuration)
-    - [Stripe](#stripe-configuration)
-    - [Braintree](#braintree-configuration)
-    - [Настройка валюты](#currency-configuration)
-- [Подписки](#subscriptions)
-    - [Создание подписок](#creating-subscriptions)
-    - [Проверка статуса подписки](#checking-subscription-status)
-    - [Смена планов](#changing-plans)
-    - [Количество подписки](#subscription-quantity)
-    - [Налог на подписку](#subscription-taxes)
-    - [Отмена подписки](#cancelling-subscriptions)
-    - [Возобновление подписки](#resuming-subscriptions)
-    - [Обновление банковских карт](#updating-credit-cards)
-- [Пробные подписки](#subscription-trials)
-    - [С запросом банковской карты](#with-credit-card-up-front)
-    - [Без запроса банковской карты](#without-credit-card-up-front)
-- [Обработка веб-хуков Stripe](#handling-stripe-webhooks)
-    - [Определение хэндлеров веб-хук событий](#defining-webhook-event-handlers)
-    - [Неудавшиеся подписки](#handling-failed-subscriptions)
-- [Обработка веб-хуков Braintree](#handling-braintree-webhooks)
-    - [Определение хэндлеров веб-хук событий](#defining-braintree-webhook-event-handlers)
-    - [Неудавшиеся подписки](#handling-braintree-failed-subscriptions)
-- [Одиночные платежи](#single-charges)
-- [Счета](#invoices)
-    - [Генерация счетов в PDF](#generating-invoice-pdfs)
 
 <a name="introduction"></a>
 ## Введение

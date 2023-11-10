@@ -1,20 +1,8 @@
-git a51a5033659603a8b2b824dde65e600647f22b8e
-
+---
+git: a51a5033659603a8b2b824dde65e600647f22b8e
 ---
 
 # Тестирование БД
-
-- [Введение](#introduction)
-- [Сброс БД после каждого теста](#resetting-the-database-after-each-test)
-    - [Использование миграций](#using-migrations)
-    - [Использование транзакций](#using-transactions)
-- [Написание фабрик](#writing-factories)
-    - [Состояния фабрик](#factory-states)
-- [Использование фабрик](#using-factories)
-    - [Создание моделей](#creating-models)
-    - [Сохранение моделей](#persisting-models)
-    - [Отношения](#relationships)
-- [Доступные утверждения](#available-assertions)
 
 <a name="introduction"></a>
 ## Введение

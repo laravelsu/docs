@@ -1,12 +1,8 @@
-git 430e0e08f8bc154890bfda637fe574c3e25d27db
-
+---
+git: 430e0e08f8bc154890bfda637fe574c3e25d27db
 ---
 
 # Шифрование
-
-- [Введение](#introduction)
-- [Настройка](#configuration)
-- [Использование шифратора](#using-the-encrypter)
 
 <a name="introduction"></a>
 ## Введение

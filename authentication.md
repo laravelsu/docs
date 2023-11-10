@@ -1,29 +1,8 @@
-git 22951bd4bcc7a559cb3d991095ad8c7a087ca010
-
+---
+git: 22951bd4bcc7a559cb3d991095ad8c7a087ca010
 ---
 
 # Аутентификация
-
-- [Введение](#introduction)
-    - [Требования для базы данных](#introduction-database-considerations)
-- [Краткое руководство по аутентификации](#authentication-quickstart)
-    - [Роутинг](#included-routing)
-    - [Шаблоны](#included-views)
-    - [Аутентификация](#included-authenticating)
-    - [Получение аутентифицированного пользователя](#retrieving-the-authenticated-user)
-    - [Защита роутов](#protecting-routes)
-    - [Троттлинг аутентификации (Ограничение числа неудачных попыток входа)](#login-throttling)
-- [Ручная аутентификация пользователей](#authenticating-users)
-    - [Запоминание пользователей](#remembering-users)
-    - [Другие методы аутентификации](#other-authentication-methods)
-- [HTTP-аутентификация](#http-basic-authentication)
-    - [HTTP-аутентификация без сохранения состояния](#stateless-http-basic-authentication)
-- [Аутентификация через социальные сети](https://github.com/laravel/socialite)
-- [Добавление собственных гвардов](#adding-custom-guards)
-- [Добавление собственных провайдеров пользователей](#adding-custom-user-providers)
-    - [Контракт User Provider](#the-user-provider-contract)
-    - [Контракт Authenticatable](#the-authenticatable-contract)
-- [События](#events)
 
 <a name="introduction"></a>
 ## Введение

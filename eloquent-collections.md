@@ -1,12 +1,8 @@
-git dd6d6a1034a89720acb0badda42666540d6e8e34
-
+---
+git: dd6d6a1034a89720acb0badda42666540d6e8e34
 ---
 
 # Eloquent: Коллекции
-
-- [Введение](#introduction)
-- [Доступные методы](#available-methods)
-- [Пользовательские коллекции](#custom-collections)
 
 <a name="introduction"></a>
 ## Введение

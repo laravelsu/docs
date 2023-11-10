@@ -1,21 +1,9 @@
-git 05366c9cb2b0d6934953026d474532d06b4abe5b
-
+---
+git: 05366c9cb2b0d6934953026d474532d06b4abe5b
 ---
 
 # Laravel Valet
 
-- [Введение](#introduction)
-    - [Valet или Homestead](#valet-or-homestead)
-- [Установка](#installation)
-    - [Обновление](#upgrading)
-- [Обслуживание сайтов](#serving-sites)
-    - [Команда "Park"](#the-park-command)
-    - [Команда "Link"](#the-link-command)
-    - [Защита сайтов при помощи TLS](#securing-sites)
-- [Общий доступ к сайтам](#sharing-sites)
-- [Пользовательские драйверы Valet](#custom-valet-drivers)
-    - [Локальные драйверы](#local-drivers)
-- [Другие команды Valet](#other-valet-commands)
 
 <a name="introduction"></a>
 ## Введение

@@ -1,17 +1,8 @@
-git 3eedb8b3ce42cb37f637285d4d928dc3f4d7be13
-
+---
+git: 3eedb8b3ce42cb37f637285d4d928dc3f4d7be13
 ---
 
 # Локализация
-
-- [Введение](#introduction)
-- [Определение строк перевода](#defining-translation-strings)
-    - [Использование кратких ключей](#using-short-keys)
-    - [Использование строк перевода как ключей](#using-translation-strings-as-keys)
-- [Получение строк перевода](#retrieving-translation-strings)
-    - [Подстановка параметров в строках перевода](#replacing-parameters-in-translation-strings)
-    - [Плюрализация](#pluralization)
-- [Переопределение языковых файлов пакета](#overriding-package-language-files)
 
 <a name="introduction"></a>
 ## Введение

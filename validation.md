@@ -1,31 +1,8 @@
-git 8d2289adb563c1f178de1bba355c7e2d8099edeb
-
+---
+git: 8d2289adb563c1f178de1bba355c7e2d8099edeb
 ---
 
 # Валидация
-
-- [Введение](#introduction)
-- [Быстрый старт](#validation-quickstart)
-    - [Определение роутов](#quick-defining-the-routes)
-    - [Создание контроллера](#quick-creating-the-controller)
-    - [Написание логики валидации](#quick-writing-the-validation-logic)
-    - [Вывод ошибок валидации](#quick-displaying-the-validation-errors)
-    - [Дополнительные поля](#a-note-on-optional-fields)
-- [Валидация в классах Form Request](#form-request-validation)
-    - [Создание Form Requests](#creating-form-requests)
-    - [Авторизация в Form Requests](#authorizing-form-requests)
-    - [Настройка формата вывода ошибок валидации](#customizing-the-error-format)
-    - [Настройка сообщений об ошибках](#customizing-the-error-messages)
-- [Создание валидаторов вручную](#manually-creating-validators)
-    - [Автоматический редирект](#automatic-redirection)
-    - [MessageBag](#named-error-bags)
-    - [Хук после валидации](#after-validation-hook)
-- [Работа с сообщениями об ошибках](#working-with-error-messages)
-    - [Пользовательские сообщения об ошибках](#custom-error-messages)
-- [Доступные правила валидации](#available-validation-rules)
-- [Добавление правил с условиями](#conditionally-adding-rules)
-- [Валидация массивов](#validating-arrays)
-- [Собственные правила валидации](#custom-validation-rules)
 
 <a name="introduction"></a>
 ## Введение

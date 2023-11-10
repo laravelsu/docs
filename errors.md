@@ -1,21 +1,8 @@
-git 540555c1f9ee225cf33ea4c2303e69f34f65cce6
-
+---
+git: 540555c1f9ee225cf33ea4c2303e69f34f65cce6
 ---
 
 # Ошибки и логирование
-
-- [Введение](#introduction)
-- [Настройка](#configuration)
-    - [Детализация ошибок](#error-detail)
-    - [Хранилище логов](#log-storage)
-    - [Коды серьёзности логов](#log-severity-levels)
-    - [Пользовательская настройка Monolog](#custom-monolog-configuration)
-- [Обработчик исключений](#the-exception-handler)
-    - [Метод Report](#report-method)
-    - [Метод Render](#render-method)
-- [HTTP-исключения](#http-exceptions)
-    - [Пользовательские страницы HTTP-ошибок](#custom-http-error-pages)
-- [Логгирование](#logging)
 
 <a name="introduction"></a>
 ## Введение

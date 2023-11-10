@@ -1,38 +1,8 @@
-git 79c77938dcb4bb3611b281d9e074975f28ce5a1b
-
+---
+git: 79c77938dcb4bb3611b281d9e074975f28ce5a1b
 ---
 
 # API аутентификации (Passport)
-
-- [Введение](#introduction)
-- [Установка](#installation)
-    - [Быстрое знакомство с фронтендом](#frontend-quickstart)
-    - [Развёртывание Passport](#deploying-passport)
-- [Настройка](#configuration)
-    - [Срок действия токенов](#token-lifetimes)
-- [Выдача токенов доступа](#issuing-access-tokens)
-    - [Управление клиентами](#managing-clients)
-    - [Запрос токенов](#requesting-tokens)
-    - [Обновление токенов](#refreshing-tokens)
-- [Токены предоставления пароля](#password-grant-tokens)
-    - [Создание клиента предоставления пароля](#creating-a-password-grant-client)
-    - [Запрос токенов](#requesting-password-grant-tokens)
-    - [Запрос всех прав](#requesting-all-scopes)
-- [Неявное предоставление токенов](#implicit-grant-tokens)
-- [Токены предоставления учётных данных клиента](#client-credentials-grant-tokens)
-- [Персональные токены доступа](#personal-access-tokens)
-    - [Создание клиента персонального доступа](#creating-a-personal-access-client)
-    - [Управление токенами персонального доступа](#managing-personal-access-tokens)
-- [Защита роутов](#protecting-routes)
-    - [С помощью посредников](#via-middleware)
-    - [Передача токена доступа](#passing-the-access-token)
-- [Права токена](#token-scopes)
-    - [Определение прав](#defining-scopes)
-    - [Назначение прав токенам](#assigning-scopes-to-tokens)
-    - [Проверка прав](#checking-scopes)
-- [Использование вашего API с помощью JavaScript](#consuming-your-api-with-javascript)
-- [События](#events)
-- [Тестирование](#testing)
 
 <a name="introduction"></a>
 ## Введение

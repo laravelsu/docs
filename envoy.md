@@ -1,20 +1,8 @@
-git 2895257ddd58bec2e4e10ef2c82b1052833aeac3
-
+---
+git: 2895257ddd58bec2e4e10ef2c82b1052833aeac3
 ---
 
 # Инструмент запуска задач Envoy
-
-- [Введение](#introduction)
-    - [Установка](#installation)
-- [Написание задач](#writing-tasks)
-    - [Настройка](#setup)
-    - [Переменные](#variables)
-    - [Истории](#stories)
-    - [Несколько серверов](#multiple-servers)
-- [Запуск задач](#running-tasks)
-    - [Подтверждение выполнения задач](#confirming-task-execution)
-- [Оповещения](#notifications)
-    - [Slack](#slack)
 
 <a name="introduction"></a>
 ## Введение

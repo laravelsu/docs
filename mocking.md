@@ -1,17 +1,8 @@
-git 5fbabacd2b9ad49a062ea276a5f238df07bb80cb
-
+---
+git: 5fbabacd2b9ad49a062ea276a5f238df07bb80cb
 ---
 
 # Мокинг (имитация)
-
-- [Введение](#introduction)
-- [Имитирование Bus](#bus-fake)
-- [Имитирование Event](#event-fake)
-- [Имитирование Mail](#mail-fake)
-- [Имитирование Notification](#notification-fake)
-- [Имитирование Queue](#queue-fake)
-- [Имитирование Storage](#storage-fake)
-- [Фасады](#mocking-facades)
 
 <a name="introduction"></a>
 ## Введение

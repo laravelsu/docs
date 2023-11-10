@@ -1,25 +1,8 @@
-git 17ddc3e2872b2725882f497db5310dfb56eccbd0
-
+---
+git: 17ddc3e2872b2725882f497db5310dfb56eccbd0
 ---
 
 # Кэш
-
-- [Настройка](#configuration)
-    - [Требования драйвера](#driver-prerequisites)
-- [Использование кэша](#cache-usage)
-    - [Получение экземпляра кэша](#obtaining-a-cache-instance)
-    - [Получение элементов из кэша](#retrieving-items-from-the-cache)
-    - [Сохранение элементов в кэш](#storing-items-in-the-cache)
-    - [Удаление элементов из кэша](#removing-items-from-the-cache)
-    - [Хелпер Cache](#the-cache-helper)
-- [Теги кэша](#cache-tags)
-    - [Сохранение элементов кэша с тегами](#storing-tagged-cache-items)
-    - [Обращение к элементам кэша с тегами](#accessing-tagged-cache-items)
-    - [Удаление элементов кэша с тегами](#removing-tagged-cache-items)
-- [Добавление своих драйверов кэша](#adding-custom-cache-drivers)
-    - [Написание драйвера](#writing-the-driver)
-    - [Регистрация драйвера](#registering-the-driver)
-- [События](#events)
 
 <a name="configuration"></a>
 ## Настройка

@@ -1,27 +1,8 @@
-git 687e640354f9fde900a7471ab74b80c99ce911dd
-
+---
+git: 687e640354f9fde900a7471ab74b80c99ce911dd
 ---
 
 # Шаблоны Blade
-
-- [Введение](#introduction)
-- [Наследование шаблонов](#template-inheritance)
-    - [Определение макета](#defining-a-layout)
-    - [Наследование макета](#extending-a-layout)
-- [Компоненты и слоты](#components-and-slots)
-- [Отображение данных](#displaying-data)
-    - [Фреймворки Blade и JavaScript](#blade-and-javascript-frameworks)
-- [Управляющие конструкции](#control-structures)
-    - [Оператор If](#if-statements)
-    - [Циклы](#loops)
-    - [Переменная Loop](#the-loop-variable)
-    - [Комментарии](#comments)
-    - [PHP](#php)
-- [Включение подшаблонов](#including-sub-views)
-    - [Отрисовка шаблонов для коллекций](#rendering-views-for-collections)
-- [Стека](#stacks)
-- [Внедрение сервисов](#service-injection)
-- [Наследование Blade](#extending-blade)
 
 <a name="introduction"></a>
 ## Введение

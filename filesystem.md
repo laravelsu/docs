@@ -1,24 +1,8 @@
-git 118e6b886dcc348c56df39d81484277efc9e78b8
-
+---
+git: 118e6b886dcc348c56df39d81484277efc9e78b8
 ---
 
 # Хранение файлов
-
-- [Введение](#introduction)
-- [Настройка](#configuration)
-    - [Общедоступный диск](#the-public-disk)
-    - [Драйвер Local](#the-local-driver)
-    - [Требования к драйверам](#driver-prerequisites)
-- [Получение экземпляров дисков](#obtaining-disk-instances)
-- [Чтение файлов](#retrieving-files)
-    - [URL файла](#file-urls)
-    - [Метаданные файла](#file-metadata)
-- [Хранение файлов](#storing-files)
-    - [Загрузка файлов](#file-uploads)
-    - [Видимость файлов](#file-visibility)
-- [Удаление файлов](#deleting-files)
-- [Директории](#directories)
-- [Пользовательские файловые системы](#custom-filesystems)
 
 <a name="introduction"></a>
 ## Введение

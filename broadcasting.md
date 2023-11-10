@@ -1,35 +1,8 @@
-git 4c1026d1b71967cac2d445a614fc6ad27e501233
-
+---
+git: 4c1026d1b71967cac2d445a614fc6ad27e501233
 ---
 
 # Широковещание
-
-- [Введение](#introduction)
-    - [Настройка](#configuration)
-    - [Требования драйвера](#driver-prerequisites)
-- [Обзор концепции](#concept-overview)
-    - [Использование примера приложения](#using-example-application)
-- [Определение широковещательных событий](#defining-broadcast-events)
-    - [Имя широковещания](#broadcast-name)
-    - [Данные широковещания](#broadcast-data)
-    - [Очередь широковещания](#broadcast-queue)
-    - [Условия широковещания](#broadcast-conditions)
-- [Авторизация на каналах](#authorizing-channels)
-    - [Определение роутов авторизации](#defining-authorization-routes)
-    - [Определение анонимных функций авторизации](#defining-authorization-callbacks)
-- [Широковещание событий](#broadcasting-events)
-    - [Только другим](#only-to-others)
-- [Получение широковещаний](#receiving-broadcasts)
-    - [Установка Laravel Echo](#installing-laravel-echo)
-    - [Прослушивание событий](#listening-for-events)
-    - [Уход с канала](#leaving-a-channel)
-    - [Пространства имён](#namespaces)
-- [Каналы присутствия](#presence-channels)
-    - [Авторизация каналов присутствия](#authorizing-presence-channels)
-    - [Присоединение к каналам присутствия](#joining-presence-channels)
-    - [Широковещание каналам присутствия](#broadcasting-to-presence-channels)
-- [События клиента](#client-events)
-- [Уведомления](#notifications)
 
 <a name="introduction"></a>
 ## Введение

@@ -1,12 +1,8 @@
-git 972c3a1594d8ae942059af7b396c0f11de280f96
-
+---
+git: 972c3a1594d8ae942059af7b396c0f11de280f96
 ---
 
 # Тестирование: начало работы
-
-- [Введение](#introduction)
-- [Среда](#environment)
-- [Создание и выполнение тестов](#creating-and-running-tests)
 
 <a name="introduction"></a>
 ## Введение

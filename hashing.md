@@ -1,11 +1,8 @@
-git e3eacb710e8fc72bff96ee2ed0158af37131e107
-
+---
+git: e3eacb710e8fc72bff96ee2ed0158af37131e107
 ---
 
 # Хеширование
-
-- [Введение](#introduction)
-- [Основы использования](#basic-usage)
 
 <a name="introduction"></a>
 ## Введение

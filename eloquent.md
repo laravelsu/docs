@@ -1,30 +1,8 @@
-git fb42b91f58fd8f080385ce5e4cba433a322d5906
-
+---
+git: fb42b91f58fd8f080385ce5e4cba433a322d5906
 ---
 
 # Eloquent: Начало работы
-
-- [Введение](#introduction)
-- [Определение моделей](#defining-models)
-    - [Условия для моделей Eloquent](#eloquent-model-conventions)
-- [Получение моделей](#retrieving-models)
-    - [Коллекции](#collections)
-    - [Разделение результата на блоки](#chunking-results)
-- [Получение одиночных моделей / агрегатных функций](#retrieving-single-models)
-    - [Получение агрегатных функций](#retrieving-aggregates)
-- [Вставка и изменение моделей](#inserting-and-updating-models)
-    - [Вставки](#inserts)
-    - [Изменения](#updates)
-    - [Массовое назначение](#mass-assignment)
-    - [Другие методы создания](#other-creation-methods)
-- [Удаление моделей](#deleting-models)
-    - [Мягкое удаление](#soft-deleting)
-    - [Запрос псевдоудалённых моделей](#querying-soft-deleted-models)
-- [Заготовки запросов](#query-scopes)
-    - [Глобальные заготовки](#global-scopes)
-    - [Локальные заготовки](#local-scopes)
-- [События](#events)
-    - [Наблюдатели](#observers)
 
 <a name="introduction"></a>
 ## Введение

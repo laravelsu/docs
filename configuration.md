@@ -1,16 +1,8 @@
-git 85de75d92a86835f103b0e99dc5db8c7f9d4d3a7
-
+---
+git: 85de75d92a86835f103b0e99dc5db8c7f9d4d3a7
 ---
 
 # Настройка
-
-- [Введение](#introduction)
-- [Настройка среды](#environment-configuration)
-    - [Чтение настроек среды](#retrieving-environment-configuration)
-    - [Определение текущей среды](#determining-the-current-environment)
-- [Чтение значений настроек](#accessing-configuration-values)
-- [Кэширование настроек](#configuration-caching)
-- [Режим обслуживания](#maintenance-mode)
 
 <a name="introduction"></a>
 ## Введение

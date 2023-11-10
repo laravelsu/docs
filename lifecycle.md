@@ -1,12 +1,9 @@
-git 79429e0b30aa7333d7634e7f690e558b3123be3a
-
+---
+git: 79429e0b30aa7333d7634e7f690e558b3123be3a
 ---
 
 # Жизненный цикл запроса
 
-- [Введение](#introduction)
-- [Обзор жизненного цикла](#lifecycle-overview)
-- [Фокус на сервис-провайдеры](#focus-on-service-providers)
 
 <a name="introduction"></a>
 ## Введение

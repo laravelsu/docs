@@ -1,30 +1,8 @@
-git d29e528d55681d64a1894485e6238bdbbb37bbf2
-
+---
+git: d29e528d55681d64a1894485e6238bdbbb37bbf2
 ---
 
 # Laravel Homestead
-
-- [Введение](#introduction)
-- [Установка и настройка](#installation-and-setup)
-    - [Первые шаги](#first-steps)
-    - [Настройка Homestead](#configuring-homestead)
-    - [Запуск Vagrant Box](#launching-the-vagrant-box)
-    - [Установка для проекта](#per-project-installation)
-    - [Установка MariaDB](#installing-mariadb)
-- [Повседневное использование](#daily-usage)
-    - [Глобальный доступ к Homestead](#accessing-homestead-globally)
-    - [Подключение через SSH](#connecting-via-ssh)
-    - [Подключение к базам данных](#connecting-to-databases)
-    - [Добавление дополнительных сайтов](#adding-additional-sites)
-    - [Настройка расписания Cron](#configuring-cron-schedules)
-    - [Порты](#ports)
-    - [Совместное использование вашей среды](#sharing-your-environment)
-    - [Несколько версий PHP](#multiple-php-versions)
-- [Сетевые интерфейсы](#network-interfaces)
-- [Обновление Homestead](#updating-homestead)
-- [Старые версии](#old-versions)
-- [Специальные настройки провайдера](#provider-specific-settings)
-    - [VirtualBox](#provider-specific-virtualbox)
 
 <a name="introduction"></a>
 ## Введение
