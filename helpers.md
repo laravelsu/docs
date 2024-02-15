@@ -12,131 +12,122 @@ Laravel включает множество глобальных вспомог�
 <a name="available-methods"></a>
 ## Доступные методы
 
-<style>
-    .collection-method-list > p {
-        column-count: 3; -moz-column-count: 3; -webkit-column-count: 3;
-        column-gap: 2em; -moz-column-gap: 2em; -webkit-column-gap: 2em;
-    }
-
-    .collection-method-list a {
-        display: block;
-    }
-</style>
 
 ### Массивы
 
-<div class="collection-method-list" markdown="1">
+<div class="docs-column-list" markdown="1">
 
-[array_add](#method-array-add)
-[array_collapse](#method-array-collapse)
-[array_divide](#method-array-divide)
-[array_dot](#method-array-dot)
-[array_except](#method-array-except)
-[array_first](#method-array-first)
-[array_flatten](#method-array-flatten)
-[array_forget](#method-array-forget)
-[array_get](#method-array-get)
-[array_has](#method-array-has)
-[array_last](#method-array-last)
-[array_only](#method-array-only)
-[array_pluck](#method-array-pluck)
-[array_prepend](#method-array-prepend)
-[array_pull](#method-array-pull)
-[array_set](#method-array-set)
-[array_sort](#method-array-sort)
-[array_sort_recursive](#method-array-sort-recursive)
-[array_where](#method-array-where)
-[array_wrap](#method-array-wrap)
-[head](#method-head)
-[last](#method-last)
+- [array_add](#method-array-add)
+- [array_collapse](#method-array-collapse)
+- [array_divide](#method-array-divide)
+- [array_dot](#method-array-dot)
+- [array_except](#method-array-except)
+- [array_first](#method-array-first)
+- [array_flatten](#method-array-flatten)
+- [array_forget](#method-array-forget)
+- [array_get](#method-array-get)
+- [array_has](#method-array-has)
+- [array_last](#method-array-last)
+- [array_only](#method-array-only)
+- [array_pluck](#method-array-pluck)
+- [array_prepend](#method-array-prepend)
+- [array_pull](#method-array-pull)
+- [array_set](#method-array-set)
+- [array_sort](#method-array-sort)
+- [array_sort_recursive](#method-array-sort-recursive)
+- [array_where](#method-array-where)
+- [array_wrap](#method-array-wrap)
+- [head](#method-head)
+- [last](#method-last)
+
 </div>
 
 ### Пути
 
-<div class="collection-method-list" markdown="1">
+<div class="docs-column-list" markdown="1">
 
-[app_path](#method-app-path)
-[base_path](#method-base-path)
-[config_path](#method-config-path)
-[database_path](#method-database-path)
-[mix](#method-mix)
-[public_path](#method-public-path)
-[resource_path](#method-resource-path)
-[storage_path](#method-storage-path)
+- [app_path](#method-app-path)
+- [base_path](#method-base-path)
+- [config_path](#method-config-path)
+- [database_path](#method-database-path)
+- [mix](#method-mix)
+- [public_path](#method-public-path)
+- [resource_path](#method-resource-path)
+- [storage_path](#method-storage-path)
 
 </div>
 
 ### Строки
 
-<div class="collection-method-list" markdown="1">
+<div class="docs-column-list" markdown="1">
 
-[camel_case](#method-camel-case)
-[class_basename](#method-class-basename)
-[e](#method-e)
-[ends_with](#method-ends-with)
-[kebab_case](#method-kebab-case)
-[snake_case](#method-snake-case)
-[str_limit](#method-str-limit)
-[starts_with](#method-starts-with)
-[str_after](#method-str-after)
-[str_contains](#method-str-contains)
-[str_finish](#method-str-finish)
-[str_is](#method-str-is)
-[str_plural](#method-str-plural)
-[str_random](#method-str-random)
-[str_singular](#method-str-singular)
-[str_slug](#method-str-slug)
-[studly_case](#method-studly-case)
-[title_case](#method-title-case)
-[trans](#method-trans)
-[trans_choice](#method-trans-choice)
+- [camel_case](#method-camel-case)
+- [class_basename](#method-class-basename)
+- [e](#method-e)
+- [ends_with](#method-ends-with)
+- [kebab_case](#method-kebab-case)
+- [snake_case](#method-snake-case)
+- [str_limit](#method-str-limit)
+- [starts_with](#method-starts-with)
+- [str_after](#method-str-after)
+- [str_contains](#method-str-contains)
+- [str_finish](#method-str-finish)
+- [str_is](#method-str-is)
+- [str_plural](#method-str-plural)
+- [str_random](#method-str-random)
+- [str_singular](#method-str-singular)
+- [str_slug](#method-str-slug)
+- [studly_case](#method-studly-case)
+- [title_case](#method-title-case)
+- [trans](#method-trans)
+- [trans_choice](#method-trans-choice)
 
 </div>
 
 ### URL
 
-<div class="collection-method-list" markdown="1">
+<div class="docs-column-list" markdown="1">
 
-[action](#method-action)
-[asset](#method-asset)
-[secure_asset](#method-secure-asset)
-[route](#method-route)
-[secure_url](#method-secure-url)
-[url](#method-url)
+- [action](#method-action)
+- [asset](#method-asset)
+- [secure_asset](#method-secure-asset)
+- [route](#method-route)
+- [secure_url](#method-secure-url)
+- [url](#method-url)
 
 </div>
 
 ### Прочее
 
-<div class="collection-method-list" markdown="1">
+<div class="docs-column-list" markdown="1">
 
-[abort](#method-abort)
-[abort_if](#method-abort-if)
-[abort_unless](#method-abort-unless)
-[auth](#method-auth)
-[back](#method-back)
-[bcrypt](#method-bcrypt)
-[cache](#method-cache)
-[collect](#method-collect)
-[config](#method-config)
-[csrf_field](#method-csrf-field)
-[csrf_token](#method-csrf-token)
-[dd](#method-dd)
-[dispatch](#method-dispatch)
-[env](#method-env)
-[event](#method-event)
-[factory](#method-factory)
-[info](#method-info)
-[logger](#method-logger)
-[method_field](#method-method-field)
-[old](#method-old)
-[redirect](#method-redirect)
-[request](#method-request)
-[response](#method-response)
-[retry](#method-retry)
-[session](#method-session)
-[value](#method-value)
-[view](#method-view)
+- [abort](#method-abort)
+- [abort_if](#method-abort-if)
+- [abort_unless](#method-abort-unless)
+- [auth](#method-auth) 
+- [back](#method-back) 
+- [bcrypt](#method-bcrypt) 
+- [cache](#method-cache)
+- [collect](#method-collect)
+- [config](#method-config)
+- [csrf_field](#method-csrf-field)
+- [csrf_token](#method-csrf-token)
+- [dd](#method-dd)
+- [dispatch](#method-dispatch)
+- [env](#method-env)
+- [event](#method-event)
+- [factory](#method-factory)
+- [info](#method-info)
+- [logger](#method-logger)
+- [method_field](#method-method-field)
+- [old](#method-old)
+- [redirect](#method-redirect)
+- [request](#method-request)
+- [response](#method-response)
+- [retry](#method-retry)
+- [session](#method-session)
+- [value](#method-value)
+- [view](#method-view)
 
 </div>
 
