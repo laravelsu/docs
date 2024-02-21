@@ -1,5 +1,5 @@
 ---
-git: dc113868736123ab845451034064a460d21ca13e
+git: d550c75b56fe72277b9a35f3daa4ba3f194af1cb
 ---
 
 # Строки
@@ -83,6 +83,7 @@ Laravel включает в себя различные функции для р
 - [Str::swap](#method-str-swap)
 - [Str::take](#method-take)
 - [Str::title](#method-title-case)
+- [Str::toBase64](#method-str-to-base64)
 - [Str::toHtmlString](#method-str-to-html-string)
 - [Str::ucfirst](#method-str-ucfirst)
 - [Str::ucsplit](#method-str-ucsplit)
@@ -182,6 +183,7 @@ Laravel включает в себя различные функции для р
 - [tap](#method-fluent-str-tap)
 - [test](#method-fluent-str-test)
 - [title](#method-fluent-str-title)
+- [toBase64](#method-fluent-str-to-base64)
 - [trim](#method-fluent-str-trim)
 - [ucfirst](#method-fluent-str-ucfirst)
 - [ucsplit](#method-fluent-str-ucsplit)
@@ -1126,6 +1128,17 @@ $repeat = Str::repeat($string, 5);
     $converted = Str::title('a nice title uses the correct case');
 
     // A Nice Title Uses The Correct Case
+
+<a name="method-str-to-base64"></a>
+#### `Str::toBase64()` {.collection-method}
+
+Метод `Str::toBase64` преобразует переданную строку в Base64:
+
+    use Illuminate\Support\Str;
+
+    $base64 = Str::toBase64('Laravel');
+
+    // TGFyYXZlbA==
 
 <a name="method-str-to-html-string"></a>
 #### `Str::toHtmlString()` 
@@ -2395,6 +2408,17 @@ $repeated = Str::of('a')->repeat(5);
     $converted = Str::of('a nice title uses the correct case')->title();
 
     // A Nice Title Uses The Correct Case
+
+<a name="method-fluent-str-to-base64"></a>
+#### `toBase64()` {.collection-method}
+
+Метод `toBase64` преобразует переданную строку в Base64:
+
+    use Illuminate\Support\Str;
+
+    $base64 = Str::of('Laravel')->toBase64();
+
+    // TGFyYXZlbA==
 
 <a name="method-fluent-str-trim"></a>
 #### `trim` 

@@ -163,6 +163,18 @@ git: 46c2634ef5a4f15427c94a3157b626cf5bd3937f
 
     echo trans('courier::messages.welcome');
 
+Вы можете зарегистрировать файлы перевода вашего пакета в формате JSON с помощью метода `loadJsonTranslationsFrom`. Метод принимает путь к директории, содержащей файлы перевода вашего пакета в формате JSON:
+
+```php
+/**
+ * Загрузка любых служб пакета.
+ */
+public function boot(): void
+{
+    $this->loadJsonTranslationsFrom(__DIR__.'/../lang');
+}
+```
+
 <a name="publishing-language-files"></a>
 #### Публикация языковых файлов
 

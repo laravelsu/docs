@@ -1,5 +1,5 @@
 ---
-git: ebe5c98bee0769c1b6c8901007bb0be276446632
+git: 8155f824bef698e679307e52751ec004abd78c47
 ---
 
 # Установка
@@ -51,7 +51,7 @@ composer create-project laravel/laravel example-app
 Или вы можете создавать новые проекты Laravel, установив глобально [Laravel installer](https://github.com/laravel/installer) via Composer:
 
 ```nothing
-composer global require laravel/installer:^5.4
+composer global require laravel/installer
 laravel new example-app
 ```
 

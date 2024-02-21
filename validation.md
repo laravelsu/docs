@@ -1,5 +1,5 @@
 ---
-git: 74608b5f3fb92bc42bd1ff2a4563d457cc11bc18
+git: 01022bfaf930303cb15c61985cd00f18d3caa113
 ---
 
 # Валидация
@@ -930,12 +930,12 @@ The credit card number field is required when payment type is credit card.
 <a name="rule-accepted"></a>
 #### accepted
 
-Проверяемое поле должно иметь значение `"yes"`, `"on"`, `1`, или `true`. Применяется для валидации принятия «Условий использования» или аналогичных полей.
+Проверяемое поле должно иметь значение `"yes"`, `"on"`, `1`, `"1"`, `true` или `"true"`. Применяется для валидации принятия «Условий использования» или аналогичных полей.
 
 <a name="rule-accepted-if"></a>
 #### accepted_if:anotherfield,value,...
 
-Проверяемое поле должно иметь значение `"yes"`, `"on"`, `1`, или `true` , если другое проверяемое поле равно указанному значению. Это полезно для валидации принятия "Условий использования" или аналогичных полей.
+Проверяемое поле должно иметь значение `"yes"`, `"on"`, `1`, `"1"`, `true` или `"true"`, если другое проверяемое поле равно указанному значению. Это полезно для валидации принятия "Условий использования" или аналогичных полей.
 
 <a name="rule-active-url"></a>
 #### active_url
@@ -1092,12 +1092,12 @@ The credit card number field is required when payment type is credit card.
 <a name="rule-declined"></a>
 #### declined
 
-Проверяемое поле должно иметь значение`"no"`, `"off"`, `0`, или `false`.
+Проверяемое поле должно иметь значение `"no"`, `"off"`, `0`, `"0"`, `false` или `"false"`.
 
 <a name="rule-declined-if"></a>
 #### declined_if:anotherfield,value,...
 
-Проверяемое поле должно иметь значение`"no"`, `"off"`, `0`, or `false`, если другое проверяемое поле равно указанному значению.
+Проверяемое поле должно иметь значение `"no"`, `"off"`, `0`, `"0"`, `false` или `"false"`, если другое проверяемое поле равно указанному значению.
 
 <a name="rule-different"></a>
 #### different:_field_
@@ -1667,7 +1667,7 @@ The credit card number field is required when payment type is credit card.
 <a name="rule-required-if-accepted"></a>
 #### required_if_accepted:_anotherfield_,...
 
-Проверяемое поле должно присутствовать и не быть пустым, если поле _anotherfield_ равно `yes`, `on`, `1`, `"1"`, `true` или `"true"`.
+Проверяемое поле должно присутствовать и не быть пустым, если поле _anotherfield_ равно `"yes"`, `"on"`, `1`, `"1"`, `true` или `"true"`.
 
 <a name="rule-required-unless"></a>
 #### required_unless:_anotherfield_,_value_,...

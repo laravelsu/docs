@@ -1,5 +1,5 @@
 ---
-git: 46c2634ef5a4f15427c94a3157b626cf5bd3937f
+git: c896b9b09d1cd96e5c93afcc967ed7b636250074
 ---
 
 # Шаблонизатор Blade
@@ -529,6 +529,12 @@ Blade – это простой, но мощный движок шаблонов
 @use('App\Models\Flight')
 ```
 
+Второй аргумент может быть использован в директиве `@use` для указания псевдонима импортируемого класса:
+
+```php
+@use('App\Models\Flight', 'FlightModel')
+```
+
 <a name="comments"></a>
 ### Комментарии
 
@@ -994,6 +1000,27 @@ Blade отобразит следующий HTML-код:
 
     <strong>Whoops!</strong> Something went wrong!
 </x-alert>
+```
+
+Вы можете вызвать метод слота `isEmpty`, чтобы определить, содержит ли он контент:
+
+```blade
+<span class="alert-title">{{ $title }}</span>
+<div class="alert alert-danger">
+    @if ($slot->isEmpty())
+        This is default content if the slot is empty.
+    @else
+        {{ $slot }}
+    @endif
+</div>
+```
+
+Кроме того, метод `hasActualContent` может быть использован для определения, содержит ли слот какой-либо «фактический» контент, не являющийся HTML-комментарием:
+
+```blade
+@if ($slot->hasActualContent())
+    The scope has non-comment content.
+@endif
 ```
 
 <a name="scoped-slots"></a>

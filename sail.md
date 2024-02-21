@@ -1,5 +1,5 @@
 ---
-git: 4933a80bb51863d70308e5ae04a49b19807584c1
+git: 43fc2028a539845fa2921e4cedcba8d57d46e69b
 ---
 
 # Laravel Sail
@@ -73,7 +73,7 @@ php artisan sail:install --devcontainer
 Однако вместо того, чтобы многократно вводить `vendor/bin/sail`, вы можете создать псевдоним (alias) Shell:
 
 ```shell
-alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
 ```
 
 Чтобы убедиться, что это всегда доступно, добавьте это в файл конфигурации оболочки в вашем домашнем каталоге, таком как `~/.zshrc` или `~/.bashrc`, а затем перезапустите вашу оболочку.
