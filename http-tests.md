@@ -1,5 +1,5 @@
 ---
-git: 22951bd4bcc7a559cb3d991095ad8c7a087ca010
+git: 59ca769c87cfcb5680b717482f549906bc1aa536
 ---
 
 # HTTP тесты
