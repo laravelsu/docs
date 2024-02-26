@@ -1,12 +1,11 @@
 ---
-git: dfb5e78dcbb42b2a6093dbe3ae209a9821fbdffa
+git: adbfcb7ec763352066e7e76ed061972741aec8c5
 ---
 
 - ## Пролог
     - [Описание изменений](/docs/{{version}}/releases)
     - [Руководство по обновлению](/docs/{{version}}/upgrade)
     - [Помощь в разработке фреймворка](/docs/{{version}}/contributions)
-    - [Документация API](/api/{{version}})
 - ## Начало работы
     - [Установка](/docs/{{version}}/installation)
     - [Настройка](/docs/{{version}}/configuration)

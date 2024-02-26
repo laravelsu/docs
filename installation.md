@@ -1,5 +1,5 @@
 ---
-git: 9c7aa069905c90c415dbcf26a0c7dcf5a59929f1
+git: 8d3abb29451a366ac6a83f18e9b088e56c5def38
 ---
 
 # Установка
@@ -17,12 +17,14 @@ git: 9c7aa069905c90c415dbcf26a0c7dcf5a59929f1
 Однако, если вы не используете Homestead, вам необходимо убедиться, что ваш сервер соответствует следующим требованиям:
 
 <div class="content-list" markdown="1">
+
 - PHP >= 5.6.4
 - Расширение PHP OpenSSL 
 - Расширение PHP PDO 
 - Расширение PHP Mbstring
 - Расширение PHP Tokenizer
 - Расширение PHP XML
+
 </div>
 
 <a name="installing-laravel"></a>
