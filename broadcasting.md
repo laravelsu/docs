@@ -1,5 +1,5 @@
 ---
-git: 9c42f8596c5ceadc3496f20044b7a38f620419a2
+git: eb47405f41fcc027f7df096c3ef9c841e941348d
 ---
 
 # Трансляция (broadcast) событий
@@ -18,7 +18,7 @@ git: 9c42f8596c5ceadc3496f20044b7a38f620419a2
 <a name="supported-drivers"></a>
 #### Поддерживаемые драйверы
 
-По умолчанию Laravel содержит два серверных драйвера трансляции на выбор: [Pusher Channels](https://pusher.com/channels) и [Ably](https://ably.com). Однако пакеты сообщества, например, [soketi](https://docs.soketi.app/), предлагают дополнительные драйверы трансляции без использования платных провайдеров.
+По умолчанию Laravel содержит три серверных драйвера трансляции на выбор: [Laravel Reverb](https://reverb.laravel.com), [Pusher Channels](https://pusher.com/channels) и [Ably](https://ably.com).
 
 > [!NOTE]
 > Прежде чем ближе ознакомиться с трансляцией событий, убедитесь, что вы прочитали документацию Laravel о [событиях и слушателях](/docs/{{version}}/events).
@@ -44,6 +44,23 @@ git: 9c42f8596c5ceadc3496f20044b7a38f620419a2
 #### Конфигурирование очереди
 
 Вам также потребуется настроить и запустить [обработчик очереди](/docs/{{version}}/queues). Все трансляции событий выполняются через задания в очереди, так что время отклика вашего приложения не сильно зависит от транслируемых событий.
+
+<a name="reverb"></a>
+### Reverb
+
+Вы можете установить Reverb с помощью менеджера пакетов Composer. Поскольку Reverb в настоящее время находится на стадии бета-тестирования, вам необходимо будет явно установить бета-версию.
+
+```shell
+composer require laravel/reverb:@beta
+```
+
+После установки пакета вы можете запустить команду установки Reverb, чтобы опубликовать конфигурацию, обновить конфигурацию транслции ваших приложений и добавить необходимые переменные среды Reverb.
+
+```sh
+php artisan reverb:install
+```
+
+Подробные инструкции по установке и использованию Reverb можно найти в [документация Reverb](/docs/{{version}}/reverb).
 
 <a name="pusher-channels"></a>
 ### Pusher Channels
@@ -114,6 +131,43 @@ BROADCAST_DRIVER=ably
 
 <a name="client-side-installation"></a>
 ## Установка на стороне клиента
+
+<a name="client-reverb"></a>
+### Reverb
+
+[Laravel Echo](https://github.com/laravel/echo) — это JavaScript-библиотека, которая упрощает подписку на каналы и прослушивание событий, транслируемых вашим драйвером на серверной стороне. Вы можете установить Echo через менеджер пакетов NPM. В этом примере мы также установим пакет `pusher-js`, так как Reverb использует протокол Pusher для подписок, каналов и сообщений WebSocket.
+
+```shell
+npm install --save-dev laravel-echo pusher-js
+```
+
+После установки Echo вы готовы создать новый экземпляр Echo в JavaScript вашего приложения. Отличное место для этого — окончание файла `resources/js/bootstrap.js`, который уже содержится в фреймворке Laravel. По умолчанию пример конфигурации Echo также находится в этом файле — вам просто нужно раскомментировать его и обновить параметр конфигурации `broadcaster` на `reverb`.
+
+```js
+import Echo from 'laravel-echo';
+
+import Pusher from 'pusher-js';
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'reverb',
+    key: import.meta.env.VITE_REVERB_APP_KEY,
+    wsHost: import.meta.env.VITE_REVERB_HOST,
+    wsPort: import.meta.env.VITE_REVERB_PORT,
+    wssPort: import.meta.env.VITE_REVERB_PORT,
+    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+    enabledTransports: ['ws', 'wss'],
+});
+```
+
+Далее вам следует скомпилировать ресурсы вашего приложения:
+
+```shell
+npm run build
+```
+
+> [!WARNING]  
+> Для Laravel Echo `reverb` транслятора требуется laravel-echo v1.16.0+.
 
 <a name="client-pusher-channels"></a>
 ### Pusher Channels
@@ -257,7 +311,7 @@ npm run dev
         /**
          * Экземпляр заказа.
          *
-         * @var \App\Order
+         * @var \App\Models\Order
          */
         public $order;
     }
