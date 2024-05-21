@@ -100,6 +100,7 @@ git: ef9464ab472b14c6298fcde6406fc9435269f597
     - [Precognition](/docs/{{version}}/precognition)
     - [Prompts](/docs/{{version}}/prompts)
     - [Pulse](/docs/{{version}}/pulse)
+    - [Reverb](/docs/{{version}}/reverb)
     - [Sail](/docs/{{version}}/sail)
     - [Sanctum](/docs/{{version}}/sanctum)
     - [Scout](/docs/{{version}}/scout)
