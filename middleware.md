@@ -1,5 +1,5 @@
 ---
-git: 46c2634ef5a4f15427c94a3157b626cf5bd3937f
+git: 9d1f50bb65b133e8cbd20369a1e1bcfe8775c5de
 ---
 
 # Посредники (middleware)
@@ -55,7 +55,6 @@ php artisan make:middleware EnsureTokenIsValid
 > [!NOTE]  
 > Все посредники извлекаются из [контейнера служб](/docs/{{version}}/container), поэтому вы можете объявить необходимые вам зависимости в конструкторе посредника.
 
-<a name="before-after-middleware"></a>
 <a name="middleware-and-responses"></a>
 #### Посредники и ответы
 
@@ -237,6 +236,7 @@ Laravel включает предопределенные группы middlewar
     protected $middlewarePriority = [
         \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
         \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
