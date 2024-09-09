@@ -1,5 +1,5 @@
 ---
-git: 46c2634ef5a4f15427c94a3157b626cf5bd3937f
+git: f05a4131b0a97679ae4feffe113617f2c6b9f1b2
 ---
 
 # Маршрутизация
@@ -445,7 +445,6 @@ Laravel автоматически извлечет модели Eloquent, оп�
         return $user->email;
     })->withTrashed();
 
-<a name="customizing-the-key"></a>
 <a name="customizing-the-default-key-name"></a>
 #### Изменение ключа по умолчанию
 
