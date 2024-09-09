@@ -1,5 +1,5 @@
 ---
-git: 46c2634ef5a4f15427c94a3157b626cf5bd3937f
+git: f05a4131b0a97679ae4feffe113617f2c6b9f1b2
 ---
 
 # Сессия HTTP
@@ -189,7 +189,7 @@ php artisan migrate
 
     $value = $request->session()->pull('key', 'default');
 
-<a name="#incrementing-and-decrementing-session-values"></a>
+<a name="incrementing-and-decrementing-session-values"></a>
 #### Увеличение и уменьшение отдельных значений в сессии
 
 Если данные вашей сессии содержат целое число, которое вы хотите увеличить или уменьшить, то вы можете использовать методы `increment` и `decrement`:
