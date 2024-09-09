@@ -1,5 +1,5 @@
 ---
-git: 9d1f50bb65b133e8cbd20369a1e1bcfe8775c5de
+git: f05a4131b0a97679ae4feffe113617f2c6b9f1b2
 ---
 
 # Посредники (middleware)
