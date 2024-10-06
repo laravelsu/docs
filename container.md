@@ -1,5 +1,5 @@
 ---
-git: 62eb15f6637ea5810edf8a9aeae0e621003cff0f
+git: 57ac7ac1a316e7c6c6efed4c4894921a65f406e6
 ---
 
 # Контейнер служб (service container)
@@ -214,6 +214,111 @@ $this->app->singletonIf(Transistor::class, function (Application $app) {
               ->give(function () {
                   return Storage::disk('s3');
               });
+
+<a name="contextual-attributes"></a>
+### Контекстуальные атрибуты
+
+Поскольку контекстная привязка часто используется для внедрения реализаций драйверов или значений конфигурации, Laravel предлагает множество атрибутов контекстной привязки, которые позволяют внедрять эти типы значений без ручного определения контекстных привязок у ваших поставщиков услуг.
+
+Например, атрибут `Storage` может использоваться для внедрения определенного [диска хранения](/docs/{{version}}/filesystem):
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Container\Attributes\Storage;
+use Illuminate\Contracts\Filesystem\Filesystem;
+
+class PhotoController extends Controller
+{
+    public function __construct(
+        #[Storage('local')] protected Filesystem $filesystem
+    )
+    {
+        // ...
+    }
+}
+```
+
+В дополнение к атрибуту `Storage`, Laravel предлагает атрибуты `Auth`, `Cache`, `Config`, `DB`, `Log` и [`Tag`](#tagging):
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Container\Attributes\Auth;
+use Illuminate\Container\Attributes\Cache;
+use Illuminate\Container\Attributes\Config;
+use Illuminate\Container\Attributes\DB;
+use Illuminate\Container\Attributes\Log;
+use Illuminate\Container\Attributes\Tag;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Contracts\Database\Connection;
+use Psr\Log\LoggerInterface;
+
+class PhotoController extends Controller
+{
+    public function __construct(
+        #[Auth('web')] protected Guard $auth,
+        #[Cache('redis')] protected Repository $cache,
+        #[Config('app.timezone')] protected string $timezone,
+        #[DB('mysql')] protected Connection $connection,
+        #[Log('daily')] protected LoggerInterface $log,
+        #[Tag('reports')] protected iterable $reports,
+    )
+    {
+        // ...
+    }
+}
+```
+
+Кроме того, Laravel предоставляет атрибут `CurrentUser` для добавления текущего аутентифицированного пользователя в заданный маршрут или класс:
+
+```php
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
+
+Route::get('/user', function (#[CurrentUser] User $user) {
+    return $user;
+})->middleware('auth');
+```
+
+<a name="defining-custom-attributes"></a>
+#### Определение пользовательских атрибутов
+
+Вы можете создавать свои собственные контекстные атрибуты, реализуя контракт `Illuminate\Contracts\Container\ContextualAttribute`. Контейнер вызовет метод `resolve` вашего атрибута, который должен разрешить значение, которое должно быть введено в класс, использующий атрибут. В приведенном ниже примере мы повторно реализуем встроенный атрибут Laravel `Config`:
+
+    <?php
+
+    namespace App\Attributes;
+
+    use Illuminate\Contracts\Container\ContextualAttribute;
+
+    #[Attribute(Attribute::TARGET_PARAMETER)]
+    class Config implements ContextualAttribute
+    {
+        /**
+         * Create a new attribute instance.
+         */
+        public function __construct(public string $key, public mixed $default = null)
+        {
+        }
+
+        /**
+         * Resolve the configuration value.
+         *
+         * @param  self  $attribute
+         * @param  \Illuminate\Contracts\Container\Container  $container
+         * @return mixed
+         */
+        public static function resolve(self $attribute, Container $container)
+        {
+            return $container->make('config')->get($attribute->key, $attribute->default);
+        }
+    }
 
 <a name="binding-primitives"></a>
 ### Связывание примитивов
