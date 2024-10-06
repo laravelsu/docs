@@ -1,5 +1,5 @@
 ---
-git: a6124510a5db5a83e9268fafdb48b6cc8e1ebbb1
+git: d62fe02f06606bc5696999e03f42008ce950801c
 ---
 
 # Строки
@@ -33,6 +33,7 @@ Laravel включает в себя различные функции для р
 - [Str::charAt](#method-char-at)
 - [Str::contains](#method-str-contains)
 - [Str::containsAll](#method-str-contains-all)
+- [Str::deduplicate](#method-deduplicate)
 - [Str::endsWith](#method-ends-with)
 - [Str::excerpt](#method-excerpt)
 - [Str::finish](#method-str-finish)
@@ -121,10 +122,11 @@ Laravel включает в себя различные функции для р
 - [classBasename](#method-fluent-str-class-basename)
 - [contains](#method-fluent-str-contains)
 - [containsAll](#method-fluent-str-contains-all)
+- [deduplicate](#method-fluent-str-deduplicate)
 - [dirname](#method-fluent-str-dirname)
 - [endsWith](#method-fluent-str-ends-with)
-- [excerpt](#method-fluent-str-excerpt)
 - [exactly](#method-fluent-str-exactly)
+- [excerpt](#method-fluent-str-excerpt)
 - [explode](#method-fluent-str-explode)
 - [finish](#method-fluent-str-finish)
 - [headline](#method-fluent-str-headline)
@@ -205,6 +207,7 @@ Laravel включает в себя различные функции для р
 - [whenTest](#method-fluent-str-when-test)
 - [wordCount](#method-fluent-str-word-count)
 - [words](#method-fluent-str-words)
+- [wrap](#method-fluent-str-wrap)
 
 </div>
 
@@ -443,6 +446,25 @@ Laravel включает в себя различные функции для р
     $containsAll = Str::containsAll('This is my name', ['MY', 'NAME'], ignoreCase: true);
 
     // true
+
+<a name="method-deduplicate"></a>
+#### `Str::deduplicate()`
+
+Метод `Str::deduplicate` заменяет последовательные экземпляры символа единственным экземпляром этого символа в данной строке. По умолчанию метод дедуплицирует пробелы:
+
+    use Illuminate\Support\Str;
+
+    $result = Str::deduplicate('The   Laravel   Framework');
+
+    // The Laravel Framework
+
+Вы можете указать другой символ для дедупликации, передав его в качестве второго аргумента метода:
+
+    use Illuminate\Support\Str;
+
+    $result = Str::deduplicate('The---Laravel---Framework', '-');
+
+    // The-Laravel-Framework
 
 <a name="method-ends-with"></a>
 #### `Str::endsWith()` 
@@ -1670,6 +1692,25 @@ Str::wordCount('Hello, world!'); // 2
 
     // true
 
+<a name="method-fluent-str-deduplicate"></a>
+#### `deduplicate`
+
+Метод `deduplicate` заменяет последовательные экземпляры символа единственным экземпляром этого символа в данной строке. По умолчанию метод дедуплицирует пробелы:
+
+    use Illuminate\Support\Str;
+
+    $result = Str::of('The   Laravel   Framework')->deduplicate();
+
+    // The Laravel Framework
+
+Вы можете указать другой символ для дедупликации, передав его в качестве второго аргумента метода:
+
+    use Illuminate\Support\Str;
+
+    $result = Str::of('The---Laravel---Framework')->deduplicate('-');
+
+    // The-Laravel-Framework
+
 <a name="method-fluent-str-dirname"></a>
 #### `dirname` 
 
@@ -1688,33 +1729,6 @@ Str::wordCount('Hello, world!'); // 2
     $string = Str::of('/foo/bar/baz')->dirname(2);
 
     // '/foo'
-
-<a name="method-fluent-str-excerpt"></a>
-#### `excerpt` 
-
-Метод `excerpt` извлекает отрывок из заданной строки, соответствующий первому вхождению фразы в эту строку:
-
-    use Illuminate\Support\Str;
-    
-    $excerpt = Str::excerpt('This is my name', 'my', [
-        'radius' => 3
-    ]);
-    
-    // '...is my na...'
-
-
-Опция `radius`, по умолчанию равная `100`, позволяет определить количество символов, которые должны появиться с каждой стороны усеченной строки.
-
-Кроме того, вы можете использовать опцию `omission`, чтобы определить строку, которая будет добавлена перед и после усеченной строки:
-
-    use Illuminate\Support\Str;
-    
-    $excerpt = Str::excerpt('This is my name', 'name', [
-        'radius' => 3,
-        'omission' => '(...) '
-    ]);
-    
-    // '(...) my name'
 
 <a name="method-fluent-str-ends-with"></a>
 #### `endsWith` 
@@ -1749,6 +1763,33 @@ Str::wordCount('Hello, world!'); // 2
     $result = Str::of('Laravel')->exactly('Laravel');
 
     // true
+
+<a name="method-fluent-str-excerpt"></a>
+#### `excerpt` 
+
+Метод `excerpt` извлекает отрывок из заданной строки, соответствующий первому вхождению фразы в эту строку:
+
+    use Illuminate\Support\Str;
+    
+    $excerpt = Str::excerpt('This is my name', 'my', [
+        'radius' => 3
+    ]);
+    
+    // '...is my na...'
+
+
+Опция `radius`, по умолчанию равная `100`, позволяет определить количество символов, которые должны появиться с каждой стороны усеченной строки.
+
+Кроме того, вы можете использовать опцию `omission`, чтобы определить строку, которая будет добавлена перед и после усеченной строки:
+
+    use Illuminate\Support\Str;
+    
+    $excerpt = Str::excerpt('This is my name', 'name', [
+        'radius' => 3,
+        'omission' => '(...) '
+    ]);
+    
+    // '(...) my name'
 
 <a name="method-fluent-str-explode"></a>
 #### `explode` 
@@ -2911,3 +2952,18 @@ Str::of('Hello, world!')->wordCount(); // 2
     $string = Str::of('Perfectly balanced, as all things should be.')->words(3, ' >>>');
 
     // Perfectly balanced, as >>>
+
+<a name="method-fluent-str-wrap"></a>
+#### `wrap`
+
+Метод `wrap` оборачивает данную строку дополнительной строкой или парой строк:
+
+    use Illuminate\Support\Str;
+
+    Str::of('Laravel')->wrap('"');
+
+    // "Laravel"
+
+    Str::is('is')->wrap(before: 'This ', after: ' Laravel!');
+
+    // This is Laravel!
