@@ -1,5 +1,5 @@
 ---
-git: de98ca780d45beb9772ba7febf85e6de6531b06a
+git: 77db50ec005aa0e6391511eb81ff3a0e21d7e504
 ---
 
 # Prompts (Подсказки)
@@ -549,6 +549,20 @@ $id = search(
 
 Замыкание получит текст, введенный пользователем, и должно вернуть массив вариантов. Если вы возвращаете ассоциативный массив, то будет возвращен выбранный ключ, в противном случае будет возвращено его значение.
 
+При фильтрации массива, в который вы собираетесь вернуть значение, вам следует использовать функцию `array_values` ​​или метод Collection `values`, чтобы гарантировать, что массив не станет ассоциативным:
+
+```php
+$names = collect(['Taylor', 'Abigail']);
+
+$selected = search(
+    label: 'Search for the user that should receive the mail',
+    options: fn (string $value) => $names
+        ->filter(fn ($name) => Str::contains($name, $value, ignoreCase: true))
+        ->values()
+        ->all(),
+);
+```
+
 Вы также можете включить плейсхолдер и информационную подсказку:
 
 ```php
@@ -614,6 +628,20 @@ $ids = multisearch(
 ```
 
 Замыкание получит текст, введенный пользователем до сих пор, и должно вернуть массив вариантов. Если вы возвращаете ассоциативный массив, то будут возвращены ключи выбранных вариантов; в противном случае будут возвращены их значения.
+
+При фильтрации массива, в который вы собираетесь вернуть значение, вам следует использовать функцию `array_values` ​​или метод Collection `values`, чтобы гарантировать, что массив не станет ассоциативным:
+
+```php
+$names = collect(['Taylor', 'Abigail']);
+
+$selected = multisearch(
+    label: 'Search for the users that should receive the mail',
+    options: fn (string $value) => $names
+        ->filter(fn ($name) => Str::contains($name, $value, ignoreCase: true))
+        ->values()
+        ->all(),
+);
+```
 
 Вы также можете включить плейсхолдер текста и информационную подсказку:
 
@@ -865,6 +893,16 @@ foreach ($users as $user) {
 }
 
 $progress->finish();
+```
+
+<a name="clear"></a>
+## Очистка терминала
+
+Функция `clear` может использоваться для очистки пользовательского терминала:
+
+```
+use function Laravel\Prompts\clear;
+clear();
 ```
 
 <a name="terminal-considerations"></a>
