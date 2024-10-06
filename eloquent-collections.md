@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: 4ee51634d1f738b7f3ebffa4955bdae40b0f2470
 ---
 
 # Eloquent · Коллекции
@@ -103,6 +103,15 @@ git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
     $users = User::all();
 
     $user = $users->find(1);
+
+<a name="method-find-or-fail"></a>
+#### `findOrFail($key)`
+
+Метод `findOrFail` возвращает модель, первичный ключ которой соответствует заданному ключу, или выдает исключение `Illuminate\Database\Eloquent\ModelNotFoundException`, если в коллекции не найдена соответствующая модель:
+
+    $users = User::all();
+
+    $user = $users->findOrFail(1);
 
 <a name="method-fresh"></a>
 #### `fresh($with = [])`
