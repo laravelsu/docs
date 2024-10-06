@@ -1,5 +1,5 @@
 ---
-git: a6124510a5db5a83e9268fafdb48b6cc8e1ebbb1
+git: a71a1ac32316192e8c489268c2fbc61f6bc6f3e7
 ---
 
 # Посредники (middleware)
@@ -377,15 +377,17 @@ Laravel включает в себя предопределенные групп
 
 Параметры посредника можно указать при определении маршрута, разделив имя посредника и параметры символом `:`. 
 
+    use App\Http\Middleware\EnsureUserHasRole;
+
     Route::put('/post/{id}', function (string $id) {
         // ...
-    })->middleware('role:editor');
+    })->middleware(EnsureUserHasRole::class.':editor');
 
 Несколько параметров следует разделять запятыми:
 
     Route::put('/post/{id}', function (string $id) {
         // ...
-    })->middleware('role:editor,publisher');
+    })->middleware(EnsureUserHasRole::class.':editor,publisher');
 
 <a name="terminable-middleware"></a>
 ## Завершающий посредник
