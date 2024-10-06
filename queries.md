@@ -1,5 +1,5 @@
 ---
-git: b2830447ba2c1edca5dceffbbe740ec7dd3a5c3a
+git: ead3a5b4b11c267f20ee1065eb3f9aa98fc986e1
 ---
 
 # Построитель запросов
@@ -65,6 +65,10 @@ git: b2830447ba2c1edca5dceffbbe740ec7dd3a5c3a
 
     return $user->email;
 
+Если вы хотите получить одну строку из таблицы базы данных, но получаете `Illuminate\Database\RecordNotFoundException`, если соответствующая строка не найдена, вы можете использовать метод `firstOrFail`. Если `RecordNotFoundException` не перехвачен, HTTP-ответ 404 автоматически отправляется обратно клиенту:
+
+    $user = DB::table('users')->where('name', 'John')->firstOrFail();
+
 Если вам не нужна вся строка, вы можете извлечь одно значение из записи с помощью метода `value`. Этот метод вернет значение столбца напрямую:
 
     $email = DB::table('users')->where('name', 'John')->value('email');
@@ -126,6 +130,20 @@ git: b2830447ba2c1edca5dceffbbe740ec7dd3a5c3a
                     ->update(['active' => true]);
             }
         });
+
+Поскольку методы `chunkById` и `lazyById` добавляют свои собственные условия "where" к выполняемому запросу, вам обычно следует [логически группировать](#ologic-grouping) свои собственные условия внутри замыкания:
+
+```php
+DB::table('users')->where(function ($query) {
+    $query->where('credits', 1)->orWhere('credits', 2);
+})->chunkById(100, function (Collection $users) {
+    foreach ($users as $user) {
+        DB::table('users')
+          ->where('id', $user->id)
+          ->update(['credits' => 3]);
+    }
+});
+```
 
 > [!WARNING]  
 > При обновлении или удалении записей внутри функции-аргумента, любые изменения первичного или внешних ключей могут повлиять на запрос очередного фрагмента. Это может потенциально привести к тому, что записи могут не быть включены в последующие результаты выполнения функции.
