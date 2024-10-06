@@ -1,5 +1,5 @@
 ---
-git: 1b0efc2e03b470a3e8f5b95c43475caa9b2f469b
+git: 681e1f1beea1aae88c75d5a6b10df2b8fc4bce8c
 ---
 
 - ## Пролог
@@ -38,6 +38,7 @@ git: 1b0efc2e03b470a3e8f5b95c43475caa9b2f469b
     - [Широковещание](/docs/{{version}}/broadcasting)
     - [Кэширование](/docs/{{version}}/cache)
     - [Коллекции](/docs/{{version}}/collections)
+    - [Параллелизм](/docs/{{version}}/concurrency)
     - [Контекст](/docs/{{version}}/context)
     - [Контракты](/docs/{{version}}/contracts)
     - [События](/docs/{{version}}/events)
