@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: b967f72817e992d526405d0712b606aa164b9efb
 ---
 
 # Eloquent · Отношения
@@ -32,7 +32,7 @@ git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
 Но, прежде чем углубляться в использование отношений, давайте узнаем, как определить каждый тип отношений, поддерживаемый Eloquent.
 
 <a name="one-to-one"></a>
-### Один к одному
+### Один к одному / Имеет один
 
 Отношения «один-к-одному» – это очень простой тип отношений базы данных. Например, модель `User` может быть связана с одной моделью `Phone`. Чтобы определить это отношение, мы поместим метод `phone` в модель `User`. Метод `phone` должен вызывать метод `hasOne` и возвращать его результат. Метод `hasOne` доступен для вашей модели через базовый класс `Illuminate\Database\Eloquent\Model` модели:
 
@@ -112,7 +112,7 @@ Eloquent определяет имя внешнего ключа, анализи
     }
 
 <a name="one-to-many"></a>
-### Один ко многим
+### Один ко многим / Имеет много
 
 Отношение «один-ко-многим» используется для определения отношений, в которых одна модель является родительской для одной или нескольких дочерних моделей. Например, пост в блоге может содержать бесконечное количество комментариев. Как и все другие отношения Eloquent, отношения «один-ко-многим» определяются путем определения метода в вашей модели Eloquent:
 
@@ -157,6 +157,53 @@ Eloquent определяет имя внешнего ключа, анализи
     return $this->hasMany(Comment::class, 'foreign_key');
 
     return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
+
+<a name="automatically-hydrating-parent-models-on-children"></a>
+#### Автоматическое увлажнение родительских моделей на дочерних объектах
+
+Даже при использовании быстрой загрузки Eloquent могут возникнуть проблемы с запросами «N + 1», если вы попытаетесь получить доступ к родительской модели из дочерней модели при циклическом переборе дочерних моделей:
+
+```php
+$posts = Post::with('comments')->get();
+
+foreach ($posts as $post) {
+    foreach ($post->comments as $comment) {
+        echo $comment->post->title;
+    }
+}
+```
+
+В приведенном выше примере возникла проблема запроса «N + 1», поскольку, хотя комментарии были готовы загружаться для каждой модели `Post`, Eloquent не выполняет автоматическую гидратацию родительской `Post` в каждой дочерней модели `Comment`.
+
+Если вы хотите, чтобы Eloquent автоматически переносил родительские модели в свои дочерние элементы, вы можете вызвать метод `chaperone` при определении отношения `hasMany`:
+
+    <?php
+
+    namespace App\Models;
+
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Relations\HasMany;
+
+    class Post extends Model
+    {
+        /**
+         * Get the comments for the blog post.
+         */
+        public function comments(): HasMany
+        {
+            return $this->hasMany(Comment::class)->chaperone();
+        }
+    }
+
+Или, если вы хотите включить автоматическую гидратацию родительского элемента во время выполнения, вы можете вызвать модель `chaperone` при загрузке связи:
+
+```php
+use App\Models\Post;
+
+$posts = Post::with([
+    'comments' => fn ($comments) => $comments->chaperone(),
+])->get();
+```
 
 <a name="one-to-many-inverse"></a>
 #### Определение обратной связи Один ко многим
@@ -970,6 +1017,46 @@ return $this->throughEnvironments()->hasDeployments();
     $commentable = $comment->commentable;
 
 Отношение `commentable` в модели `Comment` вернет либо экземпляр `Post`, либо `Video`, в зависимости от того, какой тип модели является родительским для комментария.
+
+<a name="polymorphic-automatically-hydrating-parent-models-on-children"></a>
+#### Автоматическое увлажнение родительских моделей на дочерних объектах
+
+Даже при использовании быстрой загрузки Eloquent могут возникнуть проблемы с запросами «N + 1», если вы попытаетесь получить доступ к родительской модели из дочерней модели при циклическом переборе дочерних моделей:
+
+```php
+$posts = Post::with('comments')->get();
+
+foreach ($posts as $post) {
+    foreach ($post->comments as $comment) {
+        echo $comment->commentable->title;
+    }
+}
+```
+
+В приведенном выше примере возникла проблема запроса «N + 1», поскольку, хотя комментарии были готовы загружаться для каждой модели `Post`, Eloquent не выполняет автоматическую гидратацию родительской `Post` в каждой дочерней модели `Comment`.
+
+Если вы хотите, чтобы Eloquent автоматически переносил родительские модели в свои дочерние элементы, вы можете вызвать метод `chaperone` при определении отношения `hasMany`:
+
+    class Post extends Model
+    {
+        /**
+         * Get all of the post's comments.
+         */
+        public function comments(): MorphMany
+        {
+            return $this->morphMany(Comment::class, 'commentable')->chaperone();
+        }
+    }
+
+Или, если вы хотите включить автоматическую гидратацию родительского элемента во время выполнения, вы можете вызвать модель `chaperone` при загрузке связи:
+
+```php
+use App\Models\Post;
+
+$posts = Post::with([
+    'comments' => fn ($comments) => $comments->chaperone(),
+])->get();
+```
 
 <a name="one-of-many-polymorphic-relations"></a>
 ### Один из многих (полиморфное)
