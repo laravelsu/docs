@@ -1,5 +1,5 @@
 ---
-git: e1b400d993364b991891bbcaa380bd1979bc741d
+git: 3a8bc7fa4eaf942a9e1793e12db1b7b530c1b063
 ---
 
 # Laravel Sail
@@ -461,18 +461,27 @@ SAIL_XDEBUG_MODE=develop,debug,coverage
 
 #### Настройка IP хоста для Linux
 
-Внутренняя переменная окружения `XDEBUG_CONFIG` определяется как `client_host=host.docker.internal`, чтобы Xdebug был правильно настроен для Mac и Windows (WSL2). Хост host.docker.internal существует только в системах под управлением Docker Desktop, т.е. Mac и Windows. Если ваша локальная машина работает под управлением Linux, убедитесь, что у вас установлен Docker Engine версии 17.06.0+ и Compose версии 1.16.0+; в противном случае вам нужно будет вручную определить эту переменную окружения, как показано ниже..
+Внутренняя переменная окружения `XDEBUG_CONFIG` определяется как `client_host=host.docker.internal`, чтобы Xdebug был правильно настроен для Mac и Windows (WSL2). Хост host.docker.internal существует только в системах под управлением Docker Desktop, т.е. Mac и Windows. Если на вашем локальном компьютере работает Linux и вы используете Docker 20.10+, доступен `host.docker.internal`, и ручная настройка не требуется.
 
-Во-первых, вы должны определить правильный IP-адрес хоста для добавления в переменную окружения, выполнив следующую команду. Обычно `<container-name>` должно быть именем контейнера, обслуживающего ваше приложение, как правило, это имя заканчивается на `_laravel.test_1`:
+Для версий Docker старше 20.10 не поддерживается `host.docker.internal` в Linux, и вам придется вручную определить IP-адрес хоста. Для этого настройте статический IP-адрес для вашего контейнера, определив собственную сеть в файле docker-compose.yml:
 
-```shell
-docker inspect -f {{range.NetworkSettings.Networks}}{{.Gateway}}{{end}} <container-name>
+```yaml
+networks:
+  custom_network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+services:
+  laravel.test:
+    networks:
+      custom_network:
+        ipv4_address: 172.20.0.2
 ```
 
-После того как вы получили IP-адрес хоста, на котором развёрнут Docker, вы должны определить переменную `SAIL_XDEBUG_CONFIG` в файле `.env` вашего приложения:
+После установки статического IP-адреса определите переменную `SAIL_XDEBUG_CONFIG` в файле `.env` вашего приложения:
 
 ```ini
-SAIL_XDEBUG_CONFIG="client_host=<host-ip-address>"
+SAIL_XDEBUG_CONFIG="client_host=172.20.0.2"
 ```
 
 <a name="xdebug-cli-usage"></a>
