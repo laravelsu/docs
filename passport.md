@@ -1,5 +1,5 @@
 ---
-git: d8ab24c9a1724aa7ac413ee72f864049b90bba40
+git: 6e7ec33a34c32dd3416823e5960e2c339320c074
 ---
 
 # Laravel Passport
@@ -483,7 +483,7 @@ php artisan passport:purge --expired
 
 Вы также можете настроить [запланированное задание](/docs/{{version}}/scheduling) в файле вашего приложения `routes/console.php` для автоматического удаления токенов по расписанию:
 
-    use Laravel\Support\Facades\Schedule;
+    use Illuminate\Support\Facades\Schedule;
 
     Schedule::command('passport:purge')->hourly();
 
