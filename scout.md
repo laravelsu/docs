@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: ce6cf0e289dff0b42a9c2a1e2206200498d50018
 ---
 
 # Laravel Scout
@@ -121,7 +121,7 @@ TYPESENSE_API_KEY=masterKey
 TYPESENSE_HOST=localhost
 ```
 
-При необходимости вы также можете указать порт, путь и протокол вашей установки:
+Если вы используете [Laravel Sail](/docs/{{version}}/sail), вам может потребоваться настроить переменную среды `TYPESENSE_HOST`, чтобы она соответствовала имени контейнера Docker. Вы также можете указать порт, путь и протокол вашей установки:
 
 ```env
 TYPESENSE_PORT=8108
