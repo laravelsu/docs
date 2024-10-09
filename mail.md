@@ -1,5 +1,5 @@
 ---
-git: 87c1dc3bbb78949d35a1af957ba76c4469490baa
+git: b744d060e795703c95a56576c63011f68101020e
 ---
 
 # Отправка электронной почты
@@ -687,7 +687,7 @@ public function envelope(): Envelope
 }
 ```
 
-Если ваше приложение использует драйвер Mailgun, вы можете проконсультироваться с документацией Mailgun для получения дополнительной информации о [тегах](https://documentation.mailgun.com/en/latest/user_manual.html#tagging-1) и [метаданных](https://documentation.mailgun.com/en/latest/user_manual.html#attaching-data-to-messages). Аналогично, вы можете проконсультироваться с документацией Postmark для получения дополнительной информации о поддержке [тегов](https://postmarkapp.com/blog/tags-support-for-smtp) и [метаданных](https://postmarkapp.com/support/article/1125-custom-metadata-faq).
+Если ваше приложение использует драйвер Mailgun, вы можете проконсультироваться с документацией Mailgun для получения дополнительной информации о [тегах](https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/#tagging) и [метаданных](https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/#attaching-data-to-messages). Аналогично, вы можете проконсультироваться с документацией Postmark для получения дополнительной информации о поддержке [тегов](https://postmarkapp.com/blog/tags-support-for-smtp) и [метаданных](https://postmarkapp.com/support/article/1125-custom-metadata-faq).
 
 Если ваше приложение использует Amazon SES для отправки электронных писем, вы должны использовать метод `metadata` для добавления [тегов SES](https://docs.aws.amazon.com/ses/latest/APIReference/API_MessageTag.html) к сообщению.
 
