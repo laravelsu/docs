@@ -1,5 +1,5 @@
 ---
-git: af8926466f6afe7dd8415d751c9c95cda7aa1965
+git: f04003eccc61f9f05e291305d66f73cd10dbb1da
 ---
 
 
@@ -345,7 +345,7 @@ $user->features()->unless('new-api',
 <a name="blade-directive"></a>
 ### Директива Blade
 
-Для более удобной проверки функций в Blade Pennant предлагает директиву `@feature`:
+Для более удобной проверки функций в Blade Pennant предлагает директивы `@feature` и `@featureany`:
 
 ```blade
 @feature('site-redesign')
@@ -353,6 +353,10 @@ $user->features()->unless('new-api',
 @else
     <!-- 'site-redesign' is inactive -->
 @endfeature
+
+@featureany(['site-redesign', 'beta'])
+    <!-- 'site-redesign' or `beta` is active -->
+@endfeatureany
 ```
 
 <a name="middleware"></a>
