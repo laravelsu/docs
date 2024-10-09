@@ -1,5 +1,5 @@
 ---
-git: 8bc2cdb5a19e7e757da97a6b4572dedb230f25b1
+git: 45969e396c5ec52aca9a558a43e9f902759e3d41
 ---
 
 # Laravel Horizon
@@ -217,6 +217,12 @@ php artisan horizon:continue-supervisor supervisor-1
 
 ```shell
 php artisan horizon:status
+```
+
+Вы можете проверить текущий статус конкретного [супервизора](#supervisors) Horizon с помощью Artisan-команды `horizon:supervisor-status`:
+
+```shell
+php artisan horizon:supervisor-status supervisor-1
 ```
 
 Вы можете корректно завершить процесс Horizon, используя Artisan-команду `horizon:terminate`. Все задания, которые в настоящее время обрабатываются, будут завершены, а затем Horizon прекратит работу:
