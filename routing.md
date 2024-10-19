@@ -726,21 +726,19 @@ Laravel включает в себя мощные и настраиваемые 
 
 Ограничители скорости могут быть определены в методе `boot` класса `App\Providers\AppServiceProvider` вашего приложения:
 
-```php
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
-
-/**
- * Запуск любых служб приложения.
- */
-protected function boot(): void
-{
-    RateLimiter::for('api', function (Request $request) {
-        return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-    });
-}
-```
+    use Illuminate\Cache\RateLimiting\Limit;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\RateLimiter;
+    
+    /**
+     * Запуск любых служб приложения.
+     */
+    protected function boot(): void
+    {
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+    }
 
 Ограничители определяются с помощью метода `for` фасада `RateLimiter`. Метод `for` принимает имя ограничителя и замыкание, которое возвращает конфигурацию ограничений, применяемых к назначенным маршрутам. Конфигурация ограничений – это экземпляры класса `Illuminate\Cache\RateLimiting\Limit`. Этот класс содержит полезные методы «построения», чтобы вы могли быстро определить свой «лимит». Имя ограничителя может быть любой строкой по вашему желанию:
 
