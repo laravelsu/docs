@@ -1,5 +1,5 @@
 ---
-git: bf02092cfb84070be58f97ffa9a5de61fac531b9
+git: dc8015a44281e30a45bd98de4a5830b56d002392
 ---
 
 # Eloquent: Фабрики (Factory)
@@ -86,7 +86,7 @@ php artisan make:factory PostFactory
     /**
      * Создать новый экземпляр фабрики для модели.
      */
-    protected static function newFactory(): Factory
+    protected static function newFactory()
     {
         return FlightFactory::new();
     }
