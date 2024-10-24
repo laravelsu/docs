@@ -1,5 +1,5 @@
 ---
-git: ead3a5b4b11c267f20ee1065eb3f9aa98fc986e1
+git: 6edbc838af936fca1c98832a55e78325d6214097
 ---
 
 # Разработка пакетов
@@ -341,6 +341,24 @@ Blade автоматически определит класс, связанны
                 InstallCommand::class,
                 NetworkCommand::class,
             ]);
+        }
+    }
+
+<a name="optimize-commands"></a>
+### Команды оптимизации
+
+Команда Laravel [`optimize`](/docs/{{version}}/deployment#optimization) кэширует конфигурацию приложения, события, маршруты и представления. Используя метод `optimizes`, вы можете зарегистрировать собственные команды Artisan вашего пакета, которые должны вызываться при выполнении команд `optimize` и `optimize:clear`:
+
+    /**
+     * Bootstrap any package services.
+     */
+    public function boot(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->optimizes(
+                optimize: 'package:optimize',
+                clear: 'package:clear-optimizations',
+            );
         }
     }
 
