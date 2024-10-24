@@ -1,5 +1,5 @@
 ---
-git: ead3a5b4b11c267f20ee1065eb3f9aa98fc986e1
+git: 687b781084e92ce5ee56197125c071b0d592fda4
 ---
 
 # Шаблонизатор Blade
@@ -389,10 +389,12 @@ Blade – это простой, но мощный движок шаблонов
 Для удобства, вы можете использовать директиву `@checked`, чтобы легко указать, должен ли данный флажок HTML быть "отмеченным". Эта директива будет выводить `checked`, если условие выполнится:
 
 ```html
-<input type="checkbox"
-        name="active"
-        value="active"
-        @checked(old('active', $user->active)) />
+<input
+    type="checkbox"
+    name="active"
+    value="active"
+    @checked(old('active', $user->active))
+/>
 ```
 
 Аналогично, директива `@selected` может использоваться, чтобы указать, должен ли заданный вариант выбора быть "выбранным":
@@ -416,23 +418,23 @@ Blade – это простой, но мощный движок шаблонов
 Более того, директива `@readonly` может быть использована, чтобы указать, должен ли данный элемент быть "только для чтения":
 
 ```html
-<input type="email"
-        name="email"
-        value="email@laravel.com"
-        @readonly($user->isNotAdmin()) />
+<input
+    type="email"
+    name="email"
+    value="email@laravel.com"
+    @readonly($user->isNotAdmin())
+/>
 ```
 
 Кроме того, директива `@required` может быть использована, чтобы указать, должен ли данный элемент быть "обязательным":
 
 ```html
-<input type="text" name="name" @required(true) />
-```
-
-```html
-<input type="text"
-        name="title"
-        value="title"
-        @required($user->isAdmin()) />
+<input
+    type="text"
+    name="title"
+    value="title"
+    @required($user->isAdmin())
+/>
 ```
 
 <a name="including-subviews"></a>
@@ -1466,9 +1468,11 @@ Route::get('/tasks', function () {
 
 <label for="title">Post Title</label>
 
-<input id="title"
-       type="text"
-       class="@error('title') is-invalid @enderror">
+<input
+    id="title"
+    type="text"
+    class="@error('title') is-invalid @enderror"
+/>
 
 @error('title')
 <div class="alert alert-danger">{{ $message }}</div>
@@ -1482,9 +1486,11 @@ Route::get('/tasks', function () {
 
 <label for="email">Email address</label>
 
-<input id="email"
-       type="email"
-       class="@error('email') is-invalid @else is-valid @enderror">
+<input
+    id="email"
+    type="email"
+    class="@error('email') is-invalid @else is-valid @enderror"
+/>
 ```
 
 Вы можете передать [имя конкретной коллекции ошибок](/docs/{{version}}/validation#named-error-bags) в качестве второго параметра директивы `@error` для получения сообщений об ошибках валидации на страницах, содержащих несколько форм:
@@ -1494,9 +1500,11 @@ Route::get('/tasks', function () {
 
 <label for="email">Email address</label>
 
-<input id="email"
-       type="email"
-       class="@error('email', 'login') is-invalid @enderror">
+<input
+    id="email"
+    type="email"
+    class="@error('email', 'login') is-invalid @enderror"
+/>
 
 @error('email', 'login')
 <div class="alert alert-danger">{{ $message }}</div>
