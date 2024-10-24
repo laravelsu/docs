@@ -1,5 +1,5 @@
 ---
-git: 57ac7ac1a316e7c6c6efed4c4894921a65f406e6
+git: 8205b55a6e20c0ceecc9fa606f03b7a58c32095a
 ---
 
 # Контейнер служб (service container)
@@ -241,7 +241,7 @@ class PhotoController extends Controller
 }
 ```
 
-В дополнение к атрибуту `Storage`, Laravel предлагает атрибуты `Auth`, `Cache`, `Config`, `DB`, `Log` и [`Tag`](#tagging):
+В дополнение к атрибуту `Storage`, Laravel предлагает атрибуты `Auth`, `Cache`, `Config`, `DB`, `Log`, `RouteParameter` и [`Tag`](#tagging):
 
 ```php
 <?php
