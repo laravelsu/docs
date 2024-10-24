@@ -1,5 +1,5 @@
 ---
-git: f54c269ce77ea3fff2f36f325a8d82b3a42bc23c
+git: 49b1b9f790ce1def7b3e94f254d21c0a90dfae98
 ---
 
 # События (Events)
@@ -50,6 +50,16 @@ php artisan make:listener
         {
             // ...
         }
+    }
+
+Вы можете прослушивать несколько событий, используя типы объединения PHP:
+
+    /**
+     * Handle the given event.
+     */
+    public function handle(PodcastProcessed|PodcastPublished $event): void
+    {
+        // ...
     }
 
 Если вы планируете хранить свои слушатели в другом каталоге или в нескольких каталогах, вы можете поручить Laravel сканировать эти каталоги с помощью метода `withEvents` в файле `bootstrap/app.php` вашего приложения:
