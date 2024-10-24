@@ -1,5 +1,5 @@
 ---
-git: 62eb15f6637ea5810edf8a9aeae0e621003cff0f
+git: 426c6287831d95a7472e085cfd53ea11d93f0a78
 ---
 
 # Коллекции
