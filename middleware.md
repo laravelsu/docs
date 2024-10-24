@@ -1,5 +1,5 @@
 ---
-git: a71a1ac32316192e8c489268c2fbc61f6bc6f3e7
+git: 85faadde4f004298773a1e0e8f0d53ae47430c77
 ---
 
 # Посредники (middleware)
@@ -123,6 +123,7 @@ php artisan make:middleware EnsureTokenIsValid
 
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->use([
+            \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class,
             // \Illuminate\Http\Middleware\TrustHosts::class,
             \Illuminate\Http\Middleware\TrustProxies::class,
             \Illuminate\Http\Middleware\HandleCors::class,
