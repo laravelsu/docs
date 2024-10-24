@@ -1,5 +1,5 @@
 ---
-git: 1b69438a67473dc3a9c7f351b3fa742460d11054
+git: 413397108dceec51289541a1b899a0783646d84a
 ---
 
 # Валидация
@@ -189,10 +189,12 @@ Laravel содержит удобные правила валидации, пр�
 
 <label for="title">Post Title</label>
 
-<input id="title" 
+<input
+    id="title"
     type="text" 
     name="title" 
-    class="@error('title') is-invalid @enderror">
+    class="@error('title') is-invalid @enderror"
+/>
 
 @error('title')
     <div class="alert alert-danger">{{ $message }}</div>
@@ -1058,6 +1060,8 @@ The credit card number field is required when payment type is credit card.
 #### confirmed
 
 Проверяемое поле должно иметь совпадающее поле `{field}_confirmation`. Например, если проверяемое поле – `password`, то поле `password_confirmation` также должно присутствовать во входящих данных.
+
+Вы также можете передать собственное имя поля подтверждения. Например, `confirmed:repeat_username` будет ожидать, что поле `repeat_username` будет соответствовать проверяемому полю.
 
 <a name="rule-contains"></a>
 #### contains:_foo_,_bar_,...
