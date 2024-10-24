@@ -1,5 +1,5 @@
 ---
-git: 06c3df075e79917d1a6afbbb587a17545f2ac7c9
+git: f6715ca87507f0e5f8dc2ed862e0d47743359504
 ---
 
 # Сборка ресурсов (Vite)
@@ -372,7 +372,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 createInertiaApp({
   resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
   setup({ el, App, props, plugin }) {
-    return createApp({ render: () => h(App, props) })
+    createApp({ render: () => h(App, props) })
       .use(plugin)
       .mount(el)
   },
