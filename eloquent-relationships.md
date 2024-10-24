@@ -1,5 +1,5 @@
 ---
-git: b967f72817e992d526405d0712b606aa164b9efb
+git: 5f7df11b007c4c775ca1870a1008b47b1cfc9494
 ---
 
 # Eloquent · Отношения
@@ -1465,6 +1465,12 @@ where user_id = ? and (active = 1 or votes >= 100)
             $query->where($column, 'like', 'code%');
         }
     )->get();
+
+Иногда вам может потребоваться запросить дочерние элементы родительского отношения «morph to». Вы можете сделать это, используя методы `whereMorphedTo` и `whereNotMorphedTo`, которые автоматически определят правильное сопоставление типов морфинга для данной модели. Эти методы принимают имя отношения `morphTo` в качестве первого аргумента и соответствующую родительскую модель в качестве второго аргумента:
+
+    $comments = Comment::whereMorphedTo('commentable', $post)
+                          ->orWhereMorphedTo('commentable', $video)
+                          ->get();
 
 <a name="querying-all-morph-to-related-models"></a>
 #### Запрос всех связанных моделей
