@@ -1,5 +1,5 @@
 ---
-git: ead3a5b4b11c267f20ee1065eb3f9aa98fc986e1
+git: 77569f35d47752c3ae19c88f8c6cb47366b89905
 ---
 
 # Eloquent · Начало работы
@@ -452,7 +452,7 @@ Flight::chunk(200, function (Collection $flights) {
 Flight::where('departed', true)
     ->chunkById(200, function (Collection $flights) {
         $flights->each->update(['departed' => false]);
-    }, $column = 'id');
+    }, column: 'id');
 ```
 
 Поскольку методы `chunkById` и `lazyById` добавляют свои собственные условия "where" к выполняемому запросу, вам обычно следует [логически группировать](/docs/{{version}}/queries#ological-grouping) свои собственные условия внутри закрытие:
@@ -485,7 +485,7 @@ foreach (Flight::lazy() as $flight) {
 
 ```php
 Flight::where('departed', true)
-    ->lazyById(200, $column = 'id')
+    ->lazyById(200, column: 'id')
     ->each->update(['departed' => false]);
 ```
 
