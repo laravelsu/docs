@@ -1,5 +1,5 @@
 ---
-git: a6124510a5db5a83e9268fafdb48b6cc8e1ebbb1
+git: f6318a64440b85473c46b2b4789412f7a5202564
 ---
 
 # Маршрутизация
@@ -802,6 +802,15 @@ protected function boot(): void
         return [
             Limit::perMinute(500),
             Limit::perMinute(3)->by($request->input('email')),
+        ];
+    });
+
+Если вы назначаете несколько ограничений скорости, сегментированных по одинаковым значениям `by`, вам следует убедиться, что каждое значение `by` уникально. Самый простой способ добиться этого — добавить префикс к значениям, заданным методом `by`:
+
+    RateLimiter::for('uploads', function (Request $request) {
+        return [
+            Limit::perMinute(10)->by('minute:'.$request->user()->id),
+            Limit::perDay(1000)->by('day:'.$request->user()->id),
         ];
     });
 
