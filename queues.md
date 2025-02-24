@@ -43,7 +43,7 @@ php artisan queue:work --queue=high,default
 <a name="database"></a>
 #### База данных
 
-Чтобы использовать драйвер очереди `database`, вам понадобится таблица базы данных для хранения заданий. Обычно это включено в стандартный файл Laravel `0001_01_01_000002_create_jobs_table.php` [databasemigration](/docs/{{version}}/migrations); однако, если ваше приложение не содержит этой миграции, вы можете использовать Artisan-команду `make:queue-table` для ее создания:
+Чтобы использовать драйвер очереди `database`, вам понадобится таблица базы данных для хранения заданий. Обычно это включено в стандартный файл Laravel `0001_01_01_000002_create_jobs_table.php` [миграции базы данных](/docs/{{version}}/migrations); однако, если ваше приложение не содержит этой миграции, вы можете использовать Artisan-команду `make:queue-table` для ее создания:
 
 ```shell
 php artisan make:queue-table
