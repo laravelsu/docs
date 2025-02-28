@@ -140,45 +140,47 @@ php artisan test --parallel --recreate-databases
 
 Используя фасад `ParallelTesting`, вы можете указать код, который будет выполняться в `setUp` и `tearDown` процесса или тестового класса. Переданные замыкания получат переменные `$token` и `$testCase`, которые содержат токен процесса и текущий тестовый класс, соответственно:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use Illuminate\Support\Facades\Artisan;
-    use Illuminate\Support\Facades\ParallelTesting;
-    use Illuminate\Support\ServiceProvider;
-    use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\ParallelTesting;
+use Illuminate\Support\ServiceProvider;
+use PHPUnit\Framework\TestCase;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Загрузка любых служб приложения.
+     */
+    public function boot(): void
     {
-        /**
-         * Загрузка любых служб приложения.
-         */
-        public function boot(): void
-        {
-            ParallelTesting::setUpProcess(function (int $token) {
-                // ...
-            });
+       ParallelTesting::setUpProcess(function (int $token) {
+            // ...
+        });
 
-            ParallelTesting::setUpTestCase(function (int $token, TestCase $testCase) {
-                // ...
-            });
+        ParallelTesting::setUpTestCase(function (int $token, TestCase $testCase) {
+            // ...
+        });
 
-            // Выполнится при создании тестовой базы данных...
-            ParallelTesting::setUpTestDatabase(function (string $database, int $token) {
-                Artisan::call('db:seed');
-            });
+        // Выполнится при создании тестовой базы данных...
+        ParallelTesting::setUpTestDatabase(function (string $database, int $token) {
+            Artisan::call('db:seed');
+        });
 
-            ParallelTesting::tearDownTestCase(function (int $token, TestCase $testCase) {
-                // ...
-            });
+        ParallelTesting::tearDownTestCase(function (int $token, TestCase $testCase) {
+            // ...
+        });
 
-            ParallelTesting::tearDownProcess(function (int $token) {
-                // ...
-            });
-        }
+        ParallelTesting::tearDownProcess(function (int $token) {
+            // ...
+        });
+
     }
-
+}
+```
 <a name="accessing-the-parallel-testing-token"></a>
 #### Доступ к токену процесса параллельного тестирования
 
