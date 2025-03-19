@@ -1,5 +1,5 @@
 ---
-git: 87c1dc3bbb78949d35a1af957ba76c4469490baa
+git: 1ab9932ec8489a4dab268be6868972cebd19ae43
 ---
 
 # Контракты
@@ -36,31 +36,33 @@ git: 87c1dc3bbb78949d35a1af957ba76c4469490baa
 
 Например, взгляните на этот слушатель:
 
-    <?php
+    ```php
+<?php
 
-    namespace App\Listeners;
+namespace App\Listeners;
 
-    use App\Events\OrderWasPlaced;
-    use App\Models\User;
-    use Illuminate\Contracts\Redis\Factory;
+use App\Events\OrderWasPlaced;
+use App\Models\User;
+use Illuminate\Contracts\Redis\Factory;
 
-    class CacheOrderInformation
+class CacheOrderInformation
+{
+    /**
+     * Создаnm новый экземпляр обработчика событий.
+     */
+    public function __construct(
+        protected Factory $redis,
+    ) {}
+
+    /**
+     * Обработать событие
+     */
+    public function handle(OrderWasPlaced $event): void
     {
-        /**
-         * Создать новый экземпляр обработчика события.
-         */
-        public function __construct(
-            protected Factory $redis,
-        ) {}
-
-        /**
-         * Обработать событие.
-         */
-        public function handle(OrderWasPlaced $event): void
-        {
-            // ...
-        }
+// ...
     }
+}
+```
 
 Когда слушатель события будет извлечен, сервис-контейнер, используя инициализацию типов в конструкторе класса, внедрит соответствующую зависимость. Чтобы узнать больше о регистрации в сервис-контейнере, ознакомьтесь с [его документацией](/docs/{{version}}/container).
 
