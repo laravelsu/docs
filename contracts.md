@@ -36,7 +36,7 @@ git: 1ab9932ec8489a4dab268be6868972cebd19ae43
 
 Например, взгляните на этот слушатель:
 
-    ```php
+```php
 <?php
 
 namespace App\Listeners;
@@ -48,7 +48,7 @@ use Illuminate\Contracts\Redis\Factory;
 class CacheOrderInformation
 {
     /**
-     * Создаnm новый экземпляр обработчика событий.
+     * Создан новый экземпляр обработчика событий.
      */
     public function __construct(
         protected Factory $redis,
@@ -59,7 +59,7 @@ class CacheOrderInformation
      */
     public function handle(OrderWasPlaced $event): void
     {
-// ...
+        // ...
     }
 }
 ```
