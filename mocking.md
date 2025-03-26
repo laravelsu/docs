@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Тестирование · Имитация (Мок)
@@ -110,9 +110,9 @@ use Illuminate\Support\Facades\Cache;
 
 test('get index', function () {
     Cache::shouldReceive('get')
-                ->once()
-                ->with('key')
-                ->andReturn('value');
+            ->once()
+            ->with('key')
+            ->andReturn('value');
 
     $response = $this->get('/users');
 
@@ -133,9 +133,9 @@ class UserControllerTest extends TestCase
     public function test_get_index(): void
     {
         Cache::shouldReceive('get')
-                    ->once()
-                    ->with('key')
-                    ->andReturn('value');
+                ->once()
+                ->with('key')
+                ->andReturn('value');
 
         $response = $this->get('/users');
 
