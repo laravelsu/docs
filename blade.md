@@ -1,5 +1,5 @@
 ---
-git: 724c31ccd3edce6b6dfe5e0dd2a594a47217f078
+git: 4223ed3fb9af969df6803cc81a21d5e803236ae0
 ---
 
 # Шаблонизатор Blade
@@ -11,9 +11,11 @@ Blade – это простой, но мощный движок шаблонов
 
 Шаблоны Blade могут быть возвращены из маршрутов или контроллера с помощью глобального помощника `view`. Конечно, как упоминалось в документации по [HTML-шаблонам](/docs/{{version}}/views), данные могут быть переданы в шаблоны Blade, используя второй аргумент помощника `view`:
 
-    Route::get('/', function () {
-        return view('greeting', ['name' => 'Finn']);
-    });
+```php
+Route::get('/', function () {
+    return view('greeting', ['name' => 'Finn']);
+});
+```
 
 <a name="supercharging-blade-with-livewire"></a>
 ### Новый уровень Blade с помощью Livewire
@@ -25,9 +27,11 @@ Blade – это простой, но мощный движок шаблонов
 
 Вы можете отображать данные, которые передаются в шаблоны Blade, заключив переменную в фигурные скобки. Например, учитывая следующий маршрут:
 
-    Route::get('/', function () {
-        return view('welcome', ['name' => 'Samantha']);
-    });
+```php
+Route::get('/', function () {
+    return view('welcome', ['name' => 'Samantha']);
+});
+```
 
 Вы можете отобразить содержимое переменной `name` следующим образом:
 
@@ -49,23 +53,25 @@ Blade – это простой, но мощный движок шаблонов
 
 По умолчанию Blade (и Laravel функция `e`) будет дважды кодировать объекты HTML. Если вы хотите отключить двойное кодирование, вызовите метод `Blade::withoutDoubleEncoding` в методе `boot` вашего `AppServiceProvider`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use Illuminate\Support\Facades\Blade;
-    use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\ServiceProvider;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Загрузка любых служб приложения.
+     */
+    public function boot(): void
     {
-        /**
-         * Загрузка любых служб приложения.
-         */
-        public function boot(): void
-        {
-            Blade::withoutDoubleEncoding();
-        }
+        Blade::withoutDoubleEncoding();
     }
+}
+```
 
 <a name="displaying-unescaped-data"></a>
 #### Вывод неэкранированных данных
@@ -645,15 +651,17 @@ php artisan make:component forms.input --view
 
 Однако, если вы создаете пакет, который использует компоненты Blade, вам необходимо вручную зарегистрировать класс компонента и его псевдоним HTML-тега. Вы должны зарегистрировать свои компоненты в методе `boot` поставщика служб вашего пакета:
 
-    use Illuminate\Support\Facades\Blade;
+```php
+use Illuminate\Support\Facades\Blade;
 
-    /**
-     * Загрузка любых служб пакета.
-     */
-    public function boot(): void
-    {
-        Blade::component('package-alert', Alert::class);
-    }
+/**
+ * Загрузка любых служб пакета.
+ */
+public function boot(): void
+{
+    Blade::component('package-alert', Alert::class);
+}
+```
 
 После того как ваш компонент был зарегистрирован, он может быть отображен с использованием псевдонима тега:
 
@@ -663,15 +671,17 @@ php artisan make:component forms.input --view
 
 Как вариант, вы можете использовать метод `componentNamespace` для автоматической загрузки классов компонентов по соглашению. Например, пакет `Nightshade` может иметь компоненты `Calendar` и `ColorPicker`, которые находятся в пространстве имен `Package\Views\Components`:
 
-    use Illuminate\Support\Facades\Blade;
+```php
+use Illuminate\Support\Facades\Blade;
 
-    /**
-     * Загрузка любых служб пакета.
-     */
-    public function boot(): void
-    {
-        Blade::componentNamespace('Nightshade\\Views\\Components', 'nightshade');
-    }
+/**
+ * Загрузка любых служб пакета.
+ */
+public function boot(): void
+{
+    Blade::componentNamespace('Nightshade\\Views\\Components', 'nightshade');
+}
+```
 
 Это позволит использовать компоненты пакета в пространстве имен их поставщиков, используя синтаксис `x-package-name::`:
 
@@ -701,22 +711,24 @@ Blade автоматически обнаружит класс, связанны
 
 Если вы хотите выборочно отображать ваш компонент, вы можете указать метод `shouldRender` в классе вашего компонента. Если результат метода `shouldRender` равен `false`, то компонент не будет отображаться:
 
-    use Illuminate\Support\Str;
+```php
+use Illuminate\Support\Str;
 
-    /**
-     * Определяет, должен ли компонент отображаться
-     */
-    public function shouldRender(): bool
-    {
-        return Str::length($this->message) > 0;
-    }
+/**
+ * Определяет, должен ли компонент отображаться
+ */
+public function shouldRender(): bool
+{
+    return Str::length($this->message) > 0;
+}
+```
 
 <a name="index-components"></a>
 ### Индексация компонентов
 
 Иногда компоненты являются частью группы компонентов, и вам может потребоваться сгруппировать связанные компоненты в одном каталоге. Например, представьте себе компонент «card» со следующей структурой классов:
 
-```none
+```text
 App\Views\Components\Card\Card
 App\Views\Components\Card\Header
 App\Views\Components\Card\Body
@@ -742,31 +754,33 @@ App\Views\Components\Card\Body
 
 Вы должны определить необходимые данные компонента в его конструкторе класса. Все общедоступные свойства компонента будут автоматически доступны в шаблоне компонента. Нет необходимости передавать данные в шаблон из метода `render` компонента:
 
-    <?php
+```php
+<?php
 
-    namespace App\View\Components;
+namespace App\View\Components;
 
-    use Illuminate\View\Component;
-    use Illuminate\View\View;
+use Illuminate\View\Component;
+use Illuminate\View\View;
 
-    class Alert extends Component
+class Alert extends Component
+{
+    /**
+     * Создать экземпляр компонента.
+     */
+    public function __construct(
+        public string $type,
+        public string $message,
+    ) {}
+
+    /**
+     * Получить шаблон / содержимое, представляющее компонент.
+     */
+    public function render(): View
     {
-        /**
-         * Создать экземпляр компонента.
-         */
-        public function __construct(
-            public string $type,
-            public string $message,
-        ) {}
-
-        /**
-         * Получить шаблон / содержимое, представляющее компонент.
-         */
-        public function render(): View
-        {
-            return view('components.alert');
-        }
+        return view('components.alert');
     }
+}
+```
 
 Когда ваш компонент визуализируется, вы можете отображать содержимое общедоступных переменных вашего компонента, выводя переменные по имени:
 
@@ -781,12 +795,14 @@ App\Views\Components\Card\Body
 
 Аргументы конструктора компонентов следует указывать с помощью `camelCase`, а при обращении к именам аргументов в ваших атрибутах HTML следует использовать `kebab-case`. Например, учитывая следующий конструктор компонента:
 
-    /**
-     * Создать экземпляр компонента.
-     */
-    public function __construct(
-        public string $alertType,
-    ) {}
+```php
+/**
+ * Создать экземпляр компонента.
+ */
+public function __construct(
+    public string $alertType,
+) {}
+```
 
 Аргумент `$alertType` может быть передан компоненту следующим образом:
 
@@ -831,13 +847,15 @@ Blade отобразит следующий HTML-код:
 
 В дополнение к общедоступным переменным, доступным для вашего шаблона компонента, могут быть вызваны любые общедоступные методы компонента. Например, представьте компонент, у которого есть метод `isSelected`:
 
-    /**
-     * Определить, является ли переданная опция выбранной.
-     */
-    public function isSelected(string $option): bool
-    {
-        return $option === $this->selected;
-    }
+```php
+/**
+ * Определить, является ли переданная опция выбранной.
+ */
+public function isSelected(string $option): bool
+{
+    return $option === $this->selected;
+}
+```
 
 Вы можете выполнить этот метод из своего шаблона компонента, вызвав переменную, соответствующую имени метода:
 
@@ -852,27 +870,31 @@ Blade отобразит следующий HTML-код:
 
 Компоненты Blade также позволяют получить доступ к имени компонента, атрибутам и слоту внутри метода `render` класса. Однако, чтобы получить доступ к этим данным, вы должны вернуть замыкание из метода `render` вашего компонента:
 
-    use Closure;
+```php
+use Closure;
 
-    /**
-     * Получить шаблон / содержимое, представляющее компонент.
-     */
-    public function render(): Closure
-    {
-        return function () {
-            return '<div {{ $attributes }}>Содержание компонентов</div>';
-        };
-    }
+/**
+ * Получить шаблон / содержимое, представляющее компонент.
+ */
+public function render(): Closure
+{
+    return function () {
+        return '<div {{ $attributes }}>Содержание компонентов</div>';
+    };
+}
+```
 
 Замыкание, возвращаемое методом `render` вашего компонента, также может получать массив `$data` в качестве единственного аргумента. Этот массив будет содержать несколько элементов, предоставляющих информацию о компоненте:
 
-    return function (array $data) {
-        // $data['componentName'];
-        // $data['attributes'];
-        // $data['slot'];
+```php
+return function (array $data) {
+    // $data['componentName'];
+    // $data['attributes'];
+    // $data['slot'];
 
-        return '<div {{ $attributes }}>Содержание компонентов</div>';
-    }
+    return '<div {{ $attributes }}>Содержание компонентов</div>';
+}
+```
 
 > [!WARNING]
 > Элементы массива `$data` никогда не должны быть непосредственно встроены в строку Blade, возвращаемую вашим методом `render`, так как это может привести к удаленному выполнению кода через вредоносное содержимое атрибута.
@@ -904,28 +926,30 @@ public function __construct(
 
 Если вы хотите, чтобы некоторые публичные методы или свойства не использовались как переменные в шаблоне компонента, вы можете добавить их в свойство массива `$except` в вашем компоненте:
 
-    <?php
+```php
+<?php
 
-    namespace App\View\Components;
+namespace App\View\Components;
 
-    use Illuminate\View\Component;
+use Illuminate\View\Component;
 
-    class Alert extends Component
-    {
-        /**
-         * Свойства / методы, которые не должны использоваться в шаблоне компонента.
-         *
-         * @var array
-         */
-        protected $except = ['type'];
+class Alert extends Component
+{
+    /**
+     * Свойства / методы, которые не должны использоваться в шаблоне компонента.
+     *
+     * @var array
+     */
+    protected $except = ['type'];
 
-        /**
-         * Создаие экземпляра компонента.
-         */
-        public function __construct(
-            public string $type,
-        ) {}
-    }
+    /**
+     * Создаие экземпляра компонента.
+     */
+    public function __construct(
+        public string $type,
+    ) {}
+}
+```
 
 <a name="component-attributes"></a>
 ### Атрибуты компонента
@@ -1086,6 +1110,18 @@ public function __construct(
 {{ $attributes->get('class') }}
 ```
 
+Метод `only` используется для получения только тех атрибутов, ключи которых указаны:
+
+```blade
+{{ $attributes->only(['class']) }}
+```
+
+Метод `except` используется для получения всех атрибутов, кроме тех, ключи которых указаны:
+
+```blade
+{{ $attributes->except(['class']) }}
+```
+
 <a name="reserved-keywords"></a>
 ### Зарезервированные ключевые слова
 
@@ -1230,17 +1266,19 @@ public function __construct(
 
 Для очень маленьких компонентов может показаться обременительным управлять как классом компонента, так и шаблоном компонента. По этой причине вы можете вернуть разметку компонента прямо из метода `render`:
 
-    /**
-     * Получить шаблон / содержимое, представляющее компонент.
-     */
-    public function render(): string
-    {
-        return <<<blade
-            <div class="alert alert-danger">
-                {{ $slot }}
-            </div>
-        blade;
-    }
+```php
+/**
+ * Получить шаблон / содержимое, представляющее компонент.
+ */
+public function render(): string
+{
+    return <<<blade
+        <div class="alert alert-danger">
+            {{ $slot }}
+        </div>
+    blade;
+}
+```
 
 <a name="generating-inline-view-components"></a>
 #### Генерация компонентов со встроенными шаблонами
@@ -1272,16 +1310,18 @@ php artisan make:component Alert --inline
 
 Однако, если вы создаете пакет, использующий компоненты Blade, или помещаете компоненты в нестандартные каталоги, вам потребуется вручную зарегистрировать класс вашего компонента и его псевдоним HTML-тега, чтобы Laravel знал, где найти компонент. Обычно вы регистрируете свои компоненты в методе `boot` сервис-провайдера вашего пакета:
 
-    use Illuminate\Support\Facades\Blade;
-    use VendorPackage\View\Components\AlertComponent;
+```php
+use Illuminate\Support\Facades\Blade;
+use VendorPackage\View\Components\AlertComponent;
 
-    /**
-     * Инициализация сервисов вашего пакета.
-     */
-    public function boot(): void
-    {
-        Blade::component('package-alert', AlertComponent::class);
-    }
+/**
+ * Инициализация сервисов вашего пакета.
+ */
+public function boot(): void
+{
+    Blade::component('package-alert', AlertComponent::class);
+}
+```
 
 После того, как ваш компонент будет зарегистрирован, его можно отрисовать с использованием его псевдонима тега:
 
@@ -1293,15 +1333,17 @@ php artisan make:component Alert --inline
 
 В качестве альтернативы вы можете использовать метод `componentNamespace` для автозагрузки классов компонентов согласно конвенции. Например, пакет `Nightshade` может содержать компоненты `Calendar` и `ColorPicker`, которые находятся в пространстве имен `Package\Views\Components`:
 
-    use Illuminate\Support\Facades\Blade;
+```php
+use Illuminate\Support\Facades\Blade;
 
-    /**
-     * Инициализация сервисов вашего пакета.
-     */
-    public function boot(): void
-    {
-        Blade::componentNamespace('Nightshade\\Views\\Components', 'nightshade');
-    }
+/**
+ * Инициализация сервисов вашего пакета.
+ */
+public function boot(): void
+{
+    Blade::componentNamespace('Nightshade\\Views\\Components', 'nightshade');
+}
+```
 
 Это позволит использовать компоненты пакета с использованием пространства имен вендора с использованием синтаксиса `package-name::`:
 
@@ -1332,7 +1374,7 @@ Blade автоматически обнаружит класс, связанны
 
 Иногда, когда компонент состоит из множества шаблонов Blade, вы можете захотеть сгруппировать шаблоны данного компонента в одном каталоге. Например, представьте компонент "аккордеон" со следующей структурой каталогов:
 
-```none
+```text
 /resources/views/components/accordion.blade.php
 /resources/views/components/accordion/item.blade.php
 ```
@@ -1351,7 +1393,7 @@ Blade автоматически обнаружит класс, связанны
 
 К счастью, Blade позволяет вам разместить файл, соответствующий имени каталога компонента, внутри самого каталога компонента. Если этот шаблон существует, его можно отобразить как «корневой» элемент компонента, даже если он вложен в каталог. Итак, мы можем продолжать использовать тот же синтаксис Blade, что и в примере выше; однако мы изменим структуру наших каталогов следующим образом:
 
-```none
+```text
 /resources/views/components/accordion/accordion.blade.php
 /resources/views/components/accordion/item.blade.php
 ```
@@ -1425,13 +1467,15 @@ Blade автоматически обнаружит класс, связанны
 
 Метод `anonymousComponentPath` принимает первым аргументом "путь" к расположению анонимного компонента, а вторым аргументом - необязательное "пространство имён" для компонентов. Чаще всего этот метод вызывается из метода `boot` одного из ваших [провайдеров служб](/docs/{{version}}/providers):
 
-    /**
-     * Инициализация сервисов приложения.
-     */
-    public function boot(): void
-    {
-        Blade::anonymousComponentPath(__DIR__.'/../components');
-    }
+```php
+/**
+ * Инициализация сервисов приложения.
+ */
+public function boot(): void
+{
+    Blade::anonymousComponentPath(__DIR__.'/../components');
+}
+```
 
 Если пути компонентов зарегистрированы без указания префикса, как в приведенном выше примере, то компоненты можно использовать в вашем коде Blade без указания соответствующего префикса. Например, если компонент `panel.blade.php` существует в указанном пути, его можно использовать следующим образом:
 
@@ -1441,7 +1485,9 @@ Blade автоматически обнаружит класс, связанны
 
 Вы также можете предоставить "пространство имён" вторым аргументом метода `anonymousComponentPath`:
 
-    Blade::anonymousComponentPath(__DIR__.'/../components', 'dashboard');
+```php
+Blade::anonymousComponentPath(__DIR__.'/../components', 'dashboard');
+```
 
 Когда используется префикс, компоненты из этого "пространства имён" можно использовать с префиксом пространства имён и имени компонента:
 
@@ -1510,11 +1556,13 @@ Blade автоматически обнаружит класс, связанны
 
 Теперь, когда мы определили наш макет и шаблоны списка задач, нам просто нужно вернуть представление `task` из маршрута:
 
-    use App\Models\Task;
+```php
+use App\Models\Task;
 
-    Route::get('/tasks', function () {
-        return view('tasks', ['tasks' => Task::all()]);
-    });
+Route::get('/tasks', function () {
+    return view('tasks', ['tasks' => Task::all()]);
+});
+```
 
 <a name="layouts-using-template-inheritance"></a>
 ### Макеты с использованием наследования шаблонов
@@ -1790,37 +1838,41 @@ Blade позволяет вам определять ваши собственн
 
 В следующем примере создается директива `@datetime($var)`, которая форматирует переданный `$var`, который должен быть экземпляром `DateTime`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use Illuminate\Support\Facades\Blade;
-    use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\ServiceProvider;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Регистрация любых служб приложения.
+     */
+    public function register(): void
     {
-        /**
-         * Регистрация любых служб приложения.
-         */
-        public function register(): void
-        {
-            // ...
-        }
-
-        /**
-         * Загрузка любых служб приложения.
-         */
-        public function boot(): void
-        {
-            Blade::directive('datetime', function (string $expression) {
-                return "<?php echo ($expression)->format('m/d/Y H:i'); ?>";
-            });
-        }
+        // ...
     }
+
+    /**
+     * Загрузка любых служб приложения.
+     */
+    public function boot(): void
+    {
+        Blade::directive('datetime', function (string $expression) {
+            return "<?php echo ($expression)->format('m/d/Y H:i'); ?>";
+        });
+    }
+}
+```
 
 Как видите, мы привяжем метод `format` к любому выражению, переданному в директиву. Итак, в этом примере окончательный PHP, сгенерированный этой директивой, будет:
 
-    <?php echo ($var)->format('m/d/Y H:i'); ?>
+```php
+<?php echo ($var)->format('m/d/Y H:i'); ?>
+```
 
 > [!WARNING]
 > После обновления логики директивы Blade вам нужно будет удалить все кешированные шаблоны Blade. Кешированные шаблоны Blade могут быть удалены с помощью команды `view:clear` Artisan.
@@ -1832,18 +1884,20 @@ Blade позволяет вам определять ваши собственн
 
 В этих случаях Blade позволяет зарегистрировать пользовательский обработчик вывода для данного типа объектов. Для этого необходимо вызвать метод Blade `stringable`. Метод `stringable` принимает функцию, которая в аргументе принимает тип объекта, за рендеринг которого она отвечает. Обычно метод `stringable` следует вызывать в методе `boot` класса `AppServiceProvider` вашего приложения:
 
-    use Illuminate\Support\Facades\Blade;
-    use Money\Money;
+```php
+use Illuminate\Support\Facades\Blade;
+use Money\Money;
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        Blade::stringable(function (Money $money) {
-            return $money->formatTo('en_GB');
-        });
-    }
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Blade::stringable(function (Money $money) {
+        return $money->formatTo('en_GB');
+    });
+}
+```
 
 Теперь вы можете просто "вывести" экземпляр класса Money в шаблоне:
 
@@ -1856,17 +1910,19 @@ Blade позволяет вам определять ваши собственн
 
 Программирование пользовательской директивы иногда бывает более сложным, чем необходимо при определении простых пользовательских условных операторов. По этой причине Blade содержит метод `Blade::if`, который позволяет быстро определять пользовательские условные директивы с помощью замыканий. Например, давайте определим условие, которое проверяет настроенный по умолчанию «диск» приложения. Мы можем сделать это в методе `boot` нашего `AppServiceProvider`:
 
-    use Illuminate\Support\Facades\Blade;
+```php
+use Illuminate\Support\Facades\Blade;
 
-    /**
-     * Загрузка любых служб приложения.
-     */
-    public function boot(): void
-    {
-        Blade::if('disk', function (string $value) {
-            return config('filesystems.default') === $value;
-        });
-    }
+/**
+ * Загрузка любых служб приложения.
+ */
+public function boot(): void
+{
+    Blade::if('disk', function (string $value) {
+        return config('filesystems.default') === $value;
+    });
+}
+```
 
 После того как пользовательское условие было определено, вы можете использовать его в своих шаблонах:
 
