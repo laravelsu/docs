@@ -1,5 +1,5 @@
 ---
-git: 67abb8787da00c7294fadda4fcf53fd49f571def
+git: de0cc80cd74216e1c7a5ac5d5681165357f865a6
 ---
 
 # Хеширование
@@ -14,11 +14,11 @@ Bcrypt – отличный выбор для хеширования парол�
 <a name="configuration"></a>
 ## Конфигурирование
 
-По умолчанию Laravel использует драйвер `bcrypt` при хешировании данных. Однако поддерживаются несколько других драйверов хеширования, в том числе [`argon`](https://en.wikipedia.org/wiki/Argon2) и [`argon2id`](https://en.wikipedia.org/wiki/Argon2).
+По умолчанию Laravel использует драйвер `bcrypt` при хешировании данных. Однако поддерживаются несколько других драйверов хеширования, в том числе [argon](https://en.wikipedia.org/wiki/Argon2) и [argon2id](https://en.wikipedia.org/wiki/Argon2).
 
 Вы можете указать драйвер хеширования вашего приложения, используя переменную среды `HASH_DRIVER`. Но если вы хотите настроить все параметры драйвера хеширования Laravel, вам следует опубликовать полный файл конфигурации хеширования с помощью Artisan-команды `config:publish`:
 
-```bash
+```shell
 php artisan config:publish hashing
 ```
 
@@ -30,50 +30,56 @@ php artisan config:publish hashing
 
 Вы можете хешировать пароль, вызвав метод `make` фасада `Hash`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
-    class PasswordController extends Controller
+class PasswordController extends Controller
+{
+    /**
+     * Обновить пароль пользователя.
+     */
+    public function update(Request $request): RedirectResponse
     {
-        /**
-         * Обновить пароль пользователя.
-         */
-        public function update(Request $request): RedirectResponse
-        {
-            // Проверить длину нового пароля...
+        // Проверить длину нового пароля...
 
-            $request->user()->fill([
-                'password' => Hash::make($request->newPassword)
-            ])->save();
+        $request->user()->fill([
+            'password' => Hash::make($request->newPassword)
+        ])->save();
 
-            return redirect('/profile');
-        }
+        return redirect('/profile');
     }
+}
+```
 
 <a name="adjusting-the-bcrypt-work-factor"></a>
 #### Регулировка коэффициента работы Bcrypt
 
 Если вы используете алгоритм Bcrypt, метод `make` позволяет вам управлять коэффициентом работы алгоритма с помощью параметра `rounds`; однако значение по умолчанию приемлемо для большинства приложений:
 
-    $hashed = Hash::make('password', [
-        'rounds' => 12,
-    ]);
+```php
+$hashed = Hash::make('password', [
+    'rounds' => 12,
+]);
+```
 
 <a name="adjusting-the-argon2-work-factor"></a>
 #### Регулировка коэффициента работы Argon2
 
 Если вы используете алгоритм Argon2, метод `make` позволяет вам управлять коэффициентом работы алгоритма с помощью параметров `memory`, `time` и `threads`; однако значения по умолчанию приемлемы для большинства приложений:
 
-    $hashed = Hash::make('password', [
-        'memory' => 1024,
-        'time' => 2,
-        'threads' => 2,
-    ]);
+```php
+$hashed = Hash::make('password', [
+    'memory' => 1024,
+    'time' => 2,
+    'threads' => 2,
+]);
+```
 
 > [!NOTE]
 > Дополнительную информацию об этих параметрах можно найти в [официальной документации PHP](https://www.php.net/manual/ru/function.password-hash.php).
@@ -83,18 +89,22 @@ php artisan config:publish hashing
 
 Метод `check` фасада `Hash` позволяет проверить, что указанная текстовая строка соответствует заданному хешу:
 
-    if (Hash::check('plain-text', $hashedPassword)) {
-        // Пароли совпадают...
-    }
+```php
+if (Hash::check('plain-text', $hashedPassword)) {
+    // Пароли совпадают...
+}
+```
 
 <a name="determining-if-a-password-needs-to-be-rehashed"></a>
 ### Определение необходимости повторного хеширования пароля
 
 Метод `needsRehash` фасада `Hash` позволяет определить, изменился ли коэффициентом работы, используемый хешером, с момента хеширования пароля. Некоторые приложения предпочитают выполнять эту проверку во время процесса аутентификации приложения:
 
-    if (Hash::needsRehash($hashed)) {
-        $hashed = Hash::make('plain-text');
-    }
+```php
+if (Hash::needsRehash($hashed)) {
+    $hashed = Hash::make('plain-text');
+}
+```
 
 <a name="hash-algorithm-verification"></a>
 ## Проверка алгоритма хеширования
