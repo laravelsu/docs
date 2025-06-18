@@ -1,5 +1,5 @@
 ---
-git: 4f4c78e4a04ac1c09c8092016ff2434c9c0532a0
+git: 902aaf97857b1c02499fe0dda7114ce036eb5db8
 ---
 
 # Процессы
@@ -7,7 +7,7 @@ git: 4f4c78e4a04ac1c09c8092016ff2434c9c0532a0
 <a name="introduction"></a>
 ## Введение
 
-Laravel предоставляет выразительное, минималистичное API вокруг [компонента Symfony Process](https://symfony.ru/doc/7.0/components/process.html), что позволяет вам удобно вызывать внешние процессы из вашего приложения Laravel. Возможности работы с процессами в Laravel сосредоточены на наиболее распространенных сценариях использования, обеспечивая отличный опыт разработчика.
+Laravel предоставляет выразительное, минималистичное API вокруг [компонента Symfony Process](https://symfony.ru/doc/current/components/process.html), что позволяет вам удобно вызывать внешние процессы из вашего приложения Laravel. Возможности работы с процессами в Laravel сосредоточены на наиболее распространенных сценариях использования, обеспечивая отличный опыт разработчика.
 
 <a name="invoking-processes"></a>
 ## Вызов процессов
@@ -96,16 +96,16 @@ $result = Process::timeout(60)->idleTimeout(30)->run('bash import.sh');
 
 ```php
 $result = Process::forever()
-            ->env(['IMPORT_PATH' => __DIR__])
-            ->run('bash import.sh');
+    ->env(['IMPORT_PATH' => __DIR__])
+    ->run('bash import.sh');
 ```
 
 Если вы хотите удалить унаследованную переменную среды из вызванного процесса, вы можете предоставить этой переменной среды значение `false`:
 
 ```php
 $result = Process::forever()
-            ->env(['LOAD_PATH' => false])
-            ->run('bash import.sh');
+    ->env(['LOAD_PATH' => false])
+    ->run('bash import.sh');
 ```
 
 <a name="tty-mode"></a>
@@ -284,6 +284,23 @@ $process = Process::start('bash import.sh');
 $process->waitUntil(function (string $type, string $output) {
     return $output === 'Ready...';
 });
+```
+
+<a name="asynchronous-process-timeouts"></a>
+### Таймауты асинхронных процессов
+
+Во время выполнения асинхронного процесса вы можете проверить, что время ожидания процесса не истекло, используя метод `ensureNotTimedOut`. Этот метод вызовет [timeout exception](#timeouts), если время ожидания процесса истекло:
+
+```php
+$process = Process::timeout(120)->start('bash import.sh');
+
+while ($process->running()) {
+    $process->ensureNotTimedOut();
+
+    // ...
+
+    sleep(1);
+}
 ```
 
 <a name="concurrent-processes"></a>
@@ -489,8 +506,8 @@ Process::fake([
 ```php
 Process::fake([
     'ls *' => Process::sequence()
-                ->push(Process::result('First invocation'))
-                ->push(Process::result('Second invocation')),
+        ->push(Process::result('First invocation'))
+        ->push(Process::result('Second invocation')),
 ]);
 ```
 
@@ -522,11 +539,11 @@ To properly fake this process, we need to be able to describe how many times the
 ```php
 Process::fake([
     'bash import.sh' => Process::describe()
-            ->output('First line of standard output')
-            ->errorOutput('First line of error output')
-            ->output('Second line of standard output')
-            ->exitCode(0)
-            ->iterations(3),
+        ->output('First line of standard output')
+        ->errorOutput('First line of error output')
+        ->output('Second line of standard output')
+        ->exitCode(0)
+        ->iterations(3),
 ]);
 ```
 
@@ -603,16 +620,18 @@ Process::assertRanTimes(function (PendingProcess $process, ProcessResult $result
 
 Если вы хотите убедиться, что все вызванные процессы были подделаны в пределах отдельного теста или набора тестов, вы можете вызвать метод `preventStrayProcesses`. После вызова этого метода любые процессы, для которых нет соответствующего поддельного результата, вызовут исключение, а не фактический процесс:
 
-    use Illuminate\Support\Facades\Process;
+```php
+use Illuminate\Support\Facades\Process;
 
-    Process::preventStrayProcesses();
+Process::preventStrayProcesses();
 
-    Process::fake([
-        'ls *' => 'Test output...',
-    ]);
+Process::fake([
+'ls *' => 'Test output...',
+]);
 
-    // Fake response is returned...
-    Process::run('ls -la');
+// Fake response is returned...
+Process::run('ls -la');
 
-    // An exception is thrown...
-    Process::run('bash import.sh');
+// An exception is thrown...
+Process::run('bash import.sh');
+```
