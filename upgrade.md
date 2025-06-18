@@ -1,5 +1,5 @@
 ---
-git: d8ade08a9ca88019281a5d2e0a3c3c688b0e1d48
+git: 10ca661ad531827702383dac4a4fa77e5975d7dd
 ---
 
 # Руководство по обновлению
@@ -171,21 +171,21 @@ $example->date === null;
 ```php
 $tables = Schema::getTables(); // Все таблицы во всех схемах
 
-$table = Schema::getTables(schema: 'main'); // Только схема 'main'
+$tables = Schema::getTables(schema: 'main'); // Только схема 'main'
 
-$table = Schema::getTables(schema: ['main', 'blog']); // Несколько схем
+$tables = Schema::getTables(schema: ['main', 'blog']); // Несколько схем
 ```
 
 Метод `Schema::getTableListing()` теперь возвращает имена таблиц с префиксом схемы:
 
 ```php
-Schema::getTableListing();
+$tables = Schema::getTableListing();
 // ['main.migrations', 'main.users', 'blog.posts']
 
-Schema::getTableListing(schema: 'main');
+$tables = Schema::getTableListing(schema: 'main');
 // ['main.migrations', 'main.users']
 
-Schema::getTableListing(schema: 'main', schemaQualified: false);
+$tables = Schema::getTableListing(schema: 'main', schemaQualified: false);
 // ['migrations', 'users']
 ```
 
