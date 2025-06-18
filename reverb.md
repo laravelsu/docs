@@ -1,5 +1,5 @@
 ---
-git: 81ea18410c5aa2a7c276c3c44e35306c1248b244
+git: 96617d0be0510d33cfa46db034b73a2273b22a97
 ---
 
 # Laravel Reverb
@@ -14,7 +14,7 @@ git: 81ea18410c5aa2a7c276c3c44e35306c1248b244
 
 Вы можете установить Reverb с помощью Artisan-команды `install:broadcasting`:
 
-```
+```shell
 php artisan install:broadcasting
 ```
 
@@ -76,7 +76,7 @@ REVERB_APP_SECRET=my-app-secret
 
 Однако иногда может быть полезно, например, во время локальной разработки, чтобы сервер Reverb напрямую обрабатывал безопасные соединения. Если вы используете функцию безопасного сайта [Laravel Herd](https://herd.laravel.com) или используете [Laravel Valet](/docs/{{version}}/valet) и запустили [безопасную команду](/docs/{{version}}/valet#securing-sites) для вашего приложения, вы можете использовать сертификат Herd/Valet, созданный для вашего сайта, для защиты ваших соединений Reverb. Для этого установите переменную среды `REVERB_HOST` на имя хоста вашего сайта или явно передайте параметр имени хоста при запуске сервера Reverb:
 
-```sh
+```shell
 php artisan reverb:start --host="0.0.0.0" --port=8080 --hostname="laravel.test"
 ```
 
@@ -97,7 +97,7 @@ php artisan reverb:start --host="0.0.0.0" --port=8080 --hostname="laravel.test"
 
 Сервер Reverb можно запустить с помощью Artisan-команды `reverb:start`:
 
-```sh
+```shell
 php artisan reverb:start
 ```
 
@@ -105,7 +105,7 @@ php artisan reverb:start
 
 Если вам нужно указать собственный хост или порт, вы можете сделать это с помощью опций `--host` и `--port` при запуске сервера:
 
-```sh
+```shell
 php artisan reverb:start --host=127.0.0.1 --port=9000
 ```
 
@@ -126,7 +126,7 @@ REVERB_PORT=443
 
 Для повышения производительности Reverb по умолчанию не выводит отладочную информацию. Если вы хотите видеть поток данных, проходящий через ваш сервер Reverb, вы можете указать опцию `--debug` для команды `reverb:start`:
 
-```sh
+```shell
 php artisan reverb:start --debug
 ```
 
@@ -137,7 +137,7 @@ php artisan reverb:start --debug
 
 Команда `reverb:restart` гарантирует корректное завершение всех соединений перед остановкой сервера. Если вы используете Reverb с менеджером процессов, например Supervisor, сервер будет автоматически перезапущен менеджером процессов после завершения всех соединений:
 
-```sh
+```shell
 php artisan reverb:restart
 ```
 
@@ -161,7 +161,7 @@ use Laravel\Reverb\Pulse\Recorders\ReverbMessages;
         'sample_rate' => 1,
     ],
 
-    ...
+    // ...
 ],
 ```
 
@@ -195,7 +195,7 @@ use Laravel\Reverb\Pulse\Recorders\ReverbMessages;
 
 В операционной системе на базе Unix вы можете определить разрешенное количество открытых файлов с помощью команды `ulimit`:
 
-```sh
+```shell
 ulimit -n
 ```
 
@@ -214,7 +214,7 @@ forge        hard  nofile  10000
 
 Reverb автоматически переключится на активный цикл `ext-uv`, если она доступна. Это расширение PHP доступно для установки через PECL:
 
-```sh
+```shell
 pecl install uv
 ```
 
@@ -269,7 +269,7 @@ events {
 
 Операционные системы на базе Unix обычно ограничивают количество портов, которые можно открыть на сервере. Вы можете увидеть текущий разрешенный диапазон с помощью следующей команды:
 
- ```sh
+ ```shell
 cat /proc/sys/net/ipv4/ip_local_port_range
 # 32768	60999
 ```
