@@ -1,5 +1,5 @@
 ---
-git: d636b0efcb462b894e8f18dd73f1b72f37a74881
+git: 6fe1c617a9b22f441d604787cdaaee783478c4d4
 ---
 
 # Авторизация
@@ -280,17 +280,37 @@ php artisan make:policy PostPolicy --model=Post
 
 Используя фасад `Gate`, вы можете вручную регистрировать политики и соответствующие им модели в методе `boot` `AppServiceProvider` вашего приложения:
 
-    use App\Models\Order;
-    use App\Policies\OrderPolicy;
-    use Illuminate\Support\Facades\Gate;
+```php
+use App\Models\Order;
+use App\Policies\OrderPolicy;
+use Illuminate\Support\Facades\Gate;
 
-    /**
-     * Загрузка любых сервисов приложения.
-     */
-    public function boot(): void
-    {
-        Gate::policy(Order::class, OrderPolicy::class);
-    }
+/**
+ * Загрузка любых сервисов приложения.
+ */
+public function boot(): void
+{
+    Gate::policy(Order::class, OrderPolicy::class);
+}
+```
+
+В качестве альтернативы вы можете поместить атрибут `UsePolicy` в класс модели, чтобы сообщить Laravel о соответствующей политике модели:
+
+```php
+<?php
+
+namespace App\Models;
+
+use App\Policies\OrderPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Model;
+
+#[UsePolicy(OrderPolicy::class)]
+class Order extends Model
+{
+    //
+}
+```
 
 <a name="writing-policies"></a>
 ## Написание политик
