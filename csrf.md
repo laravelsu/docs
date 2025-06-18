@@ -1,5 +1,5 @@
 ---
-git: ce7e2f4cbd61092f04d543a2c180f54cb94d0229
+git: 4223ed3fb9af969df6803cc81a21d5e803236ae0
 ---
 
 # Предотвращение атак CSRF
@@ -37,15 +37,17 @@ Laravel автоматически генерирует «токен» CSRF дл
 
 К CSRF-токену текущей сессии можно получить доступ через сессию запроса или с помощью глобального помощника `csrf_token`:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/token', function (Request $request) {
-        $token = $request->session()->token();
+Route::get('/token', function (Request $request) {
+    $token = $request->session()->token();
 
-        $token = csrf_token();
+    $token = csrf_token();
 
-        // ...
-    });
+    // ...
+});
+```
 
 Каждый раз, когда вы создаете HTML-форму «POST», «PUT», «PATCH» или «DELETE» в своем приложении, вы должны включать в форму скрытое поле `_token` CSRF, чтобы посредник CSRF мог проверить запрос. Для удобства вы можете использовать директиву Blade `@csrf` для создания скрытого поля ввода, содержащего токен:
 
@@ -72,13 +74,15 @@ Laravel автоматически генерирует «токен» CSRF дл
 
 Как правило, вы должны размещать эти виды маршрутов вне группы посредников `web`, которую Laravel применяет ко всем маршрутам в файле `routes/web.php`. Однако вы также можете исключить определенные маршруты, указав их URI методу `validateCsrfTokens` в файле `bootstrap/app.php` вашего приложения:
 
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->validateCsrfTokens(except: [
-            'stripe/*',
-            'http://example.com/foo/bar',
-            'http://example.com/foo/*',
-        ]);
-    })
+```php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->validateCsrfTokens(except: [
+        'stripe/*',
+        'http://example.com/foo/bar',
+        'http://example.com/foo/*',
+    ]);
+})
+```
 
 > [!NOTE]
 > Для удобства посредник CSRF автоматически отключается для всех маршрутов при [выполнении тестов](/docs/{{version}}/testing).
