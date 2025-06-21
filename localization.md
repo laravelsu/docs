@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: a89581b628e5fce26aa0085771e4877c3a650a71
 ---
 
 # Локализация интерфейса
@@ -14,17 +14,21 @@ git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
 
 Laravel предлагает два способа управления строками перевода. Во-первых, языковые строки могут храниться в файлах в каталоге `lang`. В этом каталоге могут быть подкаталоги для каждого языка, поддерживаемого приложением. Это подход, который Laravel использует для управления строками перевода собственного функционала, например сообщений об ошибках валидации:
 
-    /lang
-        /en
-            messages.php
-        /es
-            messages.php
+```text
+/lang
+    /en
+        messages.php
+    /es
+        messages.php
+```
 
 Или строки перевода могут быть определены в файлах JSON, которые помещаются в каталог `lang`. При таком подходе каждый язык, поддерживаемый вашим приложением, будет иметь соответствующий файл JSON в этом каталоге. Этот подход рекомендуется для приложений с большим количеством переводимых строк:
 
-    /lang
-        en.json
-        es.json
+```text
+/lang
+    en.json
+    es.json
+```
 
 Мы обсудим каждый подход по управлению строками перевода в этой документации.
 
@@ -46,47 +50,53 @@ php artisan lang:publish
 
 Вы можете изменить язык по умолчанию для одного HTTP-запроса во время выполнения, используя метод `setLocale` фасада `App`:
 
-    use Illuminate\Support\Facades\App;
+```php
+use Illuminate\Support\Facades\App;
 
-    Route::get('/greeting/{locale}', function (string $locale) {
-        if (! in_array($locale, ['en', 'es', 'fr'])) {
-            abort(400);
-        }
+Route::get('/greeting/{locale}', function (string $locale) {
+    if (! in_array($locale, ['en', 'es', 'fr'])) {
+        abort(400);
+    }
 
-        App::setLocale($locale);
+    App::setLocale($locale);
 
-        // ...
-    });
+    // ...
+});
+```
 
 <a name="determining-the-current-locale"></a>
 #### Определение текущего языка
 
 Вы можете использовать методы `currentLocale` и `isLocale` фасада `App`, чтобы определить текущий язык или проверить соответствие указанного языка:
 
-    use Illuminate\Support\Facades\App;
+```php
+use Illuminate\Support\Facades\App;
 
-    $locale = App::currentLocale();
+$locale = App::currentLocale();
 
-    if (App::isLocale('en')) {
-        // ...
-    }
+if (App::isLocale('en')) {
+    // ...
+}
+```
 
 <a name="pluralization-language"></a>
 ### Язык плюрализатора
 
 Вы можете настроить "множественное число" Laravel, которое используется Eloquent и другими частями фреймворка для преобразования единственных строк во множественные строки, чтобы использовать язык отличный от английского. Это можно сделать, вызвав метод `useLanguage` внутри метода `boot` одного из провайдеров служб вашего приложения. В настоящее время поддерживаемые языки множественного числа: `french`, `norwegian-bokmal`, `portuguese`, `spanish` и `turkish`:
 
-    use Illuminate\Support\Pluralizer;
+```php
+use Illuminate\Support\Pluralizer;
 
-    /**
-     * Загрузка сервисов приложения.
-     */
-    public function boot(): void
-    {
-        Pluralizer::useLanguage('spanish');
+/**
+ * Загрузка сервисов приложения.
+ */
+public function boot(): void
+{
+    Pluralizer::useLanguage('spanish');
 
-        // ...
-    }
+    // ...
+}
+```
 
 > [!WARNING]
 > Если вы настраиваете язык множественного числа, вы должны явно определить [имена таблиц](/docs/{{version}}/eloquent#table-names) ваших моделей Eloquent.
@@ -99,21 +109,25 @@ php artisan lang:publish
 
 Обычно строки перевода хранятся в файлах в каталоге `lang`. В этом каталоге должен быть подкаталог для каждого языка, поддерживаемого вашим приложением. Это подход, который Laravel использует для управления строками перевода собственного функционала, например сообщений об ошибках валидации:
 
-    /lang
-        /en
-            messages.php
-        /es
-            messages.php
+```text
+/lang
+    /en
+        messages.php
+    /es
+        messages.php
+```
 
 Все языковые файлы возвращают массив строк с ключами. Например:
 
-    <?php
+```php
+<?php
 
-    // lang/en/messages.php
+// lang/en/messages.php
 
-    return [
-        'welcome' => 'Welcome to our application!',
-    ];
+return [
+    'welcome' => 'Welcome to our application!',
+];
+```
 
 > [!WARNING]
 > Для языков, отличающихся территориально, вы должны назвать языковые каталоги в соответствии со стандартом ISO 15897. Например, для британского английского следует использовать «en_GB», а не «en-gb».
@@ -140,35 +154,47 @@ php artisan lang:publish
 
 Вы можете получить строки перевода из ваших языковых файлов с помощью глобального помощника `__`. Если вы используете «короткие ключи» для определения ваших строк перевода, то вы должны передать файл, содержащий ключ, и сам ключ в функцию `__`, используя «точечную нотацию». Например, давайте извлечем строку перевода `welcome` из языкового файла `lang/en/messages.php`:
 
-    echo __('messages.welcome');
+```php
+echo __('messages.welcome');
+```
 
 Если указанная строка перевода не существует, то функция `__` вернет ключ строки перевода. Итак, используя приведенный выше пример, функция `__` вернет `messages.welcome`, если строка перевода не существует.
 
 Если вы используете свои [строки перевода в качестве ключей перевода](#using-translation-strings-as-keys), то вы должны передать перевод вашей строки по умолчанию в функцию `__`:
 
-    echo __('I love programming.');
+```php
+echo __('I love programming.');
+```
 
 Опять же, если строка перевода не существует, то функция `__` вернет ключ строки перевода, который ей был передан.
 
 Если вы используете [шаблонизатор Blade](/docs/{{version}}/blade), то вы можете использовать синтаксис `{{}}` для вывода строки перевода:
 
-    {{ __('messages.welcome') }}
+```blade
+{{ __('messages.welcome') }}
+```
 
 <a name="replacing-parameters-in-translation-strings"></a>
 ### Замена параметров в строках перевода
 
 При желании вы можете определить метку-заполнитель в строках перевода. Все заполнители имеют префикс `:`. Например, вы можете определить приветственное сообщение с именем-заполнителем:
 
-    'welcome' => 'Welcome, :name',
+```php
+'welcome' => 'Welcome, :name',
+```
 
 Чтобы заменить заполнители при получении строки перевода, вы можете передать массив для замены в качестве второго аргумента функции `__`:
 
-    echo __('messages.welcome', ['name' => 'dayle']);
+```php
+echo __('messages.welcome', ['name' => 'dayle']);
+```
 
 Если все буквы заполнителя заглавные или заполнитель имеет только первую заглавную букву, то переведенное значение будет с соответствующим регистром:
 
-    'welcome' => 'Welcome, :NAME', // Welcome, DAYLE
-    'goodbye' => 'Goodbye, :Name', // Goodbye, Dayle
+```php
+'welcome' => 'Welcome, :NAME', // Welcome, DAYLE
+'goodbye' => 'Goodbye, :Name', // Goodbye, Dayle
+```
 
 <a name="object-replacement-formatting"></a>
 #### Форматирование объектов при подстановке
@@ -177,25 +203,29 @@ php artisan lang:publish
 
 В таких ситуациях Laravel предоставляет возможность зарегистрировать пользовательский обработчик форматирования для конкретного типа объекта. Для этого используется метод `stringable` фасада `Lang`. Метод `stringable` принимает замыкание, которое должно указать тип объекта, для которого выполняется форматирование. Обычно вызов метода `stringable` выполняется в методе `boot` класса `AppServiceProvider` вашего приложения:
 
-    use Illuminate\Support\Facades\Lang;
-    use Money\Money;
+```php
+use Illuminate\Support\Facades\Lang;
+use Money\Money;
 
-    /**
-     * Настройка служб приложения.
-     */
-    public function boot(): void
-    {
-        Lang::stringable(function (Money $money) {
-            return $money->formatTo('en_GB');
-        });
-    }
+/**
+ * Настройка служб приложения.
+ */
+public function boot(): void
+{
+    Lang::stringable(function (Money $money) {
+        return $money->formatTo('en_GB');
+    });
+}
+```
 
 <a name="pluralization"></a>
 ### Плюрализация
 
 Плюрализация – сложная задача, поскольку разные языки имеют множество сложных правил плюрализации; однако Laravel может помочь вам переводить строки по-разному в зависимости от правил множественного числа, которые вы определяете. Используя мета-символ `|`, вы можете различать формы единственного и множественного числа строки:
 
-    'apples' => 'There is one apple|There are many apples',
+```php
+'apples' => 'There is one apple|There are many apples',
+```
 
 Конечно, множественное число также поддерживается при использовании [строк перевода в качестве ключей](#using-translation-strings-as-keys):
 
@@ -207,21 +237,29 @@ php artisan lang:publish
 
 Вы даже можете создать более сложные правила множественного числа, которые определяют строки перевода для нескольких диапазонов значений:
 
-    'apples' => '{0} There are none|[1,19] There are some|[20,*] There are many',
+```php
+'apples' => '{0} There are none|[1,19] There are some|[20,*] There are many',
+```
 
 После определения строки перевода, которая имеет параметры множественного числа, вы можете использовать функцию `trans_choice` для извлечения строки соответствующую указанному «количеству». В этом примере, поскольку количество больше единицы, возвращается форма множественного числа строки перевода:
 
-    echo trans_choice('messages.apples', 10);
+```php
+echo trans_choice('messages.apples', 10);
+```
 
 Вы также можете определить метку-заполнитель в строках множественного числа. Эти заполнители могут быть заменены передачей массива в качестве третьего аргумента функции `trans_choice`:
 
-    'minutes_ago' => '{1} :value minute ago|[2,*] :value minutes ago',
+```php
+'minutes_ago' => '{1} :value minute ago|[2,*] :value minutes ago',
 
-    echo trans_choice('time.minutes_ago', 5, ['value' => 5]);
+echo trans_choice('time.minutes_ago', 5, ['value' => 5]);
+```
 
 Если вы хотите отобразить целочисленное значение, переданное в функцию `trans_choice`, то вы можете использовать встроенный заполнитель `:count`:
 
-    'apples' => '{0} There are none|{1} There is one|[2,*] There are :count',
+```php
+'apples' => '{0} There are none|{1} There is one|[2,*] There are :count',
+```
 
 <a name="overriding-package-language-files"></a>
 ## Переопределение языковых файлов пакета
