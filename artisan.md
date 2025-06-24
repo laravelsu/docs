@@ -1,5 +1,5 @@
 ---
-git: b9fa924860cb30ba5be04d6dddb62f4b6ce17d19
+git: e38f8449286561ea7e582f8a82fd6879c13b8d91
 ---
 
 # Консоль Artisan
@@ -31,7 +31,7 @@ php artisan help migrate
 <a name="tinker"></a>
 ### Tinker (REPL)
 
-Laravel Tinker – это мощный REPL для фреймворка Laravel, основанный на пакете [PsySH](https://github.com/bobthecow/psysh).
+[Laravel Tinker](https://github.com/laravel/tinker) — это мощный REPL для фреймворка Laravel, работающий на основе пакета [PsySH](https://github.com/bobthecow/psysh).
 
 <a name="installation"></a>
 #### Установка
@@ -68,23 +68,27 @@ php artisan vendor:publish --provider="Laravel\Tinker\TinkerServiceProvider"
 
 Tinker использует список «разрешенных» команд, которые разрешено запускать Artisan в её среде. По умолчанию вы можете запускать команды `clear-compiled`, `down`, `env`, `inspire`, `migrate`, `migrate:install`, `up` и `optimize`. Для добавления в этот список больше команд, добавьте их в массив `commands` конфигурационного файла `config/tinker.php`:
 
-    'commands' => [
-        // App\Console\Commands\ExampleCommand::class,
-    ],
+```php
+'commands' => [
+    // App\Console\Commands\ExampleCommand::class,
+],
+```
 
 <a name="classes-that-should-not-be-aliased"></a>
 #### Черный список псевдонимов
 
 Как правило, Tinker автоматически создает псевдонимы классов, когда вы взаимодействуете с ними в Tinker. Тем не менее вы можете запретить такое поведение для некоторых классов, перечислив их в массиве `dont_alias` конфигурационного файла `config/tinker.php`:
 
-    'dont_alias' => [
-        App\Models\User::class,
-    ],
+```php
+'dont_alias' => [
+    App\Models\User::class,
+],
+```
 
 <a name="writing-commands"></a>
 ## Написание команд
 
-В дополнение к командам Artisan, вы можете создавать пользовательские команды. Команды обычно хранятся в каталоге `app/Console/Commands`; однако вы можете выбрать другое месторасположение, если эти команды могут быть загружены менеджером Composer.
+В дополнение к командам Artisan, вы можете создавать пользовательские команды. Команды обычно хранятся в каталоге `app/Console/Commands`; однако вы можете выбрать другое месторасположение, если вы дадите команду [сканировать другие каталоги на наличие команд Artisan](#registering-commands).
 
 <a name="generating-commands"></a>
 ### Генерация команд
@@ -102,38 +106,40 @@ php artisan make:command SendEmails
 
 Давайте рассмотрим пример команды. Обратите внимание, что мы можем запросить любые необходимые зависимости в методе `handle` команды. [Контейнер служб](/docs/{{version}}/container) Laravel автоматически внедрит все зависимости, типы которых объявлены в этом методе:
 
-    <?php
+```php
+<?php
 
-    namespace App\Console\Commands;
+namespace App\Console\Commands;
 
-    use App\Models\User;
-    use App\Support\DripEmailer;
-    use Illuminate\Console\Command;
+use App\Models\User;
+use App\Support\DripEmailer;
+use Illuminate\Console\Command;
 
-    class SendEmails extends Command
+class SendEmails extends Command
+{
+    /**
+     * Имя и сигнатура консольной команды.
+     *
+     * @var string
+     */
+    protected $signature = 'mail:send {user}';
+
+    /**
+     * Описание консольной команды.
+     *
+     * @var string
+     */
+    protected $description = 'Отправка маркетингового электронного письма пользователю';
+
+    /**
+     * Выполнить консольную команду.
+     */
+    public function handle(DripEmailer $drip): void
     {
-        /**
-         * Имя и сигнатура консольной команды.
-         *
-         * @var string
-         */
-        protected $signature = 'mail:send {user}';
-
-        /**
-         * Описание консольной команды.
-         *
-         * @var string
-         */
-        protected $description = 'Отправка маркетингового электронного письма пользователю';
-
-        /**
-         * Выполнить консольную команду.
-         */
-        public function handle(DripEmailer $drip): void
-        {
-            $drip->send(User::find($this->argument('user')));
-        }
+        $drip->send(User::find($this->argument('user')));
     }
+}
+```
 
 > [!NOTE]
 > Хорошей практикой повторного использования кода считается создание «простых» консольных команд с делегированием своих задач службам приложения. В приведенном примере мы внедряем класс службы для выполнения «затратной» отправки электронных писем.
@@ -143,13 +149,17 @@ php artisan make:command SendEmails
 
 Если из метода `handle` ничего не возвращается и команда выполняется успешно, команда завершится с кодом завершения `0`, что указывает на успех. Однако метод `handle` может дополнительно возвращать целое число, чтобы вручную указать код завершения команды:
 
-    $this->error('Что-то пошло не так.');
+```php
+$this->error('Что-то пошло не так.');
 
-    return 1;
+return 1;
+```
 
 Если вы хотите «не выполнить» команду любым методом внутри команды, вы можете использовать метод `fail`. Метод `fail` немедленно прекратит выполнение команды и вернет код завершения `1`:
 
-    $this->fail('Что-то пошло не так.');
+```php
+$this->fail('Что-то пошло не так.');
+```
 
 <a name="closure-commands"></a>
 ### Анонимные команды
@@ -158,9 +168,11 @@ php artisan make:command SendEmails
 
 Несмотря на то, что файл `routes/console.php` не определяет HTTP-маршруты, он определяет консольные точки входа (маршруты) в ваше приложение. В этом файле вы можете определить все консольные команды на основе замыканий, используя метод `Artisan::command`. Метод `command` принимает два аргумента: [сигнатура команды](#defining-input-expectations) и замыкание, которое получает аргументы и параметры команды:
 
-    Artisan::command('mail:send {user}', function (string $user) {
-        $this->info("Отправка электронной почты на: {$user}!");
-    });
+```php
+Artisan::command('mail:send {user}', function (string $user) {
+    $this->info("Отправка электронной почты на: {$user}!");
+});
+```
 
 Замыкание привязано к базовому экземпляру команды, поэтому у вас есть полный доступ ко всем вспомогательным методам, к которым вы обычно можете обращаться в команде, созданной с помощью класса.
 
@@ -169,21 +181,25 @@ php artisan make:command SendEmails
 
 Помимо получения аргументов и параметров, замыкание анонимной команды также принимает дополнительные зависимости из [контейнера служб](/docs/{{version}}/container), необходимые для внедрения:
 
-    use App\Models\User;
-    use App\Support\DripEmailer;
+```php
+use App\Models\User;
+use App\Support\DripEmailer;
 
-    Artisan::command('mail:send {user}', function (DripEmailer $drip, string $user) {
-        $drip->send(User::find($user));
-    });
+Artisan::command('mail:send {user}', function (DripEmailer $drip, string $user) {
+    $drip->send(User::find($user));
+});
+```
 
 <a name="closure-command-descriptions"></a>
 #### Описания анонимных команд
 
 При определении анонимных команд, можно использовать метод `purpose` для добавления описания команды. Это описание будет отображаться при запуске команд `php artisan list` и `php artisan help`:
 
-    Artisan::command('mail:send {user}', function (string $user) {
-        // ...
-    })->purpose('Отправка маркетингового электронного письма пользователю');
+```php
+Artisan::command('mail:send {user}', function (string $user) {
+    // ...
+})->purpose('Отправка маркетингового электронного письма пользователю');
+```
 
 <a name="isolatable-commands"></a>
 ### Изолированные команды
@@ -193,19 +209,21 @@ php artisan make:command SendEmails
 
 Иногда вам может потребоваться, чтобы одновременно мог выполняться только один экземпляр команды. Для этого вы можете реализовать интерфейс `Illuminate\Contracts\Console\Isolatable` в вашем классе команды:
 
-    <?php
+```php
+<?php
 
-    namespace App\Console\Commands;
+namespace App\Console\Commands;
 
-    use Illuminate\Console\Command;
-    use Illuminate\Contracts\Console\Isolatable;
+use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\Isolatable;
 
-    class SendEmails extends Command implements Isolatable
-    {
-        // ...
-    }
+class SendEmails extends Command implements Isolatable
+{
+    // ...
+}
+```
 
-Когда команда отмечена как `Isolatable`, Laravel автоматически добавит опцию `--isolated` к команде. Когда команда вызывается с этой опцией, Laravel гарантирует, что никакие другие экземпляры этой команды в данный момент не выполняются. Laravel достигает этого, пытаясь получить блокировку с использованием кэш-драйвера по умолчанию вашего приложения. Если другие экземпляры команды выполняются, команда не будет выполнена; однако команда все равно завершится с кодом успешного завершения:
+Когда вы помечаете команду как `Isolatable`, Laravel автоматически делает параметр `--isolated` доступным для команды без необходимости явно определять его в параметрах команды. Когда команда вызывается с этой опцией, Laravel гарантирует, что никакие другие экземпляры этой команды в данный момент не выполняются. Laravel достигает этого, пытаясь получить блокировку с использованием кэш-драйвера по умолчанию вашего приложения. Если другие экземпляры команды выполняются, команда не будет выполнена; однако команда все равно завершится с кодом успешного завершения:
 
 ```shell
 php artisan mail:send 1 --isolated
@@ -260,32 +278,38 @@ public function isolationLockExpiresAt(): DateTimeInterface|DateInterval
 
 Все предоставленные пользователем аргументы и параметры заключаются в фигурные скобки. В следующем примере команда определяет один обязательный аргумент `user`:
 
-    /**
-     * Имя и сигнатура консольной команды.
-     *
-     * @var string
-     */
-    protected $signature = 'mail:send {user}';
+```php
+/**
+ * Имя и сигнатура консольной команды.
+ *
+ * @var string
+ */
+protected $signature = 'mail:send {user}';
+```
 
 По желанию можно сделать аргументы необязательными или определить значения по умолчанию:
 
-    // Необязательный аргумент ...
-    'mail:send {user?}'
+```php
+// Необязательный аргумент ...
+'mail:send {user?}'
 
-    // Необязательный аргумент с заданным по умолчанию значением ...
-    'mail:send {user=foo}'
+// Необязательный аргумент с заданным по умолчанию значением ...
+'mail:send {user=foo}'
+```
 
 <a name="options"></a>
 ### Параметры
 
 Параметры, как и аргументы, являются разновидностью пользовательского ввода. Параметры должны иметь префикс в виде двух дефисов (`--`), при использовании их в командной строке. Существует два типа параметров: получающие значение, и те, которые его не получают. Параметры, которые не получают значение, служат логическими «переключателями». Давайте рассмотрим пример такого варианта:
 
-    /**
-     * Имя и сигнатура консольной команды.
-     *
-     * @var string
-     */
-    protected $signature = 'mail:send {user} {--queue}';
+```php
+/**
+ * Имя и сигнатура консольной команды.
+ *
+ * @var string
+ */
+protected $signature = 'mail:send {user} {--queue}';
+```
 
 В этом примере при вызове команды Artisan может быть указан переключатель `--queue`. Если переключатель `--queue` передан, то значение этого параметра будет `true`. В противном случае значение будет `false`:
 
@@ -298,12 +322,14 @@ php artisan mail:send 1 --queue
 
 Давайте рассмотрим параметр, ожидающий значение. Если пользователь должен указать значение для параметра, то добавьте суффикс `=` к имени параметра:
 
-    /**
-     * Имя и сигнатура консольной команды.
-     *
-     * @var string
-     */
-    protected $signature = 'mail:send {user} {--queue=}';
+```php
+/**
+ * Имя и сигнатура консольной команды.
+ *
+ * @var string
+ */
+protected $signature = 'mail:send {user} {--queue=}';
+```
 
 В этом примере пользователь может передать значение для параметра. Если параметр не указан при вызове команды, то его значение будет `null`:
 
@@ -313,14 +339,18 @@ php artisan mail:send 1 --queue=default
 
 Параметру можно присвоить значение по умолчанию, указав его после имени. Если значение параметра не передано пользователем, то будет использовано значение по умолчанию:
 
-    'mail:send {user} {--queue=default}'
+```php
+'mail:send {user} {--queue=default}'
+```
 
 <a name="option-shortcuts"></a>
 #### Псевдонимы параметров
 
 Чтобы назначить псевдоним при определении параметра, вы можете указать его перед именем параметра и использовать символ разделителя `|` для отделения псевдонима от полного имени параметра:
 
-    'mail:send {user} {--Q|queue}'
+```php
+'mail:send {user} {--Q|queue}'
+```
 
 При вызове команды в терминале, псевдонимы параметров должны иметь префикс с одним дефисом, и символ `=` не должен использоваться при указании значения параметра:
 
@@ -333,9 +363,11 @@ php artisan mail:send 1 -Qdefault
 
 Чтобы определить, что аргументы или параметры ожидают массив данных, используйте метасимвол `*`. Во-первых, давайте рассмотрим пример, в котором описывается аргумент как массив данных:
 
-    'mail:send {user*}'
+```php
+'mail:send {user*}'
+```
 
-При вызове этого метода аргументы `user` могут передаваться по порядку в командную строку. Например, следующая команда установит значение `user` как `1` и `2`:
+При запуске этой команды аргументы `user` могут передаваться по порядку в командную строку. Например, следующая команда установит значение `user` как `1` и `2`:
 
 ```shell
 php artisan mail:send 1 2
@@ -343,14 +375,18 @@ php artisan mail:send 1 2
 
 Метасимвол `*` можно комбинировать с необязательным определением аргумента, чтобы разрешить ноль или более экземпляров аргумента:
 
-    'mail:send {user?*}'
+```php
+'mail:send {user?*}'
+```
 
 <a name="option-arrays"></a>
 #### Параметр со множеством значений
 
 При определении параметра, ожидающего множество значений, каждое значение передаваемого команде параметра должно иметь префикс с именем параметра:
 
-    'mail:send {--id=*}'
+```php
+'mail:send {--id=*}'
+```
 
 Такую команду можно вызвать, передав несколько аргументов `--id`:
 
@@ -363,97 +399,109 @@ php artisan mail:send --id=1 --id=2
 
 Вы можете назначить описания входным аргументам и параметрам, отделив имя аргумента от описания с помощью двоеточия. Если вам нужно немного больше места для определения вашей команды, то распределите определение на несколько строк:
 
-    /**
-     * Имя и сигнатура консольной команды.
-     *
-     * @var string
-     */
-    protected $signature = 'mail:send
-                            {user : Идентификатор пользователя}
-                            {--queue : Должно ли задание быть поставлено в очередь}';
+```php
+/**
+ * Имя и сигнатура консольной команды.
+ *
+ * @var string
+ */
+protected $signature = 'mail:send
+                        {user : Идентификатор пользователя}
+                        {--queue : Должно ли задание быть поставлено в очередь}';
+```
 
 <a name="prompting-for-missing-input"></a>
 ### Запрос отсутствующего ввода
 
 Если ваша команда содержит обязательные аргументы, пользователь получит сообщение об ошибке, если они не были предоставлены. В качестве альтернативы, вы можете настроить вашу команду так, чтобы автоматически запрашивать пользователя при отсутствии необходимых аргументов, реализовав интерфейс `PromptsForMissingInput`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Console\Commands;
+namespace App\Console\Commands;
 
-    use Illuminate\Console\Command;
-    use Illuminate\Contracts\Console\PromptsForMissingInput;
+use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\PromptsForMissingInput;
 
-    class SendEmails extends Command implements PromptsForMissingInput
-    {
-        /**
-         * Имя и сигнатура консольной команды.
-         *
-         * @var string
-         */
-        protected $signature = 'mail:send {user}';
+class SendEmails extends Command implements PromptsForMissingInput
+{
+    /**
+     * Имя и сигнатура консольной команды.
+     *
+     * @var string
+     */
+    protected $signature = 'mail:send {user}';
 
-        // ...
-    }
+    // ...
+}
+```
 
 Если Laravel должен получить обязательный аргумент от пользователя, он автоматически запросит у пользователя этот аргумент, формулируя вопрос разумно с использованием имени или описания аргумента. Если вы хотите настроить вопрос, используемый для получения обязательного аргумента, реализуйте метод `promptForMissingArgumentsUsing`, возвращающий массив вопросов с ключами соответствующими именам аргументов:
 
-    /**
-     * Подсказка об отсутствующих входных аргументах с помощью возвращаемых вопросов.
-     *
-     * @return array<string, string>
-     */
-    protected function promptForMissingArgumentsUsing(): array
-    {
-        return [
-            'user' => 'Какой идентификатор пользователя должен получать почту?',
-        ];
-    }
+```php
+/**
+ * Подсказка об отсутствующих входных аргументах с помощью возвращаемых вопросов.
+ *
+ * @return array<string, string>
+ */
+protected function promptForMissingArgumentsUsing(): array
+{
+    return [
+        'user' => 'Какой идентификатор пользователя должен получать почту?',
+    ];
+}
+```
 
 Вы также можете указать текст заполнителя, используя кортеж, содержащий вопрос и заполнитель:
 
-    return [
-        'user' => ['Which user ID should receive the mail?', 'Например: 123'],
-    ];
+```php
+return [
+    'user' => ['Which user ID should receive the mail?', 'Например: 123'],
+];
+```
 
 Если вы хотите полностью контролировать запрос, вы можете предоставить замыкание, которое будет запрашивать пользователя и возвращать его ответ:
 
-    use App\Models\User;
-    use function Laravel\Prompts\search;
+```php
+use App\Models\User;
+use function Laravel\Prompts\search;
 
-    // ...
+// ...
 
-    return [
-        'user' => fn () => search(
-            label: 'Найдите пользователя:',
-            placeholder: 'Например: Тейлор Отвелл',
-            options: fn ($value) => strlen($value) > 0
-                ? User::where('name', 'like', "%{$value}%")->pluck('name', 'id')->all()
-                : []
-        ),
-    ];
+return [
+    'user' => fn () => search(
+        label: 'Найдите пользователя:',
+        placeholder: 'Например: Тейлор Отвелл',
+        options: fn ($value) => strlen($value) > 0
+            ? User::where('name', 'like', "%{$value}%")->pluck('name', 'id')->all()
+            : []
+    ),
+];
+```
 
 > [!NOTE]
 > Подробная документация по [Laravel Prompts](/docs/{{version}}/prompts) содержит дополнительную информацию о доступных запросах и их использовании.
 
 Если вы хотите запросить у пользователя выбор или ввод опций, вы можете включить подсказки в метод `handle` вашей команды. Однако, если вы хотите запрашивать у пользователя только тогда, когда ему было автоматически предложено ввести отсутствующие аргументы, вы можете реализовать метод `afterPromptingForMissingArguments`:
 
-    use Symfony\Component\Console\Input\InputInterface;
-    use Symfony\Component\Console\Output\OutputInterface;
-    use function Laravel\Prompts\confirm;
+```php
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use function Laravel\Prompts\confirm;
 
-    // ...
+// ...
 
-    /**
-     * Выполнить действия после запроса пользователя относительно отсутствующих аргументов
-     */
-    protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output): void
-    {
-        $input->setOption('queue', confirm(
-            label: 'Хотите поставить почту в очередь?',
-            default: $this->option('queue')
-        ));
-    }
+/**
+ * Выполнить действия после запроса пользователя относительно отсутствующих аргументов
+ */
+protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output): void
+{
+    $input->setOption('queue', confirm(
+        label: 'Хотите поставить почту в очередь?',
+        default: $this->option('queue')
+    ));
+}
+```
 
 <a name="command-io"></a>
 ## Ввод/вывод команды
@@ -463,25 +511,31 @@ php artisan mail:send --id=1 --id=2
 
 Во время выполнения команды вам, вероятно, потребуется получить доступ к значениям аргументов и параметров, принятых командой. Для этого вы можете использовать методы `argument` и `option`. Если аргумент или параметр не существует, то будет возвращено значение `null`.
 
-    /**
-     * Выполнить консольную команду.
-     */
-    public function handle(): void
-    {
-        $userId = $this->argument('user');
-    }
+```php
+/**
+ * Выполнить консольную команду.
+ */
+public function handle(): void
+{
+    $userId = $this->argument('user');
+}
+```
 
 Если вам нужно получить все аргументы в виде массива, вызовите метод `arguments`:
 
-    $arguments = $this->arguments();
+```php
+$arguments = $this->arguments();
+```
 
 Параметры могут быть получены так же легко, как и аргументы, используя метод `option`. Чтобы получить все параметры в виде массива, вызовите метод `options`:
 
-    // Получение определенного параметра...
-    $queueName = $this->option('queue');
+```php
+// Получение определенного параметра...
+$queueName = $this->option('queue');
 
-    // Получение всех параметров в виде массива...
-    $options = $this->options();
+// Получение всех параметров в виде массива...
+$options = $this->options();
+```
 
 <a name="prompting-for-input"></a>
 ### Запрос для ввода данных
@@ -491,162 +545,203 @@ php artisan mail:send --id=1 --id=2
 
 Помимо отображения вывода, вы можете попросить пользователя предоставить данные во время выполнения вашей команды. Метод `ask` отобразит пользователю указанный вопрос, примет его ввод, а затем вернет эти данные, полученные от пользователя, обратно в команду:
 
-    /**
-     * Выполнить консольную команду.
-     */
-    public function handle(): void
-    {
-        $name = $this->ask('Как вас зовут?');
+```php
+/**
+ * Выполнить консольную команду.
+ */
+public function handle(): void
+{
+    $name = $this->ask('Как вас зовут?');
 
-        // ...
-    }
+    // ...
+}
+```
 
 Метод `ask` также принимает необязательный второй аргумент, который определяет значение по умолчанию, возвращаемое, если пользователь не предоставил ввод:
 
-    $name = $this->ask('Как вас зовут?', 'Тейлор');
+```php
+$name = $this->ask('Как вас зовут?', 'Тейлор');
+```
 
 Метод `secret` похож на `ask`, но ввод пользователя не будет виден ему в консоли при вводе. Этот метод полезен при запросе конфиденциальной информации, например, пароля:
 
-    $password = $this->secret('Какой пароль?');
+```php
+$password = $this->secret('Какой пароль?');
+```
 
 <a name="asking-for-confirmation"></a>
 #### Запрос подтверждения
 
 Если вам нужно получить от пользователя простое подтверждение «yes or no», то вы можете использовать метод `confirm`. По умолчанию этот метод возвращает значение `false`. Однако, если пользователь вводит `y` или `yes` в ответ на запрос, то метод возвращает `true`.
 
-    if ($this->confirm('Хотите продолжить?')) {
-        // ...
-    }
+```php
+if ($this->confirm('Хотите продолжить?')) {
+    // ...
+}
+```
 
 По желанию можно указать, что запрос подтверждения должен по умолчанию возвращать `true`, передав `true` в качестве второго аргумента метода `confirm`:
 
-    if ($this->confirm('Хотите продолжить?', true)) {
-        // ...
-    }
+```php
+if ($this->confirm('Хотите продолжить?', true)) {
+    // ...
+}
+```
 
 <a name="auto-completion"></a>
 #### Автозавершение
 
 Метод `anticipate` используется для автоматического завершения возможных вариантов. Пользователь по-прежнему может дать любой ответ, независимо от подсказок автозавершения:
 
-    $name = $this->anticipate('Как вас зовут?', ['Тейлор', 'Дэйл']);
+```php
+$name = $this->anticipate('Как вас зовут?', ['Тейлор', 'Дэйл']);
+```
 
 В качестве альтернативы, вы можете передать замыкание в качестве второго аргумента метода `anticipate`. Замыкание будет вызываться каждый раз, когда пользователь вводит символ. Замыкание должно принимать строковый параметр, содержащий введенные пользователем данные, и возвращать массив вариантов для автозавершения:
 
-    $name = $this->anticipate('Какой у вас адрес?', function (string $input) {
-        // Вернуть варианты для автоматического завершения...
-    });
+```php
+use App\Models\Address;
+
+$name = $this->anticipate('What is your address?', function (string $input) {
+    return Address::whereLike('name', "{$input}%")
+        ->limit(5)
+        ->pluck('name')
+        ->all();
+});
+```
 
 <a name="multiple-choice-questions"></a>
 #### Вопросы с множественным выбором
 
 Если нужно предоставить пользователю предопределенный набор вариантов для выбора при задании вопроса, то используйте метод `choice`. Вы можете установить индекс массива для возвращаемого по умолчанию значения, если не выбран ни один из вариантов, передав индекс в качестве третьего аргумента метода:
 
-    $name = $this->choice(
-        'Как вас зовут?',
-        ['Тейлор', 'Дэйл'],
-        $defaultIndex
-    );
+```php
+$name = $this->choice(
+    'Как вас зовут?',
+    ['Тейлор', 'Дэйл'],
+    $defaultIndex
+);
+```
 
 Кроме того, метод `choice` принимает необязательные четвертый и пятый аргументы для определения максимального количества попыток выбора действительного ответа и того, разрешен ли множественный выбор:
 
-    $name = $this->choice(
-        'Как вас зовут?',
-        ['Тейлор', 'Дэйл'],
-        $defaultIndex,
-        $maxAttempts = null,
-        $allowMultipleSelections = false
-    );
+```php
+$name = $this->choice(
+    'Как вас зовут?',
+    ['Тейлор', 'Дэйл'],
+    $defaultIndex,
+    $maxAttempts = null,
+    $allowMultipleSelections = false
+);
+```
 
 <a name="writing-output"></a>
 ### Вывод данных
 
 Чтобы вывести в консоль, используйте методы `line`, `info`, `comment`, `question`, `warn` и `error`. Каждый из этих методов будет использовать соответствующие ANSI-цвета. Например, давайте покажем пользователю некоторую общую информацию. Обычно метод `info` отображается в консоли в виде зеленого текста:
 
-    /**
-     * Выполнить консольную команду.
-     */
-    public function handle(): void
-    {
-        // ...
+```php
+/**
+ * Выполнить консольную команду.
+ */
+public function handle(): void
+{
+    // ...
 
-        $this->info('Команда выполнена успешно!');
-    }
+    $this->info('Команда выполнена успешно!');
+}
+```
 
 Для отображения сообщения об ошибке используйте метод `error`. Текст сообщения об ошибке обычно отображается красным цветом:
 
-    $this->error('Something went wrong!');
+```php
+$this->error('Something went wrong!');
+```
 
 Вы можете использовать метод `line` для отображения простого неокрашенного текста:
 
-    $this->line('Отобразить это на экране');
+```php
+$this->line('Отобразить это на экране');
+```
 
 Вы можете использовать метод `newLine` для отображения пустой строки:
 
-    // Вывести одну пустую строку...
-    $this->newLine();
+```php
+// Вывести одну пустую строку...
+$this->newLine();
 
-    // Вывести три пустые строки...
-    $this->newLine(3);
+// Вывести три пустые строки...
+$this->newLine(3);
+```
 
 <a name="tables"></a>
 #### Таблицы
 
 Метод `table` упрощает корректное форматирование нескольких строк / столбцов данных. Все, что вам нужно сделать, это указать имена столбцов и данные для таблицы, и Laravel автоматически рассчитает подходящую ширину и высоту таблицы:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $this->table(
-        ['Name', 'Email'],
-        User::all(['name', 'email'])->toArray()
-    );
+$this->table(
+    ['Name', 'Email'],
+    User::all(['name', 'email'])->toArray()
+);
+```
 
 <a name="progress-bars"></a>
 #### Индикаторы выполнения
 
 Для длительно выполняемых задач было бы полезно показать индикатор выполнения, информирующий пользователя о том, насколько завершена задача. Используя метод `withProgressBar`, Laravel будет отображать индикатор выполнения и продвигать его для каждой итерации на заданное повторяемое значение:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $users = $this->withProgressBar(User::all(), function (User $user) {
-        $this->performTask($user);
-    });
+$users = $this->withProgressBar(User::all(), function (User $user) {
+    $this->performTask($user);
+});
+```
 
 Иногда может потребоваться больший контроль над продвижением индикатора выполнения. Сначала определите общее количество шагов, через которые будет проходить процесс. Затем продвигайте индикатор выполнения после обработки каждого элемента:
 
-    $users = App\Models\User::all();
+```php
+$users = App\Models\User::all();
 
-    $bar = $this->output->createProgressBar(count($users));
+$bar = $this->output->createProgressBar(count($users));
 
-    $bar->start();
+$bar->start();
 
-    foreach ($users as $user) {
-        $this->performTask($user);
+foreach ($users as $user) {
+    $this->performTask($user);
 
-        $bar->advance();
-    }
+    $bar->advance();
+}
 
-    $bar->finish();
+$bar->finish();
+```
 
 > [!NOTE]
-> Для получения дополнительной информации ознакомьтесь с [разделом документации компонента Symfony Progress Bar](https://symfony.com/doc/7.0/components/console/helpers/progressbar.html).
+> Для получения дополнительной информации ознакомьтесь с [разделом документации компонента Symfony Progress Bar](https://symfony.com/doc/current/components/console/helpers/progressbar.html).
 
 <a name="registering-commands"></a>
 ## Регистрация команд
 
 По умолчанию Laravel автоматически регистрирует все команды в каталоге `app/Console/Commands`. Однако вы можете поручить Laravel сканировать другие каталоги на наличие команд Artisan, используя метод `withCommands` в файле `bootstrap/app.php` вашего приложения:
 
-    ->withCommands([
-        __DIR__.'/../app/Domain/Orders/Commands',
-    ])
+```php
+->withCommands([
+    __DIR__.'/../app/Domain/Orders/Commands',
+])
+```
 
 При необходимости вы также можете зарегистрировать команды вручную, указав имя класса команды в методе `withCommands`:
 
-    use App\Domain\Orders\Commands\SendEmails;
+```php
+use App\Domain\Orders\Commands\SendEmails;
 
-    ->withCommands([
-        SendEmails::class,
-    ])
+->withCommands([
+    SendEmails::class,
+])
+```
 
 Когда Artisan загрузится, все команды в вашем приложении будут обработаны [сервисным контейнером](/docs/{{version}}/container) и зарегистрированы в Artisan.
 
@@ -655,110 +750,130 @@ php artisan mail:send --id=1 --id=2
 
 По желанию можно выполнить команду Artisan за пределами CLI. Например, вы можете запустить команду Artisan в маршруте или контроллере. Для этого можно использовать метод `call` фасада `Artisan`. Метод `call` принимает в качестве первого аргумента либо имя сигнатуры команды, либо имя класса, а в качестве второго – массив параметров команды. Будет возвращен код выхода / возврата:
 
-    use Illuminate\Support\Facades\Artisan;
+```php
+use Illuminate\Support\Facades\Artisan;
 
-    Route::post('/user/{user}/mail', function (string $user) {
-        $exitCode = Artisan::call('mail:send', [
-            'user' => $user, '--queue' => 'default'
-        ]);
+Route::post('/user/{user}/mail', function (string $user) {
+    $exitCode = Artisan::call('mail:send', [
+        'user' => $user, '--queue' => 'default'
+    ]);
 
-        // ...
-    });
+    // ...
+});
+```
 
 Кроме того, вы можете передать методу `call` команду полностью в виде строки:
 
-    Artisan::call('mail:send 1 --queue=default');
+```php
+Artisan::call('mail:send 1 --queue=default');
+```
 
 <a name="passing-array-values"></a>
 #### Передача массива значений
 
 Если ваша команда определяет параметр, который принимает массив, то вы можете передать массив значений этому параметру:
 
-    use Illuminate\Support\Facades\Artisan;
+```php
+use Illuminate\Support\Facades\Artisan;
 
-    Route::post('/mail', function () {
-        $exitCode = Artisan::call('mail:send', [
-            '--id' => [5, 13]
-        ]);
-    });
+Route::post('/mail', function () {
+    $exitCode = Artisan::call('mail:send', [
+        '--id' => [5, 13]
+    ]);
+});
+```
 
 <a name="passing-boolean-values"></a>
 #### Передача значений логического типа
 
 Если необходимо указать значение параметра, который не принимает строковые значения, например флаг `--force` в команде `migrate:refresh`, то вы должны передать `true` или `false` как значение параметра:
 
-    $exitCode = Artisan::call('migrate:refresh', [
-        '--force' => true,
-    ]);
+```php
+$exitCode = Artisan::call('migrate:refresh', [
+    '--force' => true,
+]);
+```
 
 <a name="queueing-artisan-commands"></a>
 #### Очереди команд Artisan
 
 Используя метод `queue` фасада `Artisan`, вы можете даже поставить команды Artisan в очередь, чтобы они обрабатывались в фоновом режиме [обработчиком очереди](/docs/{{version}}/queues). Перед использованием этого метода убедитесь, что вы настроили очереди и был запущен слушатель очереди:
 
-    use Illuminate\Support\Facades\Artisan;
+```php
+use Illuminate\Support\Facades\Artisan;
 
-    Route::post('/user/{user}/mail', function (string $user) {
-        Artisan::queue('mail:send', [
-            'user' => $user, '--queue' => 'default'
-        ]);
+Route::post('/user/{user}/mail', function (string $user) {
+    Artisan::queue('mail:send', [
+        'user' => $user, '--queue' => 'default'
+    ]);
 
-        // ...
-    });
+    // ...
+});
+```
 
 Используя методы `onConnection` и `onQueue`, вы также можете указать соединение или очередь, в которую должна быть отправлена команда Artisan:
 
-    Artisan::queue('mail:send', [
-        'user' => 1, '--queue' => 'default'
-    ])->onConnection('redis')->onQueue('commands');
+```php
+Artisan::queue('mail:send', [
+    'user' => 1, '--queue' => 'default'
+])->onConnection('redis')->onQueue('commands');
+```
 
 <a name="calling-commands-from-other-commands"></a>
 ### Вызов команд из других команд
 
 По желанию можно вызвать другие команды из существующей команды Artisan. Вы можете сделать это с помощью метода `call`. Метод `call` принимает имя команды и массив аргументов / параметров команды:
 
-    /**
-     * Выполнить консольную команду.
-     */
-    public function handle(): void
-    {
-        $this->call('mail:send', [
-            'user' => 1, '--queue' => 'default'
-        ]);
+```php
+/**
+ * Выполнить консольную команду.
+ */
+public function handle(): void
+{
+    $this->call('mail:send', [
+        'user' => 1, '--queue' => 'default'
+    ]);
 
-        // ...
-    }
+    // ...
+}
+```
 
 Если вы хотите вызвать другую консольную команду в тихом режиме, то используйте метод `callSilently`. Метод `callSilently` имеет ту же сигнатуру, что и метод `call`:
 
-    $this->callSilently('mail:send', [
-        'user' => 1, '--queue' => 'default'
-    ]);
+```php
+$this->callSilently('mail:send', [
+    'user' => 1, '--queue' => 'default'
+]);
+```
 
 <a name="signal-handling"></a>
 ## Обработка сигналов
 
 Как вы, возможно, знаете, операционные системы позволяют отправлять сигналы запущенным процессам. Например, сигнал `SIGTERM` используется операционными системами для запроса программе о завершении выполнения. Если вы хотите прослушивать сигналы в ваших консольных командах Artisan и выполнять код при их возникновении, вы можете использовать метод `trap`:
 
-    /**
-     * Выполнить консольную команду.
-     */
-    public function handle(): void
-    {
-        $this->trap(SIGTERM, fn () => $this->shouldKeepRunning = false);
+```php
+/**
+ * Выполнить консольную команду.
+ */
+public function handle(): void
+{
+    $this->trap(SIGTERM, fn () => $this->shouldKeepRunning = false);
 
-        while ($this->shouldKeepRunning) {
-            // ...
-        }
+    while ($this->shouldKeepRunning) {
+        // ...
     }
+}
+```
 
 Для прослушивания нескольких сигналов сразу, вы можете предоставить массив сигналов методу `trap`:
 
-    $this->trap([SIGTERM, SIGQUIT], function (int $signal) {
-        $this->shouldKeepRunning = false;
+```php
+$this->trap([SIGTERM, SIGQUIT], function (int $signal) {
+    $this->shouldKeepRunning = false;
 
-        dump($signal); // SIGTERM / SIGQUIT
-    });
+    dump($signal); // SIGTERM / SIGQUIT
+});
+```
 
 <a name="stub-customization"></a>
 ## Настройка заготовок команд (stubs)
