@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: ac72220c4eafabc7b815005c135a54d13395f918
 ---
 
 # Тестирование · Имитация (Мок)
@@ -25,7 +25,7 @@ test('something can be mocked', function () {
     $this->instance(
         Service::class,
         Mockery::mock(Service::class, function (MockInterface $mock) {
-            $mock->shouldReceive('process')->once();
+            $mock->expects('process');
         })
     );
 });
@@ -41,7 +41,7 @@ public function test_something_can_be_mocked(): void
     $this->instance(
         Service::class,
         Mockery::mock(Service::class, function (MockInterface $mock) {
-            $mock->shouldReceive('process')->once();
+            $mock->expects('process');
         })
     );
 }
@@ -49,59 +49,67 @@ public function test_something_can_be_mocked(): void
 
 Чтобы сделать это более удобным, вы можете использовать метод `mock`, который обеспечен базовым классом тестов Laravel. Например, следующий пример эквивалентен приведенному выше примеру:
 
-    use App\Service;
-    use Mockery\MockInterface;
+```php
+use App\Service;
+use Mockery\MockInterface;
 
-    $mock = $this->mock(Service::class, function (MockInterface $mock) {
-        $mock->shouldReceive('process')->once();
-    });
+$mock = $this->mock(Service::class, function (MockInterface $mock) {
+    $mock->shouldReceive('process')->once();
+});
+```
 
 Вы можете использовать метод `partialMock`, когда вам нужно только имитировать несколько методов объекта. Методы, которые не являются сымитированными, при вызове будут выполняться в обычном режиме:
 
-    use App\Service;
-    use Mockery\MockInterface;
+```php
+use App\Service;
+use Mockery\MockInterface;
 
-    $mock = $this->partialMock(Service::class, function (MockInterface $mock) {
-        $mock->shouldReceive('process')->once();
-    });
+$mock = $this->partialMock(Service::class, function (MockInterface $mock) {
+    $mock->shouldReceive('process')->once();
+});
+```
 
 Точно так же, если вы хотите [шпионить](http://docs.mockery.io/en/latest/reference/spies.html) за объектом, базовый класс тестов Laravel содержит метод `spy` в качестве удобной обертки для метода `Mockery::spy`. Шпионы похожи на подставные объекты; однако, шпионы записывают любое взаимодействие между шпионом и тестируемым кодом, позволяя вам делать утверждения после выполнения кода:
 
-    use App\Service;
+```php
+use App\Service;
 
-    $spy = $this->spy(Service::class);
+$spy = $this->spy(Service::class);
 
-    // ...
+// ...
 
-    $spy->shouldHaveReceived('process');
+$spy->shouldHaveReceived('process');
+```
 
 <a name="mocking-facades"></a>
 ## Имитация фасадов
 
 В отличие от традиционных вызовов статических методов, [фасады](/docs/{{version}}/facades), включая [фасады в реальном времени](/docs/{{version}}/facades#real-time-facades) можно имитировать. Это дает большое преимущество перед традиционными статическими методами и дает вам такую же возможность тестирования, как если бы вы использовали традиционное внедрение зависимостей. При тестировании вы часто можете имитировать вызов фасада Laravel, происходящий в одном из ваших контроллеров. Например, рассмотрим следующее действие контроллера:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cache;
 
-    class UserController extends Controller
+class UserController extends Controller
+{
+    /**
+     * Получить список всех пользователей приложения.
+     */
+    public function index(): array
     {
-        /**
-         * Получить список всех пользователей приложения.
-         */
-        public function index(): array
-        {
-            $value = Cache::get('key');
+        $value = Cache::get('key');
 
-            return [
-                // ...
-            ];
-        }
+        return [
+            // ...
+        ];
     }
+}
+```
 
-Мы можем имитировать вызов фасада `Cache`, используя метод `shouldReceive`, который вернет экземпляр [Mockery](https://github.com/padraic/mockery). Поскольку фасады фактически извлекаются и управляются [контейнером служб](/docs/{{version}}/container) Laravel, то они имеют гораздо большую тестируемость, чем типичный статический класс. Например, давайте сымитируем наш вызов метода `get` фасада `Cache`:
+Мы можем имитировать вызов фасада `Cache`, используя метод `expects`, который вернет экземпляр [Mockery](https://github.com/padraic/mockery). Поскольку фасады фактически извлекаются и управляются [контейнером служб](/docs/{{version}}/container) Laravel, то они имеют гораздо большую тестируемость, чем типичный статический класс. Например, давайте сымитируем наш вызов метода `get` фасада `Cache`:
 
 ```php tab=Pest
 <?php
@@ -110,9 +118,9 @@ use Illuminate\Support\Facades\Cache;
 
 test('get index', function () {
     Cache::shouldReceive('get')
-                ->once()
-                ->with('key')
-                ->andReturn('value');
+        ->once()
+        ->with('key')
+        ->andReturn('value');
 
     $response = $this->get('/users');
 
@@ -133,9 +141,9 @@ class UserControllerTest extends TestCase
     public function test_get_index(): void
     {
         Cache::shouldReceive('get')
-                    ->once()
-                    ->with('key')
-                    ->andReturn('value');
+            ->once()
+            ->with('key')
+            ->andReturn('value');
 
         $response = $this->get('/users');
 
@@ -164,7 +172,7 @@ test('values are be stored in cache', function () {
 
     $response->assertStatus(200);
 
-    Cache::shouldHaveReceived('put')->once()->with('name', 'Taylor', 10);
+    Cache::shouldHaveReceived('put')->with('name', 'Taylor', 10);
 });
 ```
 
@@ -179,7 +187,7 @@ public function test_values_are_be_stored_in_cache(): void
 
     $response->assertStatus(200);
 
-    Cache::shouldHaveReceived('put')->once()->with('name', 'Taylor', 10);
+    Cache::shouldHaveReceived('put')->with('name', 'Taylor', 10);
 }
 ```
 
@@ -235,27 +243,31 @@ public function test_time_can_be_manipulated(): void
 
 Вы также можете предоставить замыкание для различных методов путешествия во времени. Замыкание будет вызвано с замороженным временем в указанное время. После выполнения замыкания время возобновится как обычно:
 
-    $this->travel(5)->days(function () {
-        // Test something five days into the future...
-    });
+```php
+$this->travel(5)->days(function () {
+    // Test something five days into the future...
+});
 
-    $this->travelTo(now()->subDays(10), function () {
-        // Test something during a given moment...
-    });
+$this->travelTo(now()->subDays(10), function () {
+    // Test something during a given moment...
+});
+```
 
 Метод `freezeTime` может быть использован для замораживания текущего времени. Аналогично, метод `freezeSecond` заморозит текущее время, но в начале текущей секунды:
 
-    use Illuminate\Support\Carbon;
+```php
+use Illuminate\Support\Carbon;
 
-    // Freeze time and resume normal time after executing closure...
-    $this->freezeTime(function (Carbon $time) {
-        // ...
-    });
+// Freeze time and resume normal time after executing closure...
+$this->freezeTime(function (Carbon $time) {
+    // ...
+});
 
-    // Freeze time at the current second and resume normal time after executing closure...
-    $this->freezeSecond(function (Carbon $time) {
-        // ...
-    })
+// Freeze time at the current second and resume normal time after executing closure...
+$this->freezeSecond(function (Carbon $time) {
+    // ...
+})
+```
 
 Как и ожидалось, все обсуждаемые выше методы в основном полезны для тестирования поведения приложения, зависящего от времени, такого как блокировка неактивных сообщений на форуме:
 
