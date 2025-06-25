@@ -1,5 +1,5 @@
 ---
-git: 77db50ec005aa0e6391511eb81ff3a0e21d7e504
+git: 7ee2ca445562457cc64f0a41637506c094138ba7
 ---
 
 # Prompts (Подсказки)
@@ -793,6 +793,7 @@ User::create([
 ```php
 use function Laravel\Prompts\form;
 use function Laravel\Prompts\outro;
+use function Laravel\Prompts\text;
 
 $responses = form()
     ->text('Как вас зовут?', required: true, name: 'name')
@@ -903,7 +904,7 @@ $progress->finish();
 
 Функция `clear` может использоваться для очистки пользовательского терминала:
 
-```
+```php
 use function Laravel\Prompts\clear;
 
 clear();
@@ -927,7 +928,7 @@ clear();
 
 Laravel Prompts поддерживает macOS, Linux и Windows с использованием WSL. Из-за ограничений в версии PHP для Windows в настоящее время невозможно использовать Laravel Prompts на Windows вне WSL.
 
-По этой причине Laravel Prompts поддерживает откат к альтернативной реализации, такой как [Symfony Console Question Helper](https://symfony.com/doc/7.0/components/console/helpers/questionhelper.html).
+По этой причине Laravel Prompts поддерживает откат к альтернативной реализации, такой как [Symfony Console Question Helper](https://symfony.com/doc/current/components/console/helpers/questionhelper.html).
 
 > [!NOTE]
 > При использовании Laravel Prompts с фреймворком Laravel резервные варианты для каждого запроса настроены для вас и будут автоматически включены в неподдерживаемых окружениях.
