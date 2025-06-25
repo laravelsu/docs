@@ -1,11 +1,14 @@
 ---
-git: 46c2634ef5a4f15427c94a3157b626cf5bd3937f
+git: b08a9df6d86e1d660dc75b4d665fa60c24b7b0f4
 ---
 
 # Laravel Mix
 
 <a name="introduction"></a>
 ## Введение
+
+> [!WARNING]
+> Laravel Mix — устаревший пакет, который больше не поддерживается. [Vite](/docs/{{version}}/vite) можно использовать в качестве современной альтернативы.
 
 [Laravel Mix](https://github.com/laravel-mix/laravel-mix) – это пакет, разработанный создателем [Laracasts](https://laracasts.com) Джеффри Уэй, предлагает гибкий API для определения шагов сборки [Webpack](https://webpack.js.org) для вашего приложения с использованием нескольких распространенных препроцессоров CSS и JavaScript.
 
