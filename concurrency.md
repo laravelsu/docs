@@ -1,5 +1,5 @@
 ---
-git: aac0a3fa319d0ac84d546957c4ca30ca0ec4c2df
+git: a15a6384c2e4a74f448bca9ef9cece49bc168547
 ---
 
 # Параллелизм
@@ -7,33 +7,7 @@ git: aac0a3fa319d0ac84d546957c4ca30ca0ec4c2df
 <a name="introduction"></a>
 ## Введение
 
-> [!WARNING]
-> Фасад Laravel `Concurrency` в настоящее время находится в стадии бета-тестирования, пока мы собираем отзывы сообщества.
-
 Иногда вам может потребоваться выполнить несколько медленных задач, не зависящих друг от друга. Во многих случаях существенного повышения производительности можно добиться, выполняя задачи одновременно. Фасад Laravel `Concurrency` предоставляет простой и удобный API для одновременного выполнения замыканий.
-
-<a name="concurrency-compatibility"></a>
-#### Совместимость параллелизма
-
-Если вы обновились до Laravel 11.x из приложения Laravel 10.x, вам может потребоваться добавить `ConcurrencyServiceProvider` в массив `providers` в файле конфигурации `config/app.php` вашего приложения:
-
-```php
-'providers' => ServiceProvider::defaultProviders()->merge([
-    /*
-     * Поставщики пакетных услуг...
-     */
-    Illuminate\Concurrency\ConcurrencyServiceProvider::class, // [tl! add]
-
-    /*
-     * Поставщики услуг приложений...
-     */
-    App\Providers\AppServiceProvider::class,
-    App\Providers\AuthServiceProvider::class,
-    // App\Providers\BroadcastServiceProvider::class,
-    App\Providers\EventServiceProvider::class,
-    App\Providers\RouteServiceProvider::class,
-])->toArray(),
-```
 
 <a name="how-it-works"></a>
 #### Как это работает
@@ -44,7 +18,7 @@ Laravel обеспечивает параллелизм путем сериал�
 
 Драйвер `fork` обеспечивает улучшенную производительность по сравнению с драйвером по умолчанию `process`, но его можно использовать только в контексте CLI PHP, поскольку PHP не поддерживает разветвление во время веб-запросов. Перед использованием драйвера `fork` вам необходимо установить пакет `spatie/fork`:
 
-```bash
+```shell
 composer require spatie/fork
 ```
 
@@ -73,7 +47,7 @@ $results = Concurrency::driver('fork')->run(...);
 
 Или, чтобы изменить драйвер параллелизма по умолчанию, вам следует опубликовать файл конфигурации `concurrency` с помощью Artisan-команды `config:publish` и обновить параметр `default` в файле:
 
-```bash
+```shell
 php artisan config:publish concurrency
 ```
 
