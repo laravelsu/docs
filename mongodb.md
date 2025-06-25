@@ -1,5 +1,5 @@
 ---
-git: 88b6f0d99c9f89ca38266d9fa0c3b4ea3df3c85e
+git: 6a0eec994bc3e9dfd4a6d2d81abc3a5261b7e79d
 ---
 
 # MongoDB
@@ -89,7 +89,7 @@ composer require mongodb/laravel-mongodb
 - [Написание сложных запросов](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/query-builder/) с помощью построителя запросов.
 - `mongodb` [драйвер кэша](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/cache/) оптимизирован для использования функций MongoDB, таких как индексы TTL, для автоматической очистки кэша с истекшим сроком действия. записи.
 - [Отправка и обработка заданий в очереди](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/queues/) с помощью драйвера очереди `mongodb`.
-- [Хранение файлов в GridFS](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/gridfs/), через [адаптер GridFS для Flysystem](https://flysystem.thephpleague.com/docs/adapter/gridfs/).
+- [Хранение файлов в GridFS](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/filesystems/), через [адаптер GridFS для Flysystem](https://flysystem.thephpleague.com/docs/adapter/gridfs/).
 — Большинство сторонних пакетов, использующих подключение к базе данных или Eloquent, можно использовать с MongoDB.
 
 Чтобы продолжить изучение использования MongoDB и Laravel, обратитесь к [краткому руководству по началу работы с MongoDB](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/quick-start/).
