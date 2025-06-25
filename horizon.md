@@ -1,5 +1,5 @@
 ---
-git: 45969e396c5ec52aca9a558a43e9f902759e3d41
+git: c60625a5aff0f468053aa804d48665d5379f03a8
 ---
 
 # Laravel Horizon
@@ -47,33 +47,37 @@ php artisan horizon:install
 
 Основным параметром конфигурации Horizon, с которым вы должны ознакомиться после установки, является параметр конфигурации `environments`. Этот параметр конфигурации представляет собой массив сред, в которых работает ваше приложение, и определяет параметры рабочего процесса для каждой среды. По умолчанию эта запись содержит окружение `production` и `local`. Однако вы можете добавлять дополнительные среды по мере необходимости:
 
-    'environments' => [
-        'production' => [
-            'supervisor-1' => [
-                'maxProcesses' => 10,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-            ],
-        ],
-
-        'local' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
-            ],
+```php
+'environments' => [
+    'production' => [
+        'supervisor-1' => [
+            'maxProcesses' => 10,
+            'balanceMaxShift' => 1,
+            'balanceCooldown' => 3,
         ],
     ],
+
+    'local' => [
+        'supervisor-1' => [
+            'maxProcesses' => 3,
+        ],
+    ],
+],
+```
 
 Вы также можете определить среду с подстановочными знаками (`*`), которая будет использоваться, когда не будет обнаружено другой подходящей среды:
 
-    'environments' => [
-        // ...
+```php
+'environments' => [
+    // ...
 
-        '*' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
-            ],
+    '*' => [
+        'supervisor-1' => [
+            'maxProcesses' => 3,
         ],
     ],
+],
+```
 
 Когда вы запускаете Horizon, он будет использовать параметры конфигурации рабочего процесса для среды, в которой работает ваше приложение. Как правило, среда определяется значением `APP_ENV` [переменной среды](/docs/{{version}}/configuration#determining-the-current-environment). Например, стандартная локальная среда Horizon настроена на запуск трех рабочих процессов и автоматическое выравнивание количества рабочих процессов, назначенных каждой очереди. По умолчанию рабочая среда настроена на запуск максимум 10 рабочих процессов и автоматический баланс количества рабочих процессов, назначенных каждой очереди.
 
@@ -92,14 +96,16 @@ php artisan horizon:install
 
 Во время работы вашего приложения в [режиме обслуживания](/docs/{{version}}/configuration#maintenance-mode), отложенные задания не будут обрабатываться Horizon, если опция `force` для supervisor не определена как `true` в файле конфигурации Horizon:
 
-    'environments' => [
-        'production' => [
-            'supervisor-1' => [
-                // ...
-                'force' => true,
-            ],
+```php
+'environments' => [
+    'production' => [
+        'supervisor-1' => [
+            // ...
+            'force' => true,
         ],
     ],
+],
+```
 
 <a name="default-values"></a>
 #### Значения по умолчанию
@@ -117,21 +123,23 @@ php artisan horizon:install
 
 При использовании стратегии `auto` вы можете определить параметры конфигурации `minProcesses` и `maxProcesses` для управления минимальным количеством процессов в очереди и максимальным количеством рабочих процессов в целом, которые Horizon должен масштабировать в большую или меньшую стороны:
 
-    'environments' => [
-        'production' => [
-            'supervisor-1' => [
-                'connection' => 'redis',
-                'queue' => ['default'],
-                'balance' => 'auto',
-                'autoScalingStrategy' => 'time',
-                'minProcesses' => 1,
-                'maxProcesses' => 10,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-                'tries' => 3,
-            ],
+```php
+'environments' => [
+    'production' => [
+        'supervisor-1' => [
+            'connection' => 'redis',
+            'queue' => ['default'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'minProcesses' => 1,
+            'maxProcesses' => 10,
+            'balanceMaxShift' => 1,
+            'balanceCooldown' => 3,
+            'tries' => 3,
         ],
     ],
+],
+```
 
 Значение конфигурации `autoScalingStrategy` определяет, будет ли Horizon назначать больше рабочих процессов для очередей на основе общего времени, необходимого для очистки очереди (стратегия `time`), или общего числа заданий в очереди (стратегия `size`).
 
@@ -144,19 +152,21 @@ php artisan horizon:install
 
 Доступ к информационной панели Horizon можно получить по маршруту `/horizon`. По умолчанию вы сможете получить доступ к этой панели инструментов только в локальной среде. Однако в файле `app/Providers/HorizonServiceProvider.php` есть определение [шлюза авторизации](/docs/{{version}}/authorization#gates). Этот шлюз контролирует доступ к Horizon **во внешних средах**. Вы можете настроить этот шлюз по мере необходимости, чтобы ограничить доступ к вашему приложению Horizon:
 
-    /**
-     * Регистрация шлюза Horizon.
-     *
-     * Этот шлюз определяют, кто может получить доступ к Horizon во внешней среде.
-     */
-    protected function gate(): void
-    {
-        Gate::define('viewHorizon', function (User $user) {
-            return in_array($user->email, [
-                'taylor@laravel.com',
-            ]);
-        });
-    }
+```php
+/**
+ * Регистрация шлюза Horizon.
+ *
+ * Этот шлюз определяют, кто может получить доступ к Horizon во внешней среде.
+ */
+protected function gate(): void
+{
+    Gate::define('viewHorizon', function (User $user) {
+        return in_array($user->email, [
+            'taylor@laravel.com',
+        ]);
+    });
+}
+```
 
 <a name="alternative-authentication-strategies"></a>
 #### Альтернативные стратегии аутентификации
@@ -168,20 +178,24 @@ php artisan horizon:install
 
 Иногда вам может быть неинтересно просматривать определенные задания, отправленные вашим приложением или сторонними пакетами. Вместо того чтобы эти задания занимали место в вашем списке "Завершенных заданий", вы можете заглушить их. Для начала добавьте имя класса задания в параметр конфигурации `silenced` в файле конфигурации `horizon` вашего приложения:
 
-    'silenced' => [
-        App\Jobs\ProcessPodcast::class,
-    ],
+```php
+'silenced' => [
+    App\Jobs\ProcessPodcast::class,
+],
+```
 
 В качестве альтернативы задание, которое вы хотите заглушить, может реализовать интерфейс `Laravel\Horizon\Contracts\Silenced`. Если задание реализует этот интерфейс, оно будет автоматически заглушено, даже если оно отсутствует в массиве конфигурации `silenced`:
 
-    use Laravel\Horizon\Contracts\Silenced;
+```php
+use Laravel\Horizon\Contracts\Silenced;
 
-    class ProcessPodcast implements ShouldQueue, Silenced
-    {
-        use Queueable;
+class ProcessPodcast implements ShouldQueue, Silenced
+{
+    use Queueable;
 
-        // ...
-    }
+    // ...
+}
+```
 
 <a name="upgrading-horizon"></a>
 ## Обновление Horizon
@@ -252,7 +266,7 @@ sudo apt-get install supervisor
 ```
 
 > [!NOTE]
-> Если настройка Supervisor сама по себе кажется утомительной, рассмотрите возможность использования [Laravel Forge](https://forge.laravel.com), который автоматически установит и настроит Supervisor для ваших проектов Laravel.
+> Если настройка Supervisor сама по себе кажется утомительной, рассмотрите возможность использования [Laravel Cloud](https://cloud.laravel.com), который может управлять фоновыми процессами для ваших приложений Laravel.
 
 <a name="supervisor-configuration"></a>
 #### Настройка Supervisor
@@ -297,78 +311,86 @@ sudo supervisorctl start horizon
 
 Horizon позволяет назначать “теги” (tags) заданиям, включая почтовые сообщения, широковещательные события, уведомления и прослушиватели событий в очереди. Фактически, Horizon будет интеллектуально и автоматически помечать большинство заданий в зависимости от моделей Eloquent, прикрепленных к заданию. Например, взгляните на следующее задание (job):
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-    use App\Models\Video;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Foundation\Queue\Queueable;
+use App\Models\Video;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-    class RenderVideo implements ShouldQueue
+class RenderVideo implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Создаем новый экземпляр задания.
+     */
+    public function __construct(
+        public Video $video,
+    ) {}
+
+    /**
+     * Выполнение задания.
+     */
+    public function handle(): void
     {
-        use Queueable;
-
-        /**
-         * Создаем новый экземпляр задания.
-         */
-        public function __construct(
-            public Video $video,
-        ) {}
-
-        /**
-         * Выполнение задания.
-         */
-        public function handle(): void
-        {
-            // ...
-        }
+        // ...
     }
+}
+```
 
 Если это задание поставлено в очередь с экземпляром `App\Models\Video` с атрибутом `id` равным `1`, то оно автоматически получит тег `App\Models\Video:1`. Это потому, что Horizon будет искать в свойствах задания любые модели Eloquent. Если модели Eloquent будут найдены, Horizon разумно пометит задание, используя имя класса модели и первичный ключ:
 
-    use App\Jobs\RenderVideo;
-    use App\Models\Video;
+```php
+use App\Jobs\RenderVideo;
+use App\Models\Video;
 
-    $video = Video::find(1);
+$video = Video::find(1);
 
-    RenderVideo::dispatch($video);
+RenderVideo::dispatch($video);
+```
 
 <a name="manually-tagging-jobs"></a>
 #### Самостоятельное тегирование заданий
 
 Если вы хотите самостоятельно определить теги для одного из объектов в очереди, вы можете определить в классе метод "tags()":
 
-    class RenderVideo implements ShouldQueue
+```php
+class RenderVideo implements ShouldQueue
+{
+    /**
+     * Получаем теги, которые должны быть назначены заданию.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
     {
-        /**
-         * Получаем теги, которые должны быть назначены заданию.
-         *
-         * @return array<int, string>
-         */
-        public function tags(): array
-        {
-            return ['render', 'video:'.$this->video->id];
-        }
+        return ['render', 'video:'.$this->video->id];
     }
+}
+```
 
 <a name="manually-tagging-event-listeners"></a>
 #### Самостоятельное тегирование слушателей событий
 
 При получении тегов для слушателя событий в очереди Horizon автоматически передаст экземпляр события методу `tags`, что позволит вам добавить данные события к тегам:
 
-    class SendRenderNotifications implements ShouldQueue
+```php
+class SendRenderNotifications implements ShouldQueue
+{
+    /**
+     * Получаем теги, которые должны быть назначены прослушивателю.
+     *
+     * @return array<int, string>
+     */
+    public function tags(VideoRendered $event): array
     {
-        /**
-         * Получаем теги, которые должны быть назначены прослушивателю.
-         *
-         * @return array<int, string>
-         */
-        public function tags(VideoRendered $event): array
-        {
-            return ['video:'.$event->video->id];
-        }
+        return ['video:'.$event->video->id];
     }
+}
+```
 
 <a name="notifications"></a>
 ## Уведомления
@@ -378,37 +400,49 @@ Horizon позволяет назначать “теги” (tags) задани
 
 Если вы хотите получать уведомления, когда одна из ваших очередей имеет длительное время ожидания, вы можете использовать методы `Horizon::routeMailNotificationsTo`, `Horizon::routeSlackNotificationsTo` и `Horizon::routeSmsNotificationsTo`. Вы можете вызвать эти методы из метода `boot` [провайдера](/docs/{{version}}/providers) вашего приложения `App\Providers\HorizonServiceProvider`:
 
-    /**
-     * Загрузчик сервисов приложения.
-     */
-    public function boot(): void
-    {
-        parent::boot();
+```php
+/**
+ * Загрузчик сервисов приложения.
+ */
+public function boot(): void
+{
+    parent::boot();
 
-        Horizon::routeSmsNotificationsTo('15556667777');
-        Horizon::routeMailNotificationsTo('example@example.com');
-        Horizon::routeSlackNotificationsTo('slack-webhook-url', '#channel');
-    }
+    Horizon::routeSmsNotificationsTo('15556667777');
+    Horizon::routeMailNotificationsTo('example@example.com');
+    Horizon::routeSlackNotificationsTo('slack-webhook-url', '#channel');
+}
+```
 
 <a name="configuring-notification-wait-time-thresholds"></a>
 #### Настройка пороговых значений времени ожидания уведомлений
 
 Вы можете настроить, сколько секунд будет считаться "долгим ожиданием" в файле конфигурации Horizon `config/horizon.php`. Параметр конфигурации `waits` в этом файле позволяет вам настраивать пороги ожидания для каждой комбинации соединения/очереди. Любый комбинации соединения/очереди, не определённые в `waits`, по умолчанию будут иметь порог ожидания в 60 секунд:
 
-    'waits' => [
-        'redis:critical' => 30,
-        'redis:default' => 60,
-        'redis:batch' => 120,
-    ],
+```php
+'waits' => [
+    'redis:critical' => 30,
+    'redis:default' => 60,
+    'redis:batch' => 120,
+],
+```
 
 <a name="metrics"></a>
 ## Метрики
 
 Horizon включает в себя панель метрик, которая предоставляет информацию о времени ожидания задач и очереди, а также пропускной способности. Чтобы записывать информацию в эту панель, вы должны настроить Artisan-команду Horizon `snapshot` для выполнения каждые пять минут в файле `routes/console.php` вашего приложения:
 
-    use Illuminate\Support\Facades\Schedule;
+```php
+use Illuminate\Support\Facades\Schedule;
 
-    Schedule::command('horizon:snapshot')->everyFiveMinutes();
+Schedule::command('horizon:snapshot')->everyFiveMinutes();
+```
+
+Если вы хотите удалить все данные метрик, вы можете вызвать команду Artisan `horizon:clear-metrics`:
+
+```shell
+php artisan horizon:clear-metrics
+```
 
 <a name="deleting-failed-jobs"></a>
 ## Удаление невыполненных заданий
