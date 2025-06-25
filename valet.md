@@ -372,13 +372,13 @@ valet proxies
 Например, допустим, мы пишем `WordPressValetDriver`. Наш метод `serves` может выглядеть примерно так:
 
 ```php
-   /**
-    * Определим, обслуживает ли драйвер запрос.
-    */
-   public function serves(string $sitePath, string $siteName, string $uri): bool
-   {
-       return is_dir($sitePath.'/wp-admin');
-   }
+/**
+ * Определим, обслуживает ли драйвер запрос.
+ */
+public function serves(string $sitePath, string $siteName, string $uri): bool
+{
+    return is_dir($sitePath.'/wp-admin');
+}
 ```
 
 <a name="the-isstaticfile-method"></a>
