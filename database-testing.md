@@ -1,5 +1,5 @@
 ---
-git: e81073dfdf1af87568007014abe72aaa235c61b1
+git: 4223ed3fb9af969df6803cc81a21d5e803236ae0
 ---
 
 # Тестирование · База данных
@@ -155,32 +155,36 @@ class ExampleTest extends TestCase
 
 В качестве альтернативы, вы можете указать Laravel автоматически заполнять базу данных перед каждым тестом, который использует трейт `RefreshDatabase`. Вы можете добиться этого, определив свойство `$seed` в вашем базовом тестовом классе:
 
-    <?php
+```php
+<?php
 
-    namespace Tests;
+namespace Tests;
 
-    use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
-    abstract class TestCase extends BaseTestCase
-    {
-        /**
-         * Указывает, следует ли запускать наполнитель по умолчанию перед каждым тестом.
-         *
-         * @var bool
-         */
-        protected $seed = true;
-    }
+abstract class TestCase extends BaseTestCase
+{
+    /**
+     * Указывает, следует ли запускать наполнитель по умолчанию перед каждым тестом.
+     *
+     * @var bool
+     */
+    protected $seed = true;
+}
+```
 
 Когда свойство `$seed` имеет значение `true`, тогда класс `Database\Seeders\DatabaseSeeder` будет запускаться перед каждым тестом, который использует трейт `RefreshDatabase`. Однако, вы можете указать конкретный наполнитель, который должен выполняться, определив свойство `$seeder` в вашем тестовом классе:
 
-    use Database\Seeders\OrderStatusSeeder;
+```php
+use Database\Seeders\OrderStatusSeeder;
 
-    /**
-     * Запускать указанный наполнитель перед каждым тестом.
-     *
-     * @var string
-     */
-    protected $seeder = OrderStatusSeeder::class;
+/**
+ * Запускать указанный наполнитель перед каждым тестом.
+ *
+ * @var string
+ */
+protected $seeder = OrderStatusSeeder::class;
+```
 
 <a name="available-assertions"></a>
 ## Доступные утверждения
@@ -192,76 +196,94 @@ Laravel содержит несколько утверждений базы да
 
 Утверждает, что таблица в базе данных содержит указанное количество записей:
 
-    $this->assertDatabaseCount('users', 5);
+```php
+$this->assertDatabaseCount('users', 5);
+```
 
 <a name="assert-database-empty"></a>
 #### assertDatabaseEmpty
 
 Утверждает, что таблица в базе данных не содержит записей:
 
-    $this->assertDatabaseEmpty('users');
+```php
+$this->assertDatabaseEmpty('users');
+```
 
 <a name="assert-database-has"></a>
 #### assertDatabaseHas
 
 Утверждает, что таблица в базе данных содержит записи, соответствующие переданным ключ / значение ограничениям запроса:
 
-    $this->assertDatabaseHas('users', [
-        'email' => 'sally@example.com',
-    ]);
+```php
+$this->assertDatabaseHas('users', [
+    'email' => 'sally@example.com',
+]);
+```
 
 <a name="assert-database-missing"></a>
 #### assertDatabaseMissing
 
 Утверждает, что таблица в базе данных не содержит записей, соответствующих переданным ключ / значение ограничениям запроса:
 
-    $this->assertDatabaseMissing('users', [
-        'email' => 'sally@example.com',
-    ]);
+```php
+$this->assertDatabaseMissing('users', [
+    'email' => 'sally@example.com',
+]);
+```
 
 <a name="assert-deleted"></a>
 #### assertSoftDeleted
 
 Метод `assertSoftDeleted` используется для утверждения того, что переданная модель Eloquent была «программно удалена»:
 
-    $this->assertSoftDeleted($user);
+```php
+$this->assertSoftDeleted($user);
+```
 
 <a name="assert-not-deleted"></a>
 #### assertNotSoftDeleted
 
 Метод `assertNotSoftDeleted` используется для утверждения того, что переданная модель Eloquent была «программно удалена»
 
-    $this->assertNotSoftDeleted($user);
+```php
+$this->assertNotSoftDeleted($user);
+```
 
 <a name="assert-model-exists"></a>
 #### assertModelExists
 
 Утверждает, что данная модель существует в базе данных:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $user = User::factory()->create();
+$user = User::factory()->create();
 
-    $this->assertModelExists($user);
+$this->assertModelExists($user);
+```
 
 <a name="assert-model-missing"></a>
 #### assertModelMissing
 
 Утверждает, что данной модели не существует в базе данных:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $user = User::factory()->create();
+$user = User::factory()->create();
 
-    $user->delete();
+$user->delete();
 
-    $this->assertModelMissing($user);
+$this->assertModelMissing($user);
+```
 
 <a name="expects-database-query-count"></a>
 #### expectsDatabaseQueryCount
 
 Метод `expectsDatabaseQueryCount` может быть вызван в начале вашего теста для указания общего числа запросов к базе данных, которые вы ожидаете во время выполнения теста. Если фактическое количество выполненных запросов не соответствует ожиданиям, тест завершится неудачей:
 
-    $this->expectsDatabaseQueryCount(5);
+```php
+$this->expectsDatabaseQueryCount(5);
 
-    // Test...
+// Test...
+```
