@@ -1,5 +1,5 @@
 ---
-git: 43a416d09aa91530e8d6f24532acd7509c67ce82
+git: 49225e5f9cf167a9ebc5699988fbba36aa47103d
 ---
 
 # Laravel Folio
@@ -22,13 +22,13 @@ git: 43a416d09aa91530e8d6f24532acd7509c67ce82
 
 Для начала установите Folio в ваш проект, используя менеджер пакетов Composer:
 
-```bash
+```shell
 composer require laravel/folio
 ```
 
 После установки Folio, вы можете выполнить команду Artisan `folio:install`, которая установит провайдера службы Folio в вашем приложении. Этот провайдер регистрирует директорию, в которой Folio будет искать маршруты / страницы:
 
-```bash
+```shell
 php artisan folio:install
 ```
 
@@ -88,7 +88,7 @@ Folio::domain('{account}.example.com')
 
 Чтобы быстро просмотреть список всех ваших страниц / маршрутов Folio, вы можете выполнить команду Artisan `folio:list`:
 
-```bash
+```shell
 php artisan folio:list
 ```
 
@@ -97,7 +97,7 @@ php artisan folio:list
 
 Вы можете создать вложенный маршрут, создав одну или несколько директорий внутри одной из директорий Folio. Например, чтобы создать страницу, которая будет доступна по `/user/profile`, создайте шаблон `profile.blade.php` в директории `pages/user`:
 
-```bash
+```shell
 php artisan folio:page user/profile
 
 # pages/user/profile.blade.php → /user/profile
@@ -108,7 +108,7 @@ php artisan folio:page user/profile
 
 Иногда вы можете хотеть сделать определенную страницу "индексом" для директории. Поместив шаблон `index.blade.php` в директорию Folio, все запросы к корню этой директории будут направлены на эту страницу:
 
-```bash
+```shell
 php artisan folio:page index
 # pages/index.blade.php → /
 
@@ -121,7 +121,7 @@ php artisan folio:page users/index
 
 Часто вам нужно будет внедрить сегменты URL входящего запроса в вашу страницу, чтобы вы могли взаимодействовать с ними. Например, вам может потребоваться получить доступ к "ID" пользователя, чей профиль отображается. Для этого вы можете заключить сегмент имени файла страницы в квадратные скобки:
 
-```bash
+```shell
 php artisan folio:page "users/[id]"
 
 # pages/users/[id].blade.php → /users/1
@@ -137,7 +137,7 @@ php artisan folio:page "users/[id]"
 
 Для захвата нескольких сегментов вы можете использовать префикс `...` перед заключенным в скобки сегментом:
 
-```bash
+```shell
 php artisan folio:page "users/[...ids]"
 
 # pages/users/[...ids].blade.php → /users/1/2/3
@@ -158,7 +158,7 @@ php artisan folio:page "users/[...ids]"
 
 Если подстановочный сегмент имени файла вашего шаблона страницы соответствует одной из моделей Eloquent вашего приложения, Folio автоматически использует возможности привязки модели Laravel и попытается вставить экземпляр разрешенной модели в вашу страницу:
 
-```bash
+```shell
 php artisan folio:page "users/[User]"
 
 # pages/users/[User].blade.php → /users/1
@@ -182,7 +182,7 @@ php artisan folio:page "users/[User]"
 
 По умолчанию Folio будет искать вашу модель в директории `app/Models` вашего приложения. Однако, при необходимости, вы можете указать полное имя класса модели в имени файла вашего шаблона:
 
-```bash
+```shell
 php artisan folio:page "users/[.App.Models.User]"
 
 # pages/users/[.App.Models.User].blade.php → /users/1
