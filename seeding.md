@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: 96617d0be0510d33cfa46db034b73a2273b22a97
 ---
 
 # База данных · Наполнение фиктивными данными
@@ -25,29 +25,31 @@ php artisan make:seeder UserSeeder
 
 В качестве примера давайте изменим класс `DatabaseSeeder`, созданный по умолчанию, и добавим выражение вставки фасада `DB` в методе `run`:
 
-    <?php
+```php
+<?php
 
-    namespace Database\Seeders;
+namespace Database\Seeders;
 
-    use Illuminate\Database\Seeder;
-    use Illuminate\Support\Facades\DB;
-    use Illuminate\Support\Facades\Hash;
-    use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-    class DatabaseSeeder extends Seeder
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Запустить наполнение базы данных.
+     */
+    public function run(): void
     {
-        /**
-         * Запустить наполнение базы данных.
-         */
-        public function run(): void
-        {
-            DB::table('users')->insert([
-                'name' => Str::random(10),
-                'email' => Str::random(10).'@example.com',
-                'password' => Hash::make('password'),
-            ]);
-        }
+        DB::table('users')->insert([
+            'name' => Str::random(10),
+            'email' => Str::random(10).'@example.com',
+            'password' => Hash::make('password'),
+        ]);
     }
+}
+```
 
 > [!NOTE]
 > В методе `run` вы можете объявить любые необходимые типы зависимостей. Они будут автоматически извлечены и внедрены через [контейнер служб](/docs/{{version}}/container) Laravel.
@@ -59,62 +61,68 @@ php artisan make:seeder UserSeeder
 
 Например, давайте создадим 50 пользователей, у каждого из которых будет по одному посту:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    /**
-     * Запустить наполнение базы данных.
-     */
-    public function run(): void
-    {
-        User::factory()
-                ->count(50)
-                ->hasPosts(1)
-                ->create();
-    }
+/**
+ * Запустить наполнение базы данных.
+ */
+public function run(): void
+{
+    User::factory()
+        ->count(50)
+        ->hasPosts(1)
+        ->create();
+}
+```
 
 <a name="calling-additional-seeders"></a>
 ### Вызов дополнительных наполнителей
 
 Внутри класса `DatabaseSeeder` вы можете использовать метод `call` для запуска других наполнителей. Использование метода `call` позволяет вам разбить ваши наполнители БД на несколько файлов, так что ни один класс наполнителя не станет слишком большим. Метод `call` принимает массив классов, которые должны быть выполнены:
 
-    /**
-     * Запустить наполнение базы данных.
-     */
-    public function run(): void
-    {
-        $this->call([
-            UserSeeder::class,
-            PostSeeder::class,
-            CommentSeeder::class,
-        ]);
-    }
+```php
+/**
+ * Запустить наполнение базы данных.
+ */
+public function run(): void
+{
+    $this->call([
+        UserSeeder::class,
+        PostSeeder::class,
+        CommentSeeder::class,
+    ]);
+}
+```
 
 <a name="muting-model-events"></a>
 ### Отключение событий модели
 
 При выполнении сидов (seeds) вы можете захотеть предотвратить моделям отправку событий. Для этого вы можете использовать трейт `WithoutModelEvents`. При его использовании, трейт `WithoutModelEvents` гарантирует, что события модели не будут отправлены, даже если дополнительные сид-классы выполняются с помощью метода `call`:
 
-    <?php
+```php
+<?php
 
-    namespace Database\Seeders;
+namespace Database\Seeders;
 
-    use Illuminate\Database\Seeder;
-    use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-    class DatabaseSeeder extends Seeder
+class DatabaseSeeder extends Seeder
+{
+    use WithoutModelEvents;
+
+    /**
+     * Запуск сидеров базы данных.
+     */
+    public function run(): void
     {
-        use WithoutModelEvents;
-
-        /**
-         * Запуск сидеров базы данных.
-         */
-        public function run(): void
-        {
-            $this->call([
-                UserSeeder::class,
-            ]);
-        }
+        $this->call([
+            UserSeeder::class,
+        ]);
     }
+}
+```
 
 Этот трейт поможет вам отключить отправку событий модели во время выполнения сидов (seeds).
 
