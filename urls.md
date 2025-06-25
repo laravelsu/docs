@@ -1,5 +1,5 @@
 ---
-git: 7e89b0d5ae05e39854aa7e78c44bdc9ff6de624d
+git: b3927f93ba445e6b3040f2697c8611dd5918a655
 ---
 
 # Генерация URL-адресов
@@ -17,95 +17,120 @@ Laravel предлагает несколько функций, которые �
 
 Помощник `url` используется для генерации произвольных URL-адресов для вашего приложения. Сгенерированный URL-адрес будет автоматически использовать схему (HTTP или HTTPS) и хост из текущего запроса, обрабатываемого приложением:
 
-    $post = App\Models\Post::find(1);
+```php
+$post = App\Models\Post::find(1);
 
-    echo url("/posts/{$post->id}");
+echo url("/posts/{$post->id}");
 
-    // http://example.com/posts/1
+// http://example.com/posts/1
+```
 
 Чтобы сгенерировать URL-адрес с параметрами строки запроса, вы можете использовать метод `query`:
 
-    echo url()->query('/posts', ['search' => 'Laravel']);
+```php
+echo url()->query('/posts', ['search' => 'Laravel']);
 
-    // https://example.com/posts?search=Laravel
+// https://example.com/posts?search=Laravel
 
-    echo url()->query('/posts?sort=latest', ['search' => 'Laravel']);
+echo url()->query('/posts?sort=latest', ['search' => 'Laravel']);
 
-    // http://example.com/posts?sort=latest&search=Laravel
+// http://example.com/posts?sort=latest&search=Laravel
+```
 
 Предоставление параметров строки запроса, которые уже существуют в адресе, перезапишет их существующее значение:
 
-    echo url()->query('/posts?sort=latest', ['sort' => 'oldest']);
+```php
+echo url()->query('/posts?sort=latest', ['sort' => 'oldest']);
 
-    // http://example.com/posts?sort=oldest
+// http://example.com/posts?sort=oldest
+```
 
 Массивы значений также могут передаваться в качестве параметров запроса. Эти значения будут правильно введены и закодированы в сгенерированном URL-адресе:
 
-    echo $url = url()->query('/posts', ['columns' => ['title', 'body']]);
+```php
+echo $url = url()->query('/posts', ['columns' => ['title', 'body']]);
 
-    // http://example.com/posts?columns%5B0%5D=title&columns%5B1%5D=body
+// http://example.com/posts?columns%5B0%5D=title&columns%5B1%5D=body
 
-    echo urldecode($url);
+echo urldecode($url);
 
-    // http://example.com/posts?columns[0]=title&columns[1]=body
+// http://example.com/posts?columns[0]=title&columns[1]=body
+```
 
 <a name="accessing-the-current-url"></a>
 ### Доступ к текущему URL
 
 Если не передан путь помощнику `url`, то возвращается экземпляр `Illuminate\Routing\UrlGenerator`, позволяющий вам получить доступ к информации о текущем URL:
 
-    // Получить текущий URL без строки запроса...
-    echo url()->current();
+```php
+// Получить текущий URL без строки запроса...
+echo url()->current();
 
-    // Получить текущий URL, включая строку запроса...
-    echo url()->full();
+// Получить текущий URL, включая строку запроса...
+echo url()->full();
 
-    // Получить полный URL-адрес предыдущего запроса...
-    echo url()->previous();
+// Получить полный URL-адрес предыдущего запроса...
+echo url()->previous();
+
+// Получить путь предыдущего запроса...
+echo url()->previousPath();
+```
 
 К каждому из этих методов также можно получить доступ через [фасад](/docs/{{version}}/facades) `URL`:
 
-    use Illuminate\Support\Facades\URL;
+```php
+use Illuminate\Support\Facades\URL;
 
-    echo URL::current();
+echo URL::current();
+```
 
 <a name="urls-for-named-routes"></a>
 ## URL для именованных маршрутов
 
 Помощник `route` используется для генерации URL-адресов для [именованных маршрутов](/docs/{{version}}/routing#named-routes). Именованные маршруты позволяют создавать URL-адреса без привязки к фактическому URL-адресу, определенному в маршруте. Следовательно, если URL-адрес маршрута изменится, никаких изменений в ваши вызовы функции `route` вносить не нужно. Например, представьте, что ваше приложение содержит маршрут, определенный следующим образом:
 
-    Route::get('/post/{post}', function (Post $post) {
-        // ...
-    })->name('post.show');
+```php
+Route::get('/post/{post}', function (Post $post) {
+    // ...
+})->name('post.show');
+```
 
 Чтобы сгенерировать URL-адрес этого маршрута, вы можете использовать помощник `route` следующим образом:
 
-    echo route('post.show', ['post' => 1]);
+```php
+echo route('post.show', ['post' => 1]);
 
-    // http://example.com/post/1
+// http://example.com/post/1
+```
 
 Конечно, помощник `route` также может использоваться для генерации URL-адресов для маршрутов с несколькими параметрами:
 
-    Route::get('/post/{post}/comment/{comment}', function (Post $post, Comment $comment) {
-        // ...
-    })->name('comment.show');
+```php
+Route::get('/post/{post}/comment/{comment}', function (Post $post, Comment $comment) {
+    // ...
+})->name('comment.show');
 
-    echo route('comment.show', ['post' => 1, 'comment' => 3]);
+echo route('comment.show', ['post' => 1, 'comment' => 3]);
 
-    // http://example.com/post/1/comment/3
+// http://example.com/post/1/comment/3
+```
 
 Любые дополнительные элементы массива, не соответствующие параметрам определения маршрута, будут добавлены в строку запроса URL:
 
-    echo route('post.show', ['post' => 1, 'search' => 'rocket']);
+```php
+echo route('post.show', ['post' => 1, 'search' => 'rocket']);
 
-    // http://example.com/post/1?search=rocket
+// http://example.com/post/1?search=rocket
+```
 
 <a name="eloquent-models"></a>
 #### Модели Eloquent
 
 Вы часто будете генерировать URL-адреса, используя ключ маршрута (обычно первичный ключ) [модели Eloquent](/docs/{{version}}/eloquent). По этой причине вы можете передавать модели Eloquent в качестве значений параметров. Помощник `route` автоматически извлечет ключ маршрута модели:
 
-    echo route('post.show', ['post' => $post]);
+```php
+echo route('post.show', ['post' => $post]);
+```
 
 <a name="signed-urls"></a>
 ### Подписанные URL
@@ -114,115 +139,180 @@ Laravel позволяет вам легко создавать «подписа
 
 Например, вы можете использовать подписанные URL-адреса для реализации общедоступной ссылки «отказаться от подписки», которая отправляется вашим клиентам по электронной почте. Чтобы создать подписанный URL для именованного маршрута, используйте метод `signedRoute` фасада `URL`:
 
-    use Illuminate\Support\Facades\URL;
+```php
+use Illuminate\Support\Facades\URL;
 
-    return URL::signedRoute('unsubscribe', ['user' => 1]);
+return URL::signedRoute('unsubscribe', ['user' => 1]);
+```
 
 Вы можете исключить домен из хеша подписанного URL, предоставив аргумент `absolute` методу `signedRoute`:
 
-    return URL::signedRoute('unsubscribe', ['user' => 1], absolute: false);
+```php
+return URL::signedRoute('unsubscribe', ['user' => 1], absolute: false);
+```
 
 Если вы хотите сгенерировать временный подписанный URL-адрес маршрута, срок действия которого истекает по истечении определенного времени, вы можете использовать метод `temporarySignedRoute`. Когда Laravel проверяет временный подписанный URL-адрес маршрута, он гарантирует, что метка времени истечения срока, закодированная в подписанный URL-адрес, не истекла:
 
-    use Illuminate\Support\Facades\URL;
+```php
+use Illuminate\Support\Facades\URL;
 
-    return URL::temporarySignedRoute(
-        'unsubscribe', now()->addMinutes(30), ['user' => 1]
-    );
+return URL::temporarySignedRoute(
+    'unsubscribe', now()->addMinutes(30), ['user' => 1]
+);
+```
 
 <a name="validating-signed-route-requests"></a>
 #### Проверка запросов подписанного маршрута
 
 Чтобы убедиться, что входящий запрос имеет действительную подпись, вы должны вызвать метод `hasValidSignature` для входящего объекта запроса `Illuminate\Http\Request`:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/unsubscribe/{user}', function (Request $request) {
-        if (! $request->hasValidSignature()) {
-            abort(401);
-        }
-
-        // ...
-    })->name('unsubscribe');
-
-Иногда может потребоваться разрешить фронтенду вашего приложения добавлять данные к подписанному URL, например, при выполнении пагинации на стороне клиента. Поэтому вы можете указать параметры запроса, которые следует игнорировать при проверке подписанного URL, используя метод `hasValidSignatureWhileIgnoring`. Помните, что игнорирование параметров позволяет любому изменять эти параметры в запросе:
-
-    if (! $request->hasValidSignatureWhileIgnoring(['page', 'order'])) {
+Route::get('/unsubscribe/{user}', function (Request $request) {
+    if (! $request->hasValidSignature()) {
         abort(401);
     }
 
+    // ...
+})->name('unsubscribe');
+```
+
+Иногда может потребоваться разрешить фронтенду вашего приложения добавлять данные к подписанному URL, например, при выполнении пагинации на стороне клиента. Поэтому вы можете указать параметры запроса, которые следует игнорировать при проверке подписанного URL, используя метод `hasValidSignatureWhileIgnoring`. Помните, что игнорирование параметров позволяет любому изменять эти параметры в запросе:
+
+```php
+if (! $request->hasValidSignatureWhileIgnoring(['page', 'order'])) {
+    abort(401);
+}
+```
+
 Вместо проверки подписанных URL-адресов с помощью экземпляра входящего запроса вы можете назначить маршруту `signed` (`Illuminate\Routing\Middleware\ValidateSignature`) [посредника (middleware)](/docs/{{version}}/middleware). Если входящий запрос не имеет действительной подписи, промежуточное программное обеспечение автоматически вернет HTTP-ответ «403»:
 
-    Route::post('/unsubscribe/{user}', function (Request $request) {
-        // ...
-    })->name('unsubscribe')->middleware('signed');
+```php
+Route::post('/unsubscribe/{user}', function (Request $request) {
+    // ...
+})->name('unsubscribe')->middleware('signed');
+```
 
 Если ваши подписанные URL-адреса не включают домен в хеш URL, вы должны предоставить аргумент `relative` промежуточному программному обеспечению:
 
-    Route::post('/unsubscribe/{user}', function (Request $request) {
-        // ...
-    })->name('unsubscribe')->middleware('signed:relative');
+```php
+Route::post('/unsubscribe/{user}', function (Request $request) {
+    // ...
+})->name('unsubscribe')->middleware('signed:relative');
+```
 
 <a name="responding-to-invalid-signed-routes"></a>
 #### Ответ на недействительные подписанные маршруты
 
 Когда кто-то посещает подписанный URL-адрес, срок действия которого истек, он получит общую страницу с ошибкой для кода состояния `403` HTTP. Однако вы можете настроить это поведение, определив собственное замыкание «рендеринга» для исключения `InvalidSignatureException` в файле `bootstrap/app.php` вашего приложения:
 
-    use Illuminate\Routing\Exceptions\InvalidSignatureException;
+```php
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 
-    ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (InvalidSignatureException $e) {
-            return response()->view('errors.link-expired', status: 403);
-        });
-    })
+->withExceptions(function (Exceptions $exceptions) {
+    $exceptions->render(function (InvalidSignatureException $e) {
+        return response()->view('errors.link-expired', status: 403);
+    });
+})
+```
 
 <a name="urls-for-controller-actions"></a>
 ## URL для действий контроллера
 
 Функция `action` генерирует URL-адрес для переданного действия контроллера:
 
-    use App\Http\Controllers\HomeController;
+```php
+use App\Http\Controllers\HomeController;
 
-    $url = action([HomeController::class, 'index']);
+$url = action([HomeController::class, 'index']);
+```
 
 Если метод контроллера принимает параметры маршрута, вы можете передать ассоциативный массив параметров маршрута в качестве второго аргумента функции:
 
-    $url = action([UserController::class, 'profile'], ['id' => 1]);
+```php
+$url = action([UserController::class, 'profile'], ['id' => 1]);
+```
+
+<a name="fluent-uri-objects"></a>
+## Объекты Fluent URI
+
+Класс `Uri` Laravel предоставляет удобный и гибкий интерфейс для создания и управления URI через объекты. Этот класс оборачивает функциональность, предоставляемую базовым пакетом League URI, и легко интегрируется с системой маршрутизации Laravel.
+
+Вы можете легко создать экземпляр `Uri`, используя статические методы:
+
+```php
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\InvokableController;
+use Illuminate\Support\Uri;
+
+// Генерируем экземпляр URI из заданной строки...
+$uri = Uri::of('https://example.com/path');
+
+// Генерация экземпляров URI для путей, именованных маршрутов или действий контроллера...
+$uri = Uri::to('/dashboard');
+$uri = Uri::route('users.show', ['user' => 1]);
+$uri = Uri::signedRoute('users.show', ['user' => 1]);
+$uri = Uri::temporarySignedRoute('user.index', now()->addMinutes(5));
+$uri = Uri::action([UserController::class, 'index']);
+$uri = Uri::action(InvokableController::class);
+
+// Генерируем экземпляр URI из текущего URL-адреса запроса...
+$uri = $request->uri();
+```
+
+Получив экземпляр URI, вы можете свободно его изменять:
+
+```php
+$uri = Uri::of('https://example.com')
+    ->withScheme('http')
+    ->withHost('test.com')
+    ->withPort(8000)
+    ->withPath('/users')
+    ->withQuery(['page' => 2])
+    ->withFragment('section-1');
+```
+
+Дополнительную информацию о работе с текущими объектами URI см. в [документации URI](/docs/{{version}}/helpers#uri).
 
 <a name="default-values"></a>
 ## Значения по умолчанию
 
 Для некоторых приложений вы можете указать значения по умолчанию для определенных параметров URL-адреса. Например, представьте, что многие из ваших маршрутов определяют параметр `{locale}`:
 
-    Route::get('/{locale}/posts', function () {
-        // ...
-    })->name('post.index');
+```php
+Route::get('/{locale}/posts', function () {
+    // ...
+})->name('post.index');
+```
 
 Обременительно передавать `locale` каждый раз при вызове помощника `route`. Итак, вы можете использовать метод `URL::defaults`, чтобы определить значение по умолчанию для этого параметра, которое всегда будет применяться во время текущего запроса. Вы можете вызвать этот метод из [посредника маршрута](/docs/{{version}}/middleware#assigning-middleware-to-routes), чтобы получить доступ к текущему запросу:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Middleware;
+namespace App\Http\Middleware;
 
-    use Closure;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\URL;
-    use Symfony\Component\HttpFoundation\Response;
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpFoundation\Response;
 
-    class SetDefaultLocaleForUrls
+class SetDefaultLocaleForUrls
+{
+    /**
+     * Обработка входящего запроса.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
     {
-        /**
-         * Обработка входящего запроса.
-         *
-         * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-         */
-        public function handle(Request $request, Closure $next): Response
-        {
-            URL::defaults(['locale' => $request->user()->locale]);
+        URL::defaults(['locale' => $request->user()->locale]);
 
-            return $next($request);
-        }
+        return $next($request);
     }
+}
+```
 
 После установки значения по умолчанию для параметра `locale` вам больше не потребуется передавать его значение при генерации URL-адресов с помощью помощника `route`.
 
