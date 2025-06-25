@@ -1,5 +1,5 @@
 ---
-git: e22c77d70605482e9df9964e6baad8839f824292
+git: 1615dd424f6a7823c54fcdad1522ed367b90ff4d
 ---
 
 # База данных · Использование Redis
@@ -14,7 +14,7 @@ git: e22c77d70605482e9df9964e6baad8839f824292
 Если вы не можете установить расширение PhpRedis, то установите пакет `predis/predis` через Composer. Predis – это клиент Redis, полностью написанный на PHP и не требующий дополнительных расширений:
 
 ```shell
-composer require predis/predis:^2.0
+composer require predis/predis
 ```
 
 <a name="configuration"></a>
