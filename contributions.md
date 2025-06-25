@@ -1,5 +1,5 @@
 ---
-git: 38fa9c370f19c1bfad16eb1b9e83884f94cf526a
+git: 6c865175de270fe5ebb8e33d4b13fdb24064b67b
 ---
 
 # Рекомендации по участию
@@ -21,7 +21,6 @@ git: 38fa9c370f19c1bfad16eb1b9e83884f94cf526a
 
 - [Приложение Laravel](https://github.com/laravel/laravel)
 - [Логотипы Laravel](https://github.com/laravel/art)
-- [Laravel Breeze](https://github.com/laravel/breeze)
 - [Документация Laravel](https://github.com/laravel/docs)
 - [Пакет Laravel Dusk](https://github.com/laravel/dusk)
 - [Пакет Laravel Cashier Stripe](https://github.com/laravel/cashier)
@@ -32,7 +31,7 @@ git: 38fa9c370f19c1bfad16eb1b9e83884f94cf526a
 - [Фреймворк Laravel](https://github.com/laravel/framework)
 - [Пакет Laravel Homestead](https://github.com/laravel/homestead) ([Скрипты для сборки](https://github.com/laravel/settler))
 - [Пакет Laravel Horizon](https://github.com/laravel/horizon)
-- [Пакет Laravel Jetstream](https://github.com/laravel/jetstream)
+- [Пакет Laravel Livewire Starter Kit](https://github.com/laravel/livewire-starter-kit)
 - [Пакет Laravel Passport](https://github.com/laravel/passport)
 - [Пакет Laravel Pennant](https://github.com/laravel/pennant)
 - [Пакет Laravel Pint](https://github.com/laravel/pint)
@@ -43,7 +42,7 @@ git: 38fa9c370f19c1bfad16eb1b9e83884f94cf526a
 - [Пакет Laravel Scout](https://github.com/laravel/scout)
 - [Пакет Laravel Socialite](https://github.com/laravel/socialite)
 - [Пакет Laravel Telescope](https://github.com/laravel/telescope)
-- [Исходники официального сайта Laravel](https://github.com/laravel/laravel.com)
+- [Пакет Laravel Vue Starter Kit](https://github.com/laravel/vue-starter-kit)
 
 <!-- </div> -->
 
@@ -74,9 +73,9 @@ git: 38fa9c370f19c1bfad16eb1b9e83884f94cf526a
 <a name="which-branch"></a>
 ## Какую ветку выбрать при запросах слияния?
 
-**Все** исправления ошибок должны быть отправлены в последнюю версию, которая поддерживает исправления ошибок (на данный момент `11.x`). Исправления ошибок **никогда** не должны отправляться в ветку `master`, если они не исправляют функции, которые существуют только в предстоящем выпуске.
+**Все** исправления ошибок должны быть отправлены в последнюю версию, которая поддерживает исправления ошибок (на данный момент `12.x`). Исправления ошибок **никогда** не должны отправляться в ветку `master`, если они не исправляют функции, которые существуют только в предстоящем выпуске.
 
-**Минорный** функционал, **полностью обратно совместимый** с текущим релизом, может быть отправлен в последнюю стабильную ветку (в настоящее время `11.x`)..
+**Минорный** функционал, **полностью обратно совместимый** с текущим релизом, может быть отправлен в последнюю стабильную ветку (в настоящее время `12.x`)..
 
 **Мажорный** новый функционал или функционал с изменениями, приводящими к нарушению обратной совместимости, должен всегда отправляться в ветку `master`, содержащую предстоящий релиз.
 
@@ -100,44 +99,50 @@ Laravel следует стандарту кодирования [PSR-2](https:/
 
 Ниже приведен пример валидного блока документации Laravel. Обратите внимание, что за атрибутом `@param` идут два пробела, тип аргумента, еще два пробела и, наконец, имя переменной:
 
-    /**
-     * Регистрация привязки к контейнеру.
-     *
-     * @param  string|array  $abstract
-     * @param  \Closure|string|null  $concrete
-     * @param  bool  $shared
-     * @return void
-     *
-     * @throws \Exception
-     */
-    public function bind($abstract, $concrete = null, $shared = false)
-    {
-        // ...
-    }
+```php
+/**
+ * Регистрация привязки к контейнеру.
+ *
+ * @param  string|array  $abstract
+ * @param  \Closure|string|null  $concrete
+ * @param  bool  $shared
+ * @return void
+ *
+ * @throws \Exception
+ */
+public function bind($abstract, $concrete = null, $shared = false)
+{
+    // ...
+}
+```
 
 Когда атрибуты `@param` или `@return` являются избыточными из-за использования нативных типов, их можно удалить:
 
-    /**
-     * Выполнение задания.
-     */
-    public function handle(AudioProcessor $processor): void
-    {
-        //
-    }
+```php
+/**
+ * Выполнение задания.
+ */
+public function handle(AudioProcessor $processor): void
+{
+    //
+}
+```
 
 Однако, когда нативный тип является обобщенным, укажите его через использование атрибутов `@param` или `@return`:
 
-    /**
-     * Получение вложения к сообщению.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [
-            Attachment::fromStorage('/path/to/file'),
-        ];
-    }
+```php
+/**
+ * Получение вложения к сообщению.
+ *
+ * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+ */
+public function attachments(): array
+{
+    return [
+        Attachment::fromStorage('/path/to/file'),
+    ];
+}
+```
 
 <a name="styleci"></a>
 ### StyleCI
