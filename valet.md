@@ -1,5 +1,5 @@
 ---
-git: 87c1dc3bbb78949d35a1af957ba76c4469490baa
+git: cc12f82e579b97571cfe1198e088bb92005682f8
 ---
 
 # Laravel Valet
@@ -254,13 +254,13 @@ valet unisolate
 
 Valet включает команду для предоставления доступа к вашим локальным сайтам всему миру, обеспечивая простой способ тестирования вашего сайта на мобильных устройствах или его демонстрации команде разработчиков и клиентам.
 
-По умолчанию Valet поддерживает предоставление доступа к вашим сайтам через ngrok или Expose. Прежде чем предоставить доступ к сайту, вам следует обновить вашу конфигурацию Valet, используя команду `share-tool`, указав `ngrok` или `expose`:
+По умолчанию Valet поддерживает предоставление доступа к вашим сайтам через ngrok или Expose. Прежде чем предоставить доступ к сайту, вам следует обновить вашу конфигурацию Valet, используя команду `share-tool`, указав `ngrok`, `expose` или  `cloudflared`:
 
 ```shell
 valet share-tool ngrok
 ```
 
-Если вы выберете инструмент который не установлен с помощью Homebrew (для ngrok) или Composer (для Expose), Valet автоматически предложит вам установить его. Конечно, оба инструмента требуют аутентификации вашей учетной записи ngrok или Expose, прежде чем вы сможете предоставить доступ к сайту к сайтам.
+Если вы выберете инструмент который не установлен с помощью Homebrew (для ngrok и cloudflared) или Composer (для Expose), Valet автоматически предложит вам установить его. Конечно, оба инструмента требуют аутентификации вашей учетной записи ngrok или Expose, прежде чем вы сможете предоставить доступ к сайту к сайтам.
 
 Чтобы предоставить доступ к сайту, перейдите в каталог сайта в вашем терминале и выполните команду `share` Valet. Общедоступный URL будет помещен в ваш буфер обмена и готов для вставки прямо в ваш браузер или для предоставления вашей команде:
 
@@ -310,19 +310,21 @@ valet set-ngrok-token YOUR_TOKEN_HERE
 
 Некоторые приложения, использующие другие фреймворки, могут зависеть от переменных среды сервера, но не предоставляют способа настройки этих переменных в вашем проекте. Valet позволяет настраивать переменные среды для конкретных сайтов, добавляя файл `.valet-env.php` в корень вашего проекта. Этот файл должен возвращать массив пар сайт / переменная среды, которые будут добавлены в глобальный массив `$_SERVER` для каждого указанного в массиве сайта:
 
-    <?php
+```php
+<?php
 
-    return [
-        // Set $_SERVER['key'] to "value" for the laravel.test site...
-        'laravel' => [
-            'key' => 'value',
-        ],
+return [
+    // Set $_SERVER['key'] to "value" for the laravel.test site...
+    'laravel' => [
+        'key' => 'value',
+    ],
 
-        // Set $_SERVER['key'] to "value" for all sites...
-        '*' => [
-            'key' => 'value',
-        ],
-    ];
+    // Set $_SERVER['key'] to "value" for all sites...
+    '*' => [
+        'key' => 'value',
+    ],
+];
+```
 
 <a name="proxying-services"></a>
 ## Проксирование сервисов
@@ -369,32 +371,36 @@ valet proxies
 
 Например, допустим, мы пишем `WordPressValetDriver`. Наш метод `serves` может выглядеть примерно так:
 
-    /**
-     * Определим, обслуживает ли драйвер запрос.
-     */
-    public function serves(string $sitePath, string $siteName, string $uri): bool
-    {
-        return is_dir($sitePath.'/wp-admin');
-    }
+```php
+   /**
+    * Определим, обслуживает ли драйвер запрос.
+    */
+   public function serves(string $sitePath, string $siteName, string $uri): bool
+   {
+       return is_dir($sitePath.'/wp-admin');
+   }
+```
 
 <a name="the-isstaticfile-method"></a>
 #### Метод `isStaticFile` Method
 
 Метод `isStaticFile` должен определить, относится ли входящий запрос к «статическому» файлу, такому как изображение или таблица стилей. Если файл является статическим, метод должен вернуть полный путь к этому файлу на диске. Если входящий запрос не относится к статическому файлу, метод должен вернуть `false`:
 
-    /**
-     * Определим, относится ли входящий запрос к статическому файлу.
-     *
-     * @return string|false
-     */
-    public function isStaticFile(string $sitePath, string $siteName, string $uri)
-    {
-        if (file_exists($staticFilePath = $sitePath.'/public/'.$uri)) {
-            return $staticFilePath;
-        }
-
-        return false;
+```php
+/**
+ * Определим, относится ли входящий запрос к статическому файлу.
+ *
+ * @return string|false
+ */
+public function isStaticFile(string $sitePath, string $siteName, string $uri)
+{
+    if (file_exists($staticFilePath = $sitePath.'/public/'.$uri)) {
+        return $staticFilePath;
     }
+
+    return false;
+}
+```
 
 > [!WARNING]
 > Метод `isStaticFile` будет вызван только в том случае, если метод `serves` вернет `true` для входящего запроса и URI запроса не равен `/`.
@@ -404,39 +410,43 @@ valet proxies
 
 Метод `frontControllerPath` должен вернуть полный путь к "front controller" вашего приложения, который обычно является файлом "index.php" или его эквивалентом:
 
-    /**
-     * Получите полностью разрешенный путь к фронт-контроллеру приложения.
-     */
-    public function frontControllerPath(string $sitePath, string $siteName, string $uri): string
-    {
-        return $sitePath.'/public/index.php';
-    }
+```php
+/**
+ * Получите полностью разрешенный путь к фронт-контроллеру приложения.
+ */
+public function frontControllerPath(string $sitePath, string $siteName, string $uri): string
+{
+    return $sitePath.'/public/index.php';
+}
+```
 
 <a name="local-drivers"></a>
 ### Локальные драйверы
 
 Если вы хотите определить пользовательский драйвер Valet для отдельного приложения, создайте файл `LocalValetDriver.php` в корневом каталоге приложения. Ваш пользовательский драйвер может расширять базовый класс `ValetDriver` или расширять существующий драйвер для конкретного приложения, такой как `LaravelValetDriver`:
 
-    use Valet\Drivers\LaravelValetDriver;
+```php
+use Valet\Drivers\LaravelValetDriver;
 
-    class LocalValetDriver extends LaravelValetDriver
+class LocalValetDriver extends LaravelValetDriver
+{
+    /**
+     * Определите, обслуживает ли драйвер запрос.
+     */
+    public function serves(string $sitePath, string $siteName, string $uri): bool
     {
-        /**
-         * Определите, обслуживает ли драйвер запрос.
-         */
-        public function serves(string $sitePath, string $siteName, string $uri): bool
-        {
-            return true;
-        }
-
-        /**
-         * Получите полностью разрешенный путь к фронт-контроллеру приложения.
-         */
-        public function frontControllerPath(string $sitePath, string $siteName, string $uri): string
-        {
-            return $sitePath.'/public_html/index.php';
-        }
+        return true;
     }
+
+    /**
+     * Получите полностью разрешенный путь к фронт-контроллеру приложения.
+     */
+    public function frontControllerPath(string $sitePath, string $siteName, string $uri): string
+    {
+        return $sitePath.'/public_html/index.php';
+    }
+}
+```
 
 <a name="other-valet-commands"></a>
 ## Другие команды
