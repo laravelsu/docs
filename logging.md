@@ -1,5 +1,5 @@
 ---
-git: 7102a2df101517a6388a4280485eafda00d0f28d
+git: a89581b628e5fce26aa0085771e4877c3a650a71
 ---
 
 # Логирование
@@ -45,11 +45,13 @@ git: 7102a2df101517a6388a4280485eafda00d0f28d
 
 По умолчанию экземпляр Monolog создается с «именем канала», которое соответствует текущей среде, например, `production` или `local`. Чтобы изменить это значение, добавьте параметр `name` в конфигурацию вашего канала:
 
-    'stack' => [
-        'driver' => 'stack',
-        'name' => 'channel-name',
-        'channels' => ['single', 'slack'],
-    ],
+```php
+'stack' => [
+    'driver' => 'stack',
+    'name' => 'channel-name',
+    'channels' => ['single', 'slack'],
+],
+```
 
 <a name="channel-prerequisites"></a>
 ### Предварительная подготовка канала
@@ -88,23 +90,27 @@ git: 7102a2df101517a6388a4280485eafda00d0f28d
 
 PHP, Laravel и другие библиотеки часто уведомляют своих пользователей о том, что некоторые из их функций устарели и будут удалены в будущей версии. Если вы хотите регистрировать эти предупреждения об устаревании, вы можете указать предпочитаемый канал журнала `deprecations`, используя переменную среды `LOG_DEPRECATIONS_CHANNEL` или в файле конфигурации вашего приложения `config/logging.php`:
 
-    'deprecations' => [
-        'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
-        'trace' => env('LOG_DEPRECATIONS_TRACE', false),
-    ],
+```php
+'deprecations' => [
+    'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
+    'trace' => env('LOG_DEPRECATIONS_TRACE', false),
+],
 
-    'channels' => [
-        // ...
-    ]
+'channels' => [
+    // ...
+]
+```
 
 Или вы можете определить канал журнала с именем `deprecations`. Если канал журнала с таким именем существует, он всегда будет использоваться для регистрации устаревания:
 
-    'channels' => [
-        'deprecations' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/php-deprecation-warnings.log'),
-        ],
+```php
+'channels' => [
+    'deprecations' => [
+        'driver' => 'single',
+        'path' => storage_path('logs/php-deprecation-warnings.log'),
     ],
+],
+```
 
 <a name="building-log-stacks"></a>
 ## Построение стека журналов
@@ -146,128 +152,142 @@ PHP, Laravel и другие библиотеки часто уведомляю�
 
 Итак, представьте, что мы регистрируем сообщение, используя метод `debug`:
 
-    Log::debug('An informational message.');
+```php
+Log::debug('An informational message.');
+```
 
 Учитывая нашу конфигурацию, канал `syslog` будет записывать сообщение в системный журнал; однако, поскольку сообщение об ошибке не является уровнем `critical` или выше, то оно не будет отправлено в Slack. Однако, если мы регистрируем сообщение уровня `emergency`, то оно будет отправлено как в системный журнал, так и в Slack, поскольку уровень `emergency` выше нашего минимального порогового значения для обоих каналов:
 
-    Log::emergency('The system is down!');
+```php
+Log::emergency('The system is down!');
+```
 
 <a name="writing-log-messages"></a>
 ## Запись сообщений журнала
 
 Вы можете записывать информацию в журналы с помощью [фасада](/docs/{{version}}/facades) `Log`. Как упоминалось ранее, средство ведения журнала обеспечивает восемь уровней ведения журнала, определенных в спецификации [RFC 5424 specification](https://tools.ietf.org/html/rfc5424): **emergency**, **alert**, **critical**, **error**, **warning**, **notice**, **info**, и **debug**.
 
-    use Illuminate\Support\Facades\Log;
+```php
+use Illuminate\Support\Facades\Log;
 
-    Log::emergency($message);
-    Log::alert($message);
-    Log::critical($message);
-    Log::error($message);
-    Log::warning($message);
-    Log::notice($message);
-    Log::info($message);
-    Log::debug($message);
+Log::emergency($message);
+Log::alert($message);
+Log::critical($message);
+Log::error($message);
+Log::warning($message);
+Log::notice($message);
+Log::info($message);
+Log::debug($message);
+```
 
 Вы можете вызвать любой из этих методов, чтобы записать сообщение для соответствующего уровня. По умолчанию сообщение будет записано в канал журнала по умолчанию, как настроено вашим файлом конфигурации `logging`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use App\Models\User;
-    use Illuminate\Support\Facades\Log;
-    use Illuminate\View\View;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
-    class UserController extends Controller
+class UserController extends Controller
+{
+    /**
+     * Показать профиль конкретного пользователя.
+     */
+    public function show(string $id): View
     {
-        /**
-         * Показать профиль конкретного пользователя.
-         */
-        public function show(string $id): View
-        {
-            Log::info('Showing the user profile for user: {id}', ['id' => $id]);
+        Log::info('Showing the user profile for user: {id}', ['id' => $id]);
 
-            return view('user.profile', [
-                'user' => User::findOrFail($id)
-            ]);
-        }
+        return view('user.profile', [
+            'user' => User::findOrFail($id)
+        ]);
     }
+}
+```
 
 <a name="contextual-information"></a>
 ### Контекстная информация
 
 Методам журнала может быть передан массив контекстных данных. Эти контекстные данные будут отформатированы и отображены в сообщении журнала:
 
-    use Illuminate\Support\Facades\Log;
+```php
+use Illuminate\Support\Facades\Log;
 
-    Log::info('User {id} failed to login.', ['id' => $user->id]);
+Log::info('User {id} failed to login.', ['id' => $user->id]);
+```
 
 Иногда вы можете указать некоторую контекстную информацию, которая должна быть включена во все последующие записи журнала в определенном канале. Например, вы можете захотеть зарегистрировать идентификатор запроса, связанный с каждым входящим запросом к вашему приложению. Для этого вы можете вызвать метод `withContext` фасада `Log`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Middleware;
+namespace App\Http\Middleware;
 
-    use Closure;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Log;
-    use Illuminate\Support\Str;
-    use Symfony\Component\HttpFoundation\Response;
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
-    class AssignRequestId
+class AssignRequestId
+{
+    /**
+     * Обработчик входящего запроса .
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
     {
-        /**
-         * Обработчик входящего запроса .
-         *
-         * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-         */
-        public function handle(Request $request, Closure $next): Response
-        {
-            $requestId = (string) Str::uuid();
+        $requestId = (string) Str::uuid();
 
-            Log::withContext([
-                'request-id' => $requestId
-            ]);
+        Log::withContext([
+            'request-id' => $requestId
+        ]);
 
-            $response = $next($request);
+        $response = $next($request);
 
-            $response->headers->set('Request-Id', $requestId);
+        $response->headers->set('Request-Id', $requestId);
 
-            return $response;
-        }
+        return $response;
     }
+}
+```
 
 Если вы хотите добавить общую информацию между _всеми_ каналами, вы можете вызвать метод `Log::shareContext()`. Этот метод предоставит дополнительную информацию всем созданным каналам и всем каналам, которые будут созданы впоследствии.
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Middleware;
+namespace App\Http\Middleware;
 
-    use Closure;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Log;
-    use Illuminate\Support\Str;
-    use Symfony\Component\HttpFoundation\Response;
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
-    class AssignRequestId
+class AssignRequestId
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
     {
-        /**
-         * Handle an incoming request.
-         *
-         * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-         */
-        public function handle(Request $request, Closure $next): Response
-        {
-            $requestId = (string) Str::uuid();
+        $requestId = (string) Str::uuid();
 
-            Log::shareContext([
-                'request-id' => $requestId
-            ]);
+        Log::shareContext([
+            'request-id' => $requestId
+        ]);
 
-            // ...
-        }
+        // ...
     }
+}
+```
 
 > [!NOTE]
 > Если вам нужно передавать контекст журнала при обработке задач в очереди, вы можете использовать [middleware заданий](/docs/{{version}}/queues#job-middleware).
@@ -277,36 +297,44 @@ PHP, Laravel и другие библиотеки часто уведомляю�
 
 По желанию можно записать сообщение в канал, отличный от канала по умолчанию вашего приложения. Вы можете использовать метод `channel` фасада `Log` для получения и регистрации любого канала, определенного в вашем файле конфигурации:
 
-    use Illuminate\Support\Facades\Log;
+```php
+use Illuminate\Support\Facades\Log;
 
-    Log::channel('slack')->info('Something happened!');
+Log::channel('slack')->info('Something happened!');
+```
 
 Если вы хотите создать стек протоколирования по запросу, состоящий из нескольких каналов, вы можете использовать метод `stack`:
 
-    Log::stack(['single', 'slack'])->info('Something happened!');
+```php
+Log::stack(['single', 'slack'])->info('Something happened!');
+```
 
 <a name="on-demand-channels"></a>
 #### Каналы по запросу
 
 Также возможно создать канал по запросу, предоставив конфигурацию во время выполнения, без того, чтобы эта конфигурация присутствовала в файле `logging` вашего приложения. Для этого вы можете передать массив конфигурации методу `build` фасада `Log`:
 
-    use Illuminate\Support\Facades\Log;
+```php
+use Illuminate\Support\Facades\Log;
 
-    Log::build([
-      'driver' => 'single',
-      'path' => storage_path('logs/custom.log'),
-    ])->info('Something happened!');
+Log::build([
+  'driver' => 'single',
+  'path' => storage_path('logs/custom.log'),
+])->info('Something happened!');
+```
 
 Вы также можете включить канал по запросу в стек журналов по запросу. Этого можно добиться, включив экземпляр вашего канала по запросу в массив, переданный в метод `stack`:
 
-    use Illuminate\Support\Facades\Log;
+```php
+use Illuminate\Support\Facades\Log;
 
-    $channel = Log::build([
-      'driver' => 'single',
-      'path' => storage_path('logs/custom.log'),
-    ]);
+$channel = Log::build([
+  'driver' => 'single',
+  'path' => storage_path('logs/custom.log'),
+]);
 
-    Log::stack(['slack', $channel])->info('Something happened!');
+Log::stack(['slack', $channel])->info('Something happened!');
+```
 
 <a name="monolog-channel-customization"></a>
 ## Настройка канала Monolog
@@ -318,37 +346,41 @@ PHP, Laravel и другие библиотеки часто уведомляю�
 
 Для начала определите массив `tap` в конфигурации канала. Массив `tap` должен содержать список классов, которые должны иметь возможность настраивать (или «касаться») экземпляр Monolog после его создания. Не существует обычного места для размещения этих классов, поэтому вы можете создать каталог в своем приложении, чтобы разместить эти классы:
 
-    'single' => [
-        'driver' => 'single',
-        'tap' => [App\Logging\CustomizeFormatter::class],
-        'path' => storage_path('logs/laravel.log'),
-        'level' => env('LOG_LEVEL', 'debug'),
-        'replace_placeholders' => true,
-    ],
+```php
+'single' => [
+    'driver' => 'single',
+    'tap' => [App\Logging\CustomizeFormatter::class],
+    'path' => storage_path('logs/laravel.log'),
+    'level' => env('LOG_LEVEL', 'debug'),
+    'replace_placeholders' => true,
+],
+```
 
 После того как вы настроили опцию `tap` своего канала, вы готовы определить класс, который будет контролировать ваш экземпляр Monolog. Этому классу нужен только один метод: `__invoke`, который получает экземпляр `Illuminate\Log\Logger`. Экземпляр `Illuminate\Log\Logger` передает все вызовы методов базовому экземпляру Monolog:
 
-    <?php
+```php
+<?php
 
-    namespace App\Logging;
+namespace App\Logging;
 
-    use Illuminate\Log\Logger;
-    use Monolog\Formatter\LineFormatter;
+use Illuminate\Log\Logger;
+use Monolog\Formatter\LineFormatter;
 
-    class CustomizeFormatter
+class CustomizeFormatter
+{
+    /**
+     * Настроить переданный экземпляр регистратора.
+     */
+    public function __invoke(Logger $logger): void
     {
-        /**
-         * Настроить переданный экземпляр регистратора.
-         */
-        public function __invoke(Logger $logger): void
-        {
-            foreach ($logger->getHandlers() as $handler) {
-                $handler->setFormatter(new LineFormatter(
-                    '[%datetime%] %channel%.%level_name%: %message% %context% %extra%'
-                ));
-            }
+        foreach ($logger->getHandlers() as $handler) {
+            $handler->setFormatter(new LineFormatter(
+                '[%datetime%] %channel%.%level_name%: %message% %context% %extra%'
+            ));
         }
     }
+}
+```
 
 > [!NOTE]
 > Все ваши классы «tap» извлекаются через [контейнер служб](/docs/{{version}}/container), поэтому любые зависимости конструктора, которые им требуются, будут автоматически внедрены.
@@ -358,38 +390,44 @@ PHP, Laravel и другие библиотеки часто уведомляю�
 
 В Monolog есть множество [доступных обработчиков](https://github.com/Seldaek/monolog/tree/main/src/Monolog/Handler), а в Laravel из коробки не включены каналы для каждого из них. В некоторых случаях вам может потребоваться создать собственный канал, являющийся просто экземпляром определенного обработчика Monolog, у которого нет соответствующего драйвера журнала Laravel. Эти каналы могут быть легко созданы с помощью драйвера `monolog`.
 
-При использовании драйвера `monolog` параметр конфигурации `handler` используется для указания того, какой обработчик будет создан. При желании любые параметры конструктора, необходимые обработчику, могут быть указаны с помощью опции конфигурации `with`:
+При использовании драйвера `monolog` параметр конфигурации `handler` используется для указания того, какой обработчик будет создан. При желании любые параметры конструктора, необходимые обработчику, могут быть указаны с помощью опции конфигурации `handler_with`:
 
-    'logentries' => [
-        'driver'  => 'monolog',
-        'handler' => Monolog\Handler\SyslogUdpHandler::class,
-        'with' => [
-            'host' => 'my.logentries.internal.datahubhost.company.com',
-            'port' => '10000',
-        ],
+```php
+'logentries' => [
+    'driver'  => 'monolog',
+    'handler' => Monolog\Handler\SyslogUdpHandler::class,
+    'handler_with' => [
+        'host' => 'my.logentries.internal.datahubhost.company.com',
+        'port' => '10000',
     ],
+],
+```
 
 <a name="monolog-formatters"></a>
 #### Форматтеры Monolog
 
 При использовании драйвера `monolog`, Monolog-класс `LineFormatter` будет использоваться как средство форматирования по умолчанию. Однако вы можете настроить тип средства форматирования, передаваемого обработчику, используя параметры конфигурации `formatter` и `formatter_with`:
 
-    'browser' => [
-        'driver' => 'monolog',
-        'handler' => Monolog\Handler\BrowserConsoleHandler::class,
-        'formatter' => Monolog\Formatter\HtmlFormatter::class,
-        'formatter_with' => [
-            'dateFormat' => 'Y-m-d',
-        ],
+```php
+'browser' => [
+    'driver' => 'monolog',
+    'handler' => Monolog\Handler\BrowserConsoleHandler::class,
+    'formatter' => Monolog\Formatter\HtmlFormatter::class,
+    'formatter_with' => [
+        'dateFormat' => 'Y-m-d',
     ],
+],
+```
 
 Если вы используете обработчик Monolog, который может предоставлять свой собственный модуль форматирования, вы можете установить для параметра конфигурации `formatter` значение `default`:
 
-    'newrelic' => [
-        'driver' => 'monolog',
-        'handler' => Monolog\Handler\NewRelicHandler::class,
-        'formatter' => 'default',
-    ],
+```php
+'newrelic' => [
+    'driver' => 'monolog',
+    'handler' => Monolog\Handler\NewRelicHandler::class,
+    'formatter' => 'default',
+],
+```
 
 <a name="monolog-processors"></a>
 #### Monolog Процессоры (Processors)
@@ -398,54 +436,60 @@ Monolog также может обрабатывать сообщения пер
 
 Если вы хотите кастомизировать процессоры для драйвера `monolog`, добавьте значение конфигурации `processors` в конфигурацию вашего канала:
 
-     'memory' => [
-         'driver' => 'monolog',
-         'handler' => Monolog\Handler\StreamHandler::class,
-         'with' => [
-             'stream' => 'php://stderr',
-         ],
-         'processors' => [
-             // Simple syntax...
-             Monolog\Processor\MemoryUsageProcessor::class,
-
-             // With options...
-             [
-                'processor' => Monolog\Processor\PsrLogMessageProcessor::class,
-                'with' => ['removeUsedContextFields' => true],
-            ],
-         ],
+```php
+ 'memory' => [
+     'driver' => 'monolog',
+     'handler' => Monolog\Handler\StreamHandler::class,
+     'with' => [
+         'stream' => 'php://stderr',
      ],
+     'processors' => [
+         // Simple syntax...
+         Monolog\Processor\MemoryUsageProcessor::class,
+
+         // With options...
+         [
+            'processor' => Monolog\Processor\PsrLogMessageProcessor::class,
+            'with' => ['removeUsedContextFields' => true],
+        ],
+     ],
+ ],
+```
 
 <a name="creating-custom-channels-via-factories"></a>
 ### Создание каналов через фабрики
 
 Если вы хотите определить полностью настраиваемый канал, в котором у вас есть полный контроль над созданием и конфигурацией Monolog, вы можете указать тип драйвера `custom` в файле конфигурации `config/logging.php`. Ваша конфигурация должна включать параметр `via`, содержащий имя класса фабрики, которая будет вызываться для создания экземпляра Monolog:
 
-    'channels' => [
-        'example-custom-channel' => [
-            'driver' => 'custom',
-            'via' => App\Logging\CreateCustomLogger::class,
-        ],
+```php
+'channels' => [
+    'example-custom-channel' => [
+        'driver' => 'custom',
+        'via' => App\Logging\CreateCustomLogger::class,
     ],
+],
+```
 
 После того как вы настроили канал драйвера `custom`, вы готовы определить класс, который будет создавать ваш экземпляр Monolog. Этому классу нужен только один метод `__invoke`, который должен возвращать экземпляр регистратора Monolog. Метод получит массив конфигурации каналов в качестве единственного аргумента:
 
-    <?php
+```php
+<?php
 
-    namespace App\Logging;
+namespace App\Logging;
 
-    use Monolog\Logger;
+use Monolog\Logger;
 
-    class CreateCustomLogger
+class CreateCustomLogger
+{
+    /**
+     * Создать экземпляр собственного регистратора Monolog.
+     */
+    public function __invoke(array $config): Logger
     {
-        /**
-         * Создать экземпляр собственного регистратора Monolog.
-         */
-        public function __invoke(array $config): Logger
-        {
-            return new Logger(/* ... */);
-        }
+        return new Logger(/* ... */);
     }
+}
+```
 
 <a name="tailing-log-messages-using-pail"></a>
 ## Просмотр сообщения журнала с помощью Pail
@@ -464,7 +508,7 @@ Laravel Pail - это пакет, который позволяет вам ле�
 
 Чтобы начать работу, установите Pail в свой проект с помощью менеджера пакетов Composer:
 
-```bash
+```shell
 composer require laravel/pail
 ```
 
@@ -473,19 +517,19 @@ composer require laravel/pail
 
 Чтобы начать отслеживать журналы, выполните команду `pail`:
 
-```bash
+```shell
 php artisan pail
 ```
 
 Чтобы увеличить детализацию вывода и избежать усечения (…), используйте опцию `-v`:
 
-```bash
+```shell
 php artisan pail -v
 ```
 
 Для максимальной детализации и отображения трассировок стека исключений используйте опцию `-vv` :
 
-```bash
+```shell
 php artisan pail -vv
 ```
 
@@ -499,7 +543,7 @@ php artisan pail -vv
 
 Вы можете использовать опцию `--filter` для фильтрации журналов по их типу, файлу, сообщению и содержимому трассировки стека:
 
-```bash
+```shell
 php artisan pail --filter="QueryException"
 ```
 
@@ -508,7 +552,7 @@ php artisan pail --filter="QueryException"
 
 Чтобы фильтровать журналы только по их сообщениям, вы можете использовать опцию `--message`:
 
-```bash
+```shell
 php artisan pail --message="User created"
 ```
 
@@ -517,7 +561,7 @@ php artisan pail --message="User created"
 
 Опцию `--level` можно использовать для фильтрации журналов по их [уровню](#log-levels):
 
-```bash
+```shell
 php artisan pail --level=error
 ```
 
@@ -526,6 +570,6 @@ php artisan pail --level=error
 
 Чтобы отображать только те журналы, которые были записаны при аутентифицированным пользователем, вы можете указать идентификатор пользователя в опции `--user`:
 
-```bash
+```shell
 php artisan pail --user=1
 ```
