@@ -1,5 +1,5 @@
 ---
-git: 137c84001cb546324e63327cb0c08ca67d3cd5fc
+git: c5f1f472c66dbf36844bf3461a23b3ce16753004
 ---
 
 # Контекст
@@ -48,7 +48,7 @@ Log::info('Пользователь прошел аутентификацию.',
 
 Запись в журнале будет содержать переданный `auth_id`, но запись также будет содержать `url` и `trace_id` контекста в качестве метаданных:
 
-```
+```text
 Пользователь прошел аутентификацию. {"auth_id":27} {"url":"https://example.com/login","trace_id":"e04e1a11-e75c-4db3-b5b5-cfef4ef56697"}
 ```
 
@@ -88,7 +88,7 @@ class ProcessPodcast implements ShouldQueue
 
 Результирующая запись журнала будет содержать информацию, которая была добавлена ​​в контекст во время запроса, который первоначально отправил задание:
 
-```
+```text
 Обработка подкаста. {"podcast_id":95} {"url":"https://example.com/login","trace_id":"e04e1a11-e75c-4db3-b5b5-cfef4ef56697"}
 ```
 
@@ -128,6 +128,16 @@ Context::get('key');
 // "first"
 ```
 
+Контекст также предоставляет удобные методы для увеличения или уменьшения заданного ключа. Оба эти метода принимают по крайней мере один аргумент: ключ для отслеживания. Второй аргумент может быть предоставлен для указания величины, на которую ключ должен быть увеличен или уменьшен:
+
+```php
+Context::increment('records_added');
+Context::increment('records_added', 5);
+
+Context::decrement('records_added');
+Context::decrement('records_added', 5);
+```
+
 <a name="conditional-context"></a>
 #### Условный контекст
 
@@ -143,6 +153,45 @@ Context::when(
     fn ($context) => $context->add('permissions', []),
 );
 ```
+
+<a name="scoped-context"></a>
+#### Контекст области действия
+
+Метод `scope` предоставляет способ временно изменить контекст во время выполнения заданного замыкания и восстановить контекст в его исходное состояние, когда замыкание завершает выполнение. Кроме того, вы можете передать дополнительные данные, которые должны быть объединены в контекст (как второй и третий аргументы), пока выполняется замыкание.
+
+```php
+use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\Log;
+
+Context::add('trace_id', 'abc-999');
+Context::addHidden('user_id', 123);
+
+Context::scope(
+    function () {
+        Context::add('action', 'adding_friend');
+
+        $userId = Context::getHidden('user_id');
+
+        Log::debug("Adding user [{$userId}] to friends list.");
+        // Adding user [987] to friends list.  {"trace_id":"abc-999","user_name":"taylor_otwell","action":"adding_friend"}
+    },
+    data: ['user_name' => 'taylor_otwell'],
+    hidden: ['user_id' => 987],
+);
+
+Context::all();
+// [
+//     'trace_id' => 'abc-999',
+// ]
+
+Context::allHidden();
+// [
+//     'user_id' => 123,
+// ]
+```
+
+> [!WARNING]
+> Если объект в контексте изменяется внутри области действия замыкания, эта мутация будет отражена за пределами области действия.
 
 <a name="stacks"></a>
 ### Стеки
@@ -170,6 +219,7 @@ Context::get('breadcrumbs');
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
+// In AppServiceProvider.php...
 DB::listen(function ($event) {
     Context::push('queries', [$event->time, $event->sql]);
 });
@@ -209,10 +259,12 @@ use Illuminate\Support\Facades\Context;
 $value = Context::get('key');
 ```
 
-Метод `only` можно использовать для получения подмножества информации в контексте:
+Методы `only` и `except` можно использовать для получения подмножества информации в контексте:
 
 ```php
 $data = Context::only(['first_key', 'second_key']);
+
+$data = Context::except(['first_key']);
 ```
 
 Метод `pull` можно использовать для извлечения информации из контекста и немедленного удаления ее из контекста:
@@ -226,7 +278,7 @@ $value = Context::pull('key');
 ```php
 Context::push('breadcrumbs', 'first_value', 'second_value');
 
-Context::pop('breadcrumbs')
+Context::pop('breadcrumbs');
 // second_value
 
 Context::get('breadcrumbs');
@@ -242,12 +294,16 @@ $data = Context::all();
 <a name="determining-item-existence"></a>
 ### Определение существования элемента
 
-Вы можете использовать метод `has`, чтобы определить, имеет ли контекст какое-либо значение, сохраненное для данного ключа:
+Вы можете использовать методы `has` и `missing`, чтобы определить, имеет ли контекст какое-либо значение, сохраненное для данного ключа:
 
 ```php
 use Illuminate\Support\Facades\Context;
 
 if (Context::has('key')) {
+    // ...
+}
+
+if (Context::missing('key')) {
     // ...
 }
 ```
@@ -311,8 +367,10 @@ Context::getHidden(/* ... */);
 Context::pullHidden(/* ... */);
 Context::popHidden(/* ... */);
 Context::onlyHidden(/* ... */);
+Context::exceptHidden(/* ... */);
 Context::allHidden(/* ... */);
 Context::hasHidden(/* ... */);
+Context::missingHidden(/* ... */);
 Context::forgetHidden(/* ... */);
 ```
 
