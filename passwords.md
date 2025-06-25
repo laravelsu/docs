@@ -1,5 +1,5 @@
 ---
-git: c4b06525d9893aaa7d45c71e162945fde065238e
+git: de0cc80cd74216e1c7a5ac5d5681165357f865a6
 ---
 
 # Сброс пароля
@@ -31,7 +31,7 @@ git: c4b06525d9893aaa7d45c71e162945fde065238e
 
 Как правило, вам следует настроить свой веб-сервер (Nginx или Apache), так, чтобы он обслуживал запросы, соответствующие только указанному имени хоста. Однако, если у вас нет возможности напрямую настроить свой веб-сервер и вам нужно указать Laravel, чтобы он отвечал только на определенные имена хостов, вы можете сделать это, используя метод промежуточного программного обеспечения `trustHosts` в файле `bootstrap/app.php` вашего приложения. Это особенно важно, когда ваше приложение предлагает функционал сброса пароля.
 
-Чтобы узнать больше об этом методе посредника, обратитесь к [документации посредника `TrustHosts`](/docs/{{version}}/requests#configuring-trusted-hosts).
+Чтобы узнать больше об этом методе посредника, обратитесь к [документации посредника TrustHosts](/docs/{{version}}/requests#configuring-trusted-hosts).
 
 <a name="routing"></a>
 ## Маршрутизация
@@ -46,9 +46,11 @@ git: c4b06525d9893aaa7d45c71e162945fde065238e
 
 Сначала мы определим маршруты, которые необходимы для запроса ссылок для сброса пароля. Для начала мы определим маршрут, который возвращает шаблон с формой запроса ссылки для сброса пароля:
 
-    Route::get('/forgot-password', function () {
-        return view('auth.forgot-password');
-    })->middleware('guest')->name('password.request');
+```php
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->middleware('guest')->name('password.request');
+```
 
 Шаблон, возвращаемый этим маршрутом, должен иметь форму с полем `email` для указания адреса электронной почты, позволяющем пользователю запросить ссылку для сброса пароля.
 
@@ -57,20 +59,22 @@ git: c4b06525d9893aaa7d45c71e162945fde065238e
 
 Затем мы определим маршрут, который обрабатывает запрос на отправку формы из шаблона `forgot-password`. Этот маршрут будет отвечать за проверку адреса электронной почты и отправку запроса на сброс пароля соответствующему пользователю:
 
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Password;
+```php
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
-    Route::post('/forgot-password', function (Request $request) {
-        $request->validate(['email' => 'required|email']);
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
 
-        return $status === Password::ResetLinkSent
-                    ? back()->with(['status' => __($status)])
-                    : back()->withErrors(['email' => __($status)]);
-    })->middleware('guest')->name('password.email');
+    return $status === Password::ResetLinkSent
+        ? back()->with(['status' => __($status)])
+        : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
+```
 
 Прежде чем двигаться дальше, давайте рассмотрим этот маршрут более подробно. Сначала проверяется атрибут запроса `email`. Затем мы будем использовать встроенный в Laravel «брокер паролей» через фасад `Password`, чтобы отправить пользователю ссылку для сброса пароля. Брокер паролей позаботится о получении пользователя по указанному полю (в данном случае по адресу электронной почты) и отправит пользователю ссылку для сброса пароля через встроенную [систему уведомлений](notifications) Laravel.
 
@@ -92,9 +96,11 @@ git: c4b06525d9893aaa7d45c71e162945fde065238e
 
 Затем мы определим маршруты, необходимые для фактического сброса пароля, когда пользователь щелкает ссылку для сброса пароля, отправленную ему по электронной почте, и предоставляет новый пароль. Во-первых, давайте определим маршрут, который будет отображать форму сброса пароля, после того как пользователь щелкает ссылку сброса пароля. Этот маршрут получит параметр `token`, который мы будем использовать позже для проверки запроса на сброс пароля:
 
-    Route::get('/reset-password/{token}', function (string $token) {
-        return view('auth.reset-password', ['token' => $token]);
-    })->middleware('guest')->name('password.reset');
+```php
+Route::get('/reset-password/{token}', function (string $token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
+```
 
 Экран, возвращаемый этим маршрутом, должен отображать форму, содержащую поле `email`, поле `password`, поле `password_confirmation` и скрытое поле `token`, которое должно содержать значение секретного `$token`, полученного нашим маршрутом.
 
@@ -103,37 +109,39 @@ git: c4b06525d9893aaa7d45c71e162945fde065238e
 
 Конечно, нам нужно определить маршрут для фактической обработки отправки формы сброса пароля. Этот маршрут будет отвечать за проверку входящего запроса и обновление пароля пользователя в базе данных:
 
-    use App\Models\User;
-    use Illuminate\Auth\Events\PasswordReset;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Hash;
-    use Illuminate\Support\Facades\Password;
-    use Illuminate\Support\Str;
+```php
+use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
-    Route::post('/reset-password', function (Request $request) {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+Route::post('/reset-password', function (Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user, string $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->setRememberToken(Str::random(60));
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function (User $user, string $password) {
+            $user->forceFill([
+                'password' => Hash::make($password)
+            ])->setRememberToken(Str::random(60));
 
-                $user->save();
+            $user->save();
 
-                event(new PasswordReset($user));
-            }
-        );
+            event(new PasswordReset($user));
+        }
+    );
 
-        return $status === Password::PasswordReset
-                    ? redirect()->route('login')->with('status', __($status))
-                    : back()->withErrors(['email' => [__($status)]]);
-    })->middleware('guest')->name('password.update');
+    return $status === Password::PasswordReset
+        ? redirect()->route('login')->with('status', __($status))
+        : back()->withErrors(['email' => [__($status)]]);
+})->middleware('guest')->name('password.update');
+```
 
 Прежде чем двигаться дальше, давайте рассмотрим этот маршрут более подробно. Сначала проверяются атрибуты запроса `token`, `email`, и `password`. Далее мы будем использовать встроенный в Laravel «брокер паролей» (через фасад `Password`) для проверки учетных данных запроса сброса пароля.
 
@@ -154,9 +162,11 @@ php artisan auth:clear-resets
 
 Если вы хотите автоматизировать этот процесс, рассмотрите возможность добавления команды в [планировщик](/docs/{{version}}/scheduling) вашего приложения:
 
-    use Illuminate\Support\Facades\Schedule;
+```php
+use Illuminate\Support\Facades\Schedule;
 
-    Schedule::command('auth:clear-resets')->everyFifteenMinutes();
+Schedule::command('auth:clear-resets')->everyFifteenMinutes();
+```
 
 <a name="password-customization"></a>
 ## Настройка
@@ -166,34 +176,38 @@ php artisan auth:clear-resets
 
 Вы можете изменить URL-адрес ссылки для сброса пароля, используя метод `createUrlUsing` класса уведомлений `ResetPassword`. Этот метод принимает замыкание, которое получает экземпляр ожидающего уведомление пользователя, а также токен ссылки для сброса пароля. Как правило, вызов этого метода осуществляется в методе `boot` вашего поставщика служб `App\Providers\AppServiceProvider`:
 
-    use App\Models\User;
-    use Illuminate\Auth\Notifications\ResetPassword;
+```php
+use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 
-    /**
-     * Запуск любых служб приложения.
-     */
-    public function boot(): void
-    {
-        ResetPassword::createUrlUsing(function (User $user, string $token) {
-            return 'https://example.com/reset-password?token='.$token;
-        });
-    }
+/**
+ * Запуск любых служб приложения.
+ */
+public function boot(): void
+{
+    ResetPassword::createUrlUsing(function (User $user, string $token) {
+        return 'https://example.com/reset-password?token='.$token;
+    });
+}
+```
 
 <a name="reset-email-customization"></a>
 #### Настройка уведомлений о сбросе пароля
 
 Вы можете легко изменить класс уведомления, используемый для отправки пользователю ссылки для сброса пароля. Для начала переопределите метод `sendPasswordResetNotification` в модели `App\Models\User`. В этом методе вы можете отправить уведомление, используя любой [класс уведомлений](notifications), созданный вами. Токен для сброса пароля – это первый аргумент, получаемый методом. Вы можете использовать этот `$token` для создания URL сброса пароля по вашему усмотрению и для дальнейшей отправки уведомления пользователю:
 
-    use App\Notifications\ResetPasswordNotification;
+```php
+use App\Notifications\ResetPasswordNotification;
 
-    /**
-     * Отправить пользователю уведомление о сбросе пароля.
-     *
-     * @param  string  $token
-     */
-    public function sendPasswordResetNotification($token): void
-    {
-        $url = 'https://example.com/reset-password?token='.$token;
+/**
+ * Отправить пользователю уведомление о сбросе пароля.
+ *
+ * @param  string  $token
+ */
+public function sendPasswordResetNotification($token): void
+{
+    $url = 'https://example.com/reset-password?token='.$token;
 
-        $this->notify(new ResetPasswordNotification($url));
-    }
+    $this->notify(new ResetPasswordNotification($url));
+}
+```
