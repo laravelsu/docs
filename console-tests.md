@@ -1,5 +1,5 @@
 ---
-git: 24a9f991e9a7aa18f32e4ed48a5b2abd6ab0b99d
+git: 413b06948ad8aa263a485e8d023bb7e554f3bb4a
 ---
 
 # Тестирование · Тесты консольных команд
@@ -32,41 +32,47 @@ public function test_console_command(): void
 
 Вы можете использовать метод `assertNotExitCode` чтобы подтвердить, что команда не завершилась с заданным кодом выхода:
 
-    $this->artisan('inspire')->assertNotExitCode(1);
+```php
+$this->artisan('inspire')->assertNotExitCode(1);
+```
 
 Конечно, все команды терминала обычно завершаются с кодом состояния `0`, когда они успешны, и с ненулевым кодом выхода, когда они не успешны. Поэтому для удобства вы можете использовать утверждения `assertSuccessful` и `assertFailed` чтобы утверждать, что данная команда завершилась с успешным кодом выхода или нет:
 
-    $this->artisan('inspire')->assertSuccessful();
+```php
+$this->artisan('inspire')->assertSuccessful();
 
-    $this->artisan('inspire')->assertFailed();
+$this->artisan('inspire')->assertFailed();
+```
 
 <a name="input-output-expectations"></a>
 ## Ожидания ввода / вывода
 
 Laravel позволяет вам легко «имитировать» ввод пользователем в консольных командах, используя метод `expectsQuestion`. Кроме того, вы можете указать код выхода / возврата и текст, который вы ожидаете получить от консольной команды, используя методы `assertExitCode` и `expectsOutput`. Например, рассмотрим следующую консольную команду:
 
-    Artisan::command('question', function () {
-        $name = $this->ask('What is your name?');
+```php
+Artisan::command('question', function () {
+    $name = $this->ask('What is your name?');
 
-        $language = $this->choice('Which language do you prefer?', [
-            'PHP',
-            'Ruby',
-            'Python',
-        ]);
+    $language = $this->choice('Which language do you prefer?', [
+        'PHP',
+        'Ruby',
+        'Python',
+    ]);
 
-        $this->line('Your name is '.$name.' and you prefer '.$language.'.');
-    });
+    $this->line('Your name is '.$name.' and you prefer '.$language.'.');
+});
+```
 
 Вы можете проверить эту команду с помощью следующего теста:
 
 ```php tab=Pest
 test('console command', function () {
     $this->artisan('question')
-         ->expectsQuestion('What is your name?', 'Taylor Otwell')
-         ->expectsQuestion('Which language do you prefer?', 'PHP')
-         ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
-         ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
-         ->assertExitCode(0);
+        ->expectsQuestion('What is your name?', 'Taylor Otwell')
+        ->expectsQuestion('Which language do you prefer?', 'PHP')
+        ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
+        ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
+        ->assertExitCode(0);
 });
 ```
 
@@ -77,11 +83,11 @@ test('console command', function () {
 public function test_console_command(): void
 {
     $this->artisan('question')
-         ->expectsQuestion('What is your name?', 'Taylor Otwell')
-         ->expectsQuestion('Which language do you prefer?', 'PHP')
-         ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
-         ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
-         ->assertExitCode(0);
+        ->expectsQuestion('What is your name?', 'Taylor Otwell')
+        ->expectsQuestion('Which language do you prefer?', 'PHP')
+        ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
+        ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
+        ->assertExitCode(0);
 }
 ```
 
@@ -90,12 +96,12 @@ public function test_console_command(): void
 ```php tab=Pest
 test('console command', function () {
     $this->artisan('example')
-         ->expectsSearch('What is your name?', search: 'Tay', answers: [
+        ->expectsSearch('What is your name?', search: 'Tay', answers: [
             'Taylor Otwell',
             'Taylor Swift',
             'Darian Taylor'
-         ], answer: 'Taylor Otwell')
-         ->assertExitCode(0);
+        ], answer: 'Taylor Otwell')
+        ->assertExitCode(0);
 });
 ```
 
@@ -106,12 +112,12 @@ test('console command', function () {
 public function test_console_command(): void
 {
     $this->artisan('example')
-         ->expectsSearch('What is your name?', search: 'Tay', answers: [
+        ->expectsSearch('What is your name?', search: 'Tay', answers: [
             'Taylor Otwell',
             'Taylor Swift',
             'Darian Taylor'
-         ], answer: 'Taylor Otwell')
-         ->assertExitCode(0);
+        ], answer: 'Taylor Otwell')
+        ->assertExitCode(0);
 }
 ```
 
@@ -120,8 +126,8 @@ public function test_console_command(): void
 ```php tab=Pest
 test('console command', function () {
     $this->artisan('example')
-         ->doesntExpectOutput()
-         ->assertExitCode(0);
+        ->doesntExpectOutput()
+        ->assertExitCode(0);
 });
 ```
 
@@ -132,8 +138,8 @@ test('console command', function () {
 public function test_console_command(): void
 {
     $this->artisan('example')
-            ->doesntExpectOutput()
-            ->assertExitCode(0);
+        ->doesntExpectOutput()
+        ->assertExitCode(0);
 }
 ```
 
@@ -142,8 +148,8 @@ public function test_console_command(): void
 ```php tab=Pest
 test('console command', function () {
     $this->artisan('example')
-         ->expectsOutputToContain('Taylor')
-         ->assertExitCode(0);
+        ->expectsOutputToContain('Taylor')
+        ->assertExitCode(0);
 });
 ```
 
@@ -154,8 +160,8 @@ test('console command', function () {
 public function test_console_command(): void
 {
     $this->artisan('example')
-            ->expectsOutputToContain('Taylor')
-            ->assertExitCode(0);
+        ->expectsOutputToContain('Taylor')
+        ->assertExitCode(0);
 }
 ```
 
@@ -164,23 +170,27 @@ public function test_console_command(): void
 
 При написании команды, которая ожидает подтверждения в виде ответа «да» или «нет», вы можете использовать метод `expectsConfirmation`:
 
-    $this->artisan('module:import')
-        ->expectsConfirmation('Do you really wish to run this command?', 'no')
-        ->assertExitCode(1);
+```php
+$this->artisan('module:import')
+    ->expectsConfirmation('Do you really wish to run this command?', 'no')
+    ->assertExitCode(1);
+```
 
 <a name="table-expectations"></a>
 #### Таблица ожиданий
 
 Если ваша команда отображает таблицу информации с использованием метода `table` Artisan, может быть обременительно записывать ожидаемые результаты для всей таблицы. Вместо этого вы можете использовать метод `expectsTable`. Этот метод принимает заголовки таблицы в качестве первого аргумента и данные таблицы в качестве второго аргумента:
 
-    $this->artisan('users:all')
-        ->expectsTable([
-            'ID',
-            'Email',
-        ], [
-            [1, 'taylor@example.com'],
-            [2, 'abigail@example.com'],
-        ]);
+```php
+$this->artisan('users:all')
+    ->expectsTable([
+        'ID',
+        'Email',
+    ], [
+        [1, 'taylor@example.com'],
+        [2, 'abigail@example.com'],
+    ]);
+```
 
 <a name="console-events"></a>
 ## События консоли
