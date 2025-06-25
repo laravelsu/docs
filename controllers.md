@@ -1,5 +1,5 @@
 ---
-git: ead3a5b4b11c267f20ee1065eb3f9aa98fc986e1
+git: 11cbd00f3925862924d0bba4b371c5a772d9cfa5
 ---
 
 # Контроллеры
@@ -23,31 +23,35 @@ php artisan make:controller UserController
 
 Давайте рассмотрим пример базового контроллера. Контроллер может содержать любое количество публичных методов, которые будут отвечать на входящие HTTP-запросы:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Models\User;
-    use Illuminate\View\View;
+use App\Models\User;
+use Illuminate\View\View;
 
-    class UserController extends Controller
+class UserController extends Controller
+{
+    /**
+     * Показать профиль конкретного пользователя.
+     */
+    public function show(string $id): View
     {
-        /**
-         * Показать профиль конкретного пользователя.
-         */
-        public function show(string $id): View
-        {
-            return view('user.profile', [
-                'user' => User::findOrFail($id)
-            ]);
-        }
+        return view('user.profile', [
+            'user' => User::findOrFail($id)
+        ]);
     }
+}
+```
 
 После того как вы создали класс контроллера и метод в нем, вы можете определить маршрут к методу контроллера следующим образом:
 
-    use App\Http\Controllers\UserController;
+```php
+use App\Http\Controllers\UserController;
 
-    Route::get('/user/{id}', [UserController::class, 'show']);
+Route::get('/user/{id}', [UserController::class, 'show']);
+```
 
 Когда входящий запрос совпадает с указанным URI маршрута, будет вызван метод `show` класса `App\Http\Controllers\UserController`, и параметры маршрута будут переданы методу.
 
@@ -59,26 +63,30 @@ php artisan make:controller UserController
 
 Если действие контроллера является особенно сложным, вам может показаться удобным посвятить целый класс контроллера этому единственному действию. Для этого вы можете определить один метод `__invoke` в контроллере:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    class ProvisionServer extends Controller
+class ProvisionServer extends Controller
+{
+    /**
+     * Подготовить новый веб-сервер.
+     */
+    public function __invoke()
     {
-        /**
-         * Подготовить новый веб-сервер.
-         */
-        public function __invoke()
-        {
-            // ...
-        }
+        // ...
     }
+}
+```
 
 При регистрации маршрутов для контроллеров одиночного действия вам не нужно указывать метод контроллера. Вместо этого вы можете просто передать маршрутизатору имя контроллера:
 
-    use App\Http\Controllers\ProvisionServer;
+```php
+use App\Http\Controllers\ProvisionServer;
 
-    Route::post('/server', ProvisionServer::class);
+Route::post('/server', ProvisionServer::class);
+```
 
 Вы можете сгенерировать вызываемый контроллер, используя параметр `--invokable` команды `make:controller` Artisan:
 
@@ -94,51 +102,56 @@ php artisan make:controller ProvisionServer --invokable
 
 [Посредник](/docs/{{version}}/middleware) может быть назначен маршрутам контроллера в ваших файлах маршрутизации:
 
-    Route::get('/profile', [UserController::class, 'show'])->middleware('auth');
+```php
+Route::get('/profile', [UserController::class, 'show'])->middleware('auth');
+```
 
 Или вам может быть удобно указать посредника в классе контроллера. Для этого ваш контроллер должен реализовать интерфейс `HasMiddleware`, который требует, чтобы контроллер имел статический метод `middleware`. Из этого метода вы можете вернуть массив посредников, которые должны быть применены к действиям контроллера:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use Illuminate\Routing\Controllers\HasMiddleware;
-    use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-    class UserController extends Controller implements HasMiddleware
-    {
-        /**
-         * Получить посредников, которые должны быть назначены контроллеру.
-         */
-        public static function middleware(): array
-        {
-            return [
-                'auth',
-                new Middleware('log', only: ['index']),
-                new Middleware('subscribed', except: ['store']),
-            ];
-        }
-
-        // ...
-    }
-
-Вы также можете определить посредника контроллера через замыкание, что обеспечивает удобный способ определения встроенного посредника без написания целого класса посредника:
-
-    use Closure;
-    use Illuminate\Http\Request;
-
+class UserController extends Controller implements HasMiddleware
+{
     /**
-     * Получение посредника, который должен быть назначен контроллеру.
+     * Получить посредников, которые должны быть назначены контроллеру.
      */
     public static function middleware(): array
     {
         return [
-            function (Request $request, Closure $next) {
-                return $next($request);
-            },
+            'auth',
+            new Middleware('log', only: ['index']),
+            new Middleware('subscribed', except: ['store']),
         ];
     }
+
+    // ...
+}
+```
+
+Вы также можете определить посредника контроллера через замыкание, что обеспечивает удобный способ определения встроенного посредника без написания целого класса посредника:
+
+```php
+use Closure;
+use Illuminate\Http\Request;
+
+/**
+ * Получение посредника, который должен быть назначен контроллеру.
+ */
+public static function middleware(): array
+{
+    return [
+        function (Request $request, Closure $next) {
+            return $next($request);
+        },
+    ];
+}
+```
 
 <a name="resource-controllers"></a>
 ## Ресурсные контроллеры
@@ -153,18 +166,22 @@ php artisan make:controller PhotoController --resource
 
 Эта команда поместит новый класс контроллера в каталог `app/Http/Controllers` вашего приложения. Контроллер будет содержать метод для каждого из доступных действий с ресурсами. Затем, вы можете зарегистрировать маршрут ресурса, который указывает на контроллер:
 
-    use App\Http\Controllers\PhotoController;
+```php
+use App\Http\Controllers\PhotoController;
 
-    Route::resource('photos', PhotoController::class);
+Route::resource('photos', PhotoController::class);
+```
 
 Это единое определение маршрута создаст несколько маршрутов для обработки множества действий с ресурсом. Сгенерированный контроллер уже будет иметь заготовки для каждого из этих действий. Помните, вы всегда можете получить быстрый обзор маршрутов своего приложения, выполнив команду `route:list` Artisan.
 
 Вы даже можете зарегистрировать сразу несколько контроллеров ресурсов, передав массив методу `resources`:
 
-    Route::resources([
-        'photos' => PhotoController::class,
-        'posts' => PostController::class,
-    ]);
+```php
+Route::resources([
+    'photos' => PhotoController::class,
+    'posts' => PostController::class,
+]);
+```
 
 <a name="actions-handled-by-resource-controllers"></a>
 #### Действия, выполняемые ресурсными контроллерами
@@ -184,27 +201,33 @@ php artisan make:controller PhotoController --resource
 
 Обычно, если неявно связанная модель ресурса не найдена, то генерируется HTTP-ответ с кодом `404`. Однако вы можете изменить это поведение, вызвав метод `missing` при определении вашего ресурсного маршрута. Метод `missing` принимает замыкание, которое будет вызываться, если неявно связанная модель не может быть найдена для любого из маршрутов ресурса:
 
-    use App\Http\Controllers\PhotoController;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Redirect;
+```php
+use App\Http\Controllers\PhotoController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
-    Route::resource('photos', PhotoController::class)
-            ->missing(function (Request $request) {
-                return Redirect::route('photos.index');
-            });
+Route::resource('photos', PhotoController::class)
+    ->missing(function (Request $request) {
+        return Redirect::route('photos.index');
+    });
+```
 
 <a name="soft-deleted-models"></a>
 #### Модели с мягким удалением
 
 Обычно неявная привязка моделей не будет извлекать модели, которые были [мягко удалены](/docs/{{version}}/eloquent#soft-deleting), и вместо этого будет возвращать HTTP-ответ 404. Однако вы можете указать фреймворку разрешить использование мягко удаленных моделей, вызвав метод `withTrashed` при определении маршрута ресурса:
 
-    use App\Http\Controllers\PhotoController;
+```php
+use App\Http\Controllers\PhotoController;
 
-    Route::resource('photos', PhotoController::class)->withTrashed();
+Route::resource('photos', PhotoController::class)->withTrashed();
+```
 
 Вызов `withTrashed` без аргументов разрешит использование мягко удаленных моделей для маршрутов ресурса `show`, `edit` и `update`. Вы также можете указать подмножество этих маршрутов, передав массив методу `withTrashed`:
 
-    Route::resource('photos', PhotoController::class)->withTrashed(['show']);
+```php
+Route::resource('photos', PhotoController::class)->withTrashed(['show']);
+```
 
 <a name="specifying-the-resource-model"></a>
 #### Указание модели ресурса
@@ -229,34 +252,40 @@ php artisan make:controller PhotoController --model=Photo --resource --requests
 
 При объявлении маршрута ресурса вы можете указать подмножество действий, которые должен обрабатывать контроллер, вместо полного набора действий по умолчанию:
 
-    use App\Http\Controllers\PhotoController;
+```php
+use App\Http\Controllers\PhotoController;
 
-    Route::resource('photos', PhotoController::class)->only([
-        'index', 'show'
-    ]);
+Route::resource('photos', PhotoController::class)->only([
+    'index', 'show'
+]);
 
-    Route::resource('photos', PhotoController::class)->except([
-        'create', 'store', 'update', 'destroy'
-    ]);
+Route::resource('photos', PhotoController::class)->except([
+    'create', 'store', 'update', 'destroy'
+]);
+```
 
 <a name="api-resource-routes"></a>
 #### Ресурсные API-маршруты
 
 При определении маршрутов ресурса, которые будут использоваться API, бывает необходимо исключить маршруты, содержащие ответы с HTML-шаблонами, такие как `create` и` edit`. Для удобства вы можете использовать метод `apiResource`, чтобы автоматически исключить эти два маршрута:
 
-    use App\Http\Controllers\PhotoController;
+```php
+use App\Http\Controllers\PhotoController;
 
-    Route::apiResource('photos', PhotoController::class);
+Route::apiResource('photos', PhotoController::class);
+```
 
 Вы можете зарегистрировать сразу несколько ресурсных API-контроллеров, передав массив методу `apiResources`:
 
-    use App\Http\Controllers\PhotoController;
-    use App\Http\Controllers\PostController;
+```php
+use App\Http\Controllers\PhotoController;
+use App\Http\Controllers\PostController;
 
-    Route::apiResources([
-        'photos' => PhotoController::class,
-        'posts' => PostController::class,
-    ]);
+Route::apiResources([
+    'photos' => PhotoController::class,
+    'posts' => PostController::class,
+]);
+```
 
 Чтобы быстро сгенерировать ресурсный API-контроллер, который не включает методы `create` или `edit`, используйте переключатель `--api` при выполнении команды `make:controller`:
 
@@ -269,13 +298,17 @@ php artisan make:controller PhotoController --api
 
 Иногда требуется определить маршруты ко вложенному ресурсу. Например, фоторесурс может иметь несколько комментариев, которые могут быть прикреплены к фотографии. Чтобы вложить ресурсные контроллеры, используйте «точечную нотацию» в определении маршрута:
 
-    use App\Http\Controllers\PhotoCommentController;
+```php
+use App\Http\Controllers\PhotoCommentController;
 
-    Route::resource('photos.comments', PhotoCommentController::class);
+Route::resource('photos.comments', PhotoCommentController::class);
+```
 
 Этот маршрут зарегистрирует вложенный ресурс, к которому можно получить доступ с помощью URI, подобных следующим:
 
-    /photos/{photo}/comments/{comment}
+```text
+/photos/{photo}/comments/{comment}
+```
 
 <a name="scoping-nested-resources"></a>
 #### Ограничение вложенных ресурсов
@@ -287,9 +320,11 @@ php artisan make:controller PhotoController --api
 
 Часто нет необходимости иметь в URI и родительский, и дочерний идентификаторы, поскольку дочерний идентификатор уже является уникальным идентификатором. При использовании уникальных идентификаторов, таких как автоинкрементные первичные ключи, для идентификации ваших моделей в сегментах URI, вы можете использовать «упрощенное вложение»:
 
-    use App\Http\Controllers\CommentController;
+```php
+use App\Http\Controllers\CommentController;
 
-    Route::resource('photos.comments', CommentController::class)->shallow();
+Route::resource('photos.comments', CommentController::class)->shallow();
+```
 
 Это объявление маршрута будет определять следующие маршруты:
 
@@ -308,41 +343,51 @@ php artisan make:controller PhotoController --api
 
 По умолчанию все действия ресурсного контроллера имеют имя маршрута; однако, вы можете переопределить эти имена, передав массив имен с желаемыми именами маршрутов:
 
-    use App\Http\Controllers\PhotoController;
+```php
+use App\Http\Controllers\PhotoController;
 
-    Route::resource('photos', PhotoController::class)->names([
-        'create' => 'photos.build'
-    ]);
+Route::resource('photos', PhotoController::class)->names([
+    'create' => 'photos.build'
+]);
+```
 
 <a name="restful-naming-resource-route-parameters"></a>
 ### Именование параметров ресурсных маршрутов
 
 По умолчанию `Route::resource` создаст параметры маршрута для ваших ресурсных маршрутов на основе «сингулярной» версии имени ресурса. Вы можете легко переопределить это для каждого ресурса, используя метод `parameters`. Массив, передаваемый в метод `parameters`, должен быть ассоциативным массивом имен ресурсов и имен параметров:
 
-    use App\Http\Controllers\AdminUserController;
+```php
+use App\Http\Controllers\AdminUserController;
 
-    Route::resource('users', AdminUserController::class)->parameters([
-        'users' => 'admin_user'
-    ]);
+Route::resource('users', AdminUserController::class)->parameters([
+    'users' => 'admin_user'
+]);
+```
 
 В приведенном выше примере создается следующий URI для маршрута `show` ресурса:
 
-    /users/{admin_user}
+```text
+/users/{admin_user}
+```
 
 <a name="restful-scoping-resource-routes"></a>
 ### Ограничение ресурсных маршрутов
 
 Функционал [ограничения неявной привязки модели](/docs/{{version}}/routing#implicit-model-binding-scoping) Laravel может автоматически ограничивать вложенные привязки для подтверждения принадлежности извлеченной дочерней модели по отношению к родительской модели. Используя метод `scoped` при определении вашего вложенного ресурса, вы можете включить автоматическое ограничение, а также указать Laravel, через какое поле дочерний ресурс должен быть получен:
 
-    use App\Http\Controllers\PhotoCommentController;
+```php
+use App\Http\Controllers\PhotoCommentController;
 
-    Route::resource('photos.comments', PhotoCommentController::class)->scoped([
-        'comment' => 'slug',
-    ]);
+Route::resource('photos.comments', PhotoCommentController::class)->scoped([
+    'comment' => 'slug',
+]);
+```
 
 Этот маршрут зарегистрирует ограниченный вложенный ресурс, к которому можно получить доступ с помощью таких URI, как следующий:
 
-    /photos/{photo}/comments/{comment:slug}
+```text
+/photos/{photo}/comments/{comment:slug}
+```
 
 При использовании пользовательской неявной привязки с ключом в качестве параметра вложенного маршрута, Laravel автоматически задает ограничение для получения вложенной модели своим родителем, используя соглашения, чтобы угадать имя отношения родительского элемента. В этом случае предполагается, что модель `Photo` имеет отношение с именем `comments` (множественное число от имени параметра маршрута), которое можно использовать для получения модели `Comment`.
 
@@ -351,32 +396,38 @@ php artisan make:controller PhotoController --api
 
 По умолчанию `Route::resource` создает URI ресурсов с использованием английских глаголов и правила для множественного числа. Если вам нужно локализовать команды действия `create` и `edit`, вы можете использовать метод `Route::resourceVerbs`. Это можно сделать в начале метода `boot` внутри `App\Providers\AppServiceProvider` вашего приложения:
 
-    /**
-     * Загрузка любых служб приложения.
-     */
-    public function boot(): void
-    {
-        Route::resourceVerbs([
-            'create' => 'crear',
-            'edit' => 'editar',
-        ]);
-    }
+```php
+/**
+ * Загрузка любых служб приложения.
+ */
+public function boot(): void
+{
+    Route::resourceVerbs([
+        'create' => 'crear',
+        'edit' => 'editar',
+    ]);
+}
+```
 
 Поддержка множественного числа в Laravel доступна для [нескольких разных языков, которые вы можете настроить в соответствии с вашими потребностями](/docs/{{version}}/localization#pluralization-language). После настройки глаголов и языка множественного числа, регистрация маршрута ресурса, такого как `Route::resource('publicacion', PublicacionController::class)`, будет создавать следующие URI:
 
-    /publicacion/crear
+```text
+/publicacion/crear
 
-    /publicacion/{publicaciones}/editar
+/publicacion/{publicaciones}/editar
+```
 
 <a name="restful-supplementing-resource-controllers"></a>
 ### Дополнение ресурсных контроллеров
 
 Если вам нужно добавить дополнительные маршруты ресурсного контроллера помимо набора ресурсных маршрутов по умолчанию, вы должны определить эти маршруты перед вызовом метода `Route::resource`; в противном случае маршруты, определенные методом `resource`, могут непреднамеренно иметь приоритет над вашими дополнительными маршрутами:
 
-    use App\Http\Controller\PhotoController;
+```php
+use App\Http\Controller\PhotoController;
 
-    Route::get('/photos/popular', [PhotoController::class, 'popular']);
-    Route::resource('photos', PhotoController::class);
+Route::get('/photos/popular', [PhotoController::class, 'popular']);
+Route::resource('photos', PhotoController::class);
+```
 
 > [!NOTE]
 > Помните, что ваши контроллеры должны быть сосредоточенными. Если вам постоянно требуются методы, выходящие за рамки типичного набора действий с ресурсами, рассмотрите возможность разделения вашего контроллера на два меньших контроллера.
@@ -464,73 +515,81 @@ Route::apiSingleton('photos.thumbnail', ProfileController::class)->creatable();
 
 [Контейнер служб](/docs/{{version}}/container) Laravel используется для извлечения всех контроллеров. В результате вы можете объявить любые зависимости, которые могут понадобиться вашему контроллеру в его конструкторе. Объявленные зависимости будут автоматически извлечены и внедрены в экземпляр контроллера:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Repositories\UserRepository;
+use App\Repositories\UserRepository;
 
-    class UserController extends Controller
-    {
-        /**
-         * Создать новый экземпляр контроллера.
-         */
-        public function __construct(
-            protected UserRepository $users,
-        ) {}
-    }
+class UserController extends Controller
+{
+    /**
+     * Создать новый экземпляр контроллера.
+     */
+    public function __construct(
+        protected UserRepository $users,
+    ) {}
+}
+```
 
 <a name="method-injection"></a>
 #### Внедрение зависимостей в методах контроллера
 
 Помимо внедрения в конструкторе, вы также можете объявить тип зависимости в методах вашего контроллера. Распространенный вариант использования внедрения в методе – это внедрение экземпляра `Illuminate\Http\Request` в методы вашего контроллера:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
-    use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
-    class UserController extends Controller
+class UserController extends Controller
+{
+    /**
+     * Сохранить нового пользователя.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        /**
-         * Сохранить нового пользователя.
-         */
-        public function store(Request $request): RedirectResponse
-        {
-            $name = $request->name;
+        $name = $request->name;
 
-            // Сохранить пользователя...
+        // Сохранить пользователя...
 
-            return redirect('/users');
-        }
+        return redirect('/users');
     }
+}
+```
 
 Если ваш метод контроллера также ожидает входные данные из параметра маршрута, укажите аргументы маршрута после других зависимостей. Например, если ваш маршрут определен так:
 
-    use App\Http\Controllers\UserController;
+```php
+use App\Http\Controllers\UserController;
 
-    Route::put('/user/{id}', [UserController::class, 'update']);
+Route::put('/user/{id}', [UserController::class, 'update']);
+```
 
 Вы по-прежнему можете объявить тип зависимости `Illuminate\Http\Request` и получить доступ к вашему параметру `id`, определив свой метод контроллера следующим образом:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use Illuminate\Http\RedirectResponse;
-    use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
-    class UserController extends Controller
+class UserController extends Controller
+{
+    /**
+     * Обновить конкретного пользователя.
+     */
+    public function update(Request $request, string $id): RedirectResponse
     {
-        /**
-         * Обновить конкретного пользователя.
-         */
-        public function update(Request $request, string $id): RedirectResponse
-        {
-            // Обновление пользователя...
+        // Обновление пользователя...
 
-            return redirect('/users');
-        }
+        return redirect('/users');
     }
+}
+```
