@@ -1,5 +1,5 @@
 ---
-git: 040ab151f8350470f8df5d00bfba05f56c155d12
+git: 96617d0be0510d33cfa46db034b73a2273b22a97
 ---
 
 # Пакет Laravel Socialite
@@ -33,11 +33,13 @@ composer require laravel/socialite
 
 Эти учетные данные должны быть размещены в файле конфигурации вашего приложения `config/services.php` и должны использовать ключ `facebook`, `x`, `linkedin-openid`, `google`, `github`, `gitlab`, `bitbucket`, `slack` или `slack-openid`, в зависимости от провайдеров, которые требуются вашему приложению:
 
-    'github' => [
-        'client_id' => env('GITHUB_CLIENT_ID'),
-        'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' => 'http://example.com/callback-url',
-    ],
+```php
+'github' => [
+    'client_id' => env('GITHUB_CLIENT_ID'),
+    'client_secret' => env('GITHUB_CLIENT_SECRET'),
+    'redirect' => 'http://example.com/callback-url',
+],
+```
 
 > [!NOTE]
 > Если параметр `redirect` содержит относительный путь, то он будет автоматически преобразован в абсолютный URL.
@@ -50,17 +52,19 @@ composer require laravel/socialite
 
 Для аутентификации пользователей с помощью провайдера OAuth вам понадобятся два маршрута: один для перенаправления пользователя к провайдеру OAuth, а другой для получения обратного вызова от провайдера после аутентификации. Пример ниже демонстрирует реализацию обоих маршрутов:
 
-    use Laravel\Socialite\Facades\Socialite;
+```php
+use Laravel\Socialite\Facades\Socialite;
 
-    Route::get('/auth/redirect', function () {
-        return Socialite::driver('github')->redirect();
-    });
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('github')->redirect();
+});
 
-    Route::get('/auth/callback', function () {
-        $user = Socialite::driver('github')->user();
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('github')->user();
 
-        // $user->token
-    });
+    // $user->token
+});
+```
 
 Метод `redirect` фасада `Socialite`, отвечает за перенаправление пользователя к провайдеру OAuth, в то время как метод `user` обрабатывает входящий запрос и получает информацию о пользователе от провайдера  после того, как запрос на аутентификацию будет подтверждён.
 
@@ -69,26 +73,28 @@ composer require laravel/socialite
 
 После того как пользователь был получен от поставщика OAuth, вы можете определить, существует ли пользователь в базе данных вашего приложения и [аутентифицировать пользователя](/docs/{{version}}/authentication#authenticate-a-user-instance). Если пользователь не существует в базе данных вашего приложения, вы обычно создаете новую запись в своей базе данных:
 
-    use App\Models\User;
-    use Illuminate\Support\Facades\Auth;
-    use Laravel\Socialite\Facades\Socialite;
+```php
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 
-    Route::get('/auth/callback', function () {
-        $githubUser = Socialite::driver('github')->user();
+Route::get('/auth/callback', function () {
+    $githubUser = Socialite::driver('github')->user();
 
-        $user = User::updateOrCreate([
-            'github_id' => $githubUser->id,
-        ], [
-            'name' => $githubUser->name,
-            'email' => $githubUser->email,
-            'github_token' => $githubUser->token,
-            'github_refresh_token' => $githubUser->refreshToken,
-        ]);
+    $user = User::updateOrCreate([
+        'github_id' => $githubUser->id,
+    ], [
+        'name' => $githubUser->name,
+        'email' => $githubUser->email,
+        'github_token' => $githubUser->token,
+        'github_refresh_token' => $githubUser->refreshToken,
+    ]);
 
-        Auth::login($user);
+    Auth::login($user);
 
-        return redirect('/dashboard');
-    });
+    return redirect('/dashboard');
+});
+```
 
 > [!NOTE]
 > Для получения дополнительной информации о том, какая информация о пользователях доступна от конкретных поставщиков OAuth, обратитесь к документации по [получению сведений о пользователе](#retrieving-user-details).
@@ -98,17 +104,21 @@ composer require laravel/socialite
 
 Перед перенаправлением пользователя вы можете использовать метод `scopes`, чтобы указать "scopes" (права/области) которые должны быть включены в запрос аутентификации.  Этот метод объединит все ранее указанные права с теми, которые указали вы:
 
-    use Laravel\Socialite\Facades\Socialite;
+```php
+use Laravel\Socialite\Facades\Socialite;
 
-    return Socialite::driver('github')
-        ->scopes(['read:user', 'public_repo'])
-        ->redirect();
+return Socialite::driver('github')
+    ->scopes(['read:user', 'public_repo'])
+    ->redirect();
+```
 
 Вы можете перезаписать все существующие права в запросе аутентификации, используя метод `setScopes`:
 
-    return Socialite::driver('github')
-        ->setScopes(['read:user', 'public_repo'])
-        ->redirect();
+```php
+return Socialite::driver('github')
+    ->setScopes(['read:user', 'public_repo'])
+    ->redirect();
+```
 
 <a name="slack-bot-scopes"></a>
 ### Права Slack Bot
@@ -126,14 +136,18 @@ API Slack предоставляет [разные типы токенов до�
 
 Токены ботов в основном полезны, если ваше приложение будет отправлять уведомления во внешние рабочие пространства Slack, принадлежащие пользователям вашего приложения. Чтобы сгенерировать токен бота, вызовите метод `asBotUser` перед перенаправлением пользователя в Slack для аутентификации:
 
-    return Socialite::driver('slack')
-        ->asBotUser()
-        ->setScopes(['chat:write', 'chat:write.public', 'chat:write.customize'])
-        ->redirect();
+```php
+return Socialite::driver('slack')
+    ->asBotUser()
+    ->setScopes(['chat:write', 'chat:write.public', 'chat:write.customize'])
+    ->redirect();
+```
 
 Кроме того, вы должны вызвать метод `asBotUser` перед вызовом метода `user`, когда Slack перенаправляет пользователя обратно на ваше приложение после аутентификации:
 
-    $user = Socialite::driver('slack')->asBotUser()->user();
+```php
+$user = Socialite::driver('slack')->asBotUser()->user();
+```
 
 При генерации токена бота метод `user` по-прежнему будет возвращать экземпляр `Laravel\Socialite\Two\User`, однако только свойство `token` будет заполнено. Этот токен можно сохранить, чтобы [отправлять уведомления в рабочие пространства Slack аутентифицированного пользователя](/docs/{{version}}/notifications#notifying-external-slack-workspaces).
 
@@ -142,11 +156,13 @@ API Slack предоставляет [разные типы токенов до�
 
 Некоторые провайдеры OAuth поддерживают другие необязательные параметры в запросе перенаправления. Чтобы включить в запрос любые необязательные параметры, вызовите метод `with` с ассоциативным массивом:
 
-    use Laravel\Socialite\Facades\Socialite;
+```php
+use Laravel\Socialite\Facades\Socialite;
 
-    return Socialite::driver('google')
-        ->with(['hd' => 'example.com'])
-        ->redirect();
+return Socialite::driver('google')
+    ->with(['hd' => 'example.com'])
+    ->redirect();
+```
 
 > [!WARNING]
 > При использовании метода `with` будьте осторожны, чтобы не передавать какие-либо зарезервированные ключевые слова, такие как `state` или `response_type`.
@@ -158,36 +174,40 @@ API Slack предоставляет [разные типы токенов до�
 
 Различные свойства и методы этого объекта могут быть доступны в зависимости от версии провайдера OAuth, с которым вы выполняете аутентификацию, OAuth 1.0 или OAuth 2.0:
 
-    use Laravel\Socialite\Facades\Socialite;
+```php
+use Laravel\Socialite\Facades\Socialite;
 
-    Route::get('/auth/callback', function () {
-        $user = Socialite::driver('github')->user();
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('github')->user();
 
-        // Провайдер OAuth 2.0 ...
-        $token = $user->token;
-        $refreshToken = $user->refreshToken;
-        $expiresIn = $user->expiresIn;
+    // Провайдер OAuth 2.0 ...
+    $token = $user->token;
+    $refreshToken = $user->refreshToken;
+    $expiresIn = $user->expiresIn;
 
-        // Провайдер OAuth 1.0 ...
-        $token = $user->token;
-        $tokenSecret = $user->tokenSecret;
+    // Провайдер OAuth 1.0 ...
+    $token = $user->token;
+    $tokenSecret = $user->tokenSecret;
 
-        // Все провайдеры ...
-        $user->getId();
-        $user->getNickname();
-        $user->getName();
-        $user->getEmail();
-        $user->getAvatar();
-    });
+    // Все провайдеры ...
+    $user->getId();
+    $user->getNickname();
+    $user->getName();
+    $user->getEmail();
+    $user->getAvatar();
+});
+```
 
 <a name="retrieving-user-details-from-a-token-oauth2"></a>
 #### Получение сведений о пользователе из токена
 
 Если у вас уже есть действительный токен доступа пользователя, то вы можете получить его данные с помощью метода `userFromToken` пакета Socialite:
 
-    use Laravel\Socialite\Facades\Socialite;
+```php
+use Laravel\Socialite\Facades\Socialite;
 
-    $user = Socialite::driver('github')->userFromToken($token);
+$user = Socialite::driver('github')->userFromToken($token);
+```
 
 Если вы используете ограниченный вход в Facebook через приложение iOS, Facebook вернет токен OIDC вместо токена доступа. Как и токен доступа, токен OIDC может быть предоставлен методу `userFromToken` для получения сведений о пользователе.
 
@@ -196,6 +216,8 @@ API Slack предоставляет [разные типы токенов до�
 
 Метод `stateless` используется для отключения проверки состояния сессии. Это полезно при добавлении социальной аутентификации в API без сохранения состояния, не использующему сеансы на основе файлов cookie::
 
-    use Laravel\Socialite\Facades\Socialite;
+```php
+use Laravel\Socialite\Facades\Socialite;
 
-    return Socialite::driver('google')->stateless()->user();
+return Socialite::driver('google')->stateless()->user();
+```
