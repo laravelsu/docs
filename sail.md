@@ -1,5 +1,5 @@
 ---
-git: 981c6152c4a49a0910d72577afc43025ca43602b
+git: 3d227ed6a7101a9a03fe37ff67812d73b593e57d
 ---
 
 # Laravel Sail
@@ -16,7 +16,7 @@ Laravel Sail поддерживается в macOS, Linux и Windows (через
 <a name="installation"></a>
 ## Установка и настройка
 
-Laravel Sail автоматически устанавливается со всеми новыми приложениями Laravel, поэтому вы можете сразу же начать его использовать. Чтобы узнать, как создать новое приложение Laravel, обратитесь к [документации по установке](/docs/{{version}}/installation#docker-installation-using-sail) Laravel для вашей операционной системы. Во время установки вам будет предложено выбрать, с какими службами, поддерживаемыми Sail, ваше приложение будет взаимодействовать.
+Laravel Sail автоматически устанавливается со всеми новыми приложениями Laravel, поэтому вы можете сразу же начать его использовать.
 
 <a name="installing-sail-into-existing-applications"></a>
 ### Установка Sail в существующее приложение
@@ -155,24 +155,6 @@ sail php script.php
 ```shell
 sail composer require laravel/sanctum
 ```
-
-<a name="installing-composer-dependencies-for-existing-projects"></a>
-#### Установка зависимостей Composer для существующих приложений
-
-Если вы разрабатываете приложение в команде, возможно, вы не тот, кто создал приложение Laravel с нуля. Следовательно, ни одна из зависимостей Composer, включая Sail, не будет установлена после клонирования репозитория приложения на локальный компьютер.
-
-Вы можете установить зависимости приложения, перейдя в каталог приложения и выполнив следующую команду. Эта команда использует небольшой контейнер Docker, содержащий PHP и Composer, для установки зависимостей приложения:
-
-```shell
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    laravelsail/php84-composer:latest \
-    composer install --ignore-platform-reqs
-```
-
-При использовании образа `laravelsail/phpXX-composer` вы должны использовать ту же версию PHP, которую вы планируете использовать для своего приложения (`80`, `81`, `82`, `83` или `84`).
 
 <a name="executing-artisan-commands"></a>
 ### Выполнение Artisan команд
@@ -433,7 +415,7 @@ sail up
 <a name="sail-node-versions"></a>
 ## Версии Node
 
-Sail по умолчанию устанавливает Node 20. Чтобы изменить версию Node, установленную при создании образов, вы можете обновить `build.args` в файле `docker-compose.yml` в определении сервиса `laravel.test` вашего приложения:
+Sail по умолчанию устанавливает Node 22. Чтобы изменить версию Node, установленную при создании образов, вы можете обновить `build.args` в файле `docker-compose.yml` в определении сервиса `laravel.test` вашего приложения:
 
 ```yaml
 build:
@@ -461,9 +443,11 @@ sail share
 
 При совместном использовании сайта с помощью команды `share` вам следует настроить доверенные прокси-серверы вашего приложения, используя метод посредника `TrustProxies` в файле `bootstrap/app.php` вашего приложения. В противном случае помощники создания URL-адресов, такие как `url` и `route`, не смогут определить правильный HTTP-хост, который следует использовать во время создания URL-адреса:
 
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->trustProxies(at: '*');
-    })
+```php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->trustProxies(at: '*');
+})
+```
 
 Если вы хотите выбрать поддомен для вашего общего сайта, вы можете указать параметр `subdomain` при выполнении команды `share`:
 
