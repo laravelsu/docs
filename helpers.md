@@ -1,5 +1,5 @@
 ---
-git: 1e8496c232c2e3f17179c7ad8d751f9c795ce16a
+git: 388799f067a30bc0e0996e8d33fd1576548d1ece
 ---
 
 # Глобальные помощники (helpers)
@@ -19,6 +19,8 @@ Laravel содержит множество глобальных «вспомо�
 
 - [Arr::accessible](#method-array-accessible)
 - [Arr::add](#method-array-add)
+- [Arr::array](#method-array-array)
+- [Arr::boolean](#method-array-boolean)
 - [Arr::collapse](#method-array-collapse)
 - [Arr::crossJoin](#method-array-crossjoin)
 - [Arr::divide](#method-array-divide)
@@ -27,10 +29,14 @@ Laravel содержит множество глобальных «вспомо�
 - [Arr::exists](#method-array-exists)
 - [Arr::first](#method-array-first)
 - [Arr::flatten](#method-array-flatten)
+- [Arr::float](#method-array-float)
 - [Arr::forget](#method-array-forget)
+- [Arr::from](#method-array-from)
 - [Arr::get](#method-array-get)
 - [Arr::has](#method-array-has)
+- [Arr::hasAll](#method-array-hasall)
 - [Arr::hasAny](#method-array-hasany)
+- [Arr::integer](#method-array-integer)
 - [Arr::isAssoc](#method-array-isassoc)
 - [Arr::isList](#method-array-islist)
 - [Arr::join](#method-array-join)
@@ -40,17 +46,22 @@ Laravel содержит множество глобальных «вспомо�
 - [Arr::mapSpread](#method-array-map-spread)
 - [Arr::mapWithKeys](#method-array-map-with-keys)
 - [Arr::only](#method-array-only)
+- [Arr::partition](#method-array-partition)
 - [Arr::pluck](#method-array-pluck)
 - [Arr::prepend](#method-array-prepend)
 - [Arr::prependKeysWith](#method-array-prependkeyswith)
 - [Arr::pull](#method-array-pull)
 - [Arr::query](#method-array-query)
 - [Arr::random](#method-array-random)
+- [Arr::reject](#method-array-reject)
+- [Arr::select](#method-array-select)
 - [Arr::set](#method-array-set)
 - [Arr::shuffle](#method-array-shuffle)
+- [Arr::sole](#method-array-sole)
 - [Arr::sort](#method-array-sort)
 - [Arr::sortDesc](#method-array-sort-desc)
 - [Arr::sortRecursive](#method-array-sort-recursive)
+- [Arr::string](#method-array-string)
 - [Arr::take](#method-array-take)
 - [Arr::toCssClasses](#method-array-to-css-classes)
 - [Arr::toCssStyles](#method-array-to-css-styles)
@@ -83,6 +94,7 @@ Laravel содержит множество глобальных «вспомо�
 - [Number::pairs](#method-number-pairs)
 - [Number::percentage](#method-number-percentage)
 - [Number::spell](#method-number-spell)
+- [Number::spellOrdinal](#method-number-spell-ordinal)
 - [Number::trim](#method-number-trim)
 - [Number::useLocale](#method-number-use-locale)
 - [Number::withLocale](#method-number-with-locale)
@@ -101,7 +113,6 @@ Laravel содержит множество глобальных «вспомо�
 - [config_path](#method-config-path)
 - [database_path](#method-database-path)
 - [lang_path](#method-lang-path)
-- [mix](#method-mix)
 - [public_path](#method-public-path)
 - [resource_path](#method-resource-path)
 - [storage_path](#method-storage-path)
@@ -119,6 +130,7 @@ Laravel содержит множество глобальных «вспомо�
 - [secure_asset](#method-secure-asset)
 - [secure_url](#method-secure-url)
 - [to_route](#method-to-route)
+- [uri](#method-uri)
 - [url](#method-url)
 
 </div>
@@ -137,6 +149,8 @@ Laravel содержит множество глобальных «вспомо�
 - [bcrypt](#method-bcrypt)
 - [blank](#method-blank)
 - [broadcast](#method-broadcast)
+- [broadcast_if](#method-broadcast-if)
+- [broadcast_unless](#method-broadcast-unless)
 - [cache](#method-cache)
 - [class_uses_recursive](#method-class-uses-recursive)
 - [collect](#method-collect)
@@ -196,705 +210,991 @@ Laravel содержит множество глобальных «вспомо�
 
 Метод `Arr::accessible` определяет, доступно ли переданное значение массиву:
 
-    use Illuminate\Support\Arr;
-    use Illuminate\Support\Collection;
+```php
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
-    $isAccessible = Arr::accessible(['a' => 1, 'b' => 2]);
+$isAccessible = Arr::accessible(['a' => 1, 'b' => 2]);
 
-    // true
+// true
 
-    $isAccessible = Arr::accessible(new Collection);
+$isAccessible = Arr::accessible(new Collection);
 
-    // true
+// true
 
-    $isAccessible = Arr::accessible('abc');
+$isAccessible = Arr::accessible('abc');
 
-    // false
+// false
 
-    $isAccessible = Arr::accessible(new stdClass);
+$isAccessible = Arr::accessible(new stdClass);
 
-    // false
+// false
+```
 
 <a name="method-array-add"></a>
 #### `Arr::add()`
 
 Метод `Arr::add` добавляет переданную пару ключ / значение в массив, если указанный ключ еще не существует в массиве или установлен как `null`:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = Arr::add(['name' => 'Desk'], 'price', 100);
+$array = Arr::add(['name' => 'Desk'], 'price', 100);
 
-    // ['name' => 'Desk', 'price' => 100]
+// ['name' => 'Desk', 'price' => 100]
 
-    $array = Arr::add(['name' => 'Desk', 'price' => null], 'price', 100);
+$array = Arr::add(['name' => 'Desk', 'price' => null], 'price', 100);
 
-    // ['name' => 'Desk', 'price' => 100]
+// ['name' => 'Desk', 'price' => 100]
+```
+
+<a name="method-array-array"></a>
+#### `Arr::array()`
+
+Метод `Arr::array` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `array`:
+
+```
+use Illuminate\Support\Arr;
+$array = ['name' => 'Joe', 'languages' => ['PHP', 'Ruby']];
+$value = Arr::array($array, 'languages');
+// ['PHP', 'Ruby']
+$value = Arr::array($array, 'name');
+// throws InvalidArgumentException
+```
+
+<a name="method-array-boolean"></a>
+#### `Arr::boolean()`
+
+Метод `Arr::boolean` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `boolean`:
+
+```
+use Illuminate\Support\Arr;
+
+$array = ['name' => 'Joe', 'available' => true];
+
+$value = Arr::boolean($array, 'available');
+
+// true
+
+$value = Arr::boolean($array, 'name');
+
+// throws InvalidArgumentException
+```
 
 <a name="method-array-collapse"></a>
 #### `Arr::collapse()`
 
 Метод `Arr::collapse` сворачивает массив массивов в один массив:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = Arr::collapse([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
+$array = Arr::collapse([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
 
-    // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+// [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
 
 <a name="method-array-crossjoin"></a>
 #### `Arr::crossJoin()`
 
 Метод `Arr::crossJoin` перекрестно соединяет указанные массивы, возвращая декартово произведение со всеми возможными перестановками:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $matrix = Arr::crossJoin([1, 2], ['a', 'b']);
+$matrix = Arr::crossJoin([1, 2], ['a', 'b']);
 
-    /*
-        [
-            [1, 'a'],
-            [1, 'b'],
-            [2, 'a'],
-            [2, 'b'],
-        ]
-    */
+/*
+    [
+        [1, 'a'],
+        [1, 'b'],
+        [2, 'a'],
+        [2, 'b'],
+    ]
+*/
 
-    $matrix = Arr::crossJoin([1, 2], ['a', 'b'], ['I', 'II']);
+$matrix = Arr::crossJoin([1, 2], ['a', 'b'], ['I', 'II']);
 
-    /*
-        [
-            [1, 'a', 'I'],
-            [1, 'a', 'II'],
-            [1, 'b', 'I'],
-            [1, 'b', 'II'],
-            [2, 'a', 'I'],
-            [2, 'a', 'II'],
-            [2, 'b', 'I'],
-            [2, 'b', 'II'],
-        ]
-    */
+/*
+    [
+        [1, 'a', 'I'],
+        [1, 'a', 'II'],
+        [1, 'b', 'I'],
+        [1, 'b', 'II'],
+        [2, 'a', 'I'],
+        [2, 'a', 'II'],
+        [2, 'b', 'I'],
+        [2, 'b', 'II'],
+    ]
+*/
+```
 
 <a name="method-array-divide"></a>
 #### `Arr::divide()`
 
 Метод `Arr::divide` возвращает два массива: один содержит ключи, а другой – значения переданного массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    [$keys, $values] = Arr::divide(['name' => 'Desk']);
+[$keys, $values] = Arr::divide(['name' => 'Desk']);
 
-    // $keys: ['name']
+// $keys: ['name']
 
-    // $values: ['Desk']
+// $values: ['Desk']
+```
 
 <a name="method-array-dot"></a>
 #### `Arr::dot()`
 
 Метод `Arr::dot` объединяет многомерный массив в одноуровневый, использующий «точечную нотацию» для обозначения глубины:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['products' => ['desk' => ['price' => 100]]];
+$array = ['products' => ['desk' => ['price' => 100]]];
 
-    $flattened = Arr::dot($array);
+$flattened = Arr::dot($array);
 
-    // ['products.desk.price' => 100]
+// ['products.desk.price' => 100]
+```
 
 <a name="method-array-except"></a>
 #### `Arr::except()`
 
 Метод `Arr::except` удаляет переданные пары ключ / значение из массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['name' => 'Desk', 'price' => 100];
+$array = ['name' => 'Desk', 'price' => 100];
 
-    $filtered = Arr::except($array, ['price']);
+$filtered = Arr::except($array, ['price']);
 
-    // ['name' => 'Desk']
+// ['name' => 'Desk']
+```
 
 <a name="method-array-exists"></a>
 #### `Arr::exists()`
 
 Метод `Arr::exists` проверяет, существует ли переданный ключ в указанном массиве:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['name' => 'John Doe', 'age' => 17];
+$array = ['name' => 'John Doe', 'age' => 17];
 
-    $exists = Arr::exists($array, 'name');
+$exists = Arr::exists($array, 'name');
 
-    // true
+// true
 
-    $exists = Arr::exists($array, 'salary');
+$exists = Arr::exists($array, 'salary');
 
-    // false
+// false
+```
 
 <a name="method-array-first"></a>
 #### `Arr::first()`
 
 Метод `Arr::first` возвращает первый элемент массива, прошедший тест переданного замыкания на истинность:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [100, 200, 300];
+$array = [100, 200, 300];
 
-    $first = Arr::first($array, function (int $value, int $key) {
-        return $value >= 150;
-    });
+$first = Arr::first($array, function (int $value, int $key) {
+    return $value >= 150;
+});
 
-    // 200
+// 200
+```
 
 Значение по умолчанию может быть передано в качестве третьего аргумента методу. Это значение будет возвращено, если ни одно из значений не пройдет проверку на истинность:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $first = Arr::first($array, $callback, $default);
+$first = Arr::first($array, $callback, $default);
+```
 
 <a name="method-array-flatten"></a>
 #### `Arr::flatten()`
 
 Метод `Arr::flatten` объединяет многомерный массив в одноуровневый:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['name' => 'Joe', 'languages' => ['PHP', 'Ruby']];
+$array = ['name' => 'Joe', 'languages' => ['PHP', 'Ruby']];
 
-    $flattened = Arr::flatten($array);
+$flattened = Arr::flatten($array);
 
-    // ['Joe', 'PHP', 'Ruby']
+// ['Joe', 'PHP', 'Ruby']
+```
+
+<a name="method-array-float"></a>
+#### `Arr::float()`
+
+Метод `Arr::float` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `float`:
+
+```
+use Illuminate\Support\Arr;
+
+$array = ['name' => 'Joe', 'balance' => 123.45];
+
+$value = Arr::float($array, 'balance');
+
+// 123.45
+
+$value = Arr::float($array, 'name');
+
+// throws InvalidArgumentException
+```
 
 <a name="method-array-forget"></a>
 #### `Arr::forget()`
 
 Метод `Arr::forget` удаляет переданную пару ключ / значение из глубоко вложенного массива, используя «точечную нотацию»:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['products' => ['desk' => ['price' => 100]]];
+$array = ['products' => ['desk' => ['price' => 100]]];
 
-    Arr::forget($array, 'products.desk');
+Arr::forget($array, 'products.desk');
 
-    // ['products' => []]
+// ['products' => []]
+```
+
+<a name="method-array-from"></a>
+#### `Arr::from()`
+
+Метод `Arr::from` преобразует различные типы входных данных в простой массив PHP. Он поддерживает ряд типов входных данных, включая массивы, объекты и несколько общих интерфейсов Laravel, таких как `Arrayable`, `Enumerable`, `Jsonable` и `JsonSerializable`. Кроме того, он обрабатывает экземпляры `Traversable` и `WeakMap`:
+
+```php
+use Illuminate\Support\Arr;
+
+Arr::from((object) ['foo' => 'bar']); // ['foo' => 'bar']
+
+class TestJsonableObject implements Jsonable
+{
+    public function toJson($options = 0)
+    {
+        return json_encode(['foo' => 'bar']);
+    }
+}
+
+Arr::from(new TestJsonableObject); // ['foo' => 'bar']
+```
 
 <a name="method-array-get"></a>
 #### `Arr::get()`
 
 Метод `Arr::get` извлекает значение из глубоко вложенного массива, используя «точечную нотацию»:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['products' => ['desk' => ['price' => 100]]];
+$array = ['products' => ['desk' => ['price' => 100]]];
 
-    $price = Arr::get($array, 'products.desk.price');
+$price = Arr::get($array, 'products.desk.price');
 
-    // 100
+// 100
+```
 
 Метод `Arr::get` также принимает значение по умолчанию, которое будет возвращено, если указанный ключ отсутствует в массиве:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $discount = Arr::get($array, 'products.desk.discount', 0);
+$discount = Arr::get($array, 'products.desk.discount', 0);
 
-    // 0
+// 0
+```
 
 <a name="method-array-has"></a>
 #### `Arr::has()`
 
 Метод `Arr::has` проверяет, существует ли переданный элемент или элементы в массиве, используя «точечную нотацию»:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['product' => ['name' => 'Desk', 'price' => 100]];
+$array = ['product' => ['name' => 'Desk', 'price' => 100]];
 
-    $contains = Arr::has($array, 'product.name');
+$contains = Arr::has($array, 'product.name');
 
-    // true
+// true
 
-    $contains = Arr::has($array, ['product.price', 'product.discount']);
+$contains = Arr::has($array, ['product.price', 'product.discount']);
 
-    // false
+// false
+```
+
+<a name="method-array-hasall"></a>
+#### `Arr::hasAll()`
+
+Метод `Arr::hasAll` определяет, существуют ли все указанные ключи в заданном массиве, используя «точечную» нотацию:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = ['name' => 'Taylor', 'language' => 'PHP'];
+
+Arr::hasAll($array, ['name']); // true
+Arr::hasAll($array, ['name', 'language']); // true
+Arr::hasAll($array, ['name', 'IDE']); // false
+```
 
 <a name="method-array-hasany"></a>
 #### `Arr::hasAny()`
 
 Метод `Arr::hasAny` проверяет, существует ли какой-либо элемент в переданном наборе в массиве, используя «точечную нотацию»:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['product' => ['name' => 'Desk', 'price' => 100]];
+$array = ['product' => ['name' => 'Desk', 'price' => 100]];
 
-    $contains = Arr::hasAny($array, 'product.name');
+$contains = Arr::hasAny($array, 'product.name');
 
-    // true
+// true
 
-    $contains = Arr::hasAny($array, ['product.name', 'product.discount']);
+$contains = Arr::hasAny($array, ['product.name', 'product.discount']);
 
-    // true
+// true
 
-    $contains = Arr::hasAny($array, ['category', 'product.discount']);
+$contains = Arr::hasAny($array, ['category', 'product.discount']);
 
-    // false
+// false
+```
+
+<a name="method-array-integer"></a>
+#### `Arr::integer()`
+
+Метод `Arr::integer` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `int`:
+
+```
+use Illuminate\Support\Arr;
+$array = ['name' => 'Joe', 'age' => 42];
+$value = Arr::integer($array, 'age');
+// 42
+$value = Arr::integer($array, 'name');
+// throws InvalidArgumentException
+```
 
 <a name="method-array-isassoc"></a>
 #### `Arr::isAssoc()`
 
 Метод `Arr::isAssoc` возвращает `true`, если переданный массив является ассоциативным. Массив считается ассоциативным, если в нем нет последовательных цифровых ключей, начинающихся с нуля:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $isAssoc = Arr::isAssoc(['product' => ['name' => 'Desk', 'price' => 100]]);
+$isAssoc = Arr::isAssoc(['product' => ['name' => 'Desk', 'price' => 100]]);
 
-    // true
+// true
 
-    $isAssoc = Arr::isAssoc([1, 2, 3]);
+$isAssoc = Arr::isAssoc([1, 2, 3]);
 
-    // false
+// false
+```
 
 <a name="method-array-islist"></a>
 #### `Arr::isList()`
 
 Метод `Arr::isList` возвращает true, если ключи заданного массива представляют собой последовательные целые числа, начиная с нуля:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $isList = Arr::isList(['foo', 'bar', 'baz']);
+$isList = Arr::isList(['foo', 'bar', 'baz']);
 
-    // true
+// true
 
-    $isList = Arr::isList(['product' => ['name' => 'Desk', 'price' => 100]]);
+$isList = Arr::isList(['product' => ['name' => 'Desk', 'price' => 100]]);
 
-    // false
+// false
+```
 
 <a name="method-array-join"></a>
 #### `Arr::join()`
 
 Метод `Arr::join` объединяет элементы массива в строку. Используя второй аргумента этого метода вы также можете указать строку для соединения последнего элемента массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['Tailwind', 'Alpine', 'Laravel', 'Livewire'];
+$array = ['Tailwind', 'Alpine', 'Laravel', 'Livewire'];
 
-    $joined = Arr::join($array, ', ');
+$joined = Arr::join($array, ', ');
 
-    // Tailwind, Alpine, Laravel, Livewire
+// Tailwind, Alpine, Laravel, Livewire
 
-    $joined = Arr::join($array, ', ', ' and ');
+$joined = Arr::join($array, ', ', ' and ');
 
-    // Tailwind, Alpine, Laravel and Livewire
+// Tailwind, Alpine, Laravel and Livewire
+```
 
 <a name="method-array-keyby"></a>
 #### `Arr::keyBy()`
 
 Метод `Arr::keyBy` присваивает ключи элементам базового массива на основе указанного ключа.  Если у нескольких элементов один и тот же ключ, в новом массиве появится только последний:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        ['product_id' => 'prod-100', 'name' => 'Desk'],
-        ['product_id' => 'prod-200', 'name' => 'Chair'],
-    ];
+$array = [
+    ['product_id' => 'prod-100', 'name' => 'Desk'],
+    ['product_id' => 'prod-200', 'name' => 'Chair'],
+];
 
-    $keyed = Arr::keyBy($array, 'product_id');
+$keyed = Arr::keyBy($array, 'product_id');
 
-    /*
-        [
-            'prod-100' => ['product_id' => 'prod-100', 'name' => 'Desk'],
-            'prod-200' => ['product_id' => 'prod-200', 'name' => 'Chair'],
-        ]
-    */
+/*
+    [
+        'prod-100' => ['product_id' => 'prod-100', 'name' => 'Desk'],
+        'prod-200' => ['product_id' => 'prod-200', 'name' => 'Chair'],
+    ]
+*/
+```
 
 <a name="method-array-last"></a>
 #### `Arr::last()`
 
 Метод `Arr::last` возвращает последний элемент массива, прошедший тест переданного замыкания на истинность:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [100, 200, 300, 110];
+$array = [100, 200, 300, 110];
 
-    $last = Arr::last($array, function (int $value, int $key) {
-        return $value >= 150;
-    });
+$last = Arr::last($array, function (int $value, int $key) {
+    return $value >= 150;
+});
 
-    // 300
+// 300
+```
 
 Значение по умолчанию может быть передано в качестве третьего аргумента методу. Это значение будет возвращено, если ни одно из значений не пройдет проверку на истинность:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $last = Arr::last($array, $callback, $default);
+$last = Arr::last($array, $callback, $default);
+```
 
 <a name="method-array-map"></a>
 #### `Arr::map()`
 
 Метод `Arr::map` проходит по массиву и передает каждое значение и ключ указанной функции обратного вызова. Значение массива заменяется значением, возвращаемым обратным вызовом:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['first' => 'james', 'last' => 'kirk'];
+$array = ['first' => 'james', 'last' => 'kirk'];
 
-    $mapped = Arr::map($array, function (string $value, string $key) {
-        return ucfirst($value);
-    });
+$mapped = Arr::map($array, function (string $value, string $key) {
+    return ucfirst($value);
+});
 
-    // ['first' => 'James', 'last' => 'Kirk']
+// ['first' => 'James', 'last' => 'Kirk']
+```
 
 <a name="method-array-map-spread"></a>
 #### `Arr::mapSpread()`
 
 Метод `Arr::mapSpread` выполняет итерацию по массиву, передавая каждое значение вложенного элемента в данное замыкание. Замыкание может изменять элемент и возвращать его, формируя таким образом новый массив измененных элементов:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        [0, 1],
-        [2, 3],
-        [4, 5],
-        [6, 7],
-        [8, 9],
-    ];
+$array = [
+    [0, 1],
+    [2, 3],
+    [4, 5],
+    [6, 7],
+    [8, 9],
+];
 
-    $mapped = Arr::mapSpread($array, function (int $even, int $odd) {
-        return $even + $odd;
-    });
+$mapped = Arr::mapSpread($array, function (int $even, int $odd) {
+    return $even + $odd;
+});
 
-    /*
-        [1, 5, 9, 13, 17]
-    */
+/*
+    [1, 5, 9, 13, 17]
+*/
+```
 
 <a name="method-array-map-with-keys"></a>
 #### `Arr::mapWithKeys()`
 
 Метод `Arr::mapWithKeys` проходит по массиву и передает каждое значение указанной функции обратного вызова, которая должна возвращать ассоциативный массив, содержащий одну пару ключ / значение:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        [
-            'name' => 'John',
-            'department' => 'Sales',
-            'email' => 'john@example.com',
-        ],
-        [
-            'name' => 'Jane',
-            'department' => 'Marketing',
-            'email' => 'jane@example.com',
-        ]
-    ];
+$array = [
+    [
+        'name' => 'John',
+        'department' => 'Sales',
+        'email' => 'john@example.com',
+    ],
+    [
+        'name' => 'Jane',
+        'department' => 'Marketing',
+        'email' => 'jane@example.com',
+    ]
+];
 
-    $mapped = Arr::mapWithKeys($array, function (array $item, int $key) {
-        return [$item['email'] => $item['name']];
-    });
+$mapped = Arr::mapWithKeys($array, function (array $item, int $key) {
+    return [$item['email'] => $item['name']];
+});
 
-    /*
-        [
-            'john@example.com' => 'John',
-            'jane@example.com' => 'Jane',
-        ]
-    */
+/*
+    [
+        'john@example.com' => 'John',
+        'jane@example.com' => 'Jane',
+    ]
+*/
+```
 
 <a name="method-array-only"></a>
 #### `Arr::only()`
 
 Метод `Arr::only` возвращает только указанные пары ключ / значение из переданного массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['name' => 'Desk', 'price' => 100, 'orders' => 10];
+$array = ['name' => 'Desk', 'price' => 100, 'orders' => 10];
 
-    $slice = Arr::only($array, ['name', 'price']);
+$slice = Arr::only($array, ['name', 'price']);
 
-    // ['name' => 'Desk', 'price' => 100]
+// ['name' => 'Desk', 'price' => 100]
+```
+
+<a name="method-array-partition"></a>
+#### `Arr::partition()`
+
+Метод `Arr::partition` можно комбинировать с деструктуризацией массива PHP для отделения элементов, прошедших заданный тест истинности, от тех, которые не прошли:
+
+```php
+<?php
+
+use Illuminate\Support\Arr;
+
+$numbers = [1, 2, 3, 4, 5, 6];
+
+[$underThree, $equalOrAboveThree] = Arr::partition($numbers, function (int $i) {
+    return $i < 3;
+});
+
+dump($underThree);
+
+// [1, 2]
+
+dump($equalOrAboveThree);
+
+// [3, 4, 5, 6]
+```
 
 <a name="method-array-pluck"></a>
 #### `Arr::pluck()`
 
 Метод `Arr::pluck` извлекает все значения для указанного ключа из массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        ['developer' => ['id' => 1, 'name' => 'Taylor']],
-        ['developer' => ['id' => 2, 'name' => 'Abigail']],
-    ];
+$array = [
+    ['developer' => ['id' => 1, 'name' => 'Taylor']],
+    ['developer' => ['id' => 2, 'name' => 'Abigail']],
+];
 
-    $names = Arr::pluck($array, 'developer.name');
+$names = Arr::pluck($array, 'developer.name');
 
-    // ['Taylor', 'Abigail']
+// ['Taylor', 'Abigail']
+```
 
 Вы также можете задать ключ результирующего списка:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $names = Arr::pluck($array, 'developer.name', 'developer.id');
+$names = Arr::pluck($array, 'developer.name', 'developer.id');
 
-    // [1 => 'Taylor', 2 => 'Abigail']
+// [1 => 'Taylor', 2 => 'Abigail']
+```
 
 <a name="method-array-prepend"></a>
 #### `Arr::prepend()`
 
 Метод `Arr::prepend` помещает элемент в начало массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['one', 'two', 'three', 'four'];
+$array = ['one', 'two', 'three', 'four'];
 
-    $array = Arr::prepend($array, 'zero');
+$array = Arr::prepend($array, 'zero');
 
-    // ['zero', 'one', 'two', 'three', 'four']
+// ['zero', 'one', 'two', 'three', 'four']
+```
 
 При необходимости вы можете указать ключ, который следует использовать для значения:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['price' => 100];
+$array = ['price' => 100];
 
-    $array = Arr::prepend($array, 'Desk', 'name');
+$array = Arr::prepend($array, 'Desk', 'name');
 
-    // ['name' => 'Desk', 'price' => 100]
+// ['name' => 'Desk', 'price' => 100]
+```
 
 <a name="method-array-prependkeyswith"></a>
 #### `Arr::prependKeysWith()`
 
 Метод `Arr::prependKeysWith` добавляет указанный префикс ко всем именам ключей ассоциативного массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        'name' => 'Desk',
-        'price' => 100,
-    ];
+$array = [
+    'name' => 'Desk',
+    'price' => 100,
+];
 
-    $keyed = Arr::prependKeysWith($array, 'product.');
+$keyed = Arr::prependKeysWith($array, 'product.');
 
-    /*
-        [
-            'product.name' => 'Desk',
-            'product.price' => 100,
-        ]
-    */
+/*
+    [
+        'product.name' => 'Desk',
+        'product.price' => 100,
+    ]
+*/
+```
 
 <a name="method-array-pull"></a>
 #### `Arr::pull()`
 
 Метод `Arr::pull` возвращает и удаляет пару ключ / значение из массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['name' => 'Desk', 'price' => 100];
+$array = ['name' => 'Desk', 'price' => 100];
 
-    $name = Arr::pull($array, 'name');
+$name = Arr::pull($array, 'name');
 
-    // $name: Desk
+// $name: Desk
 
-    // $array: ['price' => 100]
+// $array: ['price' => 100]
+```
 
 Значение по умолчанию может быть передано в качестве третьего аргумента методу. Это значение будет возвращено, если ключ не существует:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $value = Arr::pull($array, $key, $default);
+$value = Arr::pull($array, $key, $default);
+```
 
 <a name="method-array-query"></a>
 #### `Arr::query()`
 
 Метод `Arr::query` преобразует массив в строку запроса:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        'name' => 'Taylor',
-        'order' => [
-            'column' => 'created_at',
-            'direction' => 'desc'
-        ]
-    ];
+$array = [
+    'name' => 'Taylor',
+    'order' => [
+        'column' => 'created_at',
+        'direction' => 'desc'
+    ]
+];
 
-    Arr::query($array);
+Arr::query($array);
 
-    // name=Taylor&order[column]=created_at&order[direction]=desc
+// name=Taylor&order[column]=created_at&order[direction]=desc
+```
 
 <a name="method-array-random"></a>
 #### `Arr::random()`
 
 Метод `Arr::random` возвращает случайное значение из массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [1, 2, 3, 4, 5];
+$array = [1, 2, 3, 4, 5];
 
-    $random = Arr::random($array);
+$random = Arr::random($array);
 
-    // 4 - (retrieved randomly)
+// 4 - (retrieved randomly)
+```
 
 Вы также можете указать количество элементов для возврата в качестве необязательного второго аргумента. Обратите внимание, что при указании этого аргумента, будет возвращен массив, даже если требуется только один элемент:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $items = Arr::random($array, 2);
+$items = Arr::random($array, 2);
 
-    // [2, 5] - (retrieved randomly)
+// [2, 5] - (retrieved randomly)
+```
+
+<a name="method-array-reject"></a>
+#### `Arr::reject()`
+
+Метод `Arr::reject` удаляет элементы из массива, используя заданное замыкание:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = [100, '200', 300, '400', 500];
+
+$filtered = Arr::reject($array, function (string|int $value, int $key) {
+    return is_string($value);
+});
+
+// [0 => 100, 2 => 300, 4 => 500]
+```
+
+<a name="method-array-select"></a>
+#### `Arr::select()`
+
+Метод `Arr::select` выбирает массив значений из массива:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = [
+    ['id' => 1, 'name' => 'Desk', 'price' => 200],
+    ['id' => 2, 'name' => 'Table', 'price' => 150],
+    ['id' => 3, 'name' => 'Chair', 'price' => 300],
+];
+
+Arr::select($array, ['name', 'price']);
+
+// [['name' => 'Desk', 'price' => 200], ['name' => 'Table', 'price' => 150], ['name' => 'Chair', 'price' => 300]]
+```
 
 <a name="method-array-set"></a>
 #### `Arr::set()`
 
 Метод `Arr::set` устанавливает значение с помощью «точечной нотации» во вложенном массиве:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['products' => ['desk' => ['price' => 100]]];
+$array = ['products' => ['desk' => ['price' => 100]]];
 
-    Arr::set($array, 'products.desk.price', 200);
+Arr::set($array, 'products.desk.price', 200);
 
-    // ['products' => ['desk' => ['price' => 200]]]
+// ['products' => ['desk' => ['price' => 200]]]
+```
 
 <a name="method-array-shuffle"></a>
 #### `Arr::shuffle()`
 
 Метод `Arr::shuffle` случайным образом перемешивает элементы в массиве:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = Arr::shuffle([1, 2, 3, 4, 5]);
+$array = Arr::shuffle([1, 2, 3, 4, 5]);
 
-    // [3, 2, 5, 1, 4] - (generated randomly)
+// [3, 2, 5, 1, 4] - (generated randomly)
+```
+
+<a name="method-array-sole"></a>
+#### `Arr::sole()`
+
+Метод `Arr::sole` извлекает одно значение из массива, используя заданное замыкание. Если более одного значения в массиве соответствуют заданному тесту истинности, будет выброшено исключение `Illuminate\Support\MultipleItemsFoundException`. Если ни одно значение не соответствует тесту истинности, будет выброшено исключение `Illuminate\Support\ItemNotFoundException`:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = ['Desk', 'Table', 'Chair'];
+
+$value = Arr::sole($array, fn (string $value) => $value === 'Desk');
+
+// 'Desk'
+```
 
 <a name="method-array-sort"></a>
 #### `Arr::sort()`
 
 Метод `Arr::sort` сортирует массив по его значениям:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['Desk', 'Table', 'Chair'];
+$array = ['Desk', 'Table', 'Chair'];
 
-    $sorted = Arr::sort($array);
+$sorted = Arr::sort($array);
 
-    // ['Chair', 'Desk', 'Table']
+// ['Chair', 'Desk', 'Table']
+```
 
 Вы также можете отсортировать массив по результатам переданного замыкания:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
+$array = [
+    ['name' => 'Desk'],
+    ['name' => 'Table'],
+    ['name' => 'Chair'],
+];
+
+$sorted = array_values(Arr::sort($array, function (array $value) {
+    return $value['name'];
+}));
+
+/*
+    [
+        ['name' => 'Chair'],
         ['name' => 'Desk'],
         ['name' => 'Table'],
-        ['name' => 'Chair'],
-    ];
-
-    $sorted = array_values(Arr::sort($array, function (array $value) {
-        return $value['name'];
-    }));
-
-    /*
-        [
-            ['name' => 'Chair'],
-            ['name' => 'Desk'],
-            ['name' => 'Table'],
-        ]
-    */
+    ]
+*/
+```
 
 <a name="method-array-sort-desc"></a>
 #### `Arr::sortDesc()`
 
 Метод `Arr::sortDesc` сортирует массив по убыванию значений:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = ['Desk', 'Table', 'Chair'];
+$array = ['Desk', 'Table', 'Chair'];
 
-    $sorted = Arr::sortDesc($array);
+$sorted = Arr::sortDesc($array);
 
-    // ['Table', 'Desk', 'Chair']
+// ['Table', 'Desk', 'Chair']
+```
 
 Вы также можете отсортировать массив по результатам переданного замыкания:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        ['name' => 'Desk'],
+$array = [
+    ['name' => 'Desk'],
+    ['name' => 'Table'],
+    ['name' => 'Chair'],
+];
+
+$sorted = array_values(Arr::sortDesc($array, function (array $value) {
+    return $value['name'];
+}));
+
+/*
+    [
         ['name' => 'Table'],
+        ['name' => 'Desk'],
         ['name' => 'Chair'],
-    ];
-
-    $sorted = array_values(Arr::sortDesc($array, function (array $value) {
-        return $value['name'];
-    }));
-
-    /*
-        [
-            ['name' => 'Table'],
-            ['name' => 'Desk'],
-            ['name' => 'Chair'],
-        ]
-    */
+    ]
+*/
+```
 
 <a name="method-array-sort-recursive"></a>
 #### `Arr::sortRecursive()`
 
 Метод `Arr::sortRecursive` рекурсивно сортирует массив с помощью метода `sort` для числовых подмассивов и `ksort` для ассоциативных подмассивов:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        ['Roman', 'Taylor', 'Li'],
-        ['PHP', 'Ruby', 'JavaScript'],
-        ['one' => 1, 'two' => 2, 'three' => 3],
-    ];
+$array = [
+    ['Roman', 'Taylor', 'Li'],
+    ['PHP', 'Ruby', 'JavaScript'],
+    ['one' => 1, 'two' => 2, 'three' => 3],
+];
 
-    $sorted = Arr::sortRecursive($array);
+$sorted = Arr::sortRecursive($array);
 
-    /*
-        [
-            ['JavaScript', 'PHP', 'Ruby'],
-            ['one' => 1, 'three' => 3, 'two' => 2],
-            ['Li', 'Roman', 'Taylor'],
-        ]
-    */
+/*
+    [
+        ['JavaScript', 'PHP', 'Ruby'],
+        ['one' => 1, 'three' => 3, 'two' => 2],
+        ['Li', 'Roman', 'Taylor'],
+    ]
+*/
+```
 
 Если вы хотите, чтобы результаты были отсортированы по убыванию, вы можете использовать метод` Arr::sortRecursiveDesc`.
 
-    $sorted = Arr::sortRecursiveDesc($array);
+```php
+$sorted = Arr::sortRecursiveDesc($array);
+```
+
+<a name="method-array-string"></a>
+#### `Arr::string()`
+
+Метод `Arr::string` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `string`:
+
+```
+use Illuminate\Support\Arr;
+$array = ['name' => 'Joe', 'languages' => ['PHP', 'Ruby']];
+$value = Arr::string($array, 'name');
+// Joe
+$value = Arr::string($array, 'languages');
+// throws InvalidArgumentException
+```
 
 <a name="method-array-take"></a>
 #### `Arr::take()`
 
 Метод `Arr::take` возвращает новый массив с указанным количеством элементов:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [0, 1, 2, 3, 4, 5];
+$array = [0, 1, 2, 3, 4, 5];
 
-    $chunk = Arr::take($array, 3);
+$chunk = Arr::take($array, 3);
 
-    // [0, 1, 2]
+// [0, 1, 2]
+```
 
 Вы также можете передать отрицательное целое число, чтобы получить указанное количество элементов с конца массива:
 
-    $array = [0, 1, 2, 3, 4, 5];
+```php
+$array = [0, 1, 2, 3, 4, 5];
 
-    $chunk = Arr::take($array, -2);
+$chunk = Arr::take($array, -2);
 
-    // [4, 5]
+// [4, 5]
+```
 
 <a name="method-array-to-css-classes"></a>
 #### `Arr::toCssClasses()`
 
 Метод `Arr::toCssClasses` составляет строку классов CSS исходя из заданных условий. Метод принимает массив классов, где ключ массива содержит класс или классы, которые вы хотите добавить, а значение является булевым выражением. Если элемент массива не имеет строкового ключа, он всегда будет включен в список отрисованных классов:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $isActive = false;
-    $hasError = true;
+$isActive = false;
+$hasError = true;
 
-    $array = ['p-4', 'font-bold' => $isActive, 'bg-red' => $hasError];
+$array = ['p-4', 'font-bold' => $isActive, 'bg-red' => $hasError];
 
-    $classes = Arr::toCssClasses($array);
+$classes = Arr::toCssClasses($array);
 
-    /*
-        'p-4 bg-red'
-    */
+/*
+    'p-4 bg-red'
+*/
+```
 
 <a name="method-array-to-css-styles"></a>
 #### `Arr::toCssStyles()`
@@ -922,233 +1222,269 @@ $classes = Arr::toCssStyles($array);
 
 Метод `Arr::undot` расширяет одномерный массив, использующий "точечную нотацию", в многомерный массив:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [
-        'user.name' => 'Kevin Malone',
-        'user.occupation' => 'Accountant',
-    ];
+$array = [
+    'user.name' => 'Kevin Malone',
+    'user.occupation' => 'Accountant',
+];
 
-    $array = Arr::undot($array);
+$array = Arr::undot($array);
 
-    // ['user' => ['name' => 'Kevin Malone', 'occupation' => 'Accountant']]
+// ['user' => ['name' => 'Kevin Malone', 'occupation' => 'Accountant']]
+```
 
 <a name="method-array-where"></a>
 #### `Arr::where()`
 
 Метод `Arr::where` фильтрует массив, используя переданное замыкание:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [100, '200', 300, '400', 500];
+$array = [100, '200', 300, '400', 500];
 
-    $filtered = Arr::where($array, function (string|int $value, int $key) {
-        return is_string($value);
-    });
+$filtered = Arr::where($array, function (string|int $value, int $key) {
+    return is_string($value);
+});
 
-    // [1 => '200', 3 => '400']
+// [1 => '200', 3 => '400']
+```
 
 <a name="method-array-where-not-null"></a>
 #### `Arr::whereNotNull()`
 
 Метод `Arr::whereNotNull`удаляет все значения `null` из данного массива:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = [0, null];
+$array = [0, null];
 
-    $filtered = Arr::whereNotNull($array);
+$filtered = Arr::whereNotNull($array);
 
-    // [0 => 0]
+// [0 => 0]
+```
 
 <a name="method-array-wrap"></a>
 #### `Arr::wrap()`
 
 Метод `Arr::wrap` оборачивает переданное значение в массив. Если переданное значение уже является массивом, то оно будет возвращено без изменений:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $string = 'Laravel';
+$string = 'Laravel';
 
-    $array = Arr::wrap($string);
+$array = Arr::wrap($string);
 
-    // ['Laravel']
+// ['Laravel']
+```
 
 Если переданное значение равно `null`, то будет возвращен пустой массив:
 
-    use Illuminate\Support\Arr;
+```php
+use Illuminate\Support\Arr;
 
-    $array = Arr::wrap(null);
+$array = Arr::wrap(null);
 
-    // []
+// []
+```
 
 <a name="method-data-fill"></a>
 #### `data_fill()`
 
 Функция `data_fill` устанавливает отсутствующее значение с помощью «точечной нотации» во вложенном массиве или объекте:
 
-    $data = ['products' => ['desk' => ['price' => 100]]];
+```php
+$data = ['products' => ['desk' => ['price' => 100]]];
 
-    data_fill($data, 'products.desk.price', 200);
+data_fill($data, 'products.desk.price', 200);
 
-    // ['products' => ['desk' => ['price' => 100]]]
+// ['products' => ['desk' => ['price' => 100]]]
 
-    data_fill($data, 'products.desk.discount', 10);
+data_fill($data, 'products.desk.discount', 10);
 
-    // ['products' => ['desk' => ['price' => 100, 'discount' => 10]]]
+// ['products' => ['desk' => ['price' => 100, 'discount' => 10]]]
+```
 
 Допускается использование метасимвола подстановки `*`:
 
-    $data = [
+```php
+$data = [
+    'products' => [
+        ['name' => 'Desk 1', 'price' => 100],
+        ['name' => 'Desk 2'],
+    ],
+];
+
+data_fill($data, 'products.*.price', 200);
+
+/*
+    [
         'products' => [
             ['name' => 'Desk 1', 'price' => 100],
-            ['name' => 'Desk 2'],
+            ['name' => 'Desk 2', 'price' => 200],
         ],
-    ];
-
-    data_fill($data, 'products.*.price', 200);
-
-    /*
-        [
-            'products' => [
-                ['name' => 'Desk 1', 'price' => 100],
-                ['name' => 'Desk 2', 'price' => 200],
-            ],
-        ]
-    */
+    ]
+*/
+```
 
 <a name="method-data-get"></a>
 #### `data_get()`
 
 Функция `data_get` возвращает значение с помощью «точечной нотации» из вложенного массива или объекта:
 
-    $data = ['products' => ['desk' => ['price' => 100]]];
+```php
+$data = ['products' => ['desk' => ['price' => 100]]];
 
-    $price = data_get($data, 'products.desk.price');
+$price = data_get($data, 'products.desk.price');
 
-    // 100
+// 100
+```
 
 Функция `data_get` также принимает значение по умолчанию, которое будет возвращено, если указанный ключ не найден:
 
-    $discount = data_get($data, 'products.desk.discount', 0);
+```php
+$discount = data_get($data, 'products.desk.discount', 0);
 
-    // 0
+// 0
+```
 
 Допускается использование метасимвола подстановки `*`, предназначенный для любого ключа массива или объекта:
 
-    $data = [
-        'product-one' => ['name' => 'Desk 1', 'price' => 100],
-        'product-two' => ['name' => 'Desk 2', 'price' => 150],
-    ];
+```php
+$data = [
+    'product-one' => ['name' => 'Desk 1', 'price' => 100],
+    'product-two' => ['name' => 'Desk 2', 'price' => 150],
+];
 
-    data_get($data, '*.name');
+data_get($data, '*.name');
 
-    // ['Desk 1', 'Desk 2'];
+// ['Desk 1', 'Desk 2'];
+```
 
 Заполнители `{first}` и `{last}` могут использоваться для получения первого или последнего элемента массива:
 
-    $flight = [
-        'segments' => [
-            ['from' => 'LHR', 'departure' => '9:00', 'to' => 'IST', 'arrival' => '15:00'],
-            ['from' => 'IST', 'departure' => '16:00', 'to' => 'PKX', 'arrival' => '20:00'],
-        ],
-    ];
+```php
+$flight = [
+    'segments' => [
+        ['from' => 'LHR', 'departure' => '9:00', 'to' => 'IST', 'arrival' => '15:00'],
+        ['from' => 'IST', 'departure' => '16:00', 'to' => 'PKX', 'arrival' => '20:00'],
+    ],
+];
 
-    data_get($flight, 'segments.{first}.arrival');
+data_get($flight, 'segments.{first}.arrival');
 
-    // 15:00
+// 15:00
+```
 
 <a name="method-data-set"></a>
 #### `data_set()`
 
 Функция `data_set` устанавливает значение с помощью «точечной нотации» во вложенном массиве или объекте:
 
-    $data = ['products' => ['desk' => ['price' => 100]]];
+```php
+$data = ['products' => ['desk' => ['price' => 100]]];
 
-    data_set($data, 'products.desk.price', 200);
+data_set($data, 'products.desk.price', 200);
 
-    // ['products' => ['desk' => ['price' => 200]]]
+// ['products' => ['desk' => ['price' => 200]]]
+```
 
 Допускается использование метасимвола подстановки `*`:
 
-    $data = [
+```php
+$data = [
+    'products' => [
+        ['name' => 'Desk 1', 'price' => 100],
+        ['name' => 'Desk 2', 'price' => 150],
+    ],
+];
+
+data_set($data, 'products.*.price', 200);
+
+/*
+    [
         'products' => [
-            ['name' => 'Desk 1', 'price' => 100],
-            ['name' => 'Desk 2', 'price' => 150],
+            ['name' => 'Desk 1', 'price' => 200],
+            ['name' => 'Desk 2', 'price' => 200],
         ],
-    ];
-
-    data_set($data, 'products.*.price', 200);
-
-    /*
-        [
-            'products' => [
-                ['name' => 'Desk 1', 'price' => 200],
-                ['name' => 'Desk 2', 'price' => 200],
-            ],
-        ]
-    */
+    ]
+*/
+```
 
 По умолчанию все существующие значения перезаписываются. Если вы хотите, чтобы значение было установлено только в том случае, если оно не существует, вы можете передать `false` в качестве четвертого аргумента:
 
-    $data = ['products' => ['desk' => ['price' => 100]]];
+```php
+$data = ['products' => ['desk' => ['price' => 100]]];
 
-    data_set($data, 'products.desk.price', 200, overwrite: false);
+data_set($data, 'products.desk.price', 200, overwrite: false);
 
-    // ['products' => ['desk' => ['price' => 100]]]
+// ['products' => ['desk' => ['price' => 100]]]
+```
 
 <a name="method-data-forget"></a>
 #### `data_forget()`
 
 Функция `data_forget` удаляет значение внутри вложенного массива или объекта, используя "точечную" нотацию:
 
-    $data = ['products' => ['desk' => ['price' => 100]]];
+```php
+$data = ['products' => ['desk' => ['price' => 100]]];
 
-    data_forget($data, 'products.desk.price');
+data_forget($data, 'products.desk.price');
 
-    // ['products' => ['desk' => []]]
+// ['products' => ['desk' => []]]
+```
 
 Эта функция также принимает маски с использованием звездочек и удаляет соответствующие значения из цели:
 
-    $data = [
+```php
+$data = [
+    'products' => [
+        ['name' => 'Desk 1', 'price' => 100],
+        ['name' => 'Desk 2', 'price' => 150],
+    ],
+];
+
+data_forget($data, 'products.*.price');
+
+/*
+    [
         'products' => [
-            ['name' => 'Desk 1', 'price' => 100],
-            ['name' => 'Desk 2', 'price' => 150],
+            ['name' => 'Desk 1'],
+            ['name' => 'Desk 2'],
         ],
-    ];
-
-    data_forget($data, 'products.*.price');
-
-    /*
-        [
-            'products' => [
-                ['name' => 'Desk 1'],
-                ['name' => 'Desk 2'],
-            ],
-        ]
-    */
+    ]
+*/
+```
 
 <a name="method-head"></a>
 #### `head()`
 
 Функция `head` возвращает первый элемент переданного массива:
 
-    $array = [100, 200, 300];
+```php
+$array = [100, 200, 300];
 
-    $first = head($array);
+$first = head($array);
 
-    // 100
+// 100
+```
 
 <a name="method-last"></a>
 #### `last()`
 
 Функция `last` возвращает последний элемент переданного массива:
 
-    $array = [100, 200, 300];
+```php
+$array = [100, 200, 300];
 
-    $last = last($array);
+$last = last($array);
 
-    // 300
+// 300
+```
 
 <a name="numbers"></a>
 ## Числа
@@ -1158,163 +1494,185 @@ $classes = Arr::toCssStyles($array);
 
 Метод `Number::abbreviate` возвращает числовое значение в удобочитаемом формате с сокращением для единиц измерения:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::abbreviate(1000);
+$number = Number::abbreviate(1000);
 
-    // 1K
+// 1K
 
-    $number = Number::abbreviate(489939);
+$number = Number::abbreviate(489939);
 
-    // 490K
+// 490K
 
-    $number = Number::abbreviate(1230000, precision: 2);
+$number = Number::abbreviate(1230000, precision: 2);
 
-    // 1.23M
+// 1.23M
+```
 
 <a name="method-number-clamp"></a>
 #### `Number::clamp()`
 
 Метод `Number::clamp` гарантирует, что заданное число останется в заданном диапазоне. Если число меньше минимума, возвращается минимальное значение. Если число больше максимума, возвращается максимальное значение:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::clamp(105, min: 10, max: 100);
+$number = Number::clamp(105, min: 10, max: 100);
 
-    // 100
+// 100
 
-    $number = Number::clamp(5, min: 10, max: 100);
+$number = Number::clamp(5, min: 10, max: 100);
 
-    // 10
+// 10
 
-    $number = Number::clamp(10, min: 10, max: 100);
+$number = Number::clamp(10, min: 10, max: 100);
 
-    // 10
+// 10
 
-    $number = Number::clamp(20, min: 10, max: 100);
+$number = Number::clamp(20, min: 10, max: 100);
 
-    // 20
+// 20
+```
 
 <a name="method-number-currency"></a>
 #### `Number::currency()`
 
 Метод `Number::currency` возвращает представление указанного значения в валюте в виде строки:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $currency = Number::currency(1000);
+$currency = Number::currency(1000);
 
-    // $1,000.00
+// $1,000.00
 
-    $currency = Number::currency(1000, in: 'EUR');
+$currency = Number::currency(1000, in: 'EUR');
 
-    // €1,000.00
+// €1,000.00
 
-    $currency = Number::currency(1000, in: 'EUR', locale: 'de');
+$currency = Number::currency(1000, in: 'EUR', locale: 'de');
 
-    // 1.000,00 €
+// 1.000,00 €
+
+$currency = Number::currency(1000, in: 'EUR', locale: 'de', precision: 0);
+
+// 1.000 €
+```
 
 <a name="method-default-currency"></a>
 #### `Number::defaultCurrency()`
 
 Метод `Number::defaultCurrency` возвращает валюту по умолчанию, используемую классом `Number`:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $currency = Number::defaultCurrency();
+$currency = Number::defaultCurrency();
 
-    // USD
+// USD
+```
 
 <a name="method-default-locale"></a>
 #### `Number::defaultLocale()`
 
 Метод `Number::defaultLocale` возвращает локаль по умолчанию, используемую классом `Number`:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $locale = Number::defaultLocale();
+$locale = Number::defaultLocale();
 
-    // en
+// en
+```
 
 <a name="method-number-file-size"></a>
 #### `Number::fileSize()`
 
 Метод `Number::fileSize` для указанного значения в байтах возвращает представление размера файла в виде строки:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $size = Number::fileSize(1024);
+$size = Number::fileSize(1024);
 
-    // 1 KB
+// 1 KB
 
-    $size = Number::fileSize(1024 * 1024);
+$size = Number::fileSize(1024 * 1024);
 
-    // 1 MB
+// 1 MB
 
-    $size = Number::fileSize(1024, precision: 2);
+$size = Number::fileSize(1024, precision: 2);
 
-    // 1.00 KB
+// 1.00 KB
+```
 
 <a name="method-number-for-humans"></a>
 #### `Number::forHumans()`
 
 Метод Number::forHumans возвращает числовое значение в удобочитаемом формате:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::forHumans(1000);
+$number = Number::forHumans(1000);
 
-    // 1 thousand
+// 1 thousand
 
-    $number = Number::forHumans(489939);
+$number = Number::forHumans(489939);
 
-    // 490 thousand
+// 490 thousand
 
-    $number = Number::forHumans(1230000, precision: 2);
+$number = Number::forHumans(1230000, precision: 2);
 
-    // 1.23 million
+// 1.23 million
+```
 
 <a name="method-number-format"></a>
 #### `Number::format()`
 
 Метод `Number::format` форматирует предоставленное число в строку с учетом локализации:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::format(100000);
+$number = Number::format(100000);
 
-    // 100,000
+// 100,000
 
-    $number = Number::format(100000, precision: 2);
+$number = Number::format(100000, precision: 2);
 
-    // 100,000.00
+// 100,000.00
 
-    $number = Number::format(100000.123, maxPrecision: 2);
+$number = Number::format(100000.123, maxPrecision: 2);
 
-    // 100,000.12
+// 100,000.12
 
-    $number = Number::format(100000, locale: 'de');
+$number = Number::format(100000, locale: 'de');
 
-    // 100.000
+// 100.000
+```
 
 <a name="method-number-ordinal"></a>
 #### `Number::ordinal()`
 
 Метод `Number::ordinal` возвращает порядковое представление числа:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::ordinal(1);
+$number = Number::ordinal(1);
 
-    // 1st
+// 1st
 
-    $number = Number::ordinal(2);
+$number = Number::ordinal(2);
 
-    // 2nd
+// 2nd
 
-    $number = Number::ordinal(21);
+$number = Number::ordinal(21);
 
-    // 21st
+// 21st
+```
 
 <a name="method-number-pairs"></a>
 #### `Number::pairs()`
@@ -1326,7 +1684,7 @@ use Illuminate\Support\Number;
 
 $result = Number::pairs(25, 10);
 
-// [[1, 10], [11, 20], [21, 25]]
+// [[0, 9], [10, 19], [20, 25]]
 
 $result = Number::pairs(25, 10, offset: 0);
 
@@ -1338,125 +1696,164 @@ $result = Number::pairs(25, 10, offset: 0);
 
 Метод `Number::percentage` возвращает процентное представление указанного значения в виде строки:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $percentage = Number::percentage(10);
+$percentage = Number::percentage(10);
 
-    // 10%
+// 10%
 
-    $percentage = Number::percentage(10, precision: 2);
+$percentage = Number::percentage(10, precision: 2);
 
-    // 10.00%
+// 10.00%
 
-    $percentage = Number::percentage(10.123, maxPrecision: 2);
+$percentage = Number::percentage(10.123, maxPrecision: 2);
 
-    // 10.12%
+// 10.12%
 
-    $percentage = Number::percentage(10, precision: 2, locale: 'de');
+$percentage = Number::percentage(10, precision: 2, locale: 'de');
 
-    // 10,00%
+// 10,00%
+```
 
 <a name="method-number-spell"></a>
 #### `Number::spell()`
 
 Метод `Number::spell` возвращает заданное число прописью:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::spell(102);
+$number = Number::spell(102);
 
-    // one hundred and two
+// one hundred and two
 
-    $number = Number::spell(88, locale: 'fr');
+$number = Number::spell(88, locale: 'fr');
 
-    // quatre-vingt-huit
+// quatre-vingt-huit
+```
 
 Аргумент `after` позволяет указать значение, после которого все числа должны быть прописью:
 
-    $number = Number::spell(10, after: 10);
+```php
+$number = Number::spell(10, after: 10);
 
-    // 10
+// 10
 
-    $number = Number::spell(11, after: 10);
+$number = Number::spell(11, after: 10);
 
-    // eleven
+// eleven
+```
 
 Аргумент `until` позволяет указать значение, до которого все числа должны быть прописью:
 
-    $number = Number::spell(5, until: 10);
+```php
+$number = Number::spell(5, until: 10);
 
-    // five
+// five
 
-    $number = Number::spell(10, until: 10);
+$number = Number::spell(10, until: 10);
 
-    // 10
+// 10
+```
+
+<a name="method-number-spell-ordinal"></a>
+#### `Number::spellOrdinal()`
+
+Метод `Number::spellOrdinal` возвращает порядковое представление числа в виде строки слов:
+
+```php
+use Illuminate\Support\Number;
+
+$number = Number::spellOrdinal(1);
+
+// first
+
+$number = Number::spellOrdinal(2);
+
+// second
+
+$number = Number::spellOrdinal(21);
+
+// twenty-first
+```
 
 <a name="method-number-trim"></a>
 #### `Number::trim()`
 
 Метод `Number::trim` удаляет все конечные нулевые цифры после десятичной точки заданного числа:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::trim(12.0);
+$number = Number::trim(12.0);
 
-    // 12
+// 12
 
-    $number = Number::trim(12.30);
+$number = Number::trim(12.30);
 
-    // 12.3
+// 12.3
+```
 
 <a name="method-number-use-locale"></a>
 #### `Number::useLocale()`
 
 Метод `Number::useLocale` глобально устанавливает языковой стандарт чисел по умолчанию, что влияет на форматирование чисел и валюты при последующих обращениях к методам класса `Number`:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    /**
-     * Загрузка любых служб пакета.
-     */
-    public function boot(): void
-    {
-        Number::useLocale('de');
-    }
+/**
+ * Загрузка любых служб пакета.
+ */
+public function boot(): void
+{
+    Number::useLocale('de');
+}
+```
 
 <a name="method-number-with-locale"></a>
 #### `Number::withLocale()`
 
 Метод `Number::withLocale` выполняет заданное замыкание с использованием указанного языкового стандарта, а затем восстанавливает исходный языковой стандарт после выполнения замыкания:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::withLocale('de', function () {
-        return Number::format(1500);
-    });
+$number = Number::withLocale('de', function () {
+    return Number::format(1500);
+});
+```
 
 <a name="method-number-use-currency"></a>
 #### `Number::useCurrency()`
 
 Метод `Number::useCurrency` устанавливает глобальную числовую валюту по умолчанию, что влияет на форматирование валюты при последующих вызовах методов класса `Number`:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        Number::useCurrency('GBP');
-    }
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Number::useCurrency('GBP');
+}
+```
 
 <a name="method-number-with-currency"></a>
 #### `Number::withCurrency()`
 
 Метод `Number::withCurrency` выполняет данное замыкание, используя указанную валюту, а затем восстанавливает исходную валюту после выполнения обратного вызова:
 
-    use Illuminate\Support\Number;
+```php
+use Illuminate\Support\Number;
 
-    $number = Number::withCurrency('GBP', function () {
-        // ...
-    });
+$number = Number::withCurrency('GBP', function () {
+    // ...
+});
+```
 
 <a name="paths"></a>
 ## Пути
@@ -1466,82 +1863,91 @@ $result = Number::pairs(25, 10, offset: 0);
 
 Функция `app_path` возвращает полный путь к каталогу вашего приложения `app`. Вы также можете использовать функцию `app_path` для создания полного пути к файлу относительно каталога приложения:
 
-    $path = app_path();
+```php
+$path = app_path();
 
-    $path = app_path('Http/Controllers/Controller.php');
+$path = app_path('Http/Controllers/Controller.php');
+```
 
 <a name="method-base-path"></a>
 #### `base_path()`
 
 Функция `base_path` возвращает полный путь к корневому каталогу вашего приложения. Вы также можете использовать функцию `base_path` для генерации полного пути к заданному файлу относительно корневого каталога проекта:
 
-    $path = base_path();
+```php
+$path = base_path();
 
-    $path = base_path('vendor/bin');
+$path = base_path('vendor/bin');
+```
 
 <a name="method-config-path"></a>
 #### `config_path()`
 
 Функция `config_path` возвращает полный путь к каталогу `config` вашего приложения. Вы также можете использовать функцию `config_path` для создания полного пути к заданному файлу в каталоге конфигурации приложения:
 
-    $path = config_path();
+```php
+$path = config_path();
 
-    $path = config_path('app.php');
+$path = config_path('app.php');
+```
 
 <a name="method-database-path"></a>
 #### `database_path()`
 
 Функция `database_path` возвращает полный путь к каталогу `database` вашего приложения. Вы также можете использовать функцию `database_path` для генерации полного пути к заданному файлу в каталоге базы данных:
 
-    $path = database_path();
+```php
+$path = database_path();
 
-    $path = database_path('factories/UserFactory.php');
+$path = database_path('factories/UserFactory.php');
+```
 
 <a name="method-lang-path"></a>
 #### `lang_path()`
 
 Функция `lang_path` возвращает полный путь к каталогу `lang` вашего приложения. Вы также можете использовать функцию `lang_path` для генерации полного пути к указанному файлу внутри этого каталога:
 
-    $path = lang_path();
+```php
+$path = lang_path();
 
-    $path = lang_path('en/messages.php');
+$path = lang_path('en/messages.php');
+```
 
 > [!NOTE]
 > По умолчанию в структуре приложения Laravel отсутствует каталог `lang`. Если вы хотите настроить языковые файлы Laravel, вы можете опубликовать их с помощью команды Artisan `lang:publish`.
-
-<a name="method-mix"></a>
-#### `mix()`
-
-Функция `mix` возвращает путь к [версионированному файлу Mix](/docs/{{version}}/mix#versioning-and-cache-busting):
-
-    $path = mix('css/app.css');
 
 <a name="method-public-path"></a>
 #### `public_path()`
 
 Функция `public_path` возвращает полный путь к каталогу `public` вашего приложения. Вы также можете использовать функцию `public_path` для генерации полного пути к заданному файлу в публичном каталоге:
 
-    $path = public_path();
+```php
+$path = public_path();
 
-    $path = public_path('css/app.css');
+$path = public_path('css/app.css');
+```
 
 <a name="method-resource-path"></a>
 #### `resource_path()`
 
 Функция `resource_path` возвращает полный путь к каталогу `resources` вашего приложения. Вы также можете использовать функцию `resource_path`, чтобы сгенерировать полный путь к заданному файлу в каталоге исходников:
 
-    $path = resource_path();
+```php
+$path = resource_path();
 
-    $path = resource_path('sass/app.scss');
+$path = resource_path('sass/app.scss');
+```
 
 <a name="method-storage-path"></a>
 #### `storage_path()`
 
 Функция `storage_path` возвращает полный путь к каталогу `storage` вашего приложения. Вы также можете использовать функцию `storage_path` для генерации полного пути к заданному файлу в каталоге хранилища:
 
-    $path = storage_path();
+```php
+$path = storage_path();
 
-    $path = storage_path('app/file.txt');
+$path = storage_path('app/file.txt');
+```
 
 <a name="urls"></a>
 ## URL-адреса
@@ -1551,85 +1957,146 @@ $result = Number::pairs(25, 10, offset: 0);
 
 Функция `action` генерирует URL-адрес для переданного действия контроллера:
 
-    use App\Http\Controllers\HomeController;
+```php
+use App\Http\Controllers\HomeController;
 
-    $url = action([HomeController::class, 'index']);
+$url = action([HomeController::class, 'index']);
+```
 
 Если метод принимает параметры маршрута, вы можете передать их как второй аргумент методу:
 
-    $url = action([UserController::class, 'profile'], ['id' => 1]);
+```php
+$url = action([UserController::class, 'profile'], ['id' => 1]);
+```
 
 <a name="method-asset"></a>
 #### `asset()`
 
 Функция `asset` генерирует URL для исходника (прим. перев.: директория `resources`), используя текущую схему запроса (HTTP или HTTPS):
 
-    $url = asset('img/photo.jpg');
+```php
+$url = asset('img/photo.jpg');
+```
 
 Вы можете настроить хост URL исходников, установив переменную `ASSET_URL` в вашем файле `.env`. Это может быть полезно, если вы размещаете свои исходники на внешнем сервисе, таком как Amazon S3 или другой CDN:
 
-    // ASSET_URL=http://example.com/assets
+```php
+// ASSET_URL=http://example.com/assets
 
-    $url = asset('img/photo.jpg'); // http://example.com/assets/img/photo.jpg
+$url = asset('img/photo.jpg'); // http://example.com/assets/img/photo.jpg
+```
 
 <a name="method-route"></a>
 #### `route()`
 
 Функция `route` генерирует URL для переданного [именованного маршрута](/docs/{{version}}/routing#named-routes):
 
-    $url = route('route.name');
+```php
+$url = route('route.name');
+```
 
 Если маршрут принимает параметры, вы можете передать их в качестве второго аргумента методу:
 
-    $url = route('route.name', ['id' => 1]);
+```php
+$url = route('route.name', ['id' => 1]);
+```
 
 По умолчанию функция `route` генерирует абсолютный URL. Если вы хотите создать относительный URL, вы можете передать `false` в качестве третьего аргумента:
 
-    $url = route('route.name', ['id' => 1], false);
+```php
+$url = route('route.name', ['id' => 1], false);
+```
 
 <a name="method-secure-asset"></a>
 #### `secure_asset()`
 
 Функция `secure_asset` генерирует URL для исходника, используя HTTPS:
 
-    $url = secure_asset('img/photo.jpg');
+```php
+$url = secure_asset('img/photo.jpg');
+```
 
 <a name="method-secure-url"></a>
 #### `secure_url()`
 
 Функция `secure_url` генерирует полный URL-адрес для указанного пути, используя HTTPS. Дополнительные сегменты URL могут быть переданы во втором аргументе функции:
 
-    $url = secure_url('user/profile');
+```php
+$url = secure_url('user/profile');
 
-    $url = secure_url('user/profile', [1]);
+$url = secure_url('user/profile', [1]);
+```
 
 <a name="method-to-route"></a>
 #### `to_route()`
 
 Функция `to_route` генерирует [HTTP-ответ перенаправления](/docs/{{version}}/responses#redirects) для заданного [именованного маршрута](/docs/{{version}}/routing#named-routes) :
 
-    return to_route('users.show', ['user' => 1]);
+```php
+return to_route('users.show', ['user' => 1]);
+```
 
+```php
 return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
+```
 
 При необходимости вы можете передать методу `to_route` код состояния HTTP, который должен быть присвоен перенаправлению, а также любые дополнительные заголовки ответа в качестве третьего и четвёртого аргументов:
+
+<a name="method-uri"></a>
+#### `uri()`
+
+Функция `uri` генерирует [экземпляр текущего URI](#uri) для заданного URI:
+
+```php
+$uri = uri('https://example.com')
+    ->withPath('/users')
+    ->withQuery(['page' => 1]);
+```
+
+Если функции `uri` передан массив, содержащий вызываемую пару контроллера и метода, функция создаст экземпляр `Uri` для пути маршрута метода контроллера:
+
+```php
+use App\Http\Controllers\UserController;
+
+$uri = uri([UserController::class, 'show'], ['user' => $user]);
+```
+
+Если контроллер можно вызвать, вы можете просто указать имя класса контроллера:
+
+```php
+use App\Http\Controllers\UserIndexController;
+
+$uri = uri(UserIndexController::class);
+```
+
+Если значение, заданное для функции `uri`, совпадает с именем [именованного маршрута](/docs/{{version}}/routing#named-routes), для пути этого маршрута будет сгенерирован экземпляр `Uri`:
+
+```php
+$uri = uri('users.show', ['user' => $user]);
+```
 
 <a name="method-url"></a>
 #### `url()`
 
 Функция `url` генерирует полный URL-адрес для указанного пути:
 
-    $url = url('user/profile');
+```php
+$url = url('user/profile');
 
-    $url = url('user/profile', [1]);
+$url = url('user/profile', [1]);
+```
 
 Если путь не указан, будет возвращен экземпляр `Illuminate\Routing\UrlGenerator`:
 
-    $current = url()->current();
+```php
+$current = url()->current();
 
-    $full = url()->full();
+$full = url()->full();
 
-    $previous = url()->previous();
+$previous = url()->previous();
+```
+
+Дополнительную информацию о работе с функцией `url` см. в [документации по генерации URL](/docs/{{version}}/urls#generating-urls).
 
 <a name="miscellaneous"></a>
 ## Разное
@@ -1639,18 +2106,24 @@ return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
 
 Функция `abort` генерирует [HTTP-исключение](/docs/{{version}}/errors#http-exceptions), которое будет обработано [обработчиком исключения](/docs/{{version}}/errors#handling-exceptions):
 
-    abort(403);
+```php
+abort(403);
+```
 
 Вы также можете указать текст ответа исключения и пользовательские заголовки ответа, которые должны быть отправлены в браузер:
 
-    abort(403, 'Unauthorized.', $headers);
+```php
+abort(403, 'Unauthorized.', $headers);
+```
 
 <a name="method-abort-if"></a>
 #### `abort_if()`
 
 Функция `abort_if` генерирует исключение HTTP, если переданное логическое выражение имеет значение `true`:
 
-    abort_if(! Auth::user()->isAdmin(), 403);
+```php
+abort_if(! Auth::user()->isAdmin(), 403);
+```
 
 Подобно методу `abort`, вы также можете указать текст ответа исключения третьим аргументом и массив пользовательских заголовков ответа в качестве четвертого аргумента.
 
@@ -1659,7 +2132,9 @@ return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
 
 Функция `abort_unless` генерирует исключение HTTP, если переданное логическое выражение оценивается как `false`:
 
-    abort_unless(Auth::user()->isAdmin(), 403);
+```php
+abort_unless(Auth::user()->isAdmin(), 403);
+```
 
 Подобно методу `abort`, вы также можете указать текст ответа исключения третьим аргументом и массив пользовательских заголовков ответа в качестве четвертого аргумента.
 
@@ -1668,214 +2143,290 @@ return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
 
 Функция `app` возвращает экземпляр [контейнера служб](/docs/{{version}}/container):
 
-    $container = app();
+```php
+$container = app();
+```
 
 Вы можете передать имя класса или интерфейса для извлечения его из контейнера:
 
-    $api = app('HelpSpot\API');
+```php
+$api = app('HelpSpot\API');
+```
 
 <a name="method-auth"></a>
 #### `auth()`
 
 Функция `auth` возвращает экземпляр [аутентификатора](authentication). Вы можете использовать его вместо фасада `Auth` для удобства:
 
-    $user = auth()->user();
+```php
+$user = auth()->user();
+```
 
 При необходимости вы можете указать, к какому экземпляру охранника вы хотите получить доступ:
 
-    $user = auth('admin')->user();
+```php
+$user = auth('admin')->user();
+```
 
 <a name="method-back"></a>
 #### `back()`
 
 Функция `back` генерирует [HTTP-ответ перенаправления](responses#redirects) в предыдущее расположение пользователя:
 
-    return back($status = 302, $headers = [], $fallback = '/');
+```php
+return back($status = 302, $headers = [], $fallback = '/');
 
-    return back();
+return back();
+```
 
 <a name="method-bcrypt"></a>
 #### `bcrypt()`
 
 Функция `bcrypt` [хеширует](/docs/{{version}}/hashing) переданное значение, используя Bcrypt. Вы можете использовать его как альтернативу фасаду `Hash`:
 
-    $password = bcrypt('my-secret-password');
+```php
+$password = bcrypt('my-secret-password');
+```
 
 <a name="method-blank"></a>
 #### `blank()`
 
 Функция `blank` проверяет, является ли переданное значение «пустым»:
 
-    blank('');
-    blank('   ');
-    blank(null);
-    blank(collect());
+```php
+blank('');
+blank('   ');
+blank(null);
+blank(collect());
 
-    // true
+// true
 
-    blank(0);
-    blank(true);
-    blank(false);
+blank(0);
+blank(true);
+blank(false);
 
-    // false
+// false
+```
 
-Обратной функции `blank` является функция [`filled`](#method-filled).
+Обратной функции `blank` является функция [filled](#method-filled).
 
 <a name="method-broadcast"></a>
 #### `broadcast()`
 
 Функция `broadcast` [транслирует](/docs/{{version}}/broadcasting) переданное [событие](/docs/{{version}}/events) своим слушателям:
 
-    broadcast(new UserRegistered($user));
+```php
+broadcast(new UserRegistered($user));
 
-    broadcast(new UserRegistered($user))->toOthers();
+broadcast(new UserRegistered($user))->toOthers();
+```
+
+<a name="method-broadcast-if"></a>
+#### `broadcast_if()`
+
+Функция `broadcast_if` [транслирует](/docs/{{version}}/broadcasting) заданное [событие](/docs/{{version}}/events) своим слушателям, если заданное логическое выражение принимает значение `true`:
+
+```php
+broadcast_if($user->isActive(), new UserRegistered($user));
+
+broadcast_if($user->isActive(), new UserRegistered($user))->toOthers();
+```
+
+<a name="method-broadcast-unless"></a>
+#### `broadcast_unless()`
+
+Функция `broadcast_unless` [транслирует](/docs/{{version}}/broadcasting) заданное [событие](/docs/{{version}}/events) своим слушателям, если заданное логическое выражение принимает значение `false`:
+
+```php
+broadcast_unless($user->isBanned(), new UserRegistered($user));
+
+broadcast_unless($user->isBanned(), new UserRegistered($user))->toOthers();
+```
 
 <a name="method-cache"></a>
 #### `cache()`
 
 Функция `cache` используется для получения значений из [кеша](/docs/{{version}}/cache). Если переданный ключ не существует в кеше, будет возвращено необязательное значение по умолчанию:
 
-    $value = cache('key');
+```php
+$value = cache('key');
 
-    $value = cache('key', 'default');
+$value = cache('key', 'default');
+```
 
 Вы можете добавлять элементы в кеш, передавая массив пар ключ / значение в функцию. Вы также должны передать количество секунд или продолжительность актуальности кешированного значения:
 
-    cache(['key' => 'value'], 300);
+```php
+cache(['key' => 'value'], 300);
 
-    cache(['key' => 'value'], now()->addSeconds(10));
+cache(['key' => 'value'], now()->addSeconds(10));
+```
 
 <a name="method-class-uses-recursive"></a>
 #### `class_uses_recursive()`
 
 Функция `class_uses_recursive` возвращает все трейты, используемые классом, включая трейты, используемые всеми его родительскими классами:
 
-    $traits = class_uses_recursive(App\Models\User::class);
+```php
+$traits = class_uses_recursive(App\Models\User::class);
+```
 
 <a name="method-collect"></a>
 #### `collect()`
 
 Функция `collect` создает экземпляр [коллекции](/docs/{{version}}/collections) переданного значения:
 
-    $collection = collect(['taylor', 'abigail']);
+```php
+$collection = collect(['taylor', 'abigail']);
+```
 
 <a name="method-config"></a>
 #### `config()`
 
 Функция `config` получает значение переменной [конфигурации](/docs/{{version}}/configuration). Доступ к значениям конфигурации можно получить с помощью «точечной нотации», включающую имя файла и параметр, к которому вы хотите получить доступ. Значение по умолчанию может быть указано и возвращается, если опция конфигурации не существует:
 
-    $value = config('app.timezone');
+```php
+$value = config('app.timezone');
 
-    $value = config('app.timezone', $default);
+$value = config('app.timezone', $default);
+```
 
 Вы можете установить переменные конфигурации на время выполнения скрипта, передав массив пар ключ / значение. Однако обратите внимание, что эта функция влияет только на значение конфигурации для текущего запроса и не обновляет фактические значения конфигурации:
 
-    config(['app.debug' => true]);
+```php
+config(['app.debug' => true]);
+```
 
 <a name="method-context"></a>
 #### `context()`
 
 Функция `context` получает значение из [текущего контекста](/docs/{{version}}/context). Может быть указано значение по умолчанию, которое возвращается, если ключ контекста не существует:
 
-    $value = context('trace_id');
+```php
+$value = context('trace_id');
 
-    $value = context('trace_id', $default);
+$value = context('trace_id', $default);
+```
 
 Вы можете установить значения контекста, передав массив пар ключ/значение:
 
-    use Illuminate\Support\Str;
+```php
+use Illuminate\Support\Str;
 
-    context(['trace_id' => Str::uuid()->toString()]);
+context(['trace_id' => Str::uuid()->toString()]);
+```
 
 <a name="method-cookie"></a>
 #### `cookie()`
 
 Функция `cookie` создает новый экземпляр [Cookie](/docs/{{version}}/requests#cookies):
 
-    $cookie = cookie('name', 'value', $minutes);
+```php
+$cookie = cookie('name', 'value', $minutes);
+```
 
 <a name="method-csrf-field"></a>
 #### `csrf_field()`
 
 Функция `csrf_field` генерирует HTML «скрытого» поля ввода, содержащее значение токена CSRF. Например, используя [синтаксис Blade](/docs/{{version}}/blade):
 
-    {{ csrf_field() }}
+```blade
+{{ csrf_field() }}
+```
 
 <a name="method-csrf-token"></a>
 #### `csrf_token()`
 
 Функция `csrf_token` возвращает значение текущего токена CSRF:
 
-    $token = csrf_token();
+```php
+$token = csrf_token();
+```
 
 <a name="method-decrypt"></a>
 #### `decrypt()`
 
 Функция `decrypt` [расшифровывает](/docs/{{version}}/encryption) предоставленное значение. Вы можете использовать эту функцию в качестве альтернативы фасаду `Crypt`.
 
-    $password = decrypt($value);
+```php
+$password = decrypt($value);
+```
 
 <a name="method-dd"></a>
 #### `dd()`
 
 Функция `dd` выводит переданные переменные и завершает выполнение скрипта:
 
-    dd($value);
+```php
+dd($value);
 
-    dd($value1, $value2, $value3, ...);
+dd($value1, $value2, $value3, ...);
+```
 
-Если вы не хотите останавливать выполнение вашего скрипта, используйте вместо этого функцию [`dump`](#method-dump).
+Если вы не хотите останавливать выполнение вашего скрипта, используйте вместо этого функцию [dump](#method-dump).
 
 <a name="method-dispatch"></a>
 #### `dispatch()`
 
 Функция `dispatch` помещает переданное [задание](/docs/{{version}}/queues#creating-jobs) в [очередь заданий](/docs/{{version}}/queues) Laravel:
 
-    dispatch(new App\Jobs\SendEmails);
+```php
+dispatch(new App\Jobs\SendEmails);
+```
 
 <a name="method-dispatch-sync"></a>
 #### `dispatch_sync()`
 
 Функция `dispatch_sync` помещает предоставленную задачу в очередь  [синхронно](/docs/{{version}}/queues#synchronous-dispatching) для немедленной обработки:
 
-    dispatch_sync(new App\Jobs\SendEmails);
+```php
+dispatch_sync(new App\Jobs\SendEmails);
+```
 
 <a name="method-dump"></a>
 #### `dump()`
 
 Функция `dump` выводит переданные переменные:
 
-    dump($value);
+```php
+dump($value);
 
-    dump($value1, $value2, $value3, ...);
+dump($value1, $value2, $value3, ...);
+```
 
-Если вы хотите прекратить выполнение скрипта после вывода переменных, используйте вместо этого функцию [`dd`](#method-dd).
+Если вы хотите прекратить выполнение скрипта после вывода переменных, используйте вместо этого функцию [dd](#method-dd).
 
 <a name="method-encrypt"></a>
 #### `encrypt()`
 
 Функция `encrypt` [шифрует](/docs/{{version}}/encryption) предоставленное значение. Вы можете использовать эту функцию в качестве альтернативы фасаду `Crypt`.
 
-    $secret = encrypt('my-secret-value');
+```php
+$secret = encrypt('my-secret-value');
+```
 
 <a name="method-env"></a>
 #### `env()`
 
 Функция `env` возвращает значение [переменной окружения](/docs/{{version}}/configuration#environment-configuration) или значение по умолчанию:
 
-    $env = env('APP_ENV');
+```php
+$env = env('APP_ENV');
 
-    $env = env('APP_ENV', 'production');
+$env = env('APP_ENV', 'production');
+```
 
 > [!WARNING]
-> Если вы выполнили команду `config:cache` во время процесса развертывания, вы должны быть уверены, что вызываете функцию `env` только из файлов конфигурации. Как только конфигурации будут кешированы, файл `.env` не будет загружаться, и все вызовы функции `env` будут возвращать `null`.
+> Если вы выполнили команду `config:cache` во время процесса развертывания, вы должны быть уверены, что вызываете функцию `env` только из файлов конфигурации. Как только конфигурации будут кешированы, файл `.env` не будет загружаться, и все вызовы функции `env` будут возвращать внешние переменные среды, такие как переменные среды уровня сервера или системы или `null`.
 
 <a name="method-event"></a>
 #### `event()`
 
 Функция `event` отправляет переданное [событие](/docs/{{version}}/events) своим слушателям:
 
-    event(new UserRegistered($user));
+```php
+event(new UserRegistered($user));
+```
 
 <a name="method-fake"></a>
 #### `fake()`
@@ -1896,115 +2447,141 @@ return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
 
 По умолчанию функция `fake` будет использовать опцию `app.faker_locale` из файла конфигурации `config/app.php`. Обычно этот параметр конфигурации задается через переменную среды `APP_FAKER_LOCALE`. Вы также можете указать локализацию, передав ее в функцию `fake`. Для каждой локализации будет создан свой собственный экземпляр:
 
-    fake('nl_NL')->name()
+```php
+fake('nl_NL')->name()
+```
 
 <a name="method-filled"></a>
 #### `filled()`
 
 Функция `filled` проверяет, является ли переданное значение не «пустым»:
 
-    filled(0);
-    filled(true);
-    filled(false);
+```php
+filled(0);
+filled(true);
+filled(false);
 
-    // true
+// true
 
-    filled('');
-    filled('   ');
-    filled(null);
-    filled(collect());
+filled('');
+filled('   ');
+filled(null);
+filled(collect());
 
-    // false
+// false
+```
 
-Обратной функции `filled` является функция [`blank`](#method-blank).
+Обратной функции `filled` является функция [blank](#method-blank).
 
 <a name="method-info"></a>
 #### `info()`
 
 Функция `info` запишет информацию в [журнал](/docs/{{version}}/logging):
 
-    info('Some helpful information!');
+```php
+info('Some helpful information!');
+```
 
 Также функции может быть передан массив контекстных данных:
 
-    info('User login attempt failed.', ['id' => $user->id]);
+```php
+info('User login attempt failed.', ['id' => $user->id]);
+```
 
 <a name="method-literal"></a>
 #### `literal()`
 
 Функция `literal` создает новый экземпляр [stdClass](https://www.php.net/manual/en/class.stdclass.php) с заданными именованными аргументами в качестве свойств:
 
-    $obj = literal(
-        name: 'Joe',
-        languages: ['PHP', 'Ruby'],
-    );
+```php
+$obj = literal(
+    name: 'Joe',
+    languages: ['PHP', 'Ruby'],
+);
 
-    $obj->name; // 'Joe'
-    $obj->languages; // ['PHP', 'Ruby']
+$obj->name; // 'Joe'
+$obj->languages; // ['PHP', 'Ruby']
+```
 
 <a name="method-logger"></a>
 #### `logger()`
 
 Функцию `logger` можно использовать для записи сообщения уровня `debug` в [журнал](/docs/{{version}}/logging):
 
-    logger('Debug message');
+```php
+logger('Debug message');
+```
 
 Также функции может быть передан массив контекстных данных:
 
-    logger('User has logged in.', ['id' => $user->id]);
+```php
+logger('User has logged in.', ['id' => $user->id]);
+```
 
 Если функции не передано значение, то будет возвращен экземпляр [регистратора](/docs/{{version}}/errors#logging):
 
-    logger()->error('You are not allowed here.');
+```php
+logger()->error('You are not allowed here.');
+```
 
 <a name="method-method-field"></a>
 #### `method_field()`
 
 Функция `method_field` генерирует HTML «скрытого» поле ввода, содержащее поддельное значение HTTP-метода формы. Например, используя [синтаксис Blade](/docs/{{version}}/blade):
 
-    <form method="POST">
-        {{ method_field('DELETE') }}
-    </form>
+```blade
+<form method="POST">
+    {{ method_field('DELETE') }}
+</form>
+```
 
 <a name="method-now"></a>
 #### `now()`
 
 Функция `now` создает новый экземпляр `Illuminate\Support\Carbon` для текущего времени:
 
-    $now = now();
+```php
+$now = now();
+```
 
 <a name="method-old"></a>
 #### `old()`
 
 Функция `old` [возвращает](/docs/{{version}}/requests#retrieving-input) значение [прежнего ввода](/docs/{{version}}/requests#old-input), краткосрочно сохраненное в сессии:
 
-    $value = old('value');
+```php
+$value = old('value');
 
-    $value = old('value', 'default');
+$value = old('value', 'default');
+```
 
 Поскольку значение по умолчанию, предоставляемое вторым аргументом функции `old`, часто является атрибутом модели Eloquent, Laravel позволяет вам просто передать всю модель Eloquent в качестве второго аргумента функции `old`. При этом Laravel предполагает, что первый аргумент, предоставленный функции `old`, - это имя атрибута Eloquent, которое следует считать значением по умолчанию:
 
-    {{ old('name', $user->name) }}
+```blade
+{{ old('name', $user->name) }}
 
-    // Is equivalent to...
+// Is equivalent to...
 
-    {{ old('name', $user) }}
+{{ old('name', $user) }}
+```
 
 <a name="method-once"></a>
 #### `once()`
 
 Функция `once` выполняет заданный обратный вызов и кэширует результат в памяти на время запроса. Любые последующие вызовы функции `once` с тем же обратным вызовом будут возвращать ранее кэшированный результат:
 
-    function random(): int
-    {
-        return once(function () {
-            return random_int(1, 1000);
-        });
-    }
+```php
+function random(): int
+{
+    return once(function () {
+        return random_int(1, 1000);
+    });
+}
 
-    random(); // 123
-    random(); // 123 (cached result)
-    random(); // 123 (cached result)
+random(); // 123
+random(); // 123 (cached result)
+random(); // 123 (cached result)
+```
 
 Когда функция `once` выполняется из экземпляра объекта, кэшированный результат будет уникальным для этого экземпляра объекта:
 
@@ -2035,318 +2612,391 @@ $secondService->all(); // (cached result)
 
 Функция `optional` принимает любой аргумент и позволяет вам получать доступ к свойствам или вызывать методы этого объекта. Если переданный объект имеет значение `null`, свойства и методы будут возвращать также `null` вместо вызова ошибки:
 
-    return optional($user->address)->street;
+```php
+return optional($user->address)->street;
 
-    {!! old('name', optional($user)->name) !!}
+{!! old('name', optional($user)->name) !!}
+```
 
 Функция `optional` также принимает замыкание в качестве второго аргумента. Замыкание будет вызвано, если значение, указанное в качестве первого аргумента, не равно `null`:
 
-    return optional(User::find($id), function (User $user) {
-        return $user->name;
-    });
+```php
+return optional(User::find($id), function (User $user) {
+    return $user->name;
+});
+```
 
 <a name="method-policy"></a>
 #### `policy()`
 
 Функция `policy` извлекает экземпляр [политики](authorization#creating-policies) для переданного класса:
 
-    $policy = policy(App\Models\User::class);
+```php
+$policy = policy(App\Models\User::class);
+```
 
 <a name="method-redirect"></a>
 #### `redirect()`
 
 Функция `redirect` возвращает [HTTP-ответ перенаправления](responses#redirects) или возвращает экземпляр перенаправителя, если вызывается без аргументов:
 
-    return redirect($to = null, $status = 302, $headers = [], $https = null);
+```php
+return redirect($to = null, $status = 302, $headers = [], $https = null);
 
-    return redirect('/home');
+return redirect('/home');
 
-    return redirect()->route('route.name');
+return redirect()->route('route.name');
+```
 
 <a name="method-report"></a>
 #### `report()`
 
 Функция `report` сообщит об исключении, используя ваш [обработчик исключений](/docs/{{version}}/errors#handling-exceptions):
 
-    report($e);
+```php
+report($e);
+```
 
 Функция `report` также принимает строку в качестве аргумента. Когда в функцию передается строка, она создает исключение с переданной строкой в качестве сообщения:
 
-    report('Something went wrong.');
+```php
+report('Something went wrong.');
+```
 
 <a name="method-report-if"></a>
 #### `report_if()`
 
-Функция `report_if` будет сообщать об исключении с использованием вашего [обработчика исключений](/docs/{{version}}/errors#handling-exceptions), если заданное условие является `true`:
+Функция `report_if` будет сообщать об исключении с использованием вашего [обработчика исключений](/docs/{{version}}/errors#handling-exceptions), если заданное логическое выражение равно `true`:
 
-    report_if($shouldReport, $e);
+```php
+report_if($shouldReport, $e);
 
-    report_if($shouldReport, 'Something went wrong.');
+report_if($shouldReport, 'Something went wrong.');
+```
 
 <a name="method-report-unless"></a>
 #### `report_unless()`
 
-Функция `report_unless` будет сообщать об исключении с использованием вашего [обработчика исключений](/docs/{{version}}/errors#handling-exceptions), если заданное условие является `false`:
+Функция `report_unless` будет сообщать об исключении с использованием вашего [обработчика исключений](/docs/{{version}}/errors#handling-exceptions), если заданное логическое выражение равно `false`:
 
-    report_unless($reportingDisabled, $e);
+```php
+report_unless($reportingDisabled, $e);
 
-    report_unless($reportingDisabled, 'Something went wrong.');
+report_unless($reportingDisabled, 'Something went wrong.');
+```
 
 <a name="method-request"></a>
 #### `request()`
 
 Функция `request` возвращает экземпляр текущего [запроса](/docs/{{version}}/requests) или получает значение поля ввода из текущего запроса:
 
-    $request = request();
+```php
+$request = request();
 
-    $value = request('key', $default);
+$value = request('key', $default);
+```
 
 <a name="method-rescue"></a>
 #### `rescue()`
 
 Функция `rescue` выполняет переданное замыкание и перехватывает любые исключения, возникающие во время его выполнения. Все перехваченные исключения будут отправлены вашему [обработчику исключений](/docs/{{version}}/errors#handling-exceptions); однако, обработка запроса будет продолжена:
 
-    return rescue(function () {
-        return $this->method();
-    });
+```php
+return rescue(function () {
+    return $this->method();
+});
+```
 
 Вы также можете передать второй аргумент функции `rescue`. Этот аргумент будет значением «по умолчанию», которое должно быть возвращено, если во время выполнения замыкание возникнет исключение:
 
-    return rescue(function () {
-        return $this->method();
-    }, false);
+```php
+return rescue(function () {
+    return $this->method();
+}, false);
 
-    return rescue(function () {
-        return $this->method();
-    }, function () {
-        return $this->failure();
-    });
+return rescue(function () {
+    return $this->method();
+}, function () {
+    return $this->failure();
+});
+```
 
 Функции `rescue`  может быть предоставлен аргумент `report`, чтобы определить, следует ли сообщать об исключении чрез функцию `report`:
 
-    return rescue(function () {
-        return $this->method();
-    }, report: function (Throwable $throwable) {
-        return $throwable instanceof InvalidArgumentException;
-    });
+```php
+return rescue(function () {
+    return $this->method();
+}, report: function (Throwable $throwable) {
+    return $throwable instanceof InvalidArgumentException;
+});
+```
 
 <a name="method-resolve"></a>
 #### `resolve()`
 
 Функция `resolve` извлекает экземпляр связанного с переданным классом или интерфейсом, используя [контейнер служб](/docs/{{version}}/container):
 
-    $api = resolve('HelpSpot\API');
+```php
+$api = resolve('HelpSpot\API');
+```
 
 <a name="method-response"></a>
 #### `response()`
 
 Функция `response` создает экземпляр [ответа](responses) или получает экземпляр фабрики ответов:
 
-    return response('Hello World', 200, $headers);
+```php
+return response('Hello World', 200, $headers);
 
-    return response()->json(['foo' => 'bar'], 200, $headers);
+return response()->json(['foo' => 'bar'], 200, $headers);
+```
 
 <a name="method-retry"></a>
 #### `retry()`
 
 Функция `retry` пытается выполнить переданную функцию, пока не будет достигнут указанный лимит попыток. Если функция не выбросит исключение, то будет возвращено её значение. Если функция выбросит исключение, то будет автоматически повторена. Если максимальное количество попыток превышено, будет выброшено исключение
 
-    return retry(5, function () {
-        // Attempt 5 times while resting 100ms between attempts...
-    }, 100);
+```php
+return retry(5, function () {
+    // Attempt 5 times while resting 100ms between attempts...
+}, 100);
+```
 
 Если вы хотите вручную вычислить количество миллисекунд, которое должно пройти между попытками, вы можете передать функцию в качестве третьего аргумента функции `retry`:
 
-    use Exception;
+```php
+use Exception;
 
-    return retry(5, function () {
-        // ...
-    }, function (int $attempt, Exception $exception) {
-        return $attempt * 100;
-    });
+return retry(5, function () {
+    // ...
+}, function (int $attempt, Exception $exception) {
+    return $attempt * 100;
+});
+```
 
 Для удобства вы можете передать функции `retry` в качестве первого аргумента массив. Этот массив будет использоваться для определения интервала в миллисекундах между последующими попытками:
 
-    return retry([100, 200], function () {
-        // Sleep for 100ms on first retry, 200ms on second retry...
-    });
+```php
+return retry([100, 200], function () {
+    // Sleep for 100ms on first retry, 200ms on second retry...
+});
+```
 
 Чтобы повторить попытку только при определенных условиях, вы можете передать функцию, определяющее это условие, в качестве четвертого аргумента функции `retry`:
 
-    use Exception;
+```php
+use App\Exceptions\TemporaryException;
+use Exception;
 
-    return retry(5, function () {
-        // ...
-    }, 100, function (Exception $exception) {
-        return $exception instanceof RetryException;
-    });
+return retry(5, function () {
+    // ...
+}, 100, function (Exception $exception) {
+    return $exception instanceof TemporaryException;
+});
+```
 
 <a name="method-session"></a>
 #### `session()`
 
 Функция `session` используется для получения или задания значений [сессии](/docs/{{version}}/session):
 
-    $value = session('key');
+```php
+$value = session('key');
+```
 
 Вы можете установить значения, передав массив пар ключ / значение в функцию:
 
-    session(['chairs' => 7, 'instruments' => 3]);
+```php
+session(['chairs' => 7, 'instruments' => 3]);
+```
 
 Если в функцию не передано значение, то будет возвращен экземпляр хранилища сессий:
 
-    $value = session()->get('key');
+```php
+$value = session()->get('key');
 
-    session()->put('key', $value);
+session()->put('key', $value);
+```
 
 <a name="method-tap"></a>
 #### `tap()`
 
 Функция `tap` принимает два аргумента: произвольное значение и замыкание. Значение будет передано в замыкание, а затем возвращено функцией `tap`. Возвращаемое значение замыкания не имеет значения:
 
-    $user = tap(User::first(), function (User $user) {
-        $user->name = 'taylor';
+```php
+$user = tap(User::first(), function (User $user) {
+    $user->name = 'taylor';
 
-        $user->save();
-    });
+    $user->save();
+});
+```
 
 Если замыкание не передано функции `tap`, то вы можете вызвать любой метод с указанным значением. Возвращаемое значение вызываемого метода всегда будет изначально указанное, независимо от того, что метод фактически возвращает в своем определении. Например, метод Eloquent `update` обычно возвращает целочисленное значение. Однако, мы можем заставить метод возвращать саму модель, увязав вызов метода `update` с помощью функции `tap`:
 
-    $user = tap($user)->update([
-        'name' => $name,
-        'email' => $email,
-    ]);
+```php
+$user = tap($user)->update([
+    'name' => $name,
+    'email' => $email,
+]);
+```
 
 Чтобы добавить к своему классу метод `tap`, используйте трейт `Illuminate\Support\Traits\Tappable` в вашем классе. Метод `tap` этого трейта принимает замыкание в качестве единственного аргумента. Сам экземпляр объекта будет передан замыканию, а затем будет возвращен методом `tap`:
 
-    return $user->tap(function (User $user) {
-        // ...
-    });
+```php
+return $user->tap(function (User $user) {
+    // ...
+});
+```
 
 <a name="method-throw-if"></a>
 #### `throw_if()`
 
 Функция `throw_if` выбрасывает переданное исключение, если указанное логическое выражение оценивается как `true`:
 
-    throw_if(! Auth::user()->isAdmin(), AuthorizationException::class);
+```php
+throw_if(! Auth::user()->isAdmin(), AuthorizationException::class);
 
-    throw_if(
-        ! Auth::user()->isAdmin(),
-        AuthorizationException::class,
-        'You are not allowed to access this page.'
-    );
+throw_if(
+    ! Auth::user()->isAdmin(),
+    AuthorizationException::class,
+    'You are not allowed to access this page.'
+);
+```
 
 <a name="method-throw-unless"></a>
 #### `throw_unless()`
 
 Функция `throw_unless` выбрасывает переданное исключение, если указанное логическое выражение оценивается как `false`:
 
-    throw_unless(Auth::user()->isAdmin(), AuthorizationException::class);
+```php
+throw_unless(Auth::user()->isAdmin(), AuthorizationException::class);
 
-    throw_unless(
-        Auth::user()->isAdmin(),
-        AuthorizationException::class,
-        'You are not allowed to access this page.'
-    );
+throw_unless(
+    Auth::user()->isAdmin(),
+    AuthorizationException::class,
+    'You are not allowed to access this page.'
+);
+```
 
 <a name="method-today"></a>
 #### `today()`
 
 Функция `today` создает новый экземпляр `Illuminate\Support\Carbon` для текущей даты:
 
-    $today = today();
+```php
+$today = today();
+```
 
 <a name="method-trait-uses-recursive"></a>
 #### `trait_uses_recursive()`
 
 Функция `trait_uses_recursive` возвращает все трейты, используемые трейтом:
 
-    $traits = trait_uses_recursive(\Illuminate\Notifications\Notifiable::class);
+```php
+$traits = trait_uses_recursive(\Illuminate\Notifications\Notifiable::class);
+```
 
 <a name="method-transform"></a>
 #### `transform()`
 
 Функция `transform` выполняет замыкание для переданного значения, если значение не [пустое](#method-blank), и возвращает результат замыкания:
 
-    $callback = function (int $value) {
-        return $value * 2;
-    };
+```php
+$callback = function (int $value) {
+    return $value * 2;
+};
 
-    $result = transform(5, $callback);
+$result = transform(5, $callback);
 
-    // 10
+// 10
+```
 
 В качестве третьего параметра могут быть указанны значение по умолчанию или замыкание. Это значение будет возвращено, если переданное значение пустое:
 
-    $result = transform(null, $callback, 'The value is blank');
+```php
+$result = transform(null, $callback, 'The value is blank');
 
-    // The value is blank
+// The value is blank
+```
 
 <a name="method-validator"></a>
 #### `validator()`
 
 Функция `validator` создает новый экземпляр [валидатора](/docs/{{version}}/validation) с указанными аргументами. Вы можете использовать его для удобства вместо фасада `Validator`:
 
-    $validator = validator($data, $rules, $messages);
+```php
+$validator = validator($data, $rules, $messages);
+```
 
 <a name="method-value"></a>
 #### `value()`
 
 Функция `value` возвращает переданное значение. Однако, если вы передадите замыкание в функцию, то замыкание будет выполнено, и будет возвращен его результат:
 
-    $result = value(true);
+```php
+$result = value(true);
 
-    // true
+// true
 
-    $result = value(function () {
-        return false;
-    });
+$result = value(function () {
+    return false;
+});
 
-    // false
+// false
+```
 
 Функции `value`  могут быть переданы дополнительные аргументы. Если первый аргумент является замыканием, то дополнительные параметры будут переданы в замыкание в качестве аргументов, в противном случае они будут проигнорированы:
 
-    $result = value(function (string $name) {
-        return $name;
-    }, 'Taylor');
+```php
+$result = value(function (string $name) {
+    return $name;
+}, 'Taylor');
 
-    // 'Taylor'
+// 'Taylor'
+```
 
 <a name="method-view"></a>
 #### `view()`
 
 Функция `view` возвращает экземпляр [представления](/docs/{{version}}/views):
 
-    return view('auth.login');
+```php
+return view('auth.login');
+```
 
 <a name="method-with"></a>
 #### `with()`
 
 Функция `with` возвращает переданное значение. Если вы передадите замыкание в функцию в качестве второго аргумента, то замыкание будет выполнено и будет возвращен результат его выполнения:
 
-    $callback = function (mixed $value) {
-        return is_numeric($value) ? $value * 2 : 0;
-    };
+```php
+$callback = function (mixed $value) {
+    return is_numeric($value) ? $value * 2 : 0;
+};
 
-    $result = with(5, $callback);
+$result = with(5, $callback);
 
-    // 10
+// 10
 
-    $result = with(null, $callback);
+$result = with(null, $callback);
 
-    // 0
+// 0
 
-    $result = with(5, null);
+$result = with(5, null);
 
-    // 5
+// 5
+```
 
 <a name="method-when"></a>
 #### `when()`
 
 Функция `when` возвращает заданное ей значение, если заданное условие имеет значение `true`. В противном случае возвращается `null`. Если замыкание передается в качестве второго аргумента функции, замыкание будет выполнено и будет возвращено его возвращаемое значение:
 
-    $value = when(true, 'Hello World');
+```php
+$value = when(true, 'Hello World');
 
-    $value = when(true, fn () => 'Hello World');
+$value = when(true, fn () => 'Hello World');
+```
 
 Функция `when` в первую очередь полезна для условного рендеринга атрибутов HTML:
 
@@ -2364,27 +3014,33 @@ $secondService->all(); // (cached result)
 
 Иногда вам может потребоваться быстро оценить производительность определенных частей вашего приложения. В таких случаях вы можете воспользоваться классом `Benchmark` для измерения времени выполнения переданных обратных вызовов в миллисекундах:
 
-    <?php
+```php
+<?php
 
-    use App\Models\User;
-    use Illuminate\Support\Benchmark;
+use App\Models\User;
+use Illuminate\Support\Benchmark;
 
-    Benchmark::dd(fn () => User::find(1)); // 0.1 ms
+Benchmark::dd(fn () => User::find(1)); // 0.1 ms
 
-    Benchmark::dd([
-        'Scenario 1' => fn () => User::count(), // 0.5 ms
-        'Scenario 2' => fn () => User::all()->count(), // 20.0 ms
-    ]);
+Benchmark::dd([
+    'Scenario 1' => fn () => User::count(), // 0.5 ms
+    'Scenario 2' => fn () => User::all()->count(), // 20.0 ms
+]);
+```
 
 По умолчанию переданные обратные вызовы будут выполнены один раз (одна итерация), и их длительность будет отображена в браузере / консоли.
 
 Чтобы выполнить обратный вызов более одного раза, вы можете указать количество итераций вторым аргументом метода. При выполнении обратного вызова более одного раза класс `Benchmark` вернет среднее количество миллисекунд, затраченных на выполнение обратного вызова за все итерации:
 
-    Benchmark::dd(fn () => User::count(), iterations: 10); // 0.5 ms
+```php
+Benchmark::dd(fn () => User::count(), iterations: 10); // 0.5 ms
+```
 
 Иногда вам может потребоваться измерить время выполнения обратного вызова, сохраняя при этом значение, возвращаемое обратным вызовом. Метод `value` вернет кортеж, содержащий значение, возвращаемое обратным вызовом, и количество миллисекунд, затраченных на выполнение обратного вызова:
 
-    [$count, $duration] = Benchmark::value(fn () => User::count());
+```php
+[$count, $duration] = Benchmark::value(fn () => User::count());
+```
 
 <a name="dates"></a>
 ### Даты
@@ -2408,12 +3064,9 @@ $now = Carbon::now();
 <a name="deferred-functions"></a>
 ### Отложенные функции
 
-> [!WARNING]
-> Отложенные функции в настоящее время находятся на стадии бета-тестирования, пока мы собираем отзывы сообщества.
-
 Хотя [задания в очереди](/docs/{{version}}/queues) Laravel позволяют ставить задачи в очередь для фоновой обработки, иногда у вас могут возникнуть простые задачи, которые вы хотели бы отложить без настройки или обслуживания долго работающего обработчика очереди.
 
-Отложенные функции позволяют отложить выполнение закрытия до тех пор, пока HTTP-ответ не будет отправлен пользователю, что позволяет вашему приложению чувствовать себя быстрым и отзывчивым. Чтобы отложить выполнение замыкания, просто передайте его функции `Illuminate\Support\defer`:
+Отложенные функции позволяют отложить выполнение замыкания до тех пор, пока HTTP-ответ не будет отправлен пользователю, что позволяет вашему приложению чувствовать себя быстрым и отзывчивым. Чтобы отложить выполнение замыкания, просто передайте его функции `Illuminate\Support\defer`:
 
 ```php
 use App\Services\Metrics;
@@ -2445,19 +3098,6 @@ defer(fn () => Metrics::reportOrder($order))->always();
 defer(fn () => Metrics::report(), 'reportMetrics');
 
 defer()->forget('reportMetrics');
-```
-
-<a name="deferred-function-compatibility"></a>
-#### Совместимость отложенных функций
-
-Если вы обновились до Laravel 11.x из приложения Laravel 10.x и скелет вашего приложения все еще содержит файл `app/Http/Kernel.php`, вам следует добавить промежуточное программное обеспечение `InvokeDeferredCallbacks` в начало свойства `$middleware` ядра:
-
-```php
-protected $middleware = [
-    \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class, // [tl! add]
-    \App\Http\Middleware\TrustProxies::class,
-    // ...
-];
 ```
 
 <a name="disabling-deferred-functions-in-tests"></a>
@@ -2512,40 +3152,46 @@ abstract class TestCase extends BaseTestCase
 
 Класс лотереи Laravel может использоваться для выполнения обратных вызовов на основе заданных шансов. Это может быть особенно полезно, когда вы хотите выполнить код только для определенного процента ваших входящих запросов:
 
-    use Illuminate\Support\Lottery;
+```php
+use Illuminate\Support\Lottery;
 
-    Lottery::odds(1, 20)
-        ->winner(fn () => $user->won())
-        ->loser(fn () => $user->lost())
-        ->choose();
+Lottery::odds(1, 20)
+    ->winner(fn () => $user->won())
+    ->loser(fn () => $user->lost())
+    ->choose();
+```
 
 Вы можете комбинировать класс лотереи Laravel с другими функциями Laravel. Например, вы можете захотеть сообщать обработчику исключений только о небольшом проценте медленных запросов. А поскольку класс лотереи является вызываемым, мы можем передать экземпляр класса в любой метод, который принимает вызываемые объекты:
 
-    use Carbon\CarbonInterval;
-    use Illuminate\Support\Facades\DB;
-    use Illuminate\Support\Lottery;
+```php
+use Carbon\CarbonInterval;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Lottery;
 
-    DB::whenQueryingForLongerThan(
-        CarbonInterval::seconds(2),
-        Lottery::odds(1, 100)->winner(fn () => report('Querying > 2 seconds.')),
-    );
+DB::whenQueryingForLongerThan(
+    CarbonInterval::seconds(2),
+    Lottery::odds(1, 100)->winner(fn () => report('Querying > 2 seconds.')),
+);
+```
 
 <a name="testing-lotteries"></a>
 #### Тестирование лотерей
 
 Laravel предоставляет несколько простых методов, которые позволяют легко тестировать вызовы лотереи в вашем приложении:
 
-    // Лотерея всегда вииграшная...
-    Lottery::alwaysWin();
+```php
+// Лотерея всегда вииграшная...
+Lottery::alwaysWin();
 
-    // Лотерея всегда проиграшная...
-    Lottery::alwaysLose();
+// Лотерея всегда проиграшная...
+Lottery::alwaysLose();
 
-    // Выигрыш, проигрыш, затем вернуться к нормальному поведению...
-    Lottery::fix([true, false]);
+// Выигрыш, проигрыш, затем вернуться к нормальному поведению...
+Lottery::fix([true, false]);
 
-    // Вернуться к нормальному поведению...
-    Lottery::determineResultsNormally();
+// Вернуться к нормальному поведению...
+Lottery::determineResultsNormally();
+```
 
 <a name="pipeline"></a>
 ### Pipeline
@@ -2558,19 +3204,19 @@ use App\Models\User;
 use Illuminate\Support\Facades\Pipeline;
 
 $user = Pipeline::send($user)
-            ->through([
-                function (User $user, Closure $next) {
-                    // ...
-
-                    return $next($user);
-                },
-                function (User $user, Closure $next) {
-                    // ...
-
-                    return $next($user);
-                },
-            ])
-            ->then(fn (User $user) => $user);
+    ->through([
+        function (User $user, Closure $next) {
+            // ...
+    
+            return $next($user);
+        },
+        function (User $user, Closure $next) {
+            // ...
+    
+            return $next($user);
+        },
+    ])
+    ->then(fn (User $user) => $user);
 ```
 
 Как видите, каждый вызываемый класс или замыкание указанное в pipeline получает входные данные и замыкание `$next`. Вызов замыкания `$next` приведет к вызову следующего вызываемого объекта в пайплайне. Как вы могли заметить, это очень похоже на [middleware](/docs/{{version}}/middleware).
@@ -2581,12 +3227,12 @@ $user = Pipeline::send($user)
 
 ```php
 $user = Pipeline::send($user)
-            ->through([
-                GenerateProfilePhoto::class,
-                ActivateSubscription::class,
-                SendWelcomeEmail::class,
-            ])
-            ->then(fn (User $user) => $user);
+    ->through([
+        GenerateProfilePhoto::class,
+        ActivateSubscription::class,
+        SendWelcomeEmail::class,
+    ])
+    ->then(fn (User $user) => $user);
 ```
 
 <a name="sleep"></a>
@@ -2594,63 +3240,71 @@ $user = Pipeline::send($user)
 
 Класс `Sleep` в Laravel представляет собой легковесную обертку вокруг нативных функций PHP `sleep` и `usleep`, предоставляя большую тестируемость и удобный API для работы с временем:
 
-    use Illuminate\Support\Sleep;
+```php
+use Illuminate\Support\Sleep;
 
-    $waiting = true;
+$waiting = true;
 
-    while ($waiting) {
-        Sleep::for(1)->second();
+while ($waiting) {
+    Sleep::for(1)->second();
 
-        $waiting = /* ... */;
-    }
+    $waiting = /* ... */;
+}
+```
 
 Класс `Sleep` предоставляет разнообразные методы, позволяющие вам работать с различными единицами времени:
 
-    // Вернуть значение после сна...
-    $result = Sleep::for(1)->second()->then(fn () => 1 + 1);
+```php
+// Вернуть значение после сна...
+$result = Sleep::for(1)->second()->then(fn () => 1 + 1);
 
-    // Спать, пока заданное значение истинно...
-    Sleep::for(1)->second()->while(fn () => shouldKeepSleeping());
+// Спать, пока заданное значение истинно...
+Sleep::for(1)->second()->while(fn () => shouldKeepSleeping());
 
-    //Приостановите выполнение на 90 секунд...
-    Sleep::for(1.5)->minutes();
+//Приостановите выполнение на 90 секунд...
+Sleep::for(1.5)->minutes();
 
-    // Приостановите выполнение на 2 секунды...
-    Sleep::for(2)->seconds();
+// Приостановите выполнение на 2 секунды...
+Sleep::for(2)->seconds();
 
-    // Приостановите выполнение на 500 миллисекунд...
-    Sleep::for(500)->milliseconds();
+// Приостановите выполнение на 500 миллисекунд...
+Sleep::for(500)->milliseconds();
 
-    // Приостановите выполнение на 5000 миллисекунд...
-    Sleep::for(5000)->microseconds();
+// Приостановите выполнение на 5000 миллисекунд...
+Sleep::for(5000)->microseconds();
 
-    // Приостановить выполнение до заданного времени...
-    Sleep::until(now()->addMinute());
+// Приостановить выполнение до заданного времени...
+Sleep::until(now()->addMinute());
 
-    // Псевдоним функции PHP "sleep"...
-    Sleep::sleep(2);
+// Псевдоним функции PHP "sleep"...
+Sleep::sleep(2);
 
-    // Псевдоним функции PHP  "usleep"
-    Sleep::usleep(5000);
+// Псевдоним функции PHP  "usleep"
+Sleep::usleep(5000);
+```
 
 Чтобы легко объединять единицы времени, вы можете использовать метод `and`:
 
-    Sleep::for(1)->second()->and(10)->milliseconds();
+```php
+Sleep::for(1)->second()->and(10)->milliseconds();
+```
 
 <a name="testing-sleep"></a>
 #### Тестирование Sleep
 
 При тестировании кода, использующего класс `Sleep` или функции PHP `sleep` , выполнение вашего теста будет приостановлено. Как можно ожидать, это делает ваш пакет тестов значительно медленнее. Например, представьте, что вы тестируете следующий код:
 
+```php
+$waiting = /* ... */;
+
+$seconds = 1;
+
+while ($waiting) {
+    Sleep::for($seconds++)->seconds();
+
     $waiting = /* ... */;
-
-    $seconds = 1;
-
-    while ($waiting) {
-        Sleep::for($seconds++)->seconds();
-
-        $waiting = /* ... */;
-    }
+}
+```
 
 Обычно тестирование этого кода займет как минимум одну секунду. К счастью, класс `Sleep` позволяет нам "подделывать" задержку, чтобы наш тестовый набор оставался быстрым:
 
@@ -2706,24 +3360,26 @@ public function test_it_checks_if_ready_three_times()
 
 Конечно же, класс Sleep предоставляет и другие утверждения, которые вы можете использовать при тестировании:
 
-    use Carbon\CarbonInterval as Duration;
-    use Illuminate\Support\Sleep;
+```php
+use Carbon\CarbonInterval as Duration;
+use Illuminate\Support\Sleep;
 
-    // Утверждение, что sliip вызывали 3 раза...
-    Sleep::assertSleptTimes(3);
+// Утверждение, что sliip вызывали 3 раза...
+Sleep::assertSleptTimes(3);
 
-    // Утверждение, что продолжительность сна...
-    Sleep::assertSlept(function (Duration $duration): bool {
-        return /* ... */;
-    }, times: 1);
+// Утверждение, что продолжительность сна...
+Sleep::assertSlept(function (Duration $duration): bool {
+    return /* ... */;
+}, times: 1);
 
-    // Утверждение, что класс Sleep никогда не вызывался...
-    Sleep::assertNeverSlept();
+// Утверждение, что класс Sleep никогда не вызывался...
+Sleep::assertNeverSlept();
 
-    // Утверждение, что, даже если был вызван Sleep, пауза в выполнении не наступила...
-    Sleep::assertInsomniac();
+// Утверждение, что, даже если был вызван Sleep, пауза в выполнении не наступила...
+Sleep::assertInsomniac();
+```
 
-Иногда бывает полезно выполнять действие при каждом имитированном ожидании в коде вашего приложения. Для этого вы можете предоставить обратный вызов методу `whenFakingSleep`. В следующем примере мы используем помощники Laravel по [манипулированию временем](/docs/{{version}}/mocking#interacting-with-time), чтобы мгновенно продвинуть время на продолжительность каждого ожидания:
+Иногда бывает полезно выполнять действие при каждом имитированном ожидании. Для этого вы можете предоставить обратный вызов методу `whenFakingSleep`. В следующем примере мы используем помощники Laravel по [манипулированию временем](/docs/{{version}}/mocking#interacting-with-time), чтобы мгновенно продвинуть время на продолжительность каждого ожидания:
 
 ```php
 use Carbon\CarbonInterval as Duration;
@@ -2751,3 +3407,132 @@ $start->diffForHumans(); // 1 second ago
 ```
 
 Класс `Sleep` используется внутри Laravel при приостановке выполнения. Например, помощник [retry](#method-retry) использует класс `Sleep` при задержке, что обеспечивает лучшую тестируемость при использовании данного помощника.
+
+<a name="timebox"></a>
+### Timebox
+
+Класс `Timebox` Laravel гарантирует, что заданный обратный вызов всегда будет выполняться фиксированное количество времени, даже если его фактическое выполнение завершится раньше. Это особенно полезно для криптографических операций и проверок аутентификации пользователей, где злоумышленники могут использовать изменения во времени выполнения, чтобы вывести конфиденциальную информацию.
+
+Если выполнение превышает фиксированную длительность, `Timebox` не имеет никакого эффекта. Разработчик должен выбрать достаточно большое время в качестве фиксированной длительности, чтобы учесть наихудшие сценарии.
+
+Метод вызова принимает замыкание и ограничение по времени в микросекундах, а затем выполняет замыкание и ждет, пока не будет достигнуто ограничение по времени:
+
+```php
+use Illuminate\Support\Timebox;
+
+(new Timebox)->call(function ($timebox) {
+    // ...
+}, microseconds: 10000);
+```
+
+Если внутри замыкания возникает исключение, этот класс будет учитывать заданную задержку и повторно создаст исключение после задержки.
+
+<a name="uri"></a>
+### URI
+
+Класс `Uri` Laravel предоставляет удобный и гибкий интерфейс для создания и управления URI. Этот класс оборачивает функциональность, предоставляемую базовым пакетом League URI, и легко интегрируется с системой маршрутизации Laravel.
+
+Вы можете легко создать экземпляр `Uri`, используя статические методы:
+
+```php
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\InvokableController;
+use Illuminate\Support\Uri;
+
+// Generate a URI instance from the given string...
+$uri = Uri::of('https://example.com/path');
+
+// Generate URI instances to paths, named routes, or controller actions...
+$uri = Uri::to('/dashboard');
+$uri = Uri::route('users.show', ['user' => 1]);
+$uri = Uri::signedRoute('users.show', ['user' => 1]);
+$uri = Uri::temporarySignedRoute('user.index', now()->addMinutes(5));
+$uri = Uri::action([UserController::class, 'index']);
+$uri = Uri::action(InvokableController::class);
+
+// Generate a URI instance from the current request URL...
+$uri = $request->uri();
+```
+
+Получив экземпляр URI, вы можете свободно его изменять:
+
+```php
+$uri = Uri::of('https://example.com')
+    ->withScheme('http')
+    ->withHost('test.com')
+    ->withPort(8000)
+    ->withPath('/users')
+    ->withQuery(['page' => 2])
+    ->withFragment('section-1');
+```
+
+<a name="inspecting-uris"></a>
+#### Проверка URI
+
+Класс `Uri` также позволяет легко проверять различные компоненты базового URI:
+
+```php
+$scheme = $uri->scheme();
+$host = $uri->host();
+$port = $uri->port();
+$path = $uri->path();
+$segments = $uri->pathSegments();
+$query = $uri->query();
+$fragment = $uri->fragment();
+```
+
+<a name="manipulating-query-strings"></a>
+#### Манипулирование строками запроса
+
+Класс `Uri` предлагает несколько методов, которые могут использоваться для управления строкой запроса URI. Метод `withQuery` может использоваться для объединения дополнительных параметров строки запроса в существующую строку запроса:
+
+```php
+$uri = $uri->withQuery(['sort' => 'name']);
+```
+
+Метод `withQueryIfMissing` может использоваться для объединения дополнительных параметров строки запроса в существующую строку запроса, если указанные ключи еще не существуют в строке запроса:
+
+```php
+$uri = $uri->withQueryIfMissing(['page' => 1]);
+```
+
+Метод `replaceQuery` может использоваться для полной замены существующей строки запроса на новую:
+
+```php
+$uri = $uri->replaceQuery(['page' => 1]);
+```
+
+Метод `pushOntoQuery` может использоваться для добавления дополнительных параметров в параметр строки запроса, имеющий значение массива:
+
+```php
+$uri = $uri->pushOntoQuery('filter', ['active', 'pending']);
+```
+
+Метод `withoutQuery` можно использовать для удаления параметров из строки запроса:
+
+```php
+$uri = $uri->withoutQuery(['page']);
+```
+
+<a name="generating-responses-from-uris"></a>
+#### Генерация ответов из URI
+
+Метод `redirect` может использоваться для генерации экземпляра `RedirectResponse` для указанного URI:
+
+```php
+$uri = Uri::of('https://example.com');
+
+return $uri->redirect();
+```
+
+Или вы можете просто вернуть экземпляр `Uri` из действия маршрута или контроллера, который автоматически сгенерирует ответ перенаправления на возвращенный URI:
+
+```php
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Uri;
+
+Route::get('/redirect', function () {
+    return Uri::to('/index')
+        ->withQuery(['sort' => 'name']);
+});
+```
