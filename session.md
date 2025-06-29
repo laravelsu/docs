@@ -1,5 +1,5 @@
 ---
-git: 6ac13f37adbed3ce6a6532fd790f70bd731b8571
+git: 573edfc976877c3b88c33147040b3d312ebf3050
 ---
 
 # Сессия HTTP
@@ -172,7 +172,7 @@ Laravel предлагает множество различных типов х
 
     $value = $request->session()->pull('key', 'default');
 
-<a name="#incrementing-and-decrementing-session-values"></a>
+<a name="incrementing-and-decrementing-session-values"></a>
 #### Увеличение и уменьшение отдельных значений в сессии
 
 Если данные вашей сессии содержат целое число, которое вы хотите увеличить или уменьшить, то вы можете использовать методы `increment` и `decrement`:
