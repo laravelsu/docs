@@ -1,11 +1,14 @@
 ---
-git: af75fcd6084f2a36d071ab6f6176a4a5eb4b30f9
+git: 09555e5874bc4bc2c1cf735bf6047ff0c979bddd
 ---
 
 # Laravel Homestead
 
 <a name="introduction"></a>
 ## Введение
+
+> [!WARNING]
+> Laravel Homestead — устаревший пакет, который больше не поддерживается. [Laravel Sail](/docs/{{version}}/sail) можно использовать в качестве современной альтернативы.
 
 Laravel стремится сделать весь процесс разработки PHP приятным, включая вашу локальную среду разработки. [Laravel Homestead](https://github.com/laravel/homestead) - это официальный предварительно упакованный пакет Vagrant, который предоставляет вам прекрасную среду разработки, не требуя установки PHP, веб-сервера и любого другого серверного программного обеспечения на вашем локальном компьютере.
 
@@ -221,7 +224,9 @@ Homestead публикует имена хостов, используя `mDNS` 
 
 Настройку имен хостов лучше всего проводить при [подготовке к установке](#per-project-installation) Homestead. Если вы размещаете несколько сайтов на одном экземпляре Homestead, вы можете добавить домены для своих веб-сайтов в файл `hosts` на вашем компьютере. Файл `hosts` будет перенаправлять запросы для ваших сайтов Homestead на вашу виртуальную машину Homestead. В macOS и Linux этот файл находится в `/etc/hosts`. В Windows он находится в `C:\Windows\System32\drivers\etc\hosts`. Строки, которые вы добавляете в этот файл, будут выглядеть следующим образом:
 
-    192.168.56.56  homestead.test
+```text
+192.168.56.56  homestead.test
+```
 
 Убедитесь, что в списке указан IP-адрес, указанный в вашем файле `Homestead.yaml`. После того как вы добавили домен в файл `hosts` и запустили Vagrant-контейнер, вы сможете получить доступ к сайту через свой веб-браузер:
 
@@ -428,8 +433,10 @@ sites:
 
 Если Vagrant не управляет вашим файлом «hosts» автоматически, вам может потребоваться также добавить новый сайт в этот файл. В macOS и Linux этот файл находится в `/etc/hosts`. В Windows он находится в `C:\Windows\System32\drivers\etc\hosts`:
 
-    192.168.56.56  homestead.test
-    192.168.56.56  another.test
+```text
+192.168.56.56  homestead.test
+192.168.56.56  another.test
+```
 
 После добавления сайта выполните команду терминала `vagrant reload --provision` из каталога Homestead.
 
@@ -563,7 +570,9 @@ php83
 
 Homestead может автоматически создавать резервную копию базы данных, когда ваша виртуальная машина Homestead будет удалена. Чтобы использовать эту функцию, вы должны использовать Vagrant 2.1.0 или выше. Или, если вы используете старую версию Vagrant, вы должны установить плагин `vagrant-triggers`. Чтобы включить автоматическое резервное копирование базы данных, добавьте следующую строку в ваш файл `Homestead.yaml`:
 
-    backup: true
+```yaml
+backup: true
+```
 
 После настройки Homestead будет экспортировать ваши базы данных в каталоги `.backup/mysql_backup` и `.backup/postgres_backup` при выполнении команды `vagrant destroy`. Эти каталоги можно найти в папке, в которую вы установили Homestead, или в корне вашего проекта, если вы использовали метод [подготовка к установке](#per-project-installation).
 
@@ -633,7 +642,7 @@ buckets:
 <a name="laravel-dusk"></a>
 ### Laravel Dusk
 
-Чтобы запустить тесты [Laravel Dusk](/docs/{{version}}/dusk) в Homestead, вы должны включить [`webdriver` feature](#installing-optional-features) в вашей конфигурации Homestead:
+Чтобы запустить тесты [Laravel Dusk](/docs/{{version}}/dusk) в Homestead, вы должны включить [webdriver feature](#installing-optional-features) в вашей конфигурации Homestead:
 
 ```yaml
 features:
@@ -694,7 +703,9 @@ xdebug.start_with_request = yes
 
 Чтобы отладить CLI-приложение PHP, используйте псевдоним оболочки `xphp` внутри вашей виртуальной машины Homestead:
 
-    xphp /path/to/script
+```shell
+xphp /path/to/script
+```
 
 <a name="profiling-applications-with-blackfire"></a>
 ### Профилирование приложения с Blackfire
