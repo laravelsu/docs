@@ -1,5 +1,5 @@
 ---
-git: 6a0eec994bc3e9dfd4a6d2d81abc3a5261b7e79d
+git: 5882483ea1afa05fc6eccfe36751c5ee238f44a2
 ---
 
 # Laravel Octane
@@ -26,9 +26,6 @@ php artisan octane:install
 
 <a name="server-prerequisites"></a>
 ## Требования к серверу
-
-> [!WARNING]
-> Laravel Octane требует [PHP 8.1+](https://php.net/releases/).
 
 <a name="frankenphp"></a>
 ### FrankenPHP
