@@ -1,5 +1,5 @@
 ---
-git: 7ed72664e8064432de56f59b80dec6eca3186a66
+git: 573edfc976877c3b88c33147040b3d312ebf3050
 ---
 
 # Посредники (middleware)
@@ -52,7 +52,6 @@ git: 7ed72664e8064432de56f59b80dec6eca3186a66
 
 > {tip} Все посредники извлекаются из [контейнера служб](/docs/{{version}}/container), поэтому вы можете объявить необходимые вам зависимости в конструкторе посредника.
 
-<a name="before-after-middleware"></a>
 <a name="middleware-and-responses"></a>
 #### Посредники и ответы
 
