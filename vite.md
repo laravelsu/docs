@@ -1,5 +1,5 @@
 ---
-git: f6715ca87507f0e5f8dc2ed862e0d47743359504
+git: c74eeb16593f20ac46d14f210225749e27351c0d
 ---
 
 # Сборка ресурсов (Vite)
@@ -10,21 +10,6 @@ git: f6715ca87507f0e5f8dc2ed862e0d47743359504
 [Vite](https://vitejs.dev) - это современный инструмент сборки фронтенда, который обеспечивает чрезвычайно быстрое окружение разработки и собирает ваш код для продакшена. При создании приложений с использованием Laravel вы обычно используете Vite для сборки файлов CSS и JavaScript вашего приложения в готовые к продакшену ресурсы.
 
 Laravel интегрируется с Vite без проблем, предоставляя официальный плагин и директиву Blade для загрузки ваших ресурсов как для разработки, так и для продакшена.
-
-> [!NOTE]
-> Вы используете Laravel Mix? Vite заменил Laravel Mix в новых установках Laravel. Для документации по Mix посетите веб-сайт [Laravel Mix](https://laravel-mix.com/). Если вы хотите перейти на Vite, ознакомьтесь с нашим [руководством по миграции](https://github.com/laravel/vite-plugin/blob/main/UPGRADE.md#migrating-from-laravel-mix-to-vite).
-
-<a name="vite-or-mix"></a>
-#### Выбор между Vite и Laravel Mix
-
-Прежде чем перейти на Vite, новые приложения Laravel использовали [Mix](https://laravel-mix.com/) при сборке ресурсов, который работает на основе [webpack](https://webpack.js.org/). Vite сосредоточен на предоставлении более быстрого и продуктивного опыта при создании мощных JavaScript-приложений. Если вы разрабатываете одностраничное приложение (SPA), включая те, которые разработаны с использованием инструментов, таких как [Inertia](https://inertiajs.com), то Vite будет идеальным выбором.
-
-Vite также хорошо работает с традиционными приложениями с серверным рендерингом с "примесью" JavaScript, включая те, которые используют [Livewire](https://livewire.laravel.com). Однако у него нет некоторых функций, которые поддерживает Laravel Mix, таких как возможность копирования произвольных ресурсов, на которые нет прямых ссылок в вашем приложении JavaScript, в сборку.
-
-<a name="migrating-back-to-mix"></a>
-#### Возвращение к Mix
-
-Вы начали новое приложение Laravel, используя нашу структуру Vite, но вам нужно вернуться к Laravel Mix и webpack? Нет проблем. Пожалуйста, обратитесь к нашему [официальному руководству по миграции с Vite на Mix](https://github.com/laravel/vite-plugin/blob/main/UPGRADE.md#migrating-from-vite-to-laravel-mix).
 
 <a name="installation"></a>
 ## Установка и настройка
@@ -37,14 +22,14 @@ Vite также хорошо работает с традиционными пр
 
 Перед запуском Vite и плагина Laravel убедитесь, что у вас установлены Node.js (версии 16 и выше) и NPM:
 
-```sh
+```shell
 node -v
 npm -v
 ```
 
 Вы можете легко установить последнюю версию Node и NPM, используя простые установщики с [официального сайта Node](https://nodejs.org/en/download/). Или, если вы используете [Laravel Sail](https://laravel.com/docs/{{version}}/sail), вы можете вызвать Node и NPM через Sail:
 
-```sh
+```shell
 ./vendor/bin/sail node -v
 ./vendor/bin/sail npm -v
 ```
@@ -54,7 +39,7 @@ npm -v
 
 В новой установке Laravel в корне структуры каталогов вашего приложения вы найдете файл `package.json`. В файле `package.json` уже содержится все необходимое для начала работы с Vite и плагином Laravel. Вы можете установить зависимости фронтенда вашего приложения через NPM:
 
-```sh
+```shell
 npm install
 ```
 
@@ -148,7 +133,7 @@ export default defineConfig({
 });
 ```
 
-Если вы не можете сгенерировать доверенный сертификат для вашей системы, вы можете установить и настроить плагин `@vitejs/plugin-basic-ssl`. При использовании ненадежных сертификатов вам нужно будет принять предупреждение о сертификате для сервера разработки Vite в вашем браузере, перейдя по ссылке "Local" в консоли при выполнении команды `npm run dev`.
+Если вы не можете сгенерировать доверенный сертификат для вашей системы, вы можете установить и настроить плагин [@vitejs/plugin-basic-ssl](https://github.com/vitejs/vite-plugin-basic-ssl). При использовании ненадежных сертификатов вам нужно будет принять предупреждение о сертификате для сервера разработки Vite в вашем браузере, перейдя по ссылке "Local" в консоли при выполнении команды `npm run dev`.
 
 <a name="configuring-hmr-in-sail-on-wsl2"></a>
 #### Запуск сервера разработки в Sail на WSL2
@@ -168,7 +153,7 @@ export default defineConfig({
 });
 ```
 
-Если изменения в файлах не отображаются в браузере при запущенном сервере разработки, вам также может потребоваться настроить опцию [`server.watch.usePolling`](https://vitejs.dev/config/server-options.html#server-watch) в Vite.
+Если изменения в файлах не отображаются в браузере при запущенном сервере разработки, вам также может потребоваться настроить опцию [server.watch.usePolling](https://vitejs.dev/config/server-options.html#server-watch) в Vite.
 
 <a name="loading-your-scripts-and-styles"></a>
 ### Загрузка ваших скриптов и стилей
@@ -283,7 +268,7 @@ export default defineConfig({
 
 Если вы хотите собрать свой фронтенд, используя фреймворк [Vue](https://vuejs.org/), вам также нужно установить плагин `@vitejs/plugin-vue`:
 
-```sh
+```shell
 npm install --save-dev @vitejs/plugin-vue
 ```
 
@@ -320,14 +305,14 @@ export default defineConfig({
 ```
 
 > [!NOTE]
-> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, Vue и Vite. Посмотрите [Laravel Breeze](/docs/{{version}}/starter-kits#breeze-and-inertia) для самого быстрого способа начать работу с Laravel, Vue и Vite.
+> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, Vue и Vite. Эти стартовые наборы предлагают самый быстрый способ начать работу с Laravel, Vue и Vite.
 
 <a name="react"></a>
 ### React
 
 Если вы хотите собрать свой фронтенд, используя фреймворк [React](https://reactjs.org/), вам также необходимо установить плагин `@vitejs/plugin-react`:
 
-```sh
+```shell
 npm install --save-dev @vitejs/plugin-react
 ```
 
@@ -358,7 +343,7 @@ export default defineConfig({
 Директива `@viteReactRefresh` должна быть вызвана перед директивой `@vite`.
 
 > [!NOTE]
-> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, React и Vite. Ознакомьтесь с [Laravel Breeze](/docs/{{version}}/starter-kits#breeze-and-inertia) - самым быстрым способом начать работу с Laravel, React и Vite.
+> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, React и Vite. Эти стартовые наборы предлагают самый быстрый способ начать работу с Laravel, React и Vite.
 
 <a name="inertia"></a>
 ### Inertia
@@ -383,7 +368,7 @@ createInertiaApp({
 Если вы используете функцию разделения кода Vite с Inertia, мы рекомендуем настроить [предварительную выборку актива](#asset-prefetching).
 
 > [!NOTE]
-> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, Inertia и Vite. Ознакомьтесь с [Laravel Breeze](/docs/{{version}}/starter-kits#breeze-and-inertia) чтобы быстро начать работу с Laravel, Inertia и Vite.
+> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, Inertia и Vite. Эти стартовые наборы предлагают самый быстрый способ начать работу с Laravel, Inertia и Vite.
 
 <a name="url-processing"></a>
 ### Обработка URL
@@ -394,7 +379,7 @@ createInertiaApp({
 
 Рассмотрим следующую структуру проекта:
 
-```nothing
+```text
 public/
   taylor.png
 resources/
@@ -416,21 +401,18 @@ resources/
 ```
 
 <a name="working-with-stylesheets"></a>
-## Working With Stylesheets
-
-Вы можете узнать больше о поддержке CSS в Vite в [документации Vite](https://vitejs.dev/guide/features.html#css). Если вы используете плагины PostCSS, такие как [Tailwind](https://tailwindcss.com), вы можете создать файл `postcss.config.js` в корне вашего проекта, и Vite автоматически его применит.
-
-```js
-export default {
-    plugins: {
-        tailwindcss: {},
-        autoprefixer: {},
-    },
-};
-```
+## Работа с таблицами стилей
 
 > [!NOTE]
 > Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Tailwind, PostCSS и Vite. Или, если вы хотите использовать Tailwind и Laravel без использования одного из наших стартовых наборов, ознакомьтесь с [руководством по установке Tailwind для Laravel](https://tailwindcss.com/docs/guides/laravel).
+
+Все приложения Laravel уже включают Tailwind и правильно настроенный файл `vite.config.js`. Поэтому вам нужно только запустить сервер разработки Vite или выполнить команду `dev` Composer, которая запустит как серверы разработки Laravel, так и Vite:
+
+```shell
+composer run dev
+```
+
+CSS вашего приложения может быть размещен в файле `resources/css/app.css`.
 
 <a name="working-with-blade-and-routes"></a>
 ## Работа с Blade и маршрутами
@@ -501,7 +483,7 @@ export default defineConfig({
 });
 ```
 
-В основе плагина Laravel Vite используется пакет [`vite-plugin-full-reload`](https://github.com/ElMassimo/vite-plugin-full-reload), который предлагает некоторые дополнительные параметры конфигурации для настройки поведения этой функции. Если вам нужен такой уровень настройки, вы можете предоставить определение `config`:
+В основе плагина Laravel Vite используется пакет [vite-plugin-full-reload](https://github.com/ElMassimo/vite-plugin-full-reload), который предлагает некоторые дополнительные параметры конфигурации для настройки поведения этой функции. Если вам нужен такой уровень настройки, вы можете предоставить определение `config`:
 
 ```js
 import { defineConfig } from 'vite';
@@ -525,13 +507,15 @@ export default defineConfig({
 
 Часто в JavaScript-приложениях создают [псевдонимы](#aliases) для часто используемых каталогов. Однако, вы также можете создавать псевдонимы для использования в Blade, используя метод `macro` класса `Illuminate\Support\Facades\Vite`. Обычно "макросы" определяются в методе `boot` [сервис-провайдера](/docs/{{version}}/providers):
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        Vite::macro('image', fn (string $asset) => $this->asset("resources/images/{$asset}"));
-    }
+```php
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Vite::macro('image', fn (string $asset) => $this->asset("resources/images/{$asset}"));
+}
+```
 
 После определения макроса его можно вызвать в ваших шаблонах. Например, мы можем использовать определенный выше макрос `image`, чтобы ссылаться на ресурс, расположенный по пути `resources/images/logo.png`:
 
@@ -619,7 +603,7 @@ ASSET_URL=https://cdn.example.com
 
 После настройки URL ресурса в начало всех переписанных URL-адреса ваших ресурсов будет добавлено указанное значение:
 
-```nothing
+```text
 https://cdn.example.com/build/assets/app.9dce8d17.js
 ```
 
@@ -720,19 +704,19 @@ export default defineConfig({
 
 Затем, чтобы собрать и запустить сервер SSR, вы можете выполнить следующие команды:
 
-```sh
+```shell
 npm run build
 node bootstrap/ssr/ssr.js
 ```
 
 Если вы используете [SSR с Inertia](https://inertiajs.com/server-side-rendering), вы можете вместо этого использовать команду Artisan `inertia:start-ssr` для запуска сервера SSR:
 
-```sh
+```shell
 php artisan inertia:start-ssr
 ```
 
 > [!NOTE]
-> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, SSR Inertia и Vite. Ознакомьтесь с [Laravel Breeze](/docs/{{version}}/starter-kits#breeze-and-inertia) для самого быстрого способа начать работу с Laravel, SSR Inertia и Vite.
+> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, SSR Inertia и Vite. Эти стартовые наборы предлагают самый быстрый способ начать работу с Laravel, Inertia SSR и Vite.
 
 <a name="script-and-style-attributes"></a>
 ## Атрибуты тегов Style и Script
@@ -740,7 +724,7 @@ php artisan inertia:start-ssr
 <a name="content-security-policy-csp-nonce"></a>
 ### Content Security Policy (CSP) Nonce
 
-Если вы хотите включить атрибут [`nonce`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) в ваших тегах script и style как часть  [ политики безопасности контента (Content Security Policy)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP),  вы можете сгенерировать или указать nonce, используя метод  `useCspNonce` внутри собственного [middleware](/docs/{{version}}/middleware):
+Если вы хотите включить атрибут [nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) в ваших тегах script и style как часть [ политики безопасности контента (Content Security Policy)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP),  вы можете сгенерировать или указать nonce, используя метод  `useCspNonce` внутри собственного [middleware](/docs/{{version}}/middleware):
 
 ```php
 <?php
@@ -787,7 +771,7 @@ Vite::useCspNonce($nonce);
 <a name="subresource-integrity-sri"></a>
 ### Subresource Integrity (SRI) (Целостность подресурсов)
 
-Если ваш манифест Vite включает хеши `integrity` для ваших ресурсов, Laravel автоматически добавит атрибут `integrity` ко всем тегам script и style, которые он генерирует, чтобы обеспечить [целостность подресурсов](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). По умолчанию Vite не включает хеш `integrity` в свой манифест, но вы можете включить его, установив плагин [`vite-plugin-manifest-sri`](https://www.npmjs.com/package/vite-plugin-manifest-sri) из NPM:
+Если ваш манифест Vite включает хеши `integrity` для ваших ресурсов, Laravel автоматически добавит атрибут `integrity` ко всем тегам script и style, которые он генерирует, чтобы обеспечить [целостность подресурсов](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). По умолчанию Vite не включает хеш `integrity` в свой манифест, но вы можете включить его, установив плагин [vite-plugin-manifest-sri](https://www.npmjs.com/package/vite-plugin-manifest-sri) из NPM:
 
 ```shell
 npm install --save-dev vite-plugin-manifest-sri
@@ -827,7 +811,7 @@ Vite::useIntegrityKey(false);
 <a name="arbitrary-attributes"></a>
 ### Произвольные атрибуты
 
-Если вам нужно добавить дополнительные атрибуты к вашим тегам script и style, такие как атрибут [`data-turbo-track`](https://turbo.hotwired.dev/handbook/drive#reloading-when-assets-change), вы можете указать их с помощью методов `useScriptTagAttributes` и `useStyleTagAttributes`. Обычно эти методы вызываются из [сервис-провайдера](/docs/{{version}}/providers):
+Если вам нужно добавить дополнительные атрибуты к вашим тегам script и style, такие как атрибут [data-turbo-track](https://turbo.hotwired.dev/handbook/drive#reloading-when-assets-change), вы можете указать их с помощью методов `useScriptTagAttributes` и `useStyleTagAttributes`. Обычно эти методы вызываются из [сервис-провайдера](/docs/{{version}}/providers):
 
 ```php
 use Illuminate\Support\Facades\Vite;
@@ -899,6 +883,70 @@ export default defineConfig({
     build: {
       manifest: 'assets.json', // Customize the manifest filename...
     },
+});
+```
+
+<a name="cors"></a>
+### Совместное использование ресурсов разных источников на сервере разработки (CORS)
+
+Если у вас возникли проблемы с Cross-Origin Resource Sharing (CORS) в браузере при загрузке ресурсов с сервера разработки Vite, вам может потребоваться предоставить пользовательский доступ к серверу разработки. Vite в сочетании с плагином Laravel позволяет использовать следующие источники без какой-либо дополнительной настройки:
+
+- `::1`
+- `127.0.0.1`
+- `localhost`
+- `*.test`
+- `*.localhost`
+- `APP_URL` in the project's `.env`
+
+Самый простой способ разрешить пользовательский источник для вашего проекта — убедиться, что переменная среды `APP_URL` вашего приложения соответствует источнику, который вы посещаете в своем браузере. Например, если вы посещаете `https://my-app.laravel`, вам следует обновить ваш `.env` для соответствия:
+
+```env
+APP_URL=https://my-app.laravel
+```
+
+Если вам нужен более детальный контроль над источниками, например поддержка нескольких источников, вам следует использовать [комплексную и гибкую встроенную конфигурацию сервера CORS Vite](https://vite.dev/config/server-options.html#server-cors). Например, вы можете указать несколько источников в параметре конфигурации `server.cors.origin` в файле `vite.config.js` проекта:
+
+```js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: 'resources/js/app.js',
+            refresh: true,
+        }),
+    ],
+    server: {  // [tl! add]
+        cors: {  // [tl! add]
+            origin: [  // [tl! add]
+                'https://backend.laravel',  // [tl! add]
+                'http://admin.laravel:8566',  // [tl! add]
+            ],  // [tl! add]
+        },  // [tl! add]
+    },  // [tl! add]
+});
+```
+
+Вы также можете включить шаблоны регулярных выражений, которые могут быть полезны, если вы хотите разрешить все источники для заданного домена верхнего уровня, например `*.laravel`:
+
+```js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: 'resources/js/app.js',
+            refresh: true,
+        }),
+    ],
+    server: {  // [tl! add]
+        cors: {  // [tl! add]
+            origin: [ // [tl! add]
+                // Supports: SCHEME://DOMAIN.laravel[:PORT] [tl! add]
+                /^https?:\/\/.*\.laravel(:\d+)?$/, //[tl! add]
+            ], // [tl! add]
+        }, // [tl! add]
+    }, // [tl! add]
 });
 ```
 
