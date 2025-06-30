@@ -1,5 +1,5 @@
 ---
-git: 933bda5f2aa87567d24096f8967a4c287ee6b9f3
+git: e5abed8708ebe7e51820e3062629dbec5407607c
 ---
 
 
@@ -173,8 +173,8 @@ class PodcastController
     public function index(Request $request): Response
     {
         return Feature::active('new-api')
-                ? $this->resolveNewApiResponse($request)
-                : $this->resolveLegacyApiResponse($request);
+            ? $this->resolveNewApiResponse($request)
+            : $this->resolveLegacyApiResponse($request);
     }
 
     // ...
@@ -185,8 +185,8 @@ class PodcastController
 
 ```php
 return Feature::for($user)->active('new-api')
-        ? $this->resolveNewApiResponse($request)
-        : $this->resolveLegacyApiResponse($request);
+    ? $this->resolveNewApiResponse($request)
+    : $this->resolveLegacyApiResponse($request);
 ```
 
 Pennant также предлагает несколько дополнительных удобных методов, которые могут оказаться полезными при определении активна ли функция или нет:
@@ -234,8 +234,8 @@ class PodcastController
     public function index(Request $request): Response
     {
         return Feature::active(NewApi::class)
-                ? $this->resolveNewApiResponse($request)
-                : $this->resolveLegacyApiResponse($request);
+            ? $this->resolveNewApiResponse($request)
+            : $this->resolveLegacyApiResponse($request);
     }
 
     // ...
@@ -247,37 +247,41 @@ class PodcastController
 
 Метод `when` может быть использован для плавного выполнения заданного замыкания, если функция активна. Кроме того, можно предоставить второе замыкание, которое будет выполнено, если функция неактивна:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Features\NewApi;
-    use Illuminate\Http\Request;
-    use Illuminate\Http\Response;
-    use Laravel\Pennant\Feature;
+use App\Features\NewApi;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Laravel\Pennant\Feature;
 
-    class PodcastController
+class PodcastController
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request): Response
     {
-        /**
-         * Display a listing of the resource.
-         */
-        public function index(Request $request): Response
-        {
-            return Feature::when(NewApi::class,
-                fn () => $this->resolveNewApiResponse($request),
-                fn () => $this->resolveLegacyApiResponse($request),
-            );
-        }
-
-        // ...
+        return Feature::when(NewApi::class,
+            fn () => $this->resolveNewApiResponse($request),
+            fn () => $this->resolveLegacyApiResponse($request),
+        );
     }
+
+    // ...
+}
+```
 
 Метод `unless` является противоположностью метода `when`, он выполняет первое замыкание, если функция неактивна:
 
-    return Feature::unless(NewApi::class,
-        fn () => $this->resolveLegacyApiResponse($request),
-        fn () => $this->resolveNewApiResponse($request),
-    );
+```php
+return Feature::unless(NewApi::class,
+    fn () => $this->resolveLegacyApiResponse($request),
+    fn () => $this->resolveNewApiResponse($request),
+);
+```
 
 <a name="the-has-features-trait"></a>
 ### Трейт `HasFeatures`
@@ -471,7 +475,9 @@ class NewApi
 
 Если вам нужно вручную очистить кэш в памяти, вы можете использовать метод `flushCache`, предоставленный фасадом `Feature`:
 
-    Feature::flushCache();
+```php
+Feature::flushCache();
+```
 
 <a name="scope"></a>
 ## Области (Scope)
@@ -483,8 +489,8 @@ class NewApi
 
 ```php
 return Feature::for($user)->active('new-api')
-        ? $this->resolveNewApiResponse($request)
-        : $this->resolveLegacyApiResponse($request);
+    ? $this->resolveNewApiResponse($request)
+    : $this->resolveLegacyApiResponse($request);
 ```
 
 Конечно, возможности функций не ограничиваются «пользователями». Представьте, что вы создали новый способ выставления счетов, которую вы распространяете на целые команды, а не на отдельных пользователей.  Возможно, вы хотели бы, чтобы для более старых команды новый способ внедрялся бы медленнее, чем для новых команды. Ваше замыкание для определения функции может выглядеть примерно так:
@@ -672,17 +678,21 @@ $color = Feature::value('purchase-button');
 
 При вызове [условного метода `when`](#conditional-execution), расширенное значение функции будет предоставлено первому замыканию:
 
-    Feature::when('purchase-button',
-        fn ($color) => /* ... */,
-        fn () => /* ... */,
-    );
+```php
+Feature::when('purchase-button',
+    fn ($color) => /* ... */,
+    fn () => /* ... */,
+);
+```
 
 Точно так же, при вызове условного метода `unless`, расширенное значение функции будет предоставлено второму необязательному замыканию:
 
-    Feature::unless('purchase-button',
-        fn () => /* ... */,
-        fn ($color) => /* ... */,
-    );
+```php
+Feature::unless('purchase-button',
+    fn () => /* ... */,
+    fn ($color) => /* ... */,
+);
+```
 
 <a name="retrieving-multiple-features"></a>
 ## Получение нескольких функций
@@ -714,25 +724,27 @@ Feature::all();
 
 Если вы хотите гарантировать, что классы функций всегда будут включены при использовании метода `all`, вы можете использовать возможности обнаружения функций Pennant. Чтобы начать использование, вызовите метод `discover` в одном из сервис-провайдеров вашего приложения:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use Illuminate\Support\ServiceProvider;
-    use Laravel\Pennant\Feature;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Pennant\Feature;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
     {
-        /**
-         * Bootstrap any application services.
-         */
-        public function boot(): void
-        {
-            Feature::discover();
+        Feature::discover();
 
-            // ...
-        }
+        // ...
     }
+}
+```
 
 Метод `discover` зарегистрирует все классы функций в каталоге `app/Features` вашего приложения. Метод `all` теперь будет включать эти классы в свои результаты, независимо от того, были ли они проверены в текущем запросе:
 
@@ -868,7 +880,7 @@ Feature::purge();
 
 Поскольку очищение функций может быть полезным в рамках процесса развёртывания вашего приложения, в Pennant имеется команда Artisan `pennant:purge`, которая будет удалять предоставленные функции из хранилища:
 
-```sh
+```shell
 php artisan pennant:purge new-api
 
 php artisan pennant:purge new-api purchase-button
@@ -876,13 +888,13 @@ php artisan pennant:purge new-api purchase-button
 
 Также можно очистить все функции _за исключением_ тех, что перечислены в определенном списке функций. Например, предположим, что вы хотите удалить все функции, кроме значений для "new-api" и "purchase-button", сохраненных в хранилище. Для этого передайте имена этих функций в опцию `--except`:
 
-```sh
+```shell
 php artisan pennant:purge --except=new-api --except=purchase-button
 ```
 
 Кроме того, для удобства команда `pennant:purge` также поддерживает флаг `--except-registered`. Этот флаг указывает, что нужно удалить все функции, кроме тех, которые явно зарегистрированы в сервис провайдере:
 
-```sh
+```shell
 php artisan pennant:purge --except-registered
 ```
 
@@ -1039,16 +1051,18 @@ class AppServiceProvider extends ServiceProvider
 
 После регистрации драйвера вы можете использовать драйвер `redis` в файле конфигурации `config/pennant.php` вашего приложения:
 
-    'stores' => [
+```php
+'stores' => [
 
-        'redis' => [
-            'driver' => 'redis',
-            'connection' => null,
-        ],
-
-        // ...
-
+    'redis' => [
+        'driver' => 'redis',
+        'connection' => null,
     ],
+
+    // ...
+
+],
+```
 
 <a name="defining-features-externally"></a>
 ### Внешнее определение объектов
@@ -1138,7 +1152,6 @@ public function boot(): void
 {
     Event::listen(UnexpectedNullScopeEncountered::class, fn () => abort(500));
 }
-
 ```
 
 ### `Laravel\Pennant\Events\FeatureUpdated`
