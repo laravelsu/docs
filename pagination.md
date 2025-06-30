@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: ee8f2805e6ef75d877eb8ffa20110e3b6e08b647
 ---
 
 # База данных · Постраничная навигация
@@ -11,18 +11,15 @@ git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
 
 По умолчанию HTML, генерируемый пагинатором, совместим с [фреймворком Tailwind CSS](https://tailwindcss.com/); однако, также доступна поддержка разбивки на страницы с использованием Bootstrap.
 
-<a name="tailwind-jit"></a>
-#### Tailwind JIT
+<a name="tailwind"></a>
+#### Tailwind
 
-Если вы используете стандартные представления Laravel для разбивки на страницы Tailwind и механизм JIT Tailwind, вы должны убедиться, что ключ `content` файла `tailwind.config.js` вашего приложения ссылаются на представления разбиения на страницы Laravel, чтобы их классы Tailwind не удалялись:
+Если вы используете постраничные представления Laravel Tailwind по умолчанию с Tailwind 4.x, файл `resources/css/app.css` вашего приложения уже будет правильно настроен для постраничных представлений Laravel `@source`:
 
-```js
-content: [
-    './resources/**/*.blade.php',
-    './resources/**/*.js',
-    './resources/**/*.vue',
-    './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-],
+```css
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 ```
 
 <a name="basic-usage"></a>
@@ -35,26 +32,28 @@ content: [
 
 В этом примере единственный аргумент, переданный методу `paginate` – это количество элементов, которые вы хотите отображать «на каждой странице». В этом случае давайте укажем, что мы хотели бы отображать `15` элементов на странице:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use Illuminate\Support\Facades\DB;
-    use Illuminate\View\View;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
-    class UserController extends Controller
+class UserController extends Controller
+{
+    /**
+     * Показать всех пользователей приложения.
+     */
+    public function index(): View
     {
-        /**
-         * Показать всех пользователей приложения.
-         */
-        public function index(): View
-        {
-            return view('user.index', [
-                'users' => DB::table('users')->paginate(15)
-            ]);
-        }
+        return view('user.index', [
+            'users' => DB::table('users')->paginate(15)
+        ]);
     }
+}
+```
 
 <a name="simple-pagination"></a>
 #### Простая пагинация
@@ -63,39 +62,51 @@ content: [
 
 Следовательно, если вам нужно отображать только простые ссылки «Далее» и «Назад» в пользовательском интерфейсе вашего приложения, вы можете использовать метод `simplePaginate` для выполнения одного рационального запроса:
 
-    $users = DB::table('users')->simplePaginate(15);
+```php
+$users = DB::table('users')->simplePaginate(15);
+```
 
 <a name="paginating-eloquent-results"></a>
 ### Разбиение результатов Eloquent
 
 Вы также можете разбивать запросы [Eloquent](/docs/{{version}}/eloquent) на страницы. В этом примере мы разобьем модель `App\Models\User` на страницы и укажем, что мы планируем отображать 15 записей на странице. Как видите, синтаксис почти идентичен разбивке на страницы результатов построителя запросов:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $users = User::paginate(15);
+$users = User::paginate(15);
+```
 
 Конечно, вы можете вызвать метод `paginate` после указания других ограничений для запроса, таких как выражения `where`:
 
-    $users = User::where('votes', '>', 100)->paginate(15);
+```php
+$users = User::where('votes', '>', 100)->paginate(15);
+```
 
 Вы также можете использовать метод `simplePaginate` при разбиении на страницы моделей Eloquent:
 
-    $users = User::where('votes', '>', 100)->simplePaginate(15);
+```php
+$users = User::where('votes', '>', 100)->simplePaginate(15);
+```
 
 Точно так же вы можете использовать метод `cursorPaginate` для курсорной пагинации моделей Eloquent:
 
-    $users = User::where('votes', '>', 100)->cursorPaginate(15);
+```php
+$users = User::where('votes', '>', 100)->cursorPaginate(15);
+```
 
 <a name="multiple-paginator-instances-per-page"></a>
 #### Несколько экземпляров пагинации на странице
 
 Иногда вам может потребоваться отобразить два отдельных модуля пагинации на одном экране, который отображается вашим приложением. Однако, если оба экземпляра пагинации используют параметр строки запроса `page` для хранения текущей страницы, они будут конфликтовать. Чтобы разрешить этот конфликт, вы можете передать имя параметра строки запроса, который вы хотите использовать для хранения текущей страницы, через третий аргумент, предоставленный методам `paginate`, `simplePaginate` и `cursorPaginate`:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $users = User::where('votes', '>', 100)->paginate(
-        $perPage = 15, $columns = ['*'], $pageName = 'users'
-    );
+$users = User::where('votes', '>', 100)->paginate(
+    $perPage = 15, $columns = ['*'], $pageName = 'users'
+);
+```
 
 <a name="cursor-pagination"></a>
 ### Cursor-пагинация
@@ -104,13 +115,15 @@ content: [
 
 В отличие от пагинации на основе смещения, которая включает номер страницы в строке запроса URL-адресов, сгенерированных средством постраничной навигации, Cursor-пагинация помещает «cursor» в строку запроса. Курсор представляет собой закодированную строку, содержащую место, с которого следующий запрос с пагинацией должен начать постраничную навигацию, и направление, в котором он должен разбиваться на страницы:
 
-```nothing
+```text
 http://localhost/users?cursor=eyJpZCI6MTUsIl9wb2ludHNUb05leHRJdGVtcyI6dHJ1ZX0
 ```
 
 Вы можете создать экземпляр Cursor-пагинации с помощью метода `cursorPaginate`, предлагаемого построителем запросов. Этот метод возвращает экземпляр `Illuminate\Pagination\CursorPaginator`:
 
-    $users = DB::table('users')->orderBy('id')->cursorPaginate(15);
+```php
+$users = DB::table('users')->orderBy('id')->cursorPaginate(15);
+```
 
 После того как вы получили экземпляр Cursor-пагинации, вы можете [отобразить результаты постраничной навигации](#displaying-pagination-results) как обычно при использовании методов `paginate` и `simplePaginate`. Для получения дополнительной информации о методах экземпляра, предлагаемых средством Cursor-пагинации, обратитесь к [документации по методам экземпляра Cursor Paginator](#cursor-paginator-instance-methods).
 
@@ -159,41 +172,49 @@ Cursor-пагинация предлагает следующие преимущ
 
 По умолчанию ссылки, созданные пагинатором, будут соответствовать URI текущего запроса. Однако метод `withPath` пагинатора позволяет вам скорректировать URI, используемый пагинатором при генерации ссылок. Например, если вы хотите, чтобы пагинатор генерировал ссылки типа `http://example.com/admin/users?page=N`, вы должны передать `/admin/users` `withPath`:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    Route::get('/users', function () {
-        $users = User::paginate(15);
+Route::get('/users', function () {
+    $users = User::paginate(15);
 
-        $users->withPath('/admin/users');
+    $users->withPath('/admin/users');
 
-        // ...
-    });
+    // ...
+});
+```
 
 <a name="appending-query-string-values"></a>
 #### Добавление значений в строку запроса
 
 Вы можете добавить параметр в строку запроса навигационных ссылок с помощью метода `appends`. Например, чтобы добавить `sort=votes` к каждой ссылке пагинации, вы должны сделать следующий вызов `appends`:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    Route::get('/users', function () {
-        $users = User::paginate(15);
+Route::get('/users', function () {
+    $users = User::paginate(15);
 
-        $users->appends(['sort' => 'votes']);
+    $users->appends(['sort' => 'votes']);
 
-        // ...
-    });
+    // ...
+});
+```
 
 Вы можете использовать метод `withQueryString`, если хотите добавить все значения строки текущего запроса к ссылкам постраничной навигации:
 
-    $users = User::paginate(15)->withQueryString();
+```php
+$users = User::paginate(15)->withQueryString();
+```
 
 <a name="appending-hash-fragments"></a>
 #### Добавление фрагментов хеша
 
 Если вам нужно добавить «хеш-фрагмент» к URL-адресам, сгенерированным пагинатором, вы можете использовать метод `fragment`. Например, чтобы добавить `#users` в конец каждой навигационной ссылки, вы должны вызвать метод `fragment` следующим образом:
 
-    $users = User::paginate(15)->fragment('users');
+```php
+$users = User::paginate(15)->fragment('users');
+```
 
 <a name="displaying-pagination-results"></a>
 ## Отображение результатов постраничной навигации
@@ -228,35 +249,39 @@ Cursor-пагинация предлагает следующие преимущ
 
 Классы пагинатора Laravel реализуют контракт интерфейса `Illuminate\Contracts\Support\Jsonable` и содержат метод `toJson`, поэтому очень легко преобразовать результаты в JSON. Вы также можете преобразовать экземпляр пагинатора в JSON, вернув его из маршрута или действия контроллера:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    Route::get('/users', function () {
-        return User::paginate();
-    });
+Route::get('/users', function () {
+    return User::paginate();
+});
+```
 
 JSON из пагинатора будет включать метаинформацию, такую как `total`, `current_page`, `last_page` и другие. Записи результатов доступны через ключ `data` в массиве JSON. Вот пример JSON, созданного путем возврата экземпляра пагинатора из маршрута:
 
-    {
-       "total": 50,
-       "per_page": 15,
-       "current_page": 1,
-       "last_page": 4,
-       "first_page_url": "http://laravel.app?page=1",
-       "last_page_url": "http://laravel.app?page=4",
-       "next_page_url": "http://laravel.app?page=2",
-       "prev_page_url": null,
-       "path": "http://laravel.app",
-       "from": 1,
-       "to": 15,
-       "data":[
-            {
-                // Запись...
-            },
-            {
-                // Запись...
-            }
-       ]
-    }
+```json
+{
+   "total": 50,
+   "per_page": 15,
+   "current_page": 1,
+   "last_page": 4,
+   "first_page_url": "http://laravel.app?page=1",
+   "last_page_url": "http://laravel.app?page=4",
+   "next_page_url": "http://laravel.app?page=2",
+   "prev_page_url": null,
+   "path": "http://laravel.app",
+   "from": 1,
+   "to": 15,
+   "data":[
+        {
+            // Запись...
+        },
+        {
+            // Запись...
+        }
+   ]
+}
+```
 
 <a name="customizing-the-pagination-view"></a>
 ## Настройка вида пагинации
@@ -280,41 +305,45 @@ php artisan vendor:publish --tag=laravel-pagination
 
 Если вы хотите назначить другой файл в качестве шаблона постраничной навигации по умолчанию, вы можете вызвать методы `defaultView` и `defaultSimpleView` пагинатора в методе `boot` вашего класса `App\Providers\AppServiceProvider`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use Illuminate\Pagination\Paginator;
-    use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\ServiceProvider;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Загрузка любых служб приложения.
+     */
+    public function boot(): void
     {
-        /**
-         * Загрузка любых служб приложения.
-         */
-        public function boot(): void
-        {
-            Paginator::defaultView('view-name');
+        Paginator::defaultView('view-name');
 
-            Paginator::defaultSimpleView('view-name');
-        }
+        Paginator::defaultSimpleView('view-name');
     }
+}
+```
 
 <a name="using-bootstrap"></a>
 ### Использование Bootstrap
 
 Laravel содержит шаблоны постраничной навигации, созданные с использованием [Bootstrap CSS](https://getbootstrap.com/). Чтобы использовать эти шаблоны вместо шаблонов Tailwind по умолчанию, вы можете вызвать метод пагинатора `useBootstrapFour` или `useBootstrapFive` в методе `boot` класса `App\Providers\AppServiceProvider`:
 
-    use Illuminate\Pagination\Paginator;
+```php
+use Illuminate\Pagination\Paginator;
 
-    /**
-     * Загрузка любых служб приложения.
-     */
-    public function boot(): void
-    {
-        Paginator::useBootstrapFive();
-        Paginator::useBootstrapFour();
-    }
+/**
+ * Загрузка любых служб приложения.
+ */
+public function boot(): void
+{
+    Paginator::useBootstrapFive();
+    Paginator::useBootstrapFour();
+}
+```
 
 <a name="paginator-instance-methods"></a>
 ## Методы экземпляра Paginator и LengthAwarePaginator
