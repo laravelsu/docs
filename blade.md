@@ -1,5 +1,5 @@
 ---
-git: 4223ed3fb9af969df6803cc81a21d5e803236ae0
+git: e5abed8708ebe7e51820e3062629dbec5407607c
 ---
 
 # Шаблонизатор Blade
@@ -113,7 +113,7 @@ class AppServiceProvider extends ServiceProvider
 
 Иногда вы можете передать массив вашему шаблону с намерением отобразить его как JSON, чтобы инициализировать переменную JavaScript. Например:
 
-```blade
+```php
 <script>
     var app = <?php echo json_encode($array); ?>;
 </script>
@@ -602,8 +602,35 @@ class AppServiceProvider extends ServiceProvider
 
 Второй аргумент может быть использован в директиве `@use` для указания псевдонима импортируемого класса:
 
-```php
+```blade
 @use('App\Models\Flight', 'FlightModel')
+```
+
+Если у вас есть несколько классов в одном пространстве имен, вы можете сгруппировать импорт этих классов:
+
+```blade
+@use('App\Models\{Flight, Airport}')
+```
+
+Директива `@use` также поддерживает импорт функций и констант PHP путем добавления к пути импорта модификаторов `function` или `const`:
+
+```blade
+@use(function App\Helpers\format_currency)
+@use(const App\Constants\MAX_ATTEMPTS)
+```
+
+Как и импорт классов, псевдонимы поддерживаются также для функций и констант:
+
+```blade
+@use(function App\Helpers\format_currency, 'formatMoney')
+@use(const App\Constants\MAX_ATTEMPTS, 'MAX_TRIES')
+```
+
+Групповой импорт также поддерживается с помощью модификаторов function и const, что позволяет импортировать несколько символов из одного пространства имен в одной директиве:
+
+```blade
+@use(function App\Helpers\{format_currency, format_date})
+@use(const App\Constants\{MAX_ATTEMPTS, DEFAULT_TIMEOUT})
 ```
 
 <a name="comments"></a>
@@ -1016,7 +1043,7 @@ class Alert extends Component
 ```
 
 > [!NOTE]
-> Если вам нужно условно скомпилировать классы для других элементов HTML, которые не должны получать объединенные атрибуты, вы можете использовать директиву [`@class`](#conditional-classes).
+> Если вам нужно условно скомпилировать классы для других элементов HTML, которые не должны получать объединенные атрибуты, вы можете использовать директиву [@class](#conditional-classes).
 
 <a name="non-class-attribute-merging"></a>
 #### Слияние неклассовых атрибутов
@@ -1880,7 +1907,7 @@ class AppServiceProvider extends ServiceProvider
 <a name="custom-echo-handlers"></a>
 ### Пользовательские обработчики вывода
 
-Если вы попытаетесь вывести объект при помощи Blade, у объекта будет вызван метод `__toString`. Метод [`__toString`](https://www.php.net/manual/en/language.oop5.magic.php#object.tostring) является одним из встроенных "магических методов" PHP. Однако иногда вы не можете контролировать метод `__toString` данного класса, например, когда класс, с которым вы взаимодействуете, принадлежит сторонней библиотеке.
+Если вы попытаетесь вывести объект при помощи Blade, у объекта будет вызван метод `__toString`. Метод [__toString](https://www.php.net/manual/en/language.oop5.magic.php#object.tostring) является одним из встроенных "магических методов" PHP. Однако иногда вы не можете контролировать метод `__toString` данного класса, например, когда класс, с которым вы взаимодействуете, принадлежит сторонней библиотеке.
 
 В этих случаях Blade позволяет зарегистрировать пользовательский обработчик вывода для данного типа объектов. Для этого необходимо вызвать метод Blade `stringable`. Метод `stringable` принимает функцию, которая в аргументе принимает тип объекта, за рендеринг которого она отвечает. Обычно метод `stringable` следует вызывать в методе `boot` класса `AppServiceProvider` вашего приложения:
 
