@@ -1,5 +1,5 @@
 ---
-git: 7a21c9cbe2164e560c9861e972d16bf6d306d938
+git: ac2e2577fe6f8c58f559bae2cfec37f29baeac66
 ---
 
 # Примечания к релизу
@@ -31,7 +31,7 @@ Laravel и другие его собственные пакеты следую�
 | 8 ¹    | 7.3 - 8.1 | September 8th, 2020 | July 26th, 2022       | January 24th, 2023          |
 | 9 ¹    | 8.0 - 8.2 | February 8th, 2022  | August 8th, 2023      | February 6th, 2024          |
 | 10     | 8.1 - 8.3 | February 14th, 2023 | August 6th, 2024      | February 4th, 2025          |
-| 11     | 8.2 - 8.3 | March 12th, 2024    | August 5th, 2025      | February 3rd, 2026          |
+| 11     | 8.2 - 8.4 | March 12th, 2024    | September 3rd, 2025   | March 12th, 2026            |
 
 </div>
 
