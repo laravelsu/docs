@@ -1,5 +1,5 @@
 ---
-git: 519c46b94461471dcb4bf2f4692e4edb481b808c
+git: 46c13471056c6815c653834b256a4050c097a9aa
 ---
 
 # HTTP-клиент
@@ -14,47 +14,55 @@ Laravel предлагает минимальный и выразительны�
 
 Для отправки запросов вы можете использовать методы `head`, `get`, `post`, `put`, `patch` и `delete` фасада `Http`. Сначала давайте рассмотрим, как сделать основной запрос `GET`:
 
-    use Illuminate\Support\Facades\Http;
+```php
+use Illuminate\Support\Facades\Http;
 
-    $response = Http::get('http://example.com');
+$response = Http::get('http://example.com');
+```
 
 Метод `get` возвращает экземпляр `Illuminate\Http\Client\Response`, содержащий методы, которые можно использовать для получения информации об ответе:
 
-    $response->body() : string;
-    $response->json($key = null, $default = null) : mixed;
-    $response->object() : object;
-    $response->collect($key = null) : Illuminate\Support\Collection;
-    $response->resource() : resource;
-    $response->status() : int;
-    $response->successful() : bool;
-    $response->redirect(): bool;
-    $response->failed() : bool;
-    $response->clientError() : bool;
-    $response->header($header) : string;
-    $response->headers() : array;
+```php
+$response->body() : string;
+$response->json($key = null, $default = null) : mixed;
+$response->object() : object;
+$response->collect($key = null) : Illuminate\Support\Collection;
+$response->resource() : resource;
+$response->status() : int;
+$response->successful() : bool;
+$response->redirect(): bool;
+$response->failed() : bool;
+$response->clientError() : bool;
+$response->header($header) : string;
+$response->headers() : array;
+```
 
 Объект `Illuminate\Http\Client\Response` также реализует интерфейс `ArrayAccess` PHP, позволяющий напрямую получать доступ к данным ответа JSON:
 
-    return Http::get('http://example.com/users/1')['name'];
+```php
+return Http::get('http://example.com/users/1')['name'];
+```
 
 В дополнение к методам ответа, перечисленным выше, для определения того, имеет ли ответ заданный код состояния, можно использовать следующие методы:
 
-    $response->ok() : bool;                  // 200 OK
-    $response->created() : bool;             // 201 Created
-    $response->accepted() : bool;            // 202 Accepted
-    $response->noContent() : bool;           // 204 No Content
-    $response->movedPermanently() : bool;    // 301 Moved Permanently
-    $response->found() : bool;               // 302 Found
-    $response->badRequest() : bool;          // 400 Bad Request
-    $response->unauthorized() : bool;        // 401 Unauthorized
-    $response->paymentRequired() : bool;     // 402 Payment Required
-    $response->forbidden() : bool;           // 403 Forbidden
-    $response->notFound() : bool;            // 404 Not Found
-    $response->requestTimeout() : bool;      // 408 Request Timeout
-    $response->conflict() : bool;            // 409 Conflict
-    $response->unprocessableEntity() : bool; // 422 Unprocessable Entity
-    $response->tooManyRequests() : bool;     // 429 Too Many Requests
-    $response->serverError() : bool;         // 500 Internal Server Error
+```php
+$response->ok() : bool;                  // 200 OK
+$response->created() : bool;             // 201 Created
+$response->accepted() : bool;            // 202 Accepted
+$response->noContent() : bool;           // 204 No Content
+$response->movedPermanently() : bool;    // 301 Moved Permanently
+$response->found() : bool;               // 302 Found
+$response->badRequest() : bool;          // 400 Bad Request
+$response->unauthorized() : bool;        // 401 Unauthorized
+$response->paymentRequired() : bool;     // 402 Payment Required
+$response->forbidden() : bool;           // 403 Forbidden
+$response->notFound() : bool;            // 404 Not Found
+$response->requestTimeout() : bool;      // 408 Request Timeout
+$response->conflict() : bool;            // 409 Conflict
+$response->unprocessableEntity() : bool; // 422 Unprocessable Entity
+$response->tooManyRequests() : bool;     // 429 Too Many Requests
+$response->serverError() : bool;         // 500 Internal Server Error
+```
 
 <a name="uri-templates"></a>
 #### Шаблоны URI
@@ -75,92 +83,114 @@ Http::withUrlParameters([
 
 Если вы хотите получить информацию о сформированном экземпляре исходящего запроса перед его отправкой и прекратить выполнение скрипта, вы можете добавить метод `dd` в начало определения вашего запроса:
 
-    return Http::dd()->get('http://example.com');
+```php
+return Http::dd()->get('http://example.com');
+```
 
 <a name="request-data"></a>
 ### Данные запроса
 
 При выполнении запросов `POST`, `PUT` и `PATCH` обычно отправляются дополнительные данные, поэтому эти методы принимают массив данных в качестве второго аргумента. По умолчанию данные будут отправляться с использованием типа содержимого `application/json`:
 
-    use Illuminate\Support\Facades\Http;
+```php
+use Illuminate\Support\Facades\Http;
 
-    $response = Http::post('http://example.com/users', [
-        'name' => 'Steve',
-        'role' => 'Network Administrator',
-    ]);
+$response = Http::post('http://example.com/users', [
+    'name' => 'Steve',
+    'role' => 'Network Administrator',
+]);
+```
 
 <a name="get-request-query-parameters"></a>
 #### Параметры GET-запроса
 
 При выполнении запросов `GET` вы можете либо напрямую добавить строку запроса к URL, либо передать массив пар ключ / значение в качестве второго аргумента метода `get`:
 
-    $response = Http::get('http://example.com/users', [
-        'name' => 'Taylor',
-        'page' => 1,
-    ]);
+```php
+$response = Http::get('http://example.com/users', [
+    'name' => 'Taylor',
+    'page' => 1,
+]);
+```
 
 В качестве альтернативы можно использовать метод `withQueryParameters`:
 
-    Http::retry(3, 100)->withQueryParameters([
-        'name' => 'Taylor',
-        'page' => 1,
-    ])->get('http://example.com/users')
+```php
+Http::retry(3, 100)->withQueryParameters([
+    'name' => 'Taylor',
+    'page' => 1,
+])->get('http://example.com/users')
+```
 
 <a name="sending-form-url-encoded-requests"></a>
 #### Отправка запросов с передачей данных в URL-кодированной строке
 
 Если вы хотите отправлять данные с использованием типа содержимого `application/x-www-form-urlencoded`, то вы должны вызвать метод `asForm` перед выполнением запроса:
 
-    $response = Http::asForm()->post('http://example.com/users', [
-        'name' => 'Sara',
-        'role' => 'Privacy Consultant',
-    ]);
+```php
+$response = Http::asForm()->post('http://example.com/users', [
+    'name' => 'Sara',
+    'role' => 'Privacy Consultant',
+]);
+```
 
 <a name="sending-a-raw-request-body"></a>
 #### Отправка необработанного тела запроса
 
 Вы можете использовать метод `withBody`, если хотите передать необработанное тело запроса при его выполнении. Тип контента может быть указан вторым аргументом метода:
 
-    $response = Http::withBody(
-        base64_encode($photo), 'image/jpeg'
-    )->post('http://example.com/photo');
+```php
+$response = Http::withBody(
+    base64_encode($photo), 'image/jpeg'
+)->post('http://example.com/photo');
+```
 
 <a name="multi-part-requests"></a>
 #### Составные запросы
 
 Если вы хотите отправлять файлы в запросах, состоящих из нескольких частей, необходимо вызвать метод `attach` перед выполнением запроса. Этот метод принимает имя файла и его содержимое. При желании вы можете указать третий аргумент, который будет считаться именем файла, в то время как четвертый аргумент может быть использован для предоставления заголовков, связанных с файлом:
 
-    $response = Http::attach(
-        'attachment', file_get_contents('photo.jpg'), 'photo.jpg', ['Content-Type' => 'image/jpeg']
-    )->post('http://example.com/attachments');
+```php
+$response = Http::attach(
+    'attachment', file_get_contents('photo.jpg'), 'photo.jpg', ['Content-Type' => 'image/jpeg']
+)->post('http://example.com/attachments');
+```
 
 Вы также можете передать потоковый ресурс вместо передачи необработанного содержимого файла:
 
-    $photo = fopen('photo.jpg', 'r');
+```php
+$photo = fopen('photo.jpg', 'r');
 
-    $response = Http::attach(
-        'attachment', $photo, 'photo.jpg'
-    )->post('http://example.com/attachments');
+$response = Http::attach(
+    'attachment', $photo, 'photo.jpg'
+)->post('http://example.com/attachments');
+```
 
 <a name="headers"></a>
 ### Заголовки
 
 Заголовки могут быть добавлены к запросам с помощью метода `withHeaders`. Метод `withHeaders` принимает массив пар ключ / значение:
 
-    $response = Http::withHeaders([
-        'X-First' => 'foo',
-        'X-Second' => 'bar'
-    ])->post('http://example.com/users', [
-        'name' => 'Taylor',
-    ]);
+```php
+$response = Http::withHeaders([
+    'X-First' => 'foo',
+    'X-Second' => 'bar'
+])->post('http://example.com/users', [
+    'name' => 'Taylor',
+]);
+```
 
 Вы можете использовать метод `accept`, чтобы указать тип контента, который ваше приложение ожидает в ответ на ваш запрос:
 
-    $response = Http::accept('application/json')->get('http://example.com/users');
+```php
+$response = Http::accept('application/json')->get('http://example.com/users');
+```
 
 Для удобства вы можете использовать метод `acceptJson`, чтобы быстро указать, что ваше приложение ожидает тип содержимого `application/json` в ответ на ваш запрос:
 
-    $response = Http::acceptJson()->get('http://example.com/users');
+```php
+$response = Http::acceptJson()->get('http://example.com/users');
+```
 
 Метод `withHeaders` объединяет новые заголовки с существующими заголовками запроса. При необходимости вы можете полностью заменить все заголовки, используя метод `replaceHeaders`:
 
@@ -179,79 +209,99 @@ $response = Http::withHeaders([
 
 Вы можете указать данные **basic** и **digest** аутентификации, используя методы `withBasicAuth` и `withDigestAuth`, соответственно:
 
-    // Basic HTTP-аутентификация...
-    $response = Http::withBasicAuth('taylor@laravel.com', 'secret')->post(/* ... */);
+```php
+// Basic HTTP-аутентификация...
+$response = Http::withBasicAuth('taylor@laravel.com', 'secret')->post(/* ... */);
 
-    // Digest HTTP-аутентификациия...
-    $response = Http::withDigestAuth('taylor@laravel.com', 'secret')->post(/* ... */);
+// Digest HTTP-аутентификациия...
+$response = Http::withDigestAuth('taylor@laravel.com', 'secret')->post(/* ... */);
+```
 
 <a name="bearer-tokens"></a>
 #### Токены Bearer
 
 Если вы хотите добавить токен в заголовок `Authorization` запроса, то используйте метод `withToken`:
 
-    $response = Http::withToken('token')->post(/* ... */);
+```php
+$response = Http::withToken('token')->post(/* ... */);
+```
 
 <a name="timeout"></a>
 ### Время ожидания
 
 Метод `timeout` используется для указания максимального количества секунд ожидания ответа. По умолчанию время ожидания HTTP-клиента истекает через 30 секунд::
 
-    $response = Http::timeout(3)->get(/* ... */);
+```php
+$response = Http::timeout(3)->get(/* ... */);
+```
 
 Если указанный тайм-аут превышен, то будет выброшено исключение `Illuminate\Http\Client\ConnectionException`.
 
 Вы можете указать максимальное количество секунд ожидания при попытке подключения к серверу, используя метод `connectTimeout`:
 
-    $response = Http::connectTimeout(3)->get(/* ... */);
+```php
+$response = Http::connectTimeout(3)->get(/* ... */);
+```
 
 <a name="retries"></a>
 ### Повторные попытки
 
 Если вы хотите, чтобы HTTP-клиент автоматически повторял запрос при возникновении ошибки клиента или сервера, то используйте метод `retry`. Метод `retry` принимает максимальное количество попыток выполнения запроса и количество миллисекунд, которые Laravel должен ждать между попытками:
 
-    $response = Http::retry(3, 100)->post(/* ... */);
+```php
+$response = Http::retry(3, 100)->post(/* ... */);
+```
 
 Если вы хотите вручную вычислить количество миллисекунд, которые необходимо отвести на ожидание между попытками, вы можете передать замыкание в качестве второго аргумента методу `retry`:
 
-    use Exception;
+```php
+use Exception;
 
-    $response = Http::retry(3, function (int $attempt, Exception $exception) {
-        return $attempt * 100;
-    })->post(/* ... */);
+$response = Http::retry(3, function (int $attempt, Exception $exception) {
+    return $attempt * 100;
+})->post(/* ... */);
+```
 
 Для удобства вы также можете указать массив в качестве первого аргумента метода `retry`. Этот массив будет использоваться для определения того, сколько миллисекунд нужно ожидать между последующими попытками:
 
-    $response = Http::retry([100, 200])->post(/* ... */);
+```php
+$response = Http::retry([100, 200])->post(/* ... */);
+```
 
 При необходимости вы можете передать третий аргумент методу `retry`. Третий аргумент должен быть callable-функцией, которая определяет, следует ли на самом деле попытаться повторить попытку. Например, вы можете захотеть повторить запрос только в том случае, если начальный запрос обнаруживает исключение `ConnectionException`:
 
-    use Exception;
-    use Illuminate\Http\Client\PendingRequest;
+```php
+use Exception;
+use Illuminate\Http\Client\PendingRequest;
 
-    $response = Http::retry(3, 100, function (Exception $exception, PendingRequest $request) {
-        return $exception instanceof ConnectionException;
-    })->post(/* ... */);
+$response = Http::retry(3, 100, function (Exception $exception, PendingRequest $request) {
+    return $exception instanceof ConnectionException;
+})->post(/* ... */);
+```
 
 Если попытка запроса завершится неудачей, вы можете захотеть внести изменение в запрос перед новой попыткой. Это можно сделать, изменив аргумент запроса, предоставленный вашему вызываемому объекту метода `retry`. Например, вы можете попробовать запрос с новым токеном авторизации, если первая попытка завершилась ошибкой аутентификации:
 
-    use Exception;
-    use Illuminate\Http\Client\PendingRequest;
-    use Illuminate\Http\Client\RequestException;
+```php
+use Exception;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\RequestException;
 
-    $response = Http::withToken($this->getToken())->retry(2, 0, function (Exception $exception, PendingRequest $request) {
-        if (! $exception instanceof RequestException || $exception->response->status() !== 401) {
-            return false;
-        }
+$response = Http::withToken($this->getToken())->retry(2, 0, function (Exception $exception, PendingRequest $request) {
+    if (! $exception instanceof RequestException || $exception->response->status() !== 401) {
+        return false;
+    }
 
-        $request->withToken($this->getNewToken());
+    $request->withToken($this->getNewToken());
 
-        return true;
-    })->post(/* ... */);
+    return true;
+})->post(/* ... */);
+```
 
 Если все запросы окажутся неуспешными, то будет выброшено исключение `Illuminate\Http\Client\RequestException`. Если вы хотите отключить это поведение, вы можете предоставить аргумент `throw` со значением `false`. При отключении, после всех попыток повтора, будет возвращен последний полученный клиентом ответ:
 
-    $response = Http::retry(3, 100, throw: false)->post(/* ... */);
+```php
+$response = Http::retry(3, 100, throw: false)->post(/* ... */);
+```
 
 > [!WARNING]
 > Если все запросы завершаются неудачей из-за проблем с подключением, исключение `Illuminate\Http\Client\ConnectionException` все равно будет сгенерировано, даже если аргумент `throw` установлен в `false`.
@@ -261,106 +311,126 @@ $response = Http::withHeaders([
 
 В отличие от поведения Guzzle по умолчанию, обертка HTTP-клиента Laravel не генерирует исключений при возникновении ошибок клиента или сервера (ответы `400` и `500`, соответственно). Вы можете определить, была ли возвращена одна из этих ошибок, используя методы `successful`, `clientError`, или `serverError`:
 
-    // Определить, имеет ли ответ код состояния >= 200 and < 300...
-    $response->successful();
+```php
+// Определить, имеет ли ответ код состояния >= 200 and < 300...
+$response->successful();
 
-    // Определить, имеет ли ответ код состояния >= 400...
-    $response->failed();
+// Определить, имеет ли ответ код состояния >= 400...
+$response->failed();
 
-    // Определить, имеет ли ответ код состояния 400 ...
-    $response->clientError();
+// Определить, имеет ли ответ код состояния 400 ...
+$response->clientError();
 
-    // Определить, имеет ли ответ код состояния 500 ...
-    $response->serverError();
+// Определить, имеет ли ответ код состояния 500 ...
+$response->serverError();
 
-    // Немедленно выполнить данную функцию обратного вызова, если произошла ошибка клиента или сервера...
-    $response->onError(callable $callback);
+// Немедленно выполнить данную функцию обратного вызова, если произошла ошибка клиента или сервера...
+$response->onError(callable $callback);
+```
 
 <a name="throwing-exceptions"></a>
 #### Выброс исключений
 
 Если у вас есть экземпляр ответа и вы хотите выбросить исключение `Illuminate\Http\Client\RequestException`, если код состояния ответа указывает на ошибку клиента или сервера, используйте методы `throw` или `throwIf`:
 
-    use Illuminate\Http\Client\Response;
+```php
+use Illuminate\Http\Client\Response;
 
-    $response = Http::post(/* ... */);
+$response = Http::post(/* ... */);
 
-    // Выбросить исключение, если произошла ошибка клиента или сервера...
-    $response->throw();
+// Выбросить исключение, если произошла ошибка клиента или сервера...
+$response->throw();
 
-    // Выбросить исключение, если произошла ошибка и данное условие истинно...
-    $response->throwIf($condition);
+// Выбросить исключение, если произошла ошибка и данное условие истинно...
+$response->throwIf($condition);
 
-    // Выбросить исключение, если произошла ошибка и данное замыкание принимает значение true...
-    $response->throwIf(fn (Response $response) => true);
+// Выбросить исключение, если произошла ошибка и данное замыкание принимает значение true...
+$response->throwIf(fn (Response $response) => true);
 
-    // Выбросить исключение, если произошла ошибка и заданное условие равно false...
-    $response->throwUnless($condition);
+// Выбросить исключение, если произошла ошибка и заданное условие равно false...
+$response->throwUnless($condition);
 
-    // Выбросить исключение, если произошла ошибка и данное замыкание принимает значение false...
-    $response->throwUnless(fn (Response $response) => false);
+// Выбросить исключение, если произошла ошибка и данное замыкание принимает значение false...
+$response->throwUnless(fn (Response $response) => false);
 
-    // Выбросить исключение, если ответ имеет определенный код состояния...
-    $response->throwIfStatus(403);
+// Выбросить исключение, если ответ имеет определенный код состояния...
+$response->throwIfStatus(403);
 
-    // Выбросить исключение, если только ответ не содержит определенного кода состояния...
-    $response->throwUnlessStatus(200);
+// Выбросить исключение, если только ответ не содержит определенного кода состояния...
+$response->throwUnlessStatus(200);
 
-    return $response['user']['id'];
+return $response['user']['id'];
+```
 
 Экземпляр `Illuminate\Http\Client\RequestException` имеет свойство `$response`, которое позволит вам проверить возвращенный ответ.
 
 Метод `throw` возвращает экземпляр ответа, если ошибки не произошло, что позволяет вам использовать цепочку вызовов после метода `throw`:
 
-    return Http::post(/* ... */)->throw()->json();
+```php
+return Http::post(/* ... */)->throw()->json();
+```
 
 Если вы хотите выполнить некоторую дополнительную логику до того, как будет сгенерировано исключение, вы можете передать замыкание методу `throw`. Исключение будет сгенерировано автоматически после вызова замыкания, поэтому вам не нужно повторно генерировать исключение изнутри замыкания:
 
-    use Illuminate\Http\Client\Response;
-    use Illuminate\Http\Client\RequestException;
+```php
+use Illuminate\Http\Client\Response;
+use Illuminate\Http\Client\RequestException;
 
-    return Http::post(/* ... */)->throw(function (Response $response, RequestException $e) {
-        // ...
-    })->json();
+return Http::post(/* ... */)->throw(function (Response $response, RequestException $e) {
+    // ...
+})->json();
+```
 
 По умолчанию сообщения `RequestException` усекаются до 120 символов при логировании или в сообщении об ошибке. Чтобы настроить или отключить это поведение, вы можете использовать методы `truncateRequestExceptionsAt` и `dontTruncateRequestExceptions` при настройке поведения обработки исключений вашего приложения в файле `bootstrap/app.php`:
 
-    ->withExceptions(function (Exceptions $exceptions) {
-        // Truncate request exception messages to 240 characters...
-        $exceptions->truncateRequestExceptionsAt(240);
+```php
+->withExceptions(function (Exceptions $exceptions) {
+    // Truncate request exception messages to 240 characters...
+    $exceptions->truncateRequestExceptionsAt(240);
 
-        // Disable request exception message truncation...
-        $exceptions->dontTruncateRequestExceptions();
-    })
+    // Disable request exception message truncation...
+    $exceptions->dontTruncateRequestExceptions();
+})
+```
+
+В качестве альтернативы вы можете настроить поведение усечения исключений для каждого запроса, используя метод `truncateExceptionsAt`:
+
+```php
+return Http::truncateExceptionsAt(240)->post(/* ... */);
+```
 
 <a name="guzzle-middleware"></a>
 ### Guzzle Middleware
 
 Поскольку HTTP-клиент Laravel работает на основе Guzzle, вы можете воспользоваться [Guzzle Middleware](https://docs.guzzlephp.org/en/stable/handlers-and-middleware.html) для изменения исходящего запроса или анализа входящего ответа. Для изменения исходящего запроса зарегистрируйте middleware Guzzle с помощью метода `withRequestMiddleware`:
 
-    use Illuminate\Support\Facades\Http;
-    use Psr\Http\Message\RequestInterface;
+```php
+use Illuminate\Support\Facades\Http;
+use Psr\Http\Message\RequestInterface;
 
-    $response = Http::withRequestMiddleware(
-        function (RequestInterface $request) {
-            return $request->withHeader('X-Example', 'Value');
-        }
-    )->get('http://example.com');
+$response = Http::withRequestMiddleware(
+    function (RequestInterface $request) {
+        return $request->withHeader('X-Example', 'Value');
+    }
+)->get('http://example.com');
+```
 
 Точно так же вы можете осмотреть входящий HTTP-ответ, зарегистрировав middleware с помощью метода `withResponseMiddleware`:
 
-    use Illuminate\Support\Facades\Http;
-    use Psr\Http\Message\ResponseInterface;
+```php
+use Illuminate\Support\Facades\Http;
+use Psr\Http\Message\ResponseInterface;
 
-    $response = Http::withResponseMiddleware(
-        function (ResponseInterface $response) {
-            $header = $response->getHeader('X-Example');
+$response = Http::withResponseMiddleware(
+    function (ResponseInterface $response) {
+        $header = $response->getHeader('X-Example');
 
-            // ...
+        // ...
 
-            return $response;
-        }
-    )->get('http://example.com');
+        return $response;
+    }
+)->get('http://example.com');
+```
 
 <a name="global-middleware"></a>
 #### Глобальное Middleware
@@ -384,9 +454,11 @@ Http::globalResponseMiddleware(fn ($response) => $response->withHeader(
 
 Вы можете указать дополнительные [параметры запроса Guzzle](http://docs.guzzlephp.org/en/stable/request-options.html) для исходящего запроса, используя метод `withOptions`. Метод `withOptions` принимает массив пар ключ/значение:
 
-    $response = Http::withOptions([
-        'debug' => true,
-    ])->get('http://example.com/users');
+```php
+$response = Http::withOptions([
+    'debug' => true,
+])->get('http://example.com/users');
+```
 
 <a name="global-options"></a>
 #### Глобальные параметры
@@ -414,31 +486,35 @@ public function boot(): void
 
 Вы можете сделать это с помощью метода `pool`. Метод `pool` принимает функцию с аргументом `Illuminate\Http\Client\Pool`, при помощи которого вы можете добавлять запросы в пул запросов для отправки:
 
-    use Illuminate\Http\Client\Pool;
-    use Illuminate\Support\Facades\Http;
+```php
+use Illuminate\Http\Client\Pool;
+use Illuminate\Support\Facades\Http;
 
-    $responses = Http::pool(fn (Pool $pool) => [
-        $pool->get('http://localhost/first'),
-        $pool->get('http://localhost/second'),
-        $pool->get('http://localhost/third'),
-    ]);
+$responses = Http::pool(fn (Pool $pool) => [
+    $pool->get('http://localhost/first'),
+    $pool->get('http://localhost/second'),
+    $pool->get('http://localhost/third'),
+]);
 
-    return $responses[0]->ok() &&
-           $responses[1]->ok() &&
-           $responses[2]->ok();
+return $responses[0]->ok() &&
+       $responses[1]->ok() &&
+       $responses[2]->ok();
+```
 
 Как видите, к каждому экземпляру ответа можно получить доступ в том порядке, в котором он был добавлен в пул. При желании вы можете назвать запросы с помощью метода `as`, что позволит вам получить доступ к соответствующим ответам по имени:
 
-    use Illuminate\Http\Client\Pool;
-    use Illuminate\Support\Facades\Http;
+```php
+use Illuminate\Http\Client\Pool;
+use Illuminate\Support\Facades\Http;
 
-    $responses = Http::pool(fn (Pool $pool) => [
-        $pool->as('first')->get('http://localhost/first'),
-        $pool->as('second')->get('http://localhost/second'),
-        $pool->as('third')->get('http://localhost/third'),
-    ]);
+$responses = Http::pool(fn (Pool $pool) => [
+    $pool->as('first')->get('http://localhost/first'),
+    $pool->as('second')->get('http://localhost/second'),
+    $pool->as('third')->get('http://localhost/third'),
+]);
 
-    return $responses['first']->ok();
+return $responses['first']->ok();
+```
 
 <a name="customizing-concurrent-requests"></a>
 #### Customizing Concurrent Requests
@@ -497,110 +573,117 @@ $response = Http::github()->get('/');
 
 Например, чтобы дать указание HTTP-клиенту возвращать пустые ответы с кодом состояния `200` на каждый запрос, вы можете вызвать метод `fake` без аргументов:
 
-    use Illuminate\Support\Facades\Http;
+```php
+use Illuminate\Support\Facades\Http;
 
-    Http::fake();
+Http::fake();
 
-    $response = Http::post(/* ... */);
+$response = Http::post(/* ... */);
+```
 
 <a name="faking-specific-urls"></a>
 #### Фальсификация конкретных URL
 
 В качестве альтернативы вы можете передать массив методу `fake`. Ключи массива должны представлять шаблоны URL, которые вы хотите подделать, и связанные с ними ответы. Допускается использование метасимвола подстановки `*`. Любые запросы к URL-адресам, которые не были сфальсифицированы, будут выполнены фактически. Вы можете использовать метод `response` фасада `Http` для создания заглушек / фиктивных ответов для этих адресов:
 
-    Http::fake([
-        // Заглушка JSON ответа для адресов GitHub...
-        'github.com/*' => Http::response(['foo' => 'bar'], 200, $headers),
+```php
+Http::fake([
+    // Заглушка JSON ответа для адресов GitHub...
+    'github.com/*' => Http::response(['foo' => 'bar'], 200, $headers),
 
-        // Заглушка строкового ответа для адресов Google...
-        'google.com/*' => Http::response('Hello World', 200, $headers),
-    ]);
+    // Заглушка строкового ответа для адресов Google...
+    'google.com/*' => Http::response('Hello World', 200, $headers),
+]);
+```
 
 Если вы хотите указать шаблон резервного URL-адреса, который будет заглушать все не сопоставленные URL-адреса, то используйте символ `*`:
 
-    Http::fake([
-        // Заглушка JSON ответа для адресов GitHub...
-        'github.com/*' => Http::response(['foo' => 'bar'], 200, ['Headers']),
+```php
+Http::fake([
+    // Заглушка JSON ответа для адресов GitHub...
+    'github.com/*' => Http::response(['foo' => 'bar'], 200, ['Headers']),
 
-        // Заглушка строкового ответа для всех остальных адресов...
-        '*' => Http::response('Hello World', 200, ['Headers']),
-    ]);
+    // Заглушка строкового ответа для всех остальных адресов...
+    '*' => Http::response('Hello World', 200, ['Headers']),
+]);
+```
 
 Для удобства можно сгенерировать простую строку, JSON и пустые ответы, указав в качестве ответа строку, массив или целое число:
 
-    Http::fake([
-        'google.com/*' => 'Hello World',
-        'github.com/*' => ['foo' => 'bar'],
-        'chatgpt.com/*' => 200,
-    ]);
+```php
+Http::fake([
+    'google.com/*' => 'Hello World',
+    'github.com/*' => ['foo' => 'bar'],
+    'chatgpt.com/*' => 200,
+]);
+```
 
 <a name="faking-connection-exceptions"></a>
-#### Имитация исключений соединения
+#### Имитация исключений
 
 Иногда вам может потребоваться проверить поведение вашего приложения, если HTTP-клиент обнаруживает исключение `Illuminate\Http\Client\ConnectionException` при попытке сделать запрос. Вы можете указать HTTP-клиенту генерировать исключение соединения, используя метод `failedConnection`:
 
-    Http::fake([
-        'github.com/*' => Http::failedConnection(),
-    ]);
+```php
+Http::fake([
+    'github.com/*' => Http::failedConnection(),
+]);
+```
+
+Чтобы проверить поведение вашего приложения при возникновении исключения `Illuminate\Http\Client\RequestException`, вы можете использовать метод `failedRequest`:
+
+```php
+Http::fake([
+    'github.com/*' => Http::failedRequest(['code' => 'not_found'], 404),
+]);
+```
 
 <a name="faking-response-sequences"></a>
 #### Фальсификация серии ответов
 
 По желанию можно указать, что один URL должен возвращать серию фиктивных ответов в определенном порядке. Вы можете сделать это, используя метод `Http::sequence` для составления ответов:
 
-    Http::fake([
-        // Заглушка серии ответов для адресов GitHub...
-        'github.com/*' => Http::sequence()
-                                ->push('Hello World', 200)
-                                ->push(['foo' => 'bar'], 200)
-                                ->pushStatus(404),
-    ]);
+```php
+Http::fake([
+    // Заглушка серии ответов для адресов GitHub...
+    'github.com/*' => Http::sequence()
+        ->push('Hello World', 200)
+        ->push(['foo' => 'bar'], 200)
+        ->pushStatus(404),
+]);
+```
 
 Когда все ответы в этой последовательности будут использованы, любые дальнейшие запросы приведут к выбросу исключения. Если вы хотите указать ответ по умолчанию, который должен возвращаться, когда последовательность пуста, то используйте метод `whenEmpty`:
 
-    Http::fake([
-        // Заглушка серии ответов для адресов GitHub...
-        'github.com/*' => Http::sequence()
-                                ->push('Hello World', 200)
-                                ->push(['foo' => 'bar'], 200)
-                                ->whenEmpty(Http::response()),
-    ]);
+```php
+Http::fake([
+    // Заглушка серии ответов для адресов GitHub...
+    'github.com/*' => Http::sequence()
+        ->push('Hello World', 200)
+        ->push(['foo' => 'bar'], 200)
+        ->whenEmpty(Http::response()),
+]);
+```
 
 Если вы хотите подделать серию ответов без указания конкретного шаблона URL, который следует подделать, то используйте метод `Http::fakeSequence`:
 
-    Http::fakeSequence()
-            ->push('Hello World', 200)
-            ->whenEmpty(Http::response());
+```php
+Http::fakeSequence()
+    ->push('Hello World', 200)
+    ->whenEmpty(Http::response());
+```
 
 <a name="fake-callback"></a>
 #### Анонимные фальсификаторы
 
 Если вам требуется более сложная логика для определения того, какие ответы возвращать для определенных адресов, то вы можете передать замыкание методу `fake`. Это замыкание получит экземпляр `Illuminate\Http\Client\Request` и должно вернуть экземпляр ответа. В замыкании вы можете выполнить любую логику, необходимую для определения типа ответа, который нужно вернуть:
 
-    use Illuminate\Http\Client\Request;
+```php
+use Illuminate\Http\Client\Request;
 
-    Http::fake(function (Request $request) {
-        return Http::response('Hello World', 200);
-    });
-
-<a name="preventing-stray-requests"></a>
-### Предотвращение случайных запросов
-
-Если вы хотите удостовериться, что все запросы, отправленные через HTTP-клиент в рамках вашего отдельного теста или всего тестового набора, были поддельными, вы можете вызвать метод `preventStrayRequests`. После вызова этого метода любые запросы, которые не имеют соответствующего поддельного ответа, вызовут исключение, вместо того чтобы делать фактический HTTP-запрос:
-
-    use Illuminate\Support\Facades\Http;
-
-    Http::preventStrayRequests();
-
-    Http::fake([
-        'github.com/*' => Http::response('ok'),
-    ]);
-
-    // An "ok" response is returned...
-    Http::get('https://github.com/laravel/framework');
-
-    // An exception is thrown...
-    Http::get('https://laravel.com');
+Http::fake(function (Request $request) {
+    return Http::response('Hello World', 200);
+});
+```
 
 <a name="inspecting-requests"></a>
 ### Инспектирование запросов
@@ -609,52 +692,60 @@ $response = Http::github()->get('/');
 
 Метод `assertSent` принимает замыкание, которому будет передан экземпляр `Illuminate\Http\Client\Request` и, которое должно возвращать значение логического типа, указывающее, соответствует ли запрос вашим ожиданиям. Для успешного прохождения теста должен быть отправлен хотя бы один запрос, соответствующий указанным ожиданиям:
 
-    use Illuminate\Http\Client\Request;
-    use Illuminate\Support\Facades\Http;
+```php
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 
-    Http::fake();
+Http::fake();
 
-    Http::withHeaders([
-        'X-First' => 'foo',
-    ])->post('http://example.com/users', [
-        'name' => 'Taylor',
-        'role' => 'Developer',
-    ]);
+Http::withHeaders([
+    'X-First' => 'foo',
+])->post('http://example.com/users', [
+    'name' => 'Taylor',
+    'role' => 'Developer',
+]);
 
-    Http::assertSent(function (Request $request) {
-        return $request->hasHeader('X-First', 'foo') &&
-               $request->url() == 'http://example.com/users' &&
-               $request['name'] == 'Taylor' &&
-               $request['role'] == 'Developer';
-    });
+Http::assertSent(function (Request $request) {
+    return $request->hasHeader('X-First', 'foo') &&
+           $request->url() == 'http://example.com/users' &&
+           $request['name'] == 'Taylor' &&
+           $request['role'] == 'Developer';
+});
+```
 
 При необходимости вы можете утверждать, что конкретный запрос не был отправлен с помощью метода `assertNotSent`:
 
-    use Illuminate\Http\Client\Request;
-    use Illuminate\Support\Facades\Http;
+```php
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 
-    Http::fake();
+Http::fake();
 
-    Http::post('http://example.com/users', [
-        'name' => 'Taylor',
-        'role' => 'Developer',
-    ]);
+Http::post('http://example.com/users', [
+    'name' => 'Taylor',
+    'role' => 'Developer',
+]);
 
-    Http::assertNotSent(function (Request $request) {
-        return $request->url() === 'http://example.com/posts';
-    });
+Http::assertNotSent(function (Request $request) {
+    return $request->url() === 'http://example.com/posts';
+});
+```
 
 Вы можете использовать метод `assertSentCount`, чтобы определить, сколько запросов было отправлено во время теста:
 
-    Http::fake();
+```php
+Http::fake();
 
-    Http::assertSentCount(5);
+Http::assertSentCount(5);
+```
 
 Или используйте метод `assertNothingSent`, чтобы утверждать, что во время теста не было отправлено никаких запросов:
 
-    Http::fake();
+```php
+Http::fake();
 
-    Http::assertNothingSent();
+Http::assertNothingSent();
+```
 
 <a name="recording-requests-and-responses"></a>
 #### Запись Запросов/Ответов
@@ -695,6 +786,27 @@ $recorded = Http::recorded(function (Request $request, Response $response) {
 });
 ```
 
+<a name="preventing-stray-requests"></a>
+### Предотвращение случайных запросов
+
+Если вы хотите удостовериться, что все запросы, отправленные через HTTP-клиент в рамках вашего отдельного теста или всего тестового набора, были поддельными, вы можете вызвать метод `preventStrayRequests`. После вызова этого метода любые запросы, которые не имеют соответствующего поддельного ответа, вызовут исключение, вместо того чтобы делать фактический HTTP-запрос:
+
+```php
+use Illuminate\Support\Facades\Http;
+
+Http::preventStrayRequests();
+
+Http::fake([
+    'github.com/*' => Http::response('ok'),
+]);
+
+// An "ok" response is returned...
+Http::get('https://github.com/laravel/framework');
+
+// An exception is thrown...
+Http::get('https://laravel.com');
+```
+
 <a name="events"></a>
 ## События
 
@@ -702,15 +814,17 @@ Laravel запускает три события в процессе отпра�
 
 События `RequestSending` и `ConnectionFailed` содержат общедоступное свойство `$request`, которое вы можете использовать для проверки экземпляра `Illuminate\Http\Client\Request`. Аналогично, событие `ResponseReceived` содержит свойство `$request`, а также свойство `$response`, которое можно использовать для проверки экземпляра `Illuminate\Http\Client\Response`. Вы можете создать [прослушиватели событий](/docs/{{version}}/events) для этих событий в вашем приложении:
 
-    use Illuminate\Http\Client\Events\RequestSending;
+```php
+use Illuminate\Http\Client\Events\RequestSending;
 
-    class LogRequest
+class LogRequest
+{
+    /**
+     * Handle the event.
+     */
+    public function handle(RequestSending $event): void
     {
-        /**
-         * Handle the given event.
-         */
-        public function handle(RequestSending $event): void
-        {
-            // $event->request ...
-        }
+        // $event->request ...
     }
+}
+```
