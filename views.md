@@ -1,5 +1,5 @@
 ---
-git: 7bc9d62c85d5195d61e62e2d1ae403afa511c80d
+git: e5abed8708ebe7e51820e3062629dbec5407607c
 ---
 
 # HTML-шаблоны
@@ -23,9 +23,11 @@ git: 7bc9d62c85d5195d61e62e2d1ae403afa511c80d
 
 Поскольку этот шаблон сохранен в `resources/views/greeting.blade.php`, мы можем вернуть его, используя глобальный помощник `view`, например:
 
-    Route::get('/', function () {
-        return view('greeting', ['name' => 'James']);
-    });
+```php
+Route::get('/', function () {
+    return view('greeting', ['name' => 'James']);
+});
+```
 
 > [!NOTE]
 > Ищете дополнительную информацию о том, как писать шаблоны Blade? Ознакомьтесь с полной [документацией по Blade](/docs/{{version}}/blade), чтобы начать работу.
@@ -35,7 +37,7 @@ git: 7bc9d62c85d5195d61e62e2d1ae403afa511c80d
 
 Вместо написания фронтенд-шаблонов на PHP с использованием Blade многие разработчики предпочитают писать свои шаблоны с использованием React или Vue. Laravel делает это легким благодаря [Inertia](https://inertiajs.com/), библиотеке, которая упрощает связь вашего фронтенда на React или Vue с вашим бэкендом Laravel, избегая типичных сложностей, связанных с созданием SPA (Single Page Application).
 
-Наши стартовые наборы Breeze и Jetstream [starter kits](/docs/{{version}}/starter-kits) предоставляют отличную отправную точку для вашего следующего приложения Laravel, работающего на Inertia. Кроме того, [Laravel Bootcamp](https://bootcamp.laravel.com) предоставляет полное демонстрационное руководство по созданию приложения Laravel, работающего на Inertia, включая примеры с использованием Vue и React.
+Наши [стартовые наборы приложений React и Vue] (/docs/{{version}}/starter-kits) дают вам отличную отправную точку для вашего следующего приложения Laravel на базе Inertia.
 
 <a name="creating-and-rendering-views"></a>
 ## Создание и отрисовка шаблонов
@@ -50,15 +52,19 @@ php artisan make:view greeting
 
 После того как вы создали шаблон, вы можете вернуть его из маршрута или контроллера вашего приложения, используя глобальный помощник `view`:
 
-    Route::get('/', function () {
-        return view('greeting', ['name' => 'James']);
-    });
+```php
+Route::get('/', function () {
+    return view('greeting', ['name' => 'James']);
+});
+```
 
 Шаблон также могут быть возвращены с помощью фасада `View`:
 
-    use Illuminate\Support\Facades\View;
+```php
+use Illuminate\Support\Facades\View;
 
-    return View::make('greeting', ['name' => 'James']);
+return View::make('greeting', ['name' => 'James']);
+```
 
 Как видно, первый аргумент, переданный помощнику `view`, соответствует имени файла шаблона в каталоге `resources/views`. Второй аргумент – это массив данных, которые должны быть доступны в шаблоне. В этом случае мы передаем переменную `name`, которая будет выведена в шаблоне с использованием [синтаксиса Blade](/docs/{{version}}/blade).
 
@@ -67,7 +73,9 @@ php artisan make:view greeting
 
 Шаблоны также могут быть вложены в подкаталоги каталога `resources/views`. «Точечная нотация» используется для указания вложенности шаблона. Например, если ваш шаблон хранится в `resources/views/admin/profile.blade.php`, то вы можете вернуть его из маршрута / контроллера вашего приложения следующим образом:
 
-    return view('admin.profile', $data);
+```php
+return view('admin.profile', $data);
+```
 
 > [!WARNING]
 > Имена каталогов шаблонов не должны содержать символа `.`.
@@ -77,65 +85,75 @@ php artisan make:view greeting
 
 Используя метод `first` фасада `View`, вы можете отобразить первый шаблон, который существует в переданном массиве шаблонов. Это может быть полезно, если ваше приложение или пакет позволяют настраивать или перезаписывать шаблоны:
 
-    use Illuminate\Support\Facades\View;
+```php
+use Illuminate\Support\Facades\View;
 
-    return View::first(['custom.admin', 'admin'], $data);
+return View::first(['custom.admin', 'admin'], $data);
+```
 
 <a name="determining-if-a-view-exists"></a>
 ### Определение наличия шаблона
 
 Если вам нужно определить, существует ли шаблон, вы можете использовать фасад `View`. Метод `exists` вернет `true`, если он существует:
 
-    use Illuminate\Support\Facades\View;
+```php
+use Illuminate\Support\Facades\View;
 
-    if (View::exists('admin.profile')) {
-        // ...
-    }
+if (View::exists('admin.profile')) {
+    // ...
+}
+```
 
 <a name="passing-data-to-views"></a>
 ## Передача данных шаблону
 
 Как вы видели в предыдущих примерах, вы можете передать массив данных шаблонам, чтобы сделать эти данные доступными для них:
 
-    return view('greetings', ['name' => 'Victoria']);
+```php
+return view('greetings', ['name' => 'Victoria']);
+```
 
 При передаче информации таким образом данные должны быть массивом с парами ключ / значение. После предоставления данных в шаблон вы можете получить доступ к каждому значению, используя ключи данных, схожее с `<?php echo $name; ?>`.
 
 В качестве альтернативы передаче полного массива данных вспомогательной функции `view` вы можете использовать метод `with` для добавления некоторых данных в шаблон. Метод `with` возвращает экземпляр объекта представления, так что вы можете продолжить связывание методов перед возвратом шаблона:
 
-    return view('greeting')
-                ->with('name', 'Victoria')
-                ->with('occupation', 'Astronaut');
+```php
+return view('greeting')
+    ->with('name', 'Victoria')
+    ->with('occupation', 'Astronaut');
+```
 
 <a name="sharing-data-with-all-views"></a>
 ### Общедоступные данные для всех шаблонов
 
 Иногда требуется сделать данные общедоступными для всех шаблонов, отображаемыми вашим приложением. Вы можете сделать это, используя метод `share` фасада `View`. Как правило, вызов метода `share` осуществляется в методе `boot` поставщика служб. Вы можете добавить их в класс `App\Providers\AppServiceProvider` или создать отдельного поставщика для их размещения:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\View;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Регистрация любых служб приложения.
+     */
+    public function register(): void
     {
-        /**
-         * Регистрация любых служб приложения.
-         */
-        public function register(): void
-        {
-            // ...
-        }
-
-        /**
-         * Загрузка любых служб приложения.
-         */
-        public function boot(): void
-        {
-            View::share('key', 'value');
-        }
+        // ...
     }
+
+    /**
+     * Загрузка любых служб приложения.
+     */
+    public function boot(): void
+    {
+        View::share('key', 'value');
+    }
+}
+```
 
 <a name="view-composers"></a>
 ## Компоновщики шаблонов
@@ -146,70 +164,74 @@ php artisan make:view greeting
 
 Мы будем использовать метод `composer` фасада `View`, чтобы зарегистрировать компоновщик. Laravel по умолчанию не содержит каталог для классов компоновщиков, поэтому вы можете организовать их, как хотите. Например, вы можете создать каталог `app/View/Composers` для размещения всех компоновщиков вашего приложения:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use App\View\Composers\ProfileComposer;
-    use Illuminate\Support\Facades;
-    use Illuminate\Support\ServiceProvider;
-    use Illuminate\View\View;
+use App\View\Composers\ProfileComposer;
+use Illuminate\Support\Facades;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Регистрация любых служб приложения.
+     */
+    public function register(): void
     {
-        /**
-         * Регистрация любых служб приложения.
-         */
-        public function register(): void
-        {
-            // ...
-        }
-
-        /**
-         * Загрузка любых служб приложения.
-         */
-        public function boot(): void
-        {
-            // Использование компоновщиков на основе классов...
-            Facades\View::composer('profile', ProfileComposer::class);
-
-            // Использование анонимных компоновщиков...
-            Facades\View::composer('welcome', function (View $view) {
-                // ...
-            });
-
-            Facades\View::composer('dashboard', function (View $view) {
-                // ...
-            });
-        }
+        // ...
     }
+
+    /**
+     * Загрузка любых служб приложения.
+     */
+    public function boot(): void
+    {
+        // Использование компоновщиков на основе классов...
+        Facades\View::composer('profile', ProfileComposer::class);
+
+        // Использование анонимных компоновщиков...
+        Facades\View::composer('welcome', function (View $view) {
+            // ...
+        });
+
+        Facades\View::composer('dashboard', function (View $view) {
+            // ...
+        });
+    }
+}
+```
 
 Теперь, когда мы зарегистрировали компоновщик, метод `compose` класса `App\View\Composers\ProfileComposer` будет выполняться каждый раз, когда отрисовывается шаблон профиля. Давайте посмотрим на пример класса компоновщика:
 
-    <?php
+```php
+<?php
 
-    namespace App\View\Composers;
+namespace App\View\Composers;
 
-    use App\Repositories\UserRepository;
-    use Illuminate\View\View;
+use App\Repositories\UserRepository;
+use Illuminate\View\View;
 
-    class ProfileComposer
+class ProfileComposer
+{
+    /**
+     * Создать нового компоновщика профиля.
+     */
+    public function __construct(
+        protected UserRepository $users,
+    ) {}
+
+    /**
+     * Привязать данные к шаблону.
+     */
+    public function compose(View $view): void
     {
-        /**
-         * Создать нового компоновщика профиля.
-         */
-        public function __construct(
-            protected UserRepository $users,
-        ) {}
-
-        /**
-         * Привязать данные к шаблону.
-         */
-        public function compose(View $view): void
-        {
-            $view->with('count', $this->users->count());
-        }
+        $view->with('count', $this->users->count());
     }
+}
+```
 
 Как видите, все компоновщики внедряются через [контейнер служб](/docs/{{version}}/container), поэтому вы можете указать любые зависимости, которые вам нужны, в конструкторе компоновщика.
 
@@ -218,32 +240,38 @@ php artisan make:view greeting
 
 Вы можете связать компоновщика с несколькими шаблонами одновременно, передав массив шаблонов в качестве первого аргумента методу `composer`:
 
-    use App\Views\Composers\MultiComposer;
-    use Illuminate\Support\Facades\View;
+```php
+use App\Views\Composers\MultiComposer;
+use Illuminate\Support\Facades\View;
 
-    View::composer(
-        ['profile', 'dashboard'],
-        MultiComposer::class
-    );
+View::composer(
+    ['profile', 'dashboard'],
+    MultiComposer::class
+);
+```
 
 Допускается использование метасимвола подстановки `*`, что позволит вам прикрепить компоновщик ко всем шаблонам:
 
-    use Illuminate\Support\Facades;
-    use Illuminate\View\View;
+```php
+use Illuminate\Support\Facades;
+use Illuminate\View\View;
 
-    Facades\View::composer('*', function (View $view) {
-        // ...
-    });
+Facades\View::composer('*', function (View $view) {
+    // ...
+});
+```
 
 <a name="view-creators"></a>
 ### Создатели шаблонов
 
 «Создатели» шаблонов очень похожи на компоновщиков; но, они выполняются сразу после создания экземпляра, а не ожидают отрисовки шаблона. Чтобы зарегистрировать создателя шаблона, используйте метод `creator`:
 
-    use App\View\Creators\ProfileCreator;
-    use Illuminate\Support\Facades\View;
+```php
+use App\View\Creators\ProfileCreator;
+use Illuminate\Support\Facades\View;
 
-    View::creator('profile', ProfileCreator::class);
+View::creator('profile', ProfileCreator::class);
+```
 
 <a name="optimizing-views"></a>
 ## Оптимизация шаблонов
