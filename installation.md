@@ -1,5 +1,5 @@
 ---
-git: 8d3abb29451a366ac6a83f18e9b088e56c5def38
+git: fc95dc890bc4085979406a11aee71227205ca0fb
 ---
 
 # Установка
@@ -86,9 +86,11 @@ Laravel практически не требует настройки из ко�
 Вы также можете настроить некоторые дополнительные компоненты Laravel, такие как:
 
 <div class="content-list" markdown="1">
+
 - [Кэширование](/docs/{{version}}/cache#configuration)
 - [База данных](/docs/{{version}}/database#configuration)
 - [Сессия](/docs/{{version}}/session#configuration)
+
 </div>
 
 <a name="web-server-configuration"></a>
