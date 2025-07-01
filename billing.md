@@ -84,9 +84,11 @@ Laravel Cashier обеспечивает выразительный и гибк�
 Для многих операций реализация функций Cashier в Stripe и Braintree одинакова. Оба сервиса предоставляют возможность оплаты подписок банковскими картами, но Braintree также поддерживает оплату через PayPal. Однако, в Braintree нет некоторых возможностей, имеющихся в Stripe. При выборе между ними учитывайте следующее:
 
 <div class="content-list" markdown="1">
+
 - Braintree поддерживает PayPal, а Stripe - нет.
 - Braintree не поддерживает методы `increment` и `decrement` для подписок. Это ограничение Braintree, не Cashier.
 - Braintree не поддерживает скидки в процентах. Это ограничение Braintree, не Cashier.
+
 </div>
 
 #### Composer
