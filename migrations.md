@@ -1,5 +1,5 @@
 ---
-git: 18796f22fdbb32a6432e1bce92e36ceb9afb42c8
+git: b54903aeceb14699c10be1fae59da98b564f2980
 ---
 
 # База данных: Миграции
@@ -258,7 +258,6 @@ git: 18796f22fdbb32a6432e1bce92e36ceb9afb42c8
 `->unsigned()`  |  Делает столбцы `integer` беззнаковыми `UNSIGNED`
 `->virtualAs($expression)`  |  Создать генерируемый столбец типа virtual (только MySQL)
 
-<a name="changing-columns"></a>
 <a name="modifying-columns"></a>
 ### Изменение столбцов
 
