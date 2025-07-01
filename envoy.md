@@ -1,5 +1,5 @@
 ---
-git: 2895257ddd58bec2e4e10ef2c82b1052833aeac3
+git: fc95dc890bc4085979406a11aee71227205ca0fb
 ---
 
 # Инструмент запуска задач Envoy
@@ -151,7 +151,6 @@ git: 2895257ddd58bec2e4e10ef2c82b1052833aeac3
     @endtask
 
 <a name="notifications"></a>
-<a name="hipchat-notifications"></a>
 ## Оповещения
 
 <a name="slack"></a>
@@ -166,7 +165,9 @@ Envoy также поддерживает отправку оповещений 
 Любое из нижеследующего можно предоставить в качестве аргумента канала:
 
 <div class="content-list" markdown="1">
+
 - Для отправки уведомлений на канал: `#channel`
 - Для отправки уведомлений пользователю: `@user`
+
 </div>
 
