@@ -1,5 +1,5 @@
 ---
-git: 6b78d379a055aefcd8e8ae8eed0bf7efac6f79f9
+git: 490845661d09402f78e083d6d933fae972d031e9
 ---
 
 # Laravel Cashier (Paddle)
@@ -46,7 +46,7 @@ php artisan migrate
 <a name="paddle-sandbox"></a>
 ### Paddle Sandbox
 
-Во время локальной и промежуточной разработки вам следует [зарегистрировать учетную запись Paddle Sandbox](https://sandbox-login.paddle.com/signup). Эта учетная запись предоставит вам изолированную среду для тестирования и разработки ваших приложений без внесения реальных платежей. Вы можете использовать [номера тестовых карт Paddle](https://developer.paddle.com/concepts/pay-methods/credit-debit-card) для моделирования различных сценариев оплаты.
+Во время локальной и промежуточной разработки вам следует [зарегистрировать учетную запись Paddle Sandbox](https://sandbox-login.paddle.com/signup). Эта учетная запись предоставит вам изолированную среду для тестирования и разработки ваших приложений без внесения реальных платежей. Вы можете использовать [номера тестовых карт Paddle](https://developer.paddle.com/concepts/pay-methods/credit-debit-card#test-payment-method) для моделирования различных сценариев оплаты.
 
 При использовании среды Paddle Sandbox вам следует установить для переменной среды `PADDLE_SANDBOX` значение `true` в файле `.env` вашего приложения:
 
@@ -64,22 +64,26 @@ PADDLE_SANDBOX=true
 
 Прежде чем использовать Cashier, вы должны добавить трейт `Billable` в определение вашей пользовательской модели. Эта особенность предоставляет различные методы, позволяющие выполнять общие задачи по выставлению счетов, такие как создание подписок и обновление информации о способе оплаты:
 
-    use Laravel\Paddle\Billable;
+```php
+use Laravel\Paddle\Billable;
 
-    class User extends Authenticatable
-    {
-        use Billable;
-    }
+class User extends Authenticatable
+{
+    use Billable;
+}
+```
 
 Если у вас есть оплачиваемые сущности, которые не являются пользователями, вы также можете добавить признак к этим классам:
 
-    use Illuminate\Database\Eloquent\Model;
-    use Laravel\Paddle\Billable;
+```php
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Paddle\Billable;
 
-    class Team extends Model
-    {
-        use Billable;
-    }
+class Team extends Model
+{
+    use Billable;
+}
+```
 
 <a name="api-keys"></a>
 ### Ключи API
@@ -96,7 +100,7 @@ PADDLE_SANDBOX=true
 
 Переменная среды `PADDLE_SANDBOX` должна иметь значение `true`, когда вы используете [среду Paddle Sandbox](#paddle-sandbox). Переменная `PADDLE_SANDBOX` должна иметь значение `false`, если вы развертываете свое приложение в рабочей среде и используете рабочую среду Paddle.
 
-`PADDLE_RETAIN_KEY` является необязательным и его следует устанавливать только в том случае, если вы используете Paddle с [Retain](https://developer.paddle.com/paddlejs/retain).
+`PADDLE_RETAIN_KEY` является необязательным и его следует устанавливать только в том случае, если вы используете Paddle с [Retain](https://developer.paddle.com/concepts/retain/overview).
 
 <a name="paddle-js"></a>
 ### Paddle JS
@@ -128,26 +132,30 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 
 Вы можете расширить модели, используемые внутри Cashier, определив свою собственную модель и расширив соответствующую модель Cashier:
 
-    use Laravel\Paddle\Subscription as CashierSubscription;
+```php
+use Laravel\Paddle\Subscription as CashierSubscription;
 
-    class Subscription extends CashierSubscription
-    {
-        // ...
-    }
+class Subscription extends CashierSubscription
+{
+    // ...
+}
+```
 
 После определения вашей модели вы можете поручить Cashier использовать вашу пользовательскую модель через класс `Laravel\Paddle\Cashier`. Обычно вы должны сообщить Cashier о ваших пользовательских моделях в методе `boot` класса `App\Providers\AppServiceProvider` вашего приложения:
 
-    use App\Models\Cashier\Subscription;
-    use App\Models\Cashier\Transaction;
+```php
+use App\Models\Cashier\Subscription;
+use App\Models\Cashier\Transaction;
 
-    /**
-     * Запуск любых служб приложений.
-     */
-    public function boot(): void
-    {
-        Cashier::useSubscriptionModel(Subscription::class);
-        Cashier::useTransactionModel(Transaction::class);
-    }
+/**
+ * Запуск любых служб приложений.
+ */
+public function boot(): void
+{
+    Cashier::useSubscriptionModel(Subscription::class);
+    Cashier::useTransactionModel(Transaction::class);
+}
+```
 
 <a name="quickstart"></a>
 ## Быстрый старт
@@ -158,18 +166,20 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 > [!NOTE]
 > Прежде чем использовать Paddle Checkout, вам следует определить продукты с фиксированными ценами на панели управления Paddle. Кроме того, вам следует [настроить обработку веб-перехватчиков Paddle](#handling-paddle-webhooks).
 
-Предложение выставления счетов за продукты и подписки через ваше приложение может напугать. Однако благодаря Cashier и [Paddle's Checkout Overlay](https://www.paddle.com/billing/checkout) вы можете легко создать современную и надежную платежную интеграцию.
+Предложение выставления счетов за продукты и подписки через ваше приложение может напугать. Однако благодаря Cashier и [Paddle's Checkout Overlay](https://developer.paddle.com/concepts/sell/overlay-checkout) вы можете легко создать современную и надежную платежную интеграцию.
 
 Чтобы взимать с клиентов плату за единовременные продукты с единовременной оплатой, мы будем использовать Cashier с Paddle Checkout Overlay для оплаты, где они предоставят свои платежные реквизиты и подтвердят свою покупку. После того, как платеж будет произведен через Checkout Overlay, клиент будет перенаправлен на выбранный вами успешный URL-адрес в вашем приложении:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/buy', function (Request $request) {
-        $checkout = $request->user()->checkout('pri_deluxe_album')
-            ->returnTo(route('dashboard'));
+Route::get('/buy', function (Request $request) {
+    $checkout = $request->user()->checkout('pri_deluxe_album')
+        ->returnTo(route('dashboard'));
 
-        return view('buy', ['checkout' => $checkout]);
-    })->name('checkout');
+    return view('buy', ['checkout' => $checkout]);
+})->name('checkout');
+```
 
 Как вы можете видеть в приведенном выше примере, мы будем использовать предоставленный Cashier метод `checkout` для создания объекта оформления заказа, чтобы предоставить покупателю счет Paddle Checkout Overlay для данного «идентификатора цены». При использовании Paddle «цены» относятся к [определенным ценам для конкретных продуктов](https://developer.paddle.com/build/products/create-products-prices).
 
@@ -190,22 +200,24 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 
 Для этого вы можете предоставить массив пользовательских данных методу `checkout`. Давайте представим, что ожидающий `Order` создается в нашем приложении, когда пользователь начинает процесс оформления заказа. Помните, что модели `Cart` и `Order` в этом примере являются иллюстративными и не предоставлены Cashier. Вы можете свободно реализовать эти концепции в зависимости от потребностей вашего собственного приложения:
 
-    use App\Models\Cart;
-    use App\Models\Order;
-    use Illuminate\Http\Request;
+```php
+use App\Models\Cart;
+use App\Models\Order;
+use Illuminate\Http\Request;
 
-    Route::get('/cart/{cart}/checkout', function (Request $request, Cart $cart) {
-        $order = Order::create([
-            'cart_id' => $cart->id,
-            'price_ids' => $cart->price_ids,
-            'status' => 'incomplete',
-        ]);
+Route::get('/cart/{cart}/checkout', function (Request $request, Cart $cart) {
+    $order = Order::create([
+        'cart_id' => $cart->id,
+        'price_ids' => $cart->price_ids,
+        'status' => 'incomplete',
+    ]);
 
-        $checkout = $request->user()->checkout($order->price_ids)
-            ->customData(['order_id' => $order->id]);
+    $checkout = $request->user()->checkout($order->price_ids)
+        ->customData(['order_id' => $order->id]);
 
-        return view('billing', ['checkout' => $checkout]);
-    })->name('checkout');
+    return view('billing', ['checkout' => $checkout]);
+})->name('checkout');
+```
 
 Как вы можете видеть в приведенном выше примере, когда пользователь начинает процесс оформления заказа, мы предоставим все идентификаторы цен Paddle, связанные с корзиной/заказом, методу `checkout`. Конечно, ваше приложение отвечает за связь этих товаров с «корзиной покупок» или заказом по мере их добавления покупателем. Мы также предоставляем идентификатор заказа Paddle Checkout Overlay с помощью метода `customData`.
 
@@ -213,40 +225,44 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 
 Для начала прослушайте событие `TransactionCompleted`, отправленное Cashier. Обычно вам следует зарегистрировать прослушиватель событий в методе `boot` `AppServiceProvider` вашего приложения:
 
-    use App\Listeners\CompleteOrder;
-    use Illuminate\Support\Facades\Event;
-    use Laravel\Paddle\Events\TransactionCompleted;
+```php
+use App\Listeners\CompleteOrder;
+use Illuminate\Support\Facades\Event;
+use Laravel\Paddle\Events\TransactionCompleted;
 
-    /**
-     * Запуск любых служб приложений.
-     */
-    public function boot(): void
-    {
-        Event::listen(TransactionCompleted::class, CompleteOrder::class);
-    }
+/**
+ * Запуск любых служб приложений.
+ */
+public function boot(): void
+{
+    Event::listen(TransactionCompleted::class, CompleteOrder::class);
+}
+```
 
 В этом примере прослушиватель `CompleteOrder` может выглядеть следующим образом:
 
-    namespace App\Listeners;
+```php
+namespace App\Listeners;
 
-    use App\Models\Order;
-    use Laravel\Paddle\Cashier;
-    use Laravel\Paddle\Events\TransactionCompleted;
+use App\Models\Order;
+use Laravel\Paddle\Cashier;
+use Laravel\Paddle\Events\TransactionCompleted;
 
-    class CompleteOrder
+class CompleteOrder
+{
+    /**
+     * Обработка входящего события веб-хука Cashier.
+     */
+    public function handle(TransactionCompleted $event): void
     {
-        /**
-         * Обработка входящего события веб-хука Cashier.
-         */
-        public function handle(TransactionCompleted $event): void
-        {
-            $orderId = $event->payload['data']['custom_data']['order_id'] ?? null;
+        $orderId = $event->payload['data']['custom_data']['order_id'] ?? null;
 
-            $order = Order::findOrFail($orderId);
+        $order = Order::findOrFail($orderId);
 
-            $order->update(['status' => 'completed']);
-        }
+        $order->update(['status' => 'completed']);
     }
+}
+```
 
 Пожалуйста, обратитесь к документации Paddle для получения дополнительной информации о [данных, содержащихся в событии `transaction.completed`](https://developer.paddle.com/webhooks/transactions/transaction-completed).
 
@@ -256,20 +272,22 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 > [!NOTE]
 > Прежде чем использовать Paddle Checkout, вам следует определить продукты с фиксированными ценами на панели управления Paddle. Кроме того, вам следует [настроить обработку веб-хуков Paddle](#handling-paddle-webhooks).
 
-Предложение выставления счетов за продукты и подписки через ваше приложение может напугать. Однако благодаря Cashier и [Paddle Checkout Overlay](https://www.paddle.com/billing/checkout) вы можете легко создать современную и надежную платежную интеграцию.
+Предложение выставления счетов за продукты и подписки через ваше приложение может напугать. Однако благодаря Cashier и [Paddle Checkout Overlay](https://developer.paddle.com/concepts/sell/overlay-checkout) вы можете легко создать современную и надежную платежную интеграцию.
 
 Чтобы узнать, как продавать подписки с помощью Cashier и Paddle Checkout Overlay, давайте рассмотрим простой сценарий службы подписки с базовым ежемесячным (`price_basic_monthly`) и годовым (`price_basic_yearly`) планом. Эти две цены можно сгруппировать под «Базовым» продуктом (`pro_basic`) на нашей панели управления Paddle. Кроме того, наша служба подписки может предлагать экспертный план под названием `pro_expert`.
 
 Во-первых, давайте выясним, как клиент может подписаться на наши услуги. Конечно, вы можете себе представить, что клиент может нажать кнопку «подписаться» на базовый план на странице цен нашего приложения. Эта кнопка вызовет Paddle Checkout Overlay для выбранного плана. Для начала давайте инициируем сеанс оформления заказа с помощью метода `checkout`:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/subscribe', function (Request $request) {
-        $checkout = $request->user()->checkout('price_basic_monthly')
-            ->returnTo(route('dashboard'));
+Route::get('/subscribe', function (Request $request) {
+    $checkout = $request->user()->checkout('price_basic_monthly')
+        ->returnTo(route('dashboard'));
 
-        return view('subscribe', ['checkout' => $checkout]);
-    })->name('subscribe');
+    return view('subscribe', ['checkout' => $checkout]);
+})->name('subscribe');
+```
 
 В представлении `subscribe` мы добавим кнопку для оформления заказа. Компонент Blade `paddle-button` включен в состав Cashier Paddle; однако вы также можете [вручную отобразить оформление заказа](#manually-rendering-an-overlay-checkout):
 
@@ -306,60 +324,68 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 
 Для удобства вы можете создать [посредника](/docs/{{version}}/middleware), которое определяет, исходит ли входящий запрос от подписанного пользователя. После определения этого посредника вы можете легко назначить его маршруту, чтобы запретить пользователям, не подписанным на него, доступ к маршруту:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Middleware;
+namespace App\Http\Middleware;
 
-    use Closure;
-    use Illuminate\Http\Request;
-    use Symfony\Component\HttpFoundation\Response;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-    class Subscribed
+class Subscribed
+{
+    /**
+     * Обработка входящего запроса.
+     */
+    public function handle(Request $request, Closure $next): Response
     {
-        /**
-         * Обработка входящего запроса.
-         */
-        public function handle(Request $request, Closure $next): Response
-        {
-            if (! $request->user()?->subscribed()) {
-                // Перенаправляем пользователя на страницу оплаты и просим его подписаться...
-                return redirect('/subscribe');
-            }
-
-            return $next($request);
+        if (! $request->user()?->subscribed()) {
+            // Перенаправляем пользователя на страницу оплаты и просим его подписаться...
+            return redirect('/subscribe');
         }
+
+        return $next($request);
     }
+}
+```
 
 После определения посредника вы можете назначить его маршруту:
 
-    use App\Http\Middleware\Subscribed;
+```php
+use App\Http\Middleware\Subscribed;
 
-    Route::get('/dashboard', function () {
-        // ...
-    })->middleware([Subscribed::class]);
+Route::get('/dashboard', function () {
+    // ...
+})->middleware([Subscribed::class]);
+```
 
 <a name="quickstart-allowing-customers-to-manage-their-billing-plan"></a>
 #### Разрешение клиентам управлять своим тарифным планом
 
 Конечно, клиенты могут захотеть изменить свой план подписки на другой продукт или «уровень». В нашем примере выше мы хотели бы позволить клиенту изменить свой план с ежемесячной подписки на годовую подписку. Для этого вам нужно реализовать что-то вроде кнопки, которая приведет к следующему маршруту:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::put('/subscription/{price}/swap', function (Request $request, $price) {
-        $user->subscription()->swap($price); // В этом примере «$price» — «price_basic_yearly».
+Route::put('/subscription/{price}/swap', function (Request $request, $price) {
+    $user->subscription()->swap($price); // В этом примере «$price» — «price_basic_yearly».
 
-        return redirect()->route('dashboard');
-    })->name('subscription.swap');
+    return redirect()->route('dashboard');
+})->name('subscription.swap');
+```
 
 Помимо замены планов вам также необходимо разрешить своим клиентам отменить подписку. Как и при смене планов, предоставьте кнопку, которая ведет к следующему маршруту:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::put('/subscription/cancel', function (Request $request, $price) {
-        $user->subscription()->cancel();
+Route::put('/subscription/cancel', function (Request $request, $price) {
+    $user->subscription()->cancel();
 
-        return redirect()->route('dashboard');
-    })->name('subscription.cancel');
+    return redirect()->route('dashboard');
+})->name('subscription.cancel');
+```
 
 И теперь ваша подписка будет отменена по окончании расчетного периода.
 
@@ -378,14 +404,16 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 
 Прежде чем отображать всплывающий виджет оформления заказа, необходимо создать сеанс оформления заказа с помощью Cashier. Сеанс оформления заказа проинформирует виджет оформления заказа об операции выставления счета, которую необходимо выполнить:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/buy', function (Request $request) {
-        $checkout = $user->checkout('pri_34567')
-            ->returnTo(route('dashboard'));
+Route::get('/buy', function (Request $request) {
+    $checkout = $user->checkout('pri_34567')
+        ->returnTo(route('dashboard'));
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 Кассир включает в себя [компонент Blade](/docs/{{version}}/blade#comComponents) `paddle-button`. Вы можете передать сеанс оформления заказа этому компоненту в качестве «реквизита». Затем, когда эта кнопка будет нажата, отобразится виджет оформления заказа Paddle:
 
@@ -413,14 +441,16 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 
 Вы также можете вручную визуализировать всплывающий виджет оформления заказа без использования встроенных компонентов Blade Laravel. Для начала создайте сеанс оформления заказа [как показано в предыдущих примерах](#overlay-checkout):
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/buy', function (Request $request) {
-        $checkout = $user->checkout('pri_34567')
-            ->returnTo(route('dashboard'));
+Route::get('/buy', function (Request $request) {
+    $checkout = $user->checkout('pri_34567')
+        ->returnTo(route('dashboard'));
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 Далее вы можете использовать Paddle.js для инициализации оформления заказа. В этом примере мы создадим ссылку, которой будет присвоен класс `paddle_button`. Paddle.js обнаружит этот класс и отобразит оформление заказа при нажатии ссылки:
 
@@ -450,14 +480,16 @@ $custom = $checkout->getCustomData();
 
 Чтобы вам было проще начать работу со встроенной оплатой, Cashier включает в себя компонент Blade `paddle-checkout`. Чтобы начать, вам следует [создать сеанс оформления заказа](#overlay-checkout):
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/buy', function (Request $request) {
-        $checkout = $user->checkout('pri_34567')
-            ->returnTo(route('dashboard'));
+Route::get('/buy', function (Request $request) {
+    $checkout = $user->checkout('pri_34567')
+        ->returnTo(route('dashboard'));
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 Затем вы можете передать сеанс оформления заказа в атрибут `checkout` компонента:
 
@@ -478,14 +510,16 @@ $custom = $checkout->getCustomData();
 
 Вы также можете вручную визуализировать встроенное оформление заказа без использования встроенных компонентов Blade Laravel. Для начала создайте сеанс оформления заказа [как показано в предыдущих примерах](#inline-checkout):
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/buy', function (Request $request) {
-        $checkout = $user->checkout('pri_34567')
-            ->returnTo(route('dashboard'));
+Route::get('/buy', function (Request $request) {
+    $checkout = $user->checkout('pri_34567')
+        ->returnTo(route('dashboard'));
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 Далее вы можете использовать Paddle.js для инициализации оформления заказа. В этом примере мы продемонстрируем это, используя [Alpine.js](https://github.com/alpinejs/alpine); однако вы можете изменить этот пример для своего собственного фронтенда:
 
@@ -508,15 +542,17 @@ $options['settings']['frameInitialHeight'] = 366;
 
 Иногда вам может потребоваться создать сеанс оформления заказа для пользователей, которым не нужна учетная запись в вашем приложении. Для этого вы можете использовать метод `guest`:
 
-    use Illuminate\Http\Request;
-    use Laravel\Paddle\Checkout;
+```php
+use Illuminate\Http\Request;
+use Laravel\Paddle\Checkout;
 
-    Route::get('/buy', function (Request $request) {
-        $checkout = Checkout::guest(['pri_34567'])
-            ->returnTo(route('home'));
+Route::get('/buy', function (Request $request) {
+    $checkout = Checkout::guest(['pri_34567'])
+        ->returnTo(route('home'));
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 Затем вы можете предоставить сеанс оформления заказа компонентам Blade [кнопка Paddle](#overlay-checkout) или [встроенное оформление заказа](#inline-checkout).
 
@@ -525,18 +561,22 @@ $options['settings']['frameInitialHeight'] = 366;
 
 Paddle позволяет вам настраивать цены для каждой валюты, что, по сути, позволяет вам настраивать разные цены для разных стран. Cashier Paddle позволяет вам получить все эти цены, используя метод `previewPrices`. Этот метод принимает идентификаторы цен, для которых вы хотите получить цены:
 
-    use Laravel\Paddle\Cashier;
+```php
+use Laravel\Paddle\Cashier;
 
-    $prices = Cashier::previewPrices(['pri_123', 'pri_456']);
+$prices = Cashier::previewPrices(['pri_123', 'pri_456']);
+```
 
 Валюта будет определена на основе IP-адреса запроса; однако вы можете дополнительно указать конкретную страну для получения цен:
 
-    use Laravel\Paddle\Cashier;
+```php
+use Laravel\Paddle\Cashier;
 
-    $prices = Cashier::previewPrices(['pri_123', 'pri_456'], ['address' => [
-        'country_code' => 'BE',
-        'postal_code' => '1234',
-    ]]);
+$prices = Cashier::previewPrices(['pri_123', 'pri_456'], ['address' => [
+    'country_code' => 'BE',
+    'postal_code' => '1234',
+]]);
+```
 
 После получения цен вы можете отображать их по своему усмотрению:
 
@@ -565,9 +605,11 @@ Paddle позволяет вам настраивать цены для кажд
 
 Если пользователь уже является клиентом и вы хотите отобразить цены, применимые к этому клиенту, вы можете сделать это, получив цены непосредственно из экземпляра клиента:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $prices = User::find(1)->previewPrices(['pri_123', 'pri_456']);
+$prices = User::find(1)->previewPrices(['pri_123', 'pri_456']);
+```
 
 Внутри Cashier будет использовать идентификатор клиента пользователя для получения цен в его валюте. Так, например, пользователь, проживающий в США, увидит цены в долларах США, а пользователь из Бельгии увидит цены в евро. Если соответствующая валюта не найдена, будет использоваться валюта продукта по умолчанию. Вы можете настроить все цены на продукт или план подписки на панели управления Paddle.
 
@@ -576,11 +618,13 @@ Paddle позволяет вам настраивать цены для кажд
 
 Вы также можете выбрать отображение цен после скидки. При вызове метода `previewPrices` вы указываете идентификатор скидки с помощью опции `discount_id`:
 
-    use Laravel\Paddle\Cashier;
+```php
+use Laravel\Paddle\Cashier;
 
-    $prices = Cashier::previewPrices(['pri_123', 'pri_456'], [
-        'discount_id' => 'dsc_123'
-    ]);
+$prices = Cashier::previewPrices(['pri_123', 'pri_456'], [
+    'discount_id' => 'dsc_123'
+]);
+```
 
 Затем отобразите рассчитанные цены:
 
@@ -600,21 +644,23 @@ Paddle позволяет вам настраивать цены для кажд
 
 Cashier позволяет вам определить некоторые полезные настройки по умолчанию для ваших клиентов при создании сеансов оформления заказа. Установка этих значений по умолчанию позволяет вам предварительно заполнить адрес электронной почты и имя клиента, чтобы он мог немедленно перейти к платежной части виджета оформления заказа. Вы можете установить эти значения по умолчанию, переопределив следующие методы в вашей оплатной модели:
 
-    /**
-     * Получение имя клиента, которое будет ассоциироваться с Paddle.
-     */
-    public function paddleName(): string|null
-    {
-        return $this->name;
-    }
+```php
+/**
+ * Получение имя клиента, которое будет ассоциироваться с Paddle.
+ */
+public function paddleName(): string|null
+{
+    return $this->name;
+}
 
-    /**
-     * Получение адреса электронной почты клиента, чтобы связаться с Paddle.
-     */
-    public function paddleEmail(): string|null
-    {
-        return $this->email;
-    }
+/**
+ * Получение адреса электронной почты клиента, чтобы связаться с Paddle.
+ */
+public function paddleEmail(): string|null
+{
+    return $this->email;
+}
+```
 
 Эти значения по умолчанию будут использоваться для каждого действия в Cashier, которое генерирует [сессию оформления заказа](#checkout-sessions).
 
@@ -623,20 +669,26 @@ Cashier позволяет вам определить некоторые пол
 
 Вы можете получить клиента по его идентификатору клиента Paddle, используя метод `Cashier::findBillable`. Этот метод вернет экземпляр оплачиваемой модели:
 
-    use Laravel\Paddle\Cashier;
+```php
+use Laravel\Paddle\Cashier;
 
-    $user = Cashier::findBillable($customerId);
+$user = Cashier::findBillable($customerId);
+```
 
 <a name="creating-customers"></a>
 ### Создание клиентов
 
 Иногда вам может потребоваться создать клиента Paddle, не оформляя подписку. Вы можете сделать это, используя метод `createAsCustomer`:
 
-    $customer = $user->createAsCustomer();
+```php
+$customer = $user->createAsCustomer();
+```
 
 Возвращается экземпляр `Laravel\Paddle\Customer`. После того как клиент будет создан в Paddle, вы сможете начать подписку позже. Вы можете предоставить дополнительный массив `$options` для передачи любых дополнительных [параметров создания клиента, которые поддерживаются Paddle API](https://developer.paddle.com/api-reference/customers/create-customer):
 
-    $customer = $user->createAsCustomer($options);
+```php
+$customer = $user->createAsCustomer($options);
+```
 
 <a name="subscriptions"></a>
 ## Подписки
@@ -646,22 +698,26 @@ Cashier позволяет вам определить некоторые пол
 
 Чтобы создать подписку, сначала извлеките экземпляр вашей оплачиваемой модели из базы данных, которая обычно представляет собой экземпляр `App\Models\User`. После того, как вы получили экземпляр модели, вы можете использовать метод `subscribe` для создания сеанса оформления заказа модели:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/user/subscribe', function (Request $request) {
-        $checkout = $request->user()->subscribe($premium = 12345, 'default')
-            ->returnTo(route('home'));
+Route::get('/user/subscribe', function (Request $request) {
+    $checkout = $request->user()->subscribe($premium = 'pri_123', 'default')
+        ->returnTo(route('home'));
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 Первый аргумент, передаваемый методу `subscribe`, — это конкретная цена, на которую подписывается пользователь. Это значение должно соответствовать идентификатору цены в Paddle. Метод `returnTo` принимает URL-адрес, на который будет перенаправлен ваш пользователь после успешного завершения оформления заказа. Второй аргумент, передаваемый методу `subscribe`, должен быть внутренним «типом» подписки. Если ваше приложение предлагает только одну подписку, вы можете назвать ее `default` или `primary`. Этот тип подписки предназначен только для внутреннего использования приложения и не предназначен для отображения пользователям. Кроме того, он не должен содержать пробелов и никогда не должен меняться после создания подписки.
 
 Вы также можете предоставить массив пользовательских метаданных, касающихся подписки, используя метод `customData`:
 
-    $checkout = $request->user()->subscribe($premium = 12345, 'default')
-        ->customData(['key' => 'value'])
-        ->returnTo(route('home'));
+```php
+$checkout = $request->user()->subscribe($premium = 'pri_123', 'default')
+    ->customData(['key' => 'value'])
+    ->returnTo(route('home'));
+```
 
 После создания сеанса оформления подписки он может быть передан в `paddle-button` [компонент Blade](#overlay-checkout), который включен в Cashier Paddle:
 
@@ -678,99 +734,119 @@ Cashier позволяет вам определить некоторые пол
 
 Как только пользователь подпишется на ваше приложение, вы сможете проверить статус его подписки различными удобными способами. Во-первых, метод `subscribed` возвращает `true`, если у пользователя есть действующая подписка, даже если подписка в настоящее время находится в пробном периоде:
 
-    if ($user->subscribed()) {
-        // ...
-    }
+```php
+if ($user->subscribed()) {
+    // ...
+}
+```
 
 Если ваше приложение предлагает несколько подписок, вы можете указать подписку при вызове метода `subscribed`:
 
-    if ($user->subscribed('default')) {
-        // ...
-    }
+```php
+if ($user->subscribed('default')) {
+    // ...
+}
+```
 
 Метод `subscribed` также является отличным кандидатом на роль [псредника маршрута](/docs/{{version}}/middleware), позволяющего фильтровать доступ к маршрутам и контроллерам на основе статуса подписки пользователя:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Middleware;
+namespace App\Http\Middleware;
 
-    use Closure;
-    use Illuminate\Http\Request;
-    use Symfony\Component\HttpFoundation\Response;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-    class EnsureUserIsSubscribed
+class EnsureUserIsSubscribed
+{
+    /**
+     * Обработка входящего запроса.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
     {
-        /**
-         * Обработка входящего запроса.
-         *
-         * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-         */
-        public function handle(Request $request, Closure $next): Response
-        {
-            if ($request->user() && ! $request->user()->subscribed()) {
-                // Этот пользователь не является платящим клиентом...
-                return redirect('/billing');
-            }
-
-            return $next($request);
+        if ($request->user() && ! $request->user()->subscribed()) {
+            // Этот пользователь не является платящим клиентом...
+            return redirect('/billing');
         }
+
+        return $next($request);
     }
+}
+```
 
 Если вы хотите определить, находится ли у пользователя пробный период, вы можете использовать метод `onTrial`. Этот метод может быть полезен для определения того, следует ли отображать пользователю предупреждение о том, что у него все еще находится пробный период:
 
-    if ($user->subscription()->onTrial()) {
-        // ...
-    }
+```php
+if ($user->subscription()->onTrial()) {
+    // ...
+}
+```
 
 Метод `subscribedToPrice` может использоваться для определения того, подписан ли пользователь на данный план, на основе данного идентификатора цены Paddle. В этом примере мы определим, активно ли оформлена подписка пользователя `default` по ежемесячной цене:
 
-    if ($user->subscribedToPrice($monthly = 'pri_123', 'default')) {
-        // ...
-    }
+```php
+if ($user->subscribedToPrice($monthly = 'pri_123', 'default')) {
+    // ...
+}
+```
 
 Метод `recurring` можно использовать, чтобы определить, находится ли пользователь в настоящее время на активной подписке и больше не находится в пробном или льготном периоде:
 
-    if ($user->subscription()->recurring()) {
-        // ...
-    }
+```php
+if ($user->subscription()->recurring()) {
+    // ...
+}
+```
 
 <a name="canceled-subscription-status"></a>
 #### Статус отмены подписки
 
 Чтобы определить, был ли пользователь когда-то активным подписчиком, но отменил подписку, вы можете использовать метод `canceled`:
 
-    if ($user->subscription()->canceled()) {
-        // ...
-    }
+```php
+if ($user->subscription()->canceled()) {
+    // ...
+}
+```
 
 Вы также можете определить, отменил ли пользователь свою подписку, но у него все еще действует «льготный период» до полного истечения срока действия подписки. Например, если пользователь отменяет подписку 5 марта, срок действия которой первоначально должен был истечь 10 марта, для пользователя действует «льготный период» до 10 марта. Кроме того, метод `subscribed` все равно будет возвращать `true` в течение этого времени:
 
-    if ($user->subscription()->onGracePeriod()) {
-        // ...
-    }
+```php
+if ($user->subscription()->onGracePeriod()) {
+    // ...
+}
+```
 
 <a name="past-due-status"></a>
 #### Статус просрочки платежа
 
 Если платеж по подписке не выполнен, он будет помечен как `past_due`. Когда ваша подписка находится в этом состоянии, она не будет активна, пока клиент не обновит свою платежную информацию. Вы можете определить, просрочена ли подписка, используя метод `pastDue` в экземпляре подписки:
 
-    if ($user->subscription()->pastDue()) {
-        // ...
-    }
+```php
+if ($user->subscription()->pastDue()) {
+    // ...
+}
+```
 
 Если срок подписки просрочен, вы должны поручить пользователю [обновить платежную информацию](#updating-pay-information).
 
 Если вы хотите, чтобы подписки по-прежнему считались действительными, когда они истекли (`past_due`), вы можете использовать метод `keepPastDueSubscriptionsActive`, предоставляемый Cashier. Обычно этот метод следует вызывать в методе `register` вашего `AppServiceProvider`:
 
-    use Laravel\Paddle\Cashier;
+```php
+use Laravel\Paddle\Cashier;
 
-    /**
-     * Зарегистрируйте любые службы приложений.
-     */
-    public function register(): void
-    {
-        Cashier::keepPastDueSubscriptionsActive();
-    }
+/**
+ * Зарегистрируйте любые службы приложений.
+ */
+public function register(): void
+{
+    Cashier::keepPastDueSubscriptionsActive();
+}
+```
 
 > [!WARNING]
 > Когда подписка находится в состоянии `past_due`, ее нельзя изменить до тех пор, пока информация об оплате не будет обновлена. Таким образом, методы `swap` и `updateQuantity` выдадут исключение, когда подписка находится в состоянии `past_due`.
@@ -780,57 +856,67 @@ Cashier позволяет вам определить некоторые пол
 
 Большинство состояний подписки также доступны в виде областей запроса, поэтому вы можете легко запросить в базе данных подписки, находящиеся в заданном состоянии:
 
-    // Получить все действительные подписки...
-    $subscriptions = Subscription::query()->valid()->get();
+```php
+// Получить все действительные подписки...
+$subscriptions = Subscription::query()->valid()->get();
 
-    // Получить все отмененные подписки пользователя...
-    $subscriptions = $user->subscriptions()->canceled()->get();
+// Получить все отмененные подписки пользователя...
+$subscriptions = $user->subscriptions()->canceled()->get();
+```
 
 Полный список доступных областей доступен ниже:
 
-    Subscription::query()->valid();
-    Subscription::query()->onTrial();
-    Subscription::query()->expiredTrial();
-    Subscription::query()->notOnTrial();
-    Subscription::query()->active();
-    Subscription::query()->recurring();
-    Subscription::query()->pastDue();
-    Subscription::query()->paused();
-    Subscription::query()->notPaused();
-    Subscription::query()->onPausedGracePeriod();
-    Subscription::query()->notOnPausedGracePeriod();
-    Subscription::query()->canceled();
-    Subscription::query()->notCanceled();
-    Subscription::query()->onGracePeriod();
-    Subscription::query()->notOnGracePeriod();
+```php
+Subscription::query()->valid();
+Subscription::query()->onTrial();
+Subscription::query()->expiredTrial();
+Subscription::query()->notOnTrial();
+Subscription::query()->active();
+Subscription::query()->recurring();
+Subscription::query()->pastDue();
+Subscription::query()->paused();
+Subscription::query()->notPaused();
+Subscription::query()->onPausedGracePeriod();
+Subscription::query()->notOnPausedGracePeriod();
+Subscription::query()->canceled();
+Subscription::query()->notCanceled();
+Subscription::query()->onGracePeriod();
+Subscription::query()->notOnGracePeriod();
+```
 
 <a name="subscription-single-charges"></a>
 ### Разовые платежи за подписку
 
 Единая плата за подписку позволяет взимать с подписчиков единовременную плату в дополнение к их подписке. При вызове метода `charge` вы должны указать один или несколько идентификаторов цены:
 
-    // Установить одну цену...
-    $response = $user->subscription()->charge('pri_123');
+```php
+// Установить одну цену...
+$response = $user->subscription()->charge('pri_123');
 
-    // Назначить несколько цен одновременно...
-    $response = $user->subscription()->charge(['pri_123', 'pri_456']);
+// Назначить несколько цен одновременно...
+$response = $user->subscription()->charge(['pri_123', 'pri_456']);
+```
 
 Метод `charge` фактически не взимает с клиента плату до следующего периода выставления счетов за его подписку. Если вы хотите немедленно выставить счет клиенту, вместо этого вы можете использовать метод `chargeAndInvoice`:
 
-    $response = $user->subscription()->chargeAndInvoice('pri_123');
+```php
+$response = $user->subscription()->chargeAndInvoice('pri_123');
+```
 
 <a name="updating-payment-information"></a>
 ### Обновление платежной информации
 
 Paddle всегда сохраняет способ оплаты для каждой подписки. Если вы хотите обновить метод оплаты по умолчанию для подписки, вам следует перенаправить своего клиента на страницу обновления размещенного метода оплаты Paddle, используя метод `redirectToUpdatePaymentMethod` в модели подписки:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/update-payment-method', function (Request $request) {
-        $user = $request->user();
+Route::get('/update-payment-method', function (Request $request) {
+    $user = $request->user();
 
-        return $user->subscription()->redirectToUpdatePaymentMethod();
-    });
+    return $user->subscription()->redirectToUpdatePaymentMethod();
+});
+```
 
 Когда пользователь завершит обновление своей информации, Paddle отправит веб-хук `subscription_updated`, и сведения о подписке будут обновлены в базе данных вашего приложения.
 
@@ -839,32 +925,42 @@ Paddle всегда сохраняет способ оплаты для кажд
 
 После того как пользователь подписался на ваше приложение, он может иногда захотеть перейти на новый план подписки. Чтобы обновить план подписки для пользователя, вам необходимо передать идентификатор цены Paddle в метод `swap`:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $user = User::find(1);
+$user = User::find(1);
 
-    $user->subscription()->swap($premium = 'pri_456');
+$user->subscription()->swap($premium = 'pri_456');
+```
 
 Если вы хотите поменять планы и немедленно выставить пользователю счет вместо того, чтобы ждать следующего платежного цикла, вы можете использовать метод `swapAndInvoice`:
 
-    $user = User::find(1);
+```php
+$user = User::find(1);
 
-    $user->subscription()->swapAndInvoice($premium = 'pri_456');
+$user->subscription()->swapAndInvoice($premium = 'pri_456');
+```
 
 <a name="prorations"></a>
 #### Пропорции
 
 По умолчанию Paddle пропорционально распределяет расходы при переключении между планами. Метод `noProrate` можно использовать для обновления подписок без пропорционального распределения расходов:
 
-    $user->subscription('default')->noProrate()->swap($premium = 'pri_456');
+```php
+$user->subscription('default')->noProrate()->swap($premium = 'pri_456');
+```
 
 Если вы хотите немедленно отключить пропорциональное распределение и выставлять счета клиентам, вы можете использовать метод `swapAndInvoice` в сочетании с `noProrate`:
 
-    $user->subscription('default')->noProrate()->swapAndInvoice($premium = 'pri_456');
+```php
+$user->subscription('default')->noProrate()->swapAndInvoice($premium = 'pri_456');
+```
 
 Или, чтобы не выставлять счет клиенту за изменение подписки, вы можете использовать метод `doNotBill`:
 
-    $user->subscription('default')->doNotBill()->swap($premium = 'pri_456');
+```php
+$user->subscription('default')->doNotBill()->swap($premium = 'pri_456');
+```
 
 Для получения дополнительной информации о политике пропорционального распределения Paddle обратитесь к [документации по пропорциональному распределению](https://developer.paddle.com/concepts/subscriptions/proration).
 
@@ -873,32 +969,40 @@ Paddle всегда сохраняет способ оплаты для кажд
 
 Иногда на подписки влияет «количество». Например, приложение для управления проектами может взимать 10 долларов США в месяц за проект. Чтобы легко увеличить или уменьшить количество вашей подписки, используйте методы `incrementQuantity` и `decrementQuantity`:
 
-    $user = User::find(1);
+```php
+$user = User::find(1);
 
-    $user->subscription()->incrementQuantity();
+$user->subscription()->incrementQuantity();
 
-    // Добавить пять к текущему количеству подписки...
-    $user->subscription()->incrementQuantity(5);
+// Добавить пять к текущему количеству подписки...
+$user->subscription()->incrementQuantity(5);
 
-    $user->subscription()->decrementQuantity();
+$user->subscription()->decrementQuantity();
 
-    // Вычесть пять из текущего количества подписки...
-    $user->subscription()->decrementQuantity(5);
+// Вычесть пять из текущего количества подписки...
+$user->subscription()->decrementQuantity(5);
+```
 
 Альтернативно вы можете установить определенное количество, используя метод `updateQuantity`:
 
-    $user->subscription()->updateQuantity(10);
+```php
+$user->subscription()->updateQuantity(10);
+```
 
 Метод `noProrate` можно использовать для обновления количества подписки без пропорционального распределения расходов:
 
-    $user->subscription()->noProrate()->updateQuantity(10);
+```php
+$user->subscription()->noProrate()->updateQuantity(10);
+```
 
 <a name="quantities-for-subscription-with-multiple-products"></a>
 #### Количество для подписок с несколькими продуктами
 
 Если ваша подписка представляет собой [подписку с несколькими продуктами](#subscriptions-with-multiple-products), вам следует передать идентификатор цены, количество которой вы хотите увеличить или уменьшить, в качестве второго аргумента методов увеличения/уменьшения:
 
-    $user->subscription()->incrementQuantity(1, 'price_chat');
+```php
+$user->subscription()->incrementQuantity(1, 'price_chat');
+```
 
 <a name="subscriptions-with-multiple-products"></a>
 ### Подписки с несколькими продуктами
@@ -907,36 +1011,46 @@ Paddle всегда сохраняет способ оплаты для кажд
 
 При создании сеансов оформления подписки вы можете указать несколько продуктов для данной подписки, передав массив цен в качестве первого аргумента методу `subscribe`:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::post('/user/subscribe', function (Request $request) {
-        $checkout = $request->user()->subscribe([
-            'price_monthly',
-            'price_chat',
-        ]);
+Route::post('/user/subscribe', function (Request $request) {
+    $checkout = $request->user()->subscribe([
+        'price_monthly',
+        'price_chat',
+    ]);
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 В приведенном выше примере к подписке `default` для клиента будут прикреплены две цены. Обе цены будут взиматься в соответствующие расчетные периоды. При необходимости вы можете передать ассоциативный массив пар ключ/значение, чтобы указать конкретное количество для каждой цены:
 
-    $user = User::find(1);
+```php
+$user = User::find(1);
 
-    $checkout = $user->subscribe('default', ['price_monthly', 'price_chat' => 5]);
+$checkout = $user->subscribe('default', ['price_monthly', 'price_chat' => 5]);
+```
 
 Если вы хотите добавить еще одну цену к существующей подписке, вы должны использовать метод подписки `swap`. При вызове метода `swap` вы также должны указать текущие цены и количество подписки:
 
-    $user = User::find(1);
+```php
+$user = User::find(1);
 
-    $user->subscription()->swap(['price_chat', 'price_original' => 2]);
+$user->subscription()->swap(['price_chat', 'price_original' => 2]);
+```
 
 В приведенном выше примере будет добавлена ​​новая цена, но клиенту не будет выставлен счет за нее до следующего платежного цикла. Если вы хотите немедленно выставить счет клиенту, вы можете использовать метод `swapAndInvoice`:
 
-    $user->subscription()->swapAndInvoice(['price_chat', 'price_original' => 2]);
+```php
+$user->subscription()->swapAndInvoice(['price_chat', 'price_original' => 2]);
+```
 
 Вы можете удалить цены из подписок, используя метод `swap`, опустив цену, которую хотите удалить:
 
-    $user->subscription()->swap(['price_original' => 2]);
+```php
+$user->subscription()->swap(['price_original' => 2]);
+```
 
 > [!WARNING]
 > Вы не можете удалить последнюю цену подписки. Вместо этого вам следует просто отменить подписку.
@@ -948,52 +1062,70 @@ Paddle позволяет вашим клиентам иметь несколь�
 
 Когда ваше приложение создает подписки, вы можете указать тип подписки методу `subscribe` в качестве второго аргумента. Типом может быть любая строка, представляющая тип подписки, которую инициирует пользователь:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::post('/swimming/subscribe', function (Request $request) {
-        $checkout = $request->user()->subscribe($swimmingMonthly = 'pri_123', 'swimming');
+Route::post('/swimming/subscribe', function (Request $request) {
+    $checkout = $request->user()->subscribe($swimmingMonthly = 'pri_123', 'swimming');
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 В этом примере мы инициировали ежемесячную подписку на плавание для клиента. Однако позже они могут захотеть перейти на годовую подписку. При настройке подписки клиента мы можем просто поменять цену на подписку `swimming`:
 
-    $user->subscription('swimming')->swap($swimmingYearly = 'pri_456');
+```php
+$user->subscription('swimming')->swap($swimmingYearly = 'pri_456');
+```
 
 Конечно, вы также можете полностью отменить подписку:
 
-    $user->subscription('swimming')->cancel();
+```php
+$user->subscription('swimming')->cancel();
+```
 
 <a name="pausing-subscriptions"></a>
 ### Приостановка подписок
 
 Чтобы приостановить подписку, вызовите метод `pause` в подписке пользователя:
 
-    $user->subscription()->pause();
+```php
+$user->subscription()->pause();
+```
 
 Когда подписка приостановлена, Cashier автоматически установит столбец `paused_at` в вашей базе данных. Этот столбец используется для определения того, когда метод `paused` должен начать возвращать `true`. Например, если клиент приостанавливает подписку 1 марта, но возобновление подписки не запланировано до 5 марта, метод `paused` будет продолжать возвращать `false` до 5 марта. Это связано с тем, что пользователю обычно разрешается продолжать использовать приложение до конца платежного цикла.
 
 По умолчанию приостановка происходит в следующем интервале выставления счетов, чтобы клиент мог использовать оставшуюся часть оплаченного периода. Если вы хотите немедленно приостановить подписку, вы можете использовать метод `pauseNow`:
 
-    $user->subscription()->pauseNow();
+```php
+$user->subscription()->pauseNow();
+```
 
 Используя метод `pauseUntil`, вы можете приостановить подписку до определенного момента времени:
 
-    $user->subscription()->pauseUntil(now()->addMonth());
+```php
+$user->subscription()->pauseUntil(now()->addMonth());
+```
 
 Или вы можете использовать метод `pauseNowUntil`, чтобы немедленно приостановить подписку до заданного момента времени:
 
-    $user->subscription()->pauseNowUntil(now()->addMonth());
+```php
+$user->subscription()->pauseNowUntil(now()->addMonth());
+```
 
 Вы можете определить, приостановил ли пользователь свою подписку, но все еще находится в «льготном периоде», используя метод `onPausedGracePeriod`:
 
-    if ($user->subscription()->onPausedGracePeriod()) {
-        // ...
-    }
+```php
+if ($user->subscription()->onPausedGracePeriod()) {
+    // ...
+}
+```
 
 Чтобы возобновить приостановленную подписку, вы можете вызвать метод `resume` подписки:
 
-    $user->subscription()->resume();
+```php
+$user->subscription()->resume();
+```
 
 > [!WARNING]
 > Подписку нельзя изменить, пока она приостановлена. Если вы хотите перейти на другой план или обновить количество, сначала необходимо возобновить подписку.
@@ -1003,23 +1135,31 @@ Paddle позволяет вашим клиентам иметь несколь�
 
 Чтобы отменить подписку, вызовите метод `cancel` для подписки пользователя:
 
-    $user->subscription()->cancel();
+```php
+$user->subscription()->cancel();
+```
 
 При отмене подписки Cashier автоматически установит столбец `ends_at` в вашей базе данных. Этот столбец используется для определения того, когда метод `subscribed` должен начать возвращать `false`. Например, если клиент отменяет подписку 1 марта, но ее завершение не планировалось до 5 марта, метод `subscribed` будет продолжать возвращать `true` до 5 марта. Это сделано потому, что пользователю обычно разрешается продолжать использовать приложение до конца платежного цикла.
 
 Вы можете определить, отменил ли пользователь свою подписку, но все еще имеет «льготный период», используя метод `onGracePeriod`:
 
-    if ($user->subscription()->onGracePeriod()) {
-        // ...
-    }
+```php
+if ($user->subscription()->onGracePeriod()) {
+    // ...
+}
+```
 
 Если вы хотите немедленно отменить подписку, вы можете вызвать метод `cancelNow` для подписки:
 
-    $user->subscription()->cancelNow();
+```php
+$user->subscription()->cancelNow();
+```
 
 Чтобы предотвратить отмену подписки в льготный период, вы можете вызвать метод `stopCancelation`:
 
-    $user->subscription()->stopCancelation();
+```php
+$user->subscription()->stopCancelation();
+```
 
 > [!WARNING]
 > Подписки Paddle не могут быть возобновлены после отмены. Если ваш клиент желает возобновить подписку, ему придется создать новую подписку.
@@ -1032,104 +1172,120 @@ Paddle позволяет вашим клиентам иметь несколь�
 
 Если вы хотите предложить своим клиентам пробные периоды, одновременно собирая информацию о методах оплаты заранее, вам следует установить пробное время на панели управления Paddle по цене, на которую подписывается ваш клиент. Затем запустите сеанс оформления заказа как обычно:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/user/subscribe', function (Request $request) {
-        $checkout = $request->user()->subscribe('pri_monthly')
-                    ->returnTo(route('home'));
+Route::get('/user/subscribe', function (Request $request) {
+    $checkout = $request->user()
+        ->subscribe('pri_monthly')
+        ->returnTo(route('home'));
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 Когда ваше приложение получит событие `subscription_created`, Cashier установит дату окончания пробного периода в записи подписки в базе данных вашего приложения, а также даст указание Paddle не начинать выставлять счета клиенту до истечения этой даты.
 
 > [!WARNING]
 > Если подписка клиента не отменена до даты окончания пробной версии, с нее будет снята плата, как только истечет пробная версия, поэтому вам следует обязательно уведомить своих пользователей о дате окончания пробной версии.
 
-Вы можете определить, находится ли у пользователя пробный период, используя метод `onTrial` экземпляра пользователя или метод `onTrial` экземпляра подписки. Два приведенных ниже примера эквивалентны:
+Вы можете определить, находится ли у пользователя пробный период, используя метод `onTrial` экземпляра пользователя:
 
-    if ($user->onTrial()) {
-        // ...
-    }
-
-    if ($user->subscription()->onTrial()) {
-        // ...
-    }
+```php
+if ($user->onTrial()) {
+    // ...
+}
+```
 
 Чтобы определить, истек ли срок действия существующей пробной версии, вы можете использовать методы `hasExpiredTrial`:
 
-    if ($user->hasExpiredTrial()) {
-        // ...
-    }
-
-    if ($user->subscription()->hasExpiredTrial()) {
-        // ...
-    }
+```php
+if ($user->hasExpiredTrial()) {
+    // ...
+}
+```
 
 Чтобы определить, находится ли пользователь на пробной версии для определенного типа подписки, вы можете указать тип методам `onTrial` или `hasExpiredTrial`:
 
-    if ($user->onTrial('default')) {
-        // ...
-    }
+```php
+if ($user->onTrial('default')) {
+    // ...
+}
 
-    if ($user->hasExpiredTrial('default')) {
-        // ...
-    }
+if ($user->hasExpiredTrial('default')) {
+    // ...
+}
+```
 
 <a name="without-payment-method-up-front"></a>
 ### Без способа оплаты заранее
 
 Если вы хотите предлагать пробные периоды без предварительного сбора информации о способе оплаты пользователя, вы можете установить в столбце `trial_ends_at` в записи клиента, прикрепленной к вашему пользователю, желаемую дату окончания пробного периода. Обычно это делается во время регистрации пользователя:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $user = User::create([
-        // ...
-    ]);
+$user = User::create([
+    // ...
+]);
 
-    $user->createAsCustomer([
-        'trial_ends_at' => now()->addDays(10)
-    ]);
+$user->createAsCustomer([
+    'trial_ends_at' => now()->addDays(10)
+]);
+```
 
 Cashier называет этот тип пробной версии «общей пробной версией», поскольку она не привязана ни к одной существующей подписке. Метод `onTrial` экземпляра `User` вернет `true`, если текущая дата не превышает значения `trial_ends_at`:
 
-    if ($user->onTrial()) {
-        // У пользователя действует пробный период...
-    }
+```php
+if ($user->onTrial()) {
+    // У пользователя действует пробный период...
+}
+```
 
 Когда вы будете готовы создать реальную подписку для пользователя, вы можете использовать метод `subscribe` как обычно:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/user/subscribe', function (Request $request) {
-        $checkout = $user->subscribe('pri_monthly')
-            ->returnTo(route('home'));
+Route::get('/user/subscribe', function (Request $request) {
+    $checkout = $request->user()
+        ->subscribe('pri_monthly')
+        ->returnTo(route('home'));
 
-        return view('billing', ['checkout' => $checkout]);
-    });
+    return view('billing', ['checkout' => $checkout]);
+});
+```
 
 Чтобы получить дату окончания пробной версии пользователя, вы можете использовать метод `trialEndsAt`. Этот метод вернет экземпляр даты Carbon, если пользователь находится на пробной версии, или `null`, если нет. Вы также можете передать необязательный параметр типа подписки, если хотите получить дату окончания пробной версии для конкретной подписки, отличной от стандартной:
 
-    if ($user->onTrial('default')) {
-        $trialEndsAt = $user->trialEndsAt();
-    }
+```php
+if ($user->onTrial('default')) {
+    $trialEndsAt = $user->trialEndsAt();
+}
+```
 
 Вы можете использовать метод `onGenericTrial`, если хотите точно знать, что у пользователя находится «общий» пробный период и он еще не создал фактическую подписку:
 
-    if ($user->onGenericTrial()) {
-        // У пользователя действует «общий» пробный период...
-    }
+```php
+if ($user->onGenericTrial()) {
+    // У пользователя действует «общий» пробный период...
+}
+```
 
 <a name="extend-or-activate-a-trial"></a>
 ### Продление или активировация пробной версии
 
 Вы можете продлить существующий пробный период подписки, вызвав метод `extendTrial` и указав момент времени, когда пробная версия должна закончиться:
 
-    $user->subscription()->extendTrial(now()->addDays(5));
+```php
+$user->subscription()->extendTrial(now()->addDays(5));
+```
 
 Или вы можете немедленно активировать подписку, завершив ее пробную версию, вызвав метод `activate` подписки:
 
-    $user->subscription()->activate();
+```php
+$user->subscription()->activate();
+```
 
 <a name="handling-paddle-webhooks"></a>
 ## Обработка веб-хуков Paddle
@@ -1138,7 +1294,7 @@ Paddle может уведомлять ваше приложение о разл
 
 По умолчанию этот контроллер автоматически обрабатывает отмену подписок со слишком большим количеством неудачных платежей, обновлений подписок и изменений способов оплаты; однако, как мы скоро обнаружим, вы можете расширить этот контроллер для обработки любого события веб-хука Paddle, которое вам нравится.
 
-Чтобы ваше приложение могло обрабатывать веб-хуки Paddle, обязательно [настройте URL-адрес веб-перехватчика на панели управления Paddle](https://vendors.paddle.com/alerts-webhooks). По умолчанию контроллер веб-хука Cashier отвечает на URL-путь `/paddle/webhook`. Полный список всех веб-хуков, которые следует включить в панели управления Paddle:
+Чтобы ваше приложение могло обрабатывать веб-хуки Paddle, обязательно [настройте URL-адрес веб-перехватчика на панели управления Paddle](https://vendors.paddle.com/notifications-v2). По умолчанию контроллер веб-хука Cashier отвечает на URL-путь `/paddle/webhook`. Полный список всех веб-хуков, которые следует включить в панели управления Paddle:
 
 - Клиент обновлен (Customer Updated)
 - Транзакция завершена (Transaction Completed)
@@ -1156,11 +1312,13 @@ Paddle может уведомлять ваше приложение о разл
 
 Поскольку веб-хукам Paddle необходимо обходить [защиту CSRF](/docs/{{version}}/csrf) Laravel, вам следует убедиться, что Laravel не пытается проверить токен CSRF для входящих веб-хуков Paddle. Для этого вам следует исключить `paddle/*` из защиты CSRF в файле `bootstrap/app.php` вашего приложения:
 
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->validateCsrfTokens(except: [
-            'paddle/*',
-        ]);
-    })
+```php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->validateCsrfTokens(except: [
+        'paddle/*',
+    ]);
+})
+```
 
 <a name="webhooks-local-development"></a>
 #### Вебхуки и локальная разработка
@@ -1177,24 +1335,26 @@ Cashier автоматически обрабатывает отмену под�
 
 Оба события содержат полную полезную нагрузку веб-хука Paddle. Например, если вы хотите обрабатывать веб-хук `transaction.billed`, вы можете зарегистрировать [прослушиватель](/docs/{{version}}/events#defining-listeners), который будет обрабатывать событие:
 
-    <?php
+```php
+<?php
 
-    namespace App\Listeners;
+namespace App\Listeners;
 
-    use Laravel\Paddle\Events\WebhookReceived;
+use Laravel\Paddle\Events\WebhookReceived;
 
-    class PaddleEventListener
+class PaddleEventListener
+{
+    /**
+     * Handle получил веб-хуки Paddle.
+     */
+    public function handle(WebhookReceived $event): void
     {
-        /**
-         * Handle получил веб-хуки Paddle.
-         */
-        public function handle(WebhookReceived $event): void
-        {
-            if ($event->payload['event_type'] === 'transaction.billed') {
-                // Обработать входящее событие...
-            }
+        if ($event->payload['event_type'] === 'transaction.billed') {
+            // Обработать входящее событие...
         }
     }
+}
+```
 
 Касса также генерирует события, посвященные типу полученного вебхука. В дополнение к полной полезной нагрузке Paddle они также содержат соответствующие модели, которые использовались для обработки веб-перехватчика, такие как оплачиваемая модель, подписка или квитанция:
 
@@ -1215,7 +1375,7 @@ CASHIER_WEBHOOK=https://example.com/my-paddle-webhook-url
 <a name="verifying-webhook-signatures"></a>
 ### Проверка подписей вебхуков
 
-Чтобы защитить свои веб-хуки, вы можете использовать [подписи веб-хуков Paddle](https://developer.paddle.com/webhook-reference/verifying-webhooks). Для удобства Cashier автоматически включает посредника, который проверяет правильность входящего запроса веб-хука Paddle.
+Чтобы защитить свои веб-хуки, вы можете использовать [подписи веб-хуков Paddle](https://developer.paddle.com/webhooks/signature-verification). Для удобства Cashier автоматически включает посредника, который проверяет правильность входящего запроса веб-хука Paddle.
 
 Чтобы включить проверку веб-хука, убедитесь, что переменная среды `PADDLE_WEBHOOK_SECRET` определена в файле `.env` вашего приложения. Секрет вебхука можно получить на панели управления вашей учетной записи Paddle.
 
@@ -1227,13 +1387,15 @@ CASHIER_WEBHOOK=https://example.com/my-paddle-webhook-url
 
 Если вы хотите инициировать покупку продукта для клиента, вы можете использовать метод `checkout` в экземпляре оплачиваемой модели, чтобы создать сеанс оформления заказа для покупки. Метод `checkout` принимает один или несколько идентификаторов цены. При необходимости можно использовать ассоциативный массив для указания количества приобретаемого продукта:
 
-    use Illuminate\Http\Request;
+```php
+use Illuminate\Http\Request;
 
-    Route::get('/buy', function (Request $request) {
-        $checkout = $request->user()->checkout(['pri_tshirt', 'pri_socks' => 5]);
+Route::get('/buy', function (Request $request) {
+    $checkout = $request->user()->checkout(['pri_tshirt', 'pri_socks' => 5]);
 
-        return view('buy', ['checkout' => $checkout]);
-    });
+    return view('buy', ['checkout' => $checkout]);
+});
+```
 
 После создания сеанса оформления заказа вы можете использовать предоставленную Cashier `paddle-button` [компонент Blade](#overlay-checkout), чтобы позволить пользователю просмотреть виджет оформления заказа Paddle и завершить покупку:
 
@@ -1245,10 +1407,12 @@ CASHIER_WEBHOOK=https://example.com/my-paddle-webhook-url
 
 Сеанс оформления заказа имеет метод `customData`, позволяющий передавать любые пользовательские данные, которые вы хотите, в базовую транзакцию. Пожалуйста, обратитесь к [документации Paddle](https://developer.paddle.com/build/transactions/custom-data), чтобы узнать больше о параметрах, доступных вам при передаче пользовательских данных:
 
-    $checkout = $user->checkout('pri_tshirt')
-        ->customData([
-            'custom_option' => $value,
-        ]);
+```php
+$checkout = $user->checkout('pri_tshirt')
+    ->customData([
+        'custom_option' => $value,
+    ]);
+```
 
 <a name="refunding-transactions"></a>
 ### Возвратные транзакции
@@ -1257,20 +1421,24 @@ CASHIER_WEBHOOK=https://example.com/my-paddle-webhook-url
 
 Например, представьте, что мы хотим возместить определенную транзакцию по ценам `pri_123` и `pri_456`. Мы хотим полностью вернуть стоимость `pri_123`, но вернуть только два доллара за `pri_456`:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $user = User::find(1);
+$user = User::find(1);
 
-    $transaction = $user->transactions()->first();
+$transaction = $user->transactions()->first();
 
-    $response = $transaction->refund('Accidental charge', [
-        'pri_123', // Полностью верните эту цену...
-        'pri_456' => 200, // Только частично возместите эту цену...
-    ]);
+$response = $transaction->refund('Accidental charge', [
+    'pri_123', // Полностью верните эту цену...
+    'pri_456' => 200, // Только частично возместите эту цену...
+]);
+```
 
 В приведенном выше примере происходит возврат средств по определенным позициям в транзакции. Если вы хотите вернуть всю транзакцию, просто укажите причину:
 
-    $response = $transaction->refund('Accidental charge');
+```php
+$response = $transaction->refund('Accidental charge');
+```
 
 Для получения дополнительной информации о возврате средств обратитесь к [документации по возврату средств Paddle](https://developer.paddle.com/build/transactions/create-transaction-adjustments).
 
@@ -1282,10 +1450,12 @@ CASHIER_WEBHOOK=https://example.com/my-paddle-webhook-url
 
 Как и при возврате средств, вы также можете кредитовать транзакции. Зачисление транзакций добавит средства на баланс клиента, чтобы их можно было использовать для будущих покупок. Транзакции кредитования могут выполняться только для транзакций, собираемых вручную, но не для транзакций, собираемых автоматически (например, подписок), поскольку Paddle автоматически обрабатывает кредиты по подписке:
 
-    $transaction = $user->transactions()->first();
+```php
+$transaction = $user->transactions()->first();
 
-    // Полностью кредитуем конкретную позицию...
-    $response = $transaction->credit('Compensation', 'pri_123');
+// Полностью кредитуем конкретную позицию...
+$response = $transaction->credit('Compensation', 'pri_123');
+```
 
 Для получения дополнительной информации [см. документацию Paddle по кредитованию](https://developer.paddle.com/build/transactions/create-transaction-adjustments).
 
@@ -1297,11 +1467,13 @@ CASHIER_WEBHOOK=https://example.com/my-paddle-webhook-url
 
 Вы можете легко получить массив транзакций оплачиваемой модели с помощью свойства `transactions`:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $user = User::find(1);
+$user = User::find(1);
 
-    $transactions = $user->transactions;
+$transactions = $user->transactions;
+```
 
 Транзакции представляют собой оплату ваших продуктов и покупок и сопровождаются счетами. В базе данных вашего приложения сохраняются только завершенные транзакции.
 
@@ -1322,26 +1494,30 @@ CASHIER_WEBHOOK=https://example.com/my-paddle-webhook-url
 
 Маршрут `download-invoice` может выглядеть следующим образом:
 
-    use Illuminate\Http\Request;
-    use Laravel\Paddle\Transaction;
+```php
+use Illuminate\Http\Request;
+use Laravel\Paddle\Transaction;
 
-    Route::get('/download-invoice/{transaction}', function (Request $request, Transaction $transaction) {
-        return $transaction->redirectToInvoicePdf();
-    })->name('download-invoice');
+Route::get('/download-invoice/{transaction}', function (Request $request, Transaction $transaction) {
+    return $transaction->redirectToInvoicePdf();
+})->name('download-invoice');
+```
 
 <a name="past-and-upcoming-payments"></a>
 ### Прошлые и предстоящие платежи
 
 Вы можете использовать методы `lastPayment` и `nextPayment` для получения и отображения прошлых или предстоящих платежей клиента за повторяющиеся подписки:
 
-    use App\Models\User;
+```php
+use App\Models\User;
 
-    $user = User::find(1);
+$user = User::find(1);
 
-    $subscription = $user->subscription();
+$subscription = $user->subscription();
 
-    $lastPayment = $subscription->lastPayment();
-    $nextPayment = $subscription->nextPayment();
+$lastPayment = $subscription->lastPayment();
+$nextPayment = $subscription->nextPayment();
+```
 
 Оба эти метода вернут экземпляр `Laravel\Paddle\Payment`; однако `lastPayment` вернет `null`, если транзакции ещё не синхронизированы с помощью веб-хуков, а `nextPayment` вернет `null`, когда платежный цикл закончился (например, когда подписка была отменена):
 
