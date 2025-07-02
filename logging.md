@@ -1,5 +1,5 @@
 ---
-git: a89581b628e5fce26aa0085771e4877c3a650a71
+git: fa5ace397db97fb06e50fdbe630a9bd0080ce30d
 ---
 
 # Логирование
@@ -509,7 +509,7 @@ Laravel Pail - это пакет, который позволяет вам ле�
 Чтобы начать работу, установите Pail в свой проект с помощью менеджера пакетов Composer:
 
 ```shell
-composer require laravel/pail
+composer require --dev laravel/pail
 ```
 
 <a name="pail-usage"></a>
