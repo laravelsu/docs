@@ -1,5 +1,5 @@
 ---
-git: 11cbd00f3925862924d0bba4b371c5a772d9cfa5
+git: 84413739f127e00727a102c4994551108e62cff7
 ---
 
 # Контроллеры
@@ -505,6 +505,65 @@ Route::apiSingleton('profile', ProfileController::class);
 
 ```php
 Route::apiSingleton('photos.thumbnail', ProfileController::class)->creatable();
+```
+
+<a name="middleware-and-resource-controllers"></a>
+### Посредники и ресурсные контроллеры
+
+Laravel позволяет назначать middleware всем или только определенным методам маршрутов ресурсов с помощью методов `middleware`, `middlewareFor` и `withoutMiddlewareFor`. Эти методы обеспечивают детальный контроль над тем, какое middleware применяется к каждому действию ресурса.
+
+#### Применение посредников ко всем методам
+
+Вы можете использовать метод `middleware`, чтобы назначить посредников всем маршрутам, сгенерированным ресурсом или маршрутом одиночного ресурса:
+
+```php
+Route::resource('users', UserController::class)
+    ->middleware(['auth', 'verified']);
+
+Route::singleton('profile', ProfileController::class)
+    ->middleware('auth');
+```
+
+#### Применение посредников к определенным методам
+
+Вы можете использовать метод `middlewareFor` для назначения посредников одному или нескольким конкретным методам заданного контроллера ресурсов:
+
+```php
+Route::resource('users', UserController::class)
+    ->middlewareFor('show', 'auth');
+
+Route::apiResource('users', UserController::class)
+    ->middlewareFor(['show', 'update'], 'auth');
+
+Route::resource('users', UserController::class)
+    ->middlewareFor('show', 'auth')
+    ->middlewareFor('update', 'auth');
+
+Route::apiResource('users', UserController::class)
+    ->middlewareFor(['show', 'update'], ['auth', 'verified']);
+```
+
+Метод `middlewareFor` также может использоваться совместно с контроллерами ресурсов singleton и API singleton:
+
+```php
+Route::singleton('profile', ProfileController::class)
+    ->middlewareFor('show', 'auth');
+
+Route::apiSingleton('profile', ProfileController::class)
+    ->middlewareFor(['show', 'update'], 'auth');
+```
+
+#### Исключение посредников из определенных методов
+
+Вы можете использовать метод `withoutMiddlewareFor`, чтобы исключить посредников из определенных методов контроллера ресурсов:
+
+```php
+Route::middleware(['auth', 'verified', 'subscribed'])->group(function () {
+    Route::resource('users', UserController::class)
+        ->withoutMiddlewareFor('index', ['auth', 'verified'])
+        ->withoutMiddlewareFor(['create', 'store'], 'verified')
+        ->withoutMiddlewareFor('destroy', 'subscribed');
+});
 ```
 
 <a name="dependency-injection-and-controllers"></a>
