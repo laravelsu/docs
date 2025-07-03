@@ -1,5 +1,5 @@
 ---
-git: b25d56c2f0551c2865e53819cf66eab94880a1d6
+git: fc95dc890bc4085979406a11aee71227205ca0fb
 ---
 
 # Помощь в разработке фреймворка
@@ -17,6 +17,7 @@ git: b25d56c2f0551c2865e53819cf66eab94880a1d6
 Исходный код Laravel расположен на Github. Вот репозитории каждого из проектов Laravel:
 
 <div class="content-list" markdown="1">
+
 - [Laravel Application](https://github.com/laravel/laravel)
 - [Laravel Art](https://github.com/laravel/art)
 - [Laravel Documentation](https://github.com/laravel/docs)
@@ -30,6 +31,7 @@ git: b25d56c2f0551c2865e53819cf66eab94880a1d6
 - [Laravel Scout](https://github.com/laravel/scout)
 - [Laravel Socialite](https://github.com/laravel/socialite)
 - [Laravel Website](https://github.com/laravel/laravel.com)
+
 </div>
 
 <a name="core-development-discussion"></a>
