@@ -1,5 +1,5 @@
 ---
-git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
+git: 04e48786fc848a482342992fd9ee6a22f00f962f
 ---
 
 # Коллекции
@@ -126,17 +126,17 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 ## Список методов
 
 <style>
-    #collection-method code {
+    .collection-method code {
         font-size: 14px;
     }
 
-    #collection-method:not(.first-collection-method) {
+    .collection-method:not(.first-collection-method) {
         margin-top: 50px;
     }
 </style>
 
 <a name="method-all"></a>
-#### `all()` {#collection-method .first-collection-method}
+#### `all()` {.collection-method .first-collection-method}
 
 Метод `all` возвращает заданный массив, представленный коллекцией:
 
@@ -145,12 +145,12 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1, 2, 3]
 
 <a name="method-average"></a>
-#### `average()` {#collection-method}
+#### `average()` {.collection-method}
 
 Псевдоним метода [`avg`](#method-avg).
 
 <a name="method-avg"></a>
-#### `avg()` {#collection-method}
+#### `avg()` {.collection-method}
 
 Метод `avg` возвращает [среднее значение](https://en.wikipedia.org/wiki/Average) переданного ключа:
 
@@ -163,7 +163,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 2
 
 <a name="method-chunk"></a>
-#### `chunk()` {#collection-method}
+#### `chunk()` {.collection-method}
 
 Метод `chunk` разбивает коллекцию на множество мелких коллекций заданного размера:
 
@@ -186,7 +186,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     @endforeach
 
 <a name="method-collapse"></a>
-#### `collapse()` {#collection-method}
+#### `collapse()` {.collection-method}
 
 Метод `collapse` сворачивает коллекцию массивов в одну одномерную коллекцию:
 
@@ -199,7 +199,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 <a name="method-combine"></a>
-#### `combine()` {#collection-method}
+#### `combine()` {.collection-method}
 
 Метод `combine` комбинирует ключи коллекции со значениями другого массива или коллекции:
 
@@ -212,7 +212,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['name' => 'George', 'age' => 29]
 
 <a name="method-concat"></a>
-#### `concat()` {#collection-method}
+#### `concat()` {.collection-method}
  
 Метод `concat` добавляет массив в конец коллекции. Если массив ассоциативный, ключи игнорируются.
  
@@ -225,7 +225,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['John Doe', 'Jane Doe', 'Johnny Doe']     
 
 <a name="method-contains"></a>
-#### `contains()` {#collection-method}
+#### `contains()` {.collection-method}
 
 Метод `contains` определяет, содержит ли коллекция заданное значение:
 
@@ -263,12 +263,12 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод `contains` использует "неточные" сравнения при проверке значений элементов; то есть строка с целым значением будет считаться равной целому числу с тем же значением. Используйте метод [`containsStrict`](#method-containsstrict) для фильтрации с использованием строгих сравнений.
 
 <a name="method-containsstrict"></a>
-#### `containsStrict()` {#collection-method}
+#### `containsStrict()` {.collection-method}
 
 Этот метод использует ту же сигнатуру, как и метод [`contains`](#method-contains); однако, все значения сравниваются с использованием "строгих" сравнений.
 
 <a name="method-count"></a>
-#### `count()` {#collection-method}
+#### `count()` {.collection-method}
 
 Метод `count` возвращает общее количество элементов в коллекции:
 
@@ -279,7 +279,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 4
 
 <a name="method-diff"></a>
-#### `diff()` {#collection-method}
+#### `diff()` {.collection-method}
 
 Метод `diff` сравнивает одну коллекцию с другой коллекцией или с простым массивом, основываясь на его значениях. Этот метод вернёт те значения исходной коллекции, которых нет в переданной для сравнения коллекции:
 
@@ -292,7 +292,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1, 3, 5]
 
 <a name="method-diffassoc"></a>
-#### `diffAssoc()` {#collection-method}
+#### `diffAssoc()` {.collection-method}
 
 Метод `diffAssoc` сравнивает коллекцию с другой коллекцией или простым массивом, основываясь на ключах и значениях. Этот метод вернёт те пары ключ/значение исходной коллекции, которых нет в переданной для сравнения коллекции:
 
@@ -314,7 +314,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['color' => 'orange', 'remain' => 6]
 
 <a name="method-diffkeys"></a>
-#### `diffKeys()` {#collection-method}
+#### `diffKeys()` {.collection-method}
 
 Метод `diffKeys` сравнивает одну коллекцию с другой коллекцией или с простым массивом на основе их ключей. Этот метод вернёт те пары ключ/значение из исходной коллекции, которых нет в переданной для сравнения коллекции:
 
@@ -338,7 +338,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['one' => 10, 'three' => 30, 'five' => 50]
 
 <a name="method-each"></a>
-#### `each()` {#collection-method}
+#### `each()` {.collection-method}
 
 Метод `each` перебирает элементы в коллекции и передает каждый элемент в функцию обратного вызова:
 
@@ -355,7 +355,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     });
 
 <a name="method-every"></a>
-#### `every()` {#collection-method}
+#### `every()` {.collection-method}
 
 Метод `every` можно использовать, чтобы проверить, что все элементы коллекции прошли проверку на истинность:
 
@@ -366,7 +366,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // false
 
 <a name="method-except"></a>
-#### `except()` {#collection-method}
+#### `except()` {.collection-method}
 
 Метод `except` возвращает все элементы в коллекции, кроме тех, чьи ключи указаны в передаваемом массиве:
 
@@ -381,7 +381,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод [only](#method-only) - инверсный методу `except`.
 
 <a name="method-filter"></a>
-#### `filter()` {#collection-method}
+#### `filter()` {.collection-method}
 
 Метод `filter` фильтрует коллекцию с помощью переданной функции обратного вызова, оставляя только те элементы, которые соответствуют заданному условию:
 
@@ -406,7 +406,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод [reject](#method-reject) - инверсный методу `filter`.
 
 <a name="method-first"></a>
-#### `first()` {#collection-method}
+#### `first()` {.collection-method}
 
 Метод `first` возвращает первый элемент в коллекции, который подходит под заданное условие:
 
@@ -423,7 +423,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 1
 
 <a name="method-flatmap"></a>
-#### `flatMap()` {#collection-method}
+#### `flatMap()` {.collection-method}
 
 Метод `flatMap` проходит по коллекции и передаёт каждое значение в заданную функцию обратного вызова. Эта функция может изменить элемент и вернуть его, формируя таким образом новую коллекцию модифицированных элементов. Затем массив "сплющивается" в одномерный:
 
@@ -442,7 +442,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['name' => 'SALLY', 'school' => 'ARKANSAS', 'age' => '28'];
 
 <a name="method-flatten"></a>
-#### `flatten()` {#collection-method}
+#### `flatten()` {.collection-method}
 
 Метод `flatten` преобразует многомерную коллекцию в одномерную:
 
@@ -479,7 +479,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 В этом примере: если вызвать `flatten` без указания глубины, то вложенные массивы тоже «расплющатся», и получим `['iPhone 6S', 'Apple', 'Galaxy S7', 'Samsung']`. Глубина задаёт уровень вложенности массивов, ниже которого "расплющивать" не нужно.
 
 <a name="method-flip"></a>
-#### `flip()` {#collection-method}
+#### `flip()` {.collection-method}
 
 Метод `flip` меняет местами ключи и значения в коллекции:
 
@@ -492,7 +492,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['taylor' => 'name', 'laravel' => 'framework']
 
 <a name="method-forget"></a>
-#### `forget()` {#collection-method}
+#### `forget()` {.collection-method}
 
 Метод `forget` удаляет элемент из коллекции по его ключу:
 
@@ -507,7 +507,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 > {note} В отличие от большинства других методов коллекции, `forget` не возвращает новую модифицированную коллекцию. Он изменяет коллекцию при вызове.
 
 <a name="method-forpage"></a>
-#### `forPage()` {#collection-method}
+#### `forPage()` {.collection-method}
 
 Метод `forPage` возвращает новую коллекцию, содержащую элементы, которые будут присутствовать на странице с заданным номером. Первый аргумент метода — номер страницы, второй аргумент — число элементов для вывода на странице:
 
@@ -520,7 +520,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [4, 5, 6]
 
 <a name="method-get"></a>
-#### `get()` {#collection-method}
+#### `get()` {.collection-method}
 
 Метод `get` возвращает нужный элемент по заданному ключу. Если ключ не существует, то возвращается `null`:
 
@@ -547,7 +547,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // default-value
 
 <a name="method-groupby"></a>
-#### `groupBy()` {#collection-method}
+#### `groupBy()` {.collection-method}
 
 Метод `groupBy` группирует элементы коллекции по заданному ключу:
 
@@ -594,7 +594,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     */
 
 <a name="method-has"></a>
-#### `has()` {#collection-method}
+#### `has()` {.collection-method}
 
 Метод `has` определяет, существует ли заданный ключ в коллекции:
 
@@ -605,7 +605,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // true
 
 <a name="method-implode"></a>
-#### `implode()` {#collection-method}
+#### `implode()` {.collection-method}
 
 Метод `implode` соединяет элементы в коллекции. Его параметры зависят от типа элементов в коллекции. Если коллекция содержит массивы или объекты, вы должны передать ключ атрибутов, значения которых вы хотите соединить, и "промежуточную" строку, которую вы хотите поместить между значениями:
 
@@ -625,7 +625,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // '1-2-3-4-5'
 
 <a name="method-intersect"></a>
-#### `intersect()` {#collection-method}
+#### `intersect()` {.collection-method}
 
 Метод `intersect` удаляет любые значения из исходной коллекции, которых нет в переданном `array` или коллекции. Результирующая коллекция сохранит ключи оригинальной коллекции:
 
@@ -638,7 +638,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [0 => 'Desk', 2 => 'Chair']
 
 <a name="method-intersectkey"></a>
-#### `intersectKey()` {#collection-method}
+#### `intersectKey()` {.collection-method}
 
 Метод `intersectKey` удаляет любые ключи из исходной коллекции, которых нет в переданном `array` или коллекции:
 
@@ -655,7 +655,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['type' => 'screen', 'year' => 2009]
 
 <a name="method-isempty"></a>
-#### `isEmpty()` {#collection-method}
+#### `isEmpty()` {.collection-method}
 
 Метод `isEmpty` возвращает `true`, если коллекция пуста. В противном случае вернётся `false`:
 
@@ -664,7 +664,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // true
 
 <a name="method-isnotempty"></a>
-#### `isNotEmpty()` {#collection-method}
+#### `isNotEmpty()` {.collection-method}
 
 Метод `isNotEmpty` возвращает `true`, если коллекция не пуста; в противном случае вернётся `false`:
 
@@ -673,7 +673,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // false
 
 <a name="method-keyby"></a>
-#### `keyBy()` {#collection-method}
+#### `keyBy()` {.collection-method}
 
 Метод `keyBy` возвращает коллекцию по указанному ключу. Если несколько элементов имеют одинаковый ключ, в результирующей коллекции появится только последний их них:
 
@@ -709,7 +709,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     */
 
 <a name="method-keys"></a>
-#### `keys()` {#collection-method}
+#### `keys()` {.collection-method}
 
 Метод `keys` возвращает все ключи коллекции:
 
@@ -725,7 +725,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['prod-100', 'prod-200']
 
 <a name="method-last"></a>
-#### `last()` {#collection-method}
+#### `last()` {.collection-method}
 
 Метод `last` возвращает последний элемент в коллекции, который проходит проверку на истинность:
 
@@ -742,7 +742,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 4
 
 <a name="method-map"></a>
-#### `map()` {#collection-method}
+#### `map()` {.collection-method}
 
 Метод `map` перебирает коллекцию и передаёт каждое значению в функцию обратного вызова. Функция обратного вызова может свободно изменять элемент и возвращать его, формируя тем самым новую коллекцию измененных элементов:
 
@@ -759,7 +759,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 > {note} Как и большинство других методов коллекции, метод `map` возвращает новый экземпляр коллекции. Он не изменяет коллекцию при вызове. Если вы хотите преобразовать оригинальную коллекцию, используйте метод[`transform`](#method-transform).
 
 <a name="method-mapwithkeys"></a>
-#### `mapWithKeys()` {#collection-method}
+#### `mapWithKeys()` {.collection-method}
 
 Метод `mapWithKeys` проходит по элементам коллекции и передаёт каждое значение в функцию обратного вызова, которая должна вернуть ассоциативный массив, содержащий одну пару ключ/значение:
 
@@ -790,7 +790,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     */
 
 <a name="method-max"></a>
-#### `max()` {#collection-method}
+#### `max()` {.collection-method}
 
 Метод `max`  возвращает максимальное значение по заданному ключу:
 
@@ -803,7 +803,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 5
 
 <a name="method-median"></a>
-#### `median()` {#collection-method}
+#### `median()` {.collection-method}
 
 Метод `median` возвращает [медианное значение](https://en.wikipedia.org/wiki/Median) заданного ключа:
 
@@ -816,7 +816,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 1.5
 
 <a name="method-merge"></a>
-#### `merge()` {#collection-method}
+#### `merge()` {.collection-method}
 
 Метод `merge` добавляет указанный массив в исходную коллекцию. Значения исходной коллекции, имеющие тот же строковый ключ, что и значение в массиве, будут перезаписаны:
 
@@ -839,7 +839,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['Desk', 'Chair', 'Bookcase', 'Door']
 
 <a name="method-min"></a>
-#### `min()` {#collection-method}
+#### `min()` {.collection-method}
 
 Метод `min` возвращает минимальное значение по заданному ключу:
 
@@ -852,7 +852,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 1
 
 <a name="method-mode"></a>
-#### `mode()` {#collection-method}
+#### `mode()` {.collection-method}
 
 Метод `mode` возвращает [значение мода](https://en.wikipedia.org/wiki/Mode_(statistics)) заданного ключа:
 
@@ -865,7 +865,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1]
 
 <a name="method-nth"></a>
-#### `nth()` {#collection-method}
+#### `nth()` {.collection-method}
 
 Метод `nth` создает новую коллекцию, состоящую из каждого n-ного элемента:
 
@@ -882,7 +882,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['b', 'f']
 
 <a name="method-only"></a>
-#### `only()` {#collection-method}
+#### `only()` {.collection-method}
 
 Метод `only` возвращает элементы коллекции с заданными ключами:
 
@@ -897,7 +897,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод [except](#method-except) - инверсный для метода `only`.
 
 <a name="method-partition"></a>
-#### `partition()` {#collection-method}
+#### `partition()` {.collection-method}
 
 Метод `partition` можно объединить с функцией PHP `list`, чтобы отделить элементы, которые прошли заданную проверку на истинность от тех элементов, которые её не прошли:
 
@@ -908,7 +908,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     });
 
 <a name="method-pipe"></a>
-#### `pipe()` {#collection-method}
+#### `pipe()` {.collection-method}
 
 Метод `pipe` передает коллекцию в заданную функцию и возвращает результат:
 
@@ -921,7 +921,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 6
 
 <a name="method-pluck"></a>
-#### `pluck()` {#collection-method}
+#### `pluck()` {.collection-method}
 
 Метод `pluck` извлекает все значения по заданному ключу:
 
@@ -945,7 +945,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['prod-100' => 'Desk', 'prod-200' => 'Chair']
 
 <a name="method-pop"></a>
-#### `pop()` {#collection-method}
+#### `pop()` {.collection-method}
 
 Метод `pop` удаляет и возвращает последний элемент из коллекции:
 
@@ -960,7 +960,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1, 2, 3, 4]
 
 <a name="method-prepend"></a>
-#### `prepend()` {#collection-method}
+#### `prepend()` {.collection-method}
 
 Метод `prepend` добавляет элемент в начало коллекции:
 
@@ -983,7 +983,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['zero' => 0, 'one' => 1, 'two' => 2]
 
 <a name="method-pull"></a>
-#### `pull()` {#collection-method}
+#### `pull()` {.collection-method}
 
 Метод `pull` удаляет и возвращает элемент из коллекции по его ключу:
 
@@ -998,7 +998,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['product_id' => 'prod-100']
 
 <a name="method-push"></a>
-#### `push()` {#collection-method}
+#### `push()` {.collection-method}
 
 Метод `push` добавляет элемент в конец коллекции:
 
@@ -1011,7 +1011,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1, 2, 3, 4, 5]
 
 <a name="method-put"></a>
-#### `put()` {#collection-method}
+#### `put()` {.collection-method}
 
 Метод `put` устанавливает заданный ключ и значение в коллекцию:
 
@@ -1024,7 +1024,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // ['product_id' => 1, 'name' => 'Desk', 'price' => 100]
 
 <a name="method-random"></a>
-#### `random()` {#collection-method}
+#### `random()` {.collection-method}
 
 Метод `random` возвращает случайный элемент из коллекции:
 
@@ -1045,7 +1045,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Если коллекция содержит меньше элементов, чем запрошено, то выбрасывается исключение `InvalidArgumentException`.    
 
 <a name="method-reduce"></a>
-#### `reduce()` {#collection-method}
+#### `reduce()` {.collection-method}
 
 Метод `reduce` уменьшает коллекцию до одного значения, передавая результат каждой итерации в последующую итерацию:
 
@@ -1066,7 +1066,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 10
 
 <a name="method-reject"></a>
-#### `reject()` {#collection-method}
+#### `reject()` {.collection-method}
 
 Метод `reject` фильтрует коллекцию, используя заданную функцию обратного вызова. Функция обратного вызова должна возвращать `true` для элементов, которые необходимо удалить из результирующей коллекции:
 
@@ -1083,7 +1083,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод [`filter`](#method-filter) - инверсный для метода `reject`.
 
 <a name="method-reverse"></a>
-#### `reverse()` {#collection-method}
+#### `reverse()` {.collection-method}
 
 Метод `reverse` меняет порядок элементов коллекции:
 
@@ -1096,7 +1096,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [5, 4, 3, 2, 1]
 
 <a name="method-search"></a>
-#### `search()` {#collection-method}
+#### `search()` {.collection-method}
 
 Метод `search` ищет в коллекции заданное значение и возвращает его ключ при успешном поиске. Если элемент не найден, то возвращается `false`.
 
@@ -1121,7 +1121,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 2
 
 <a name="method-shift"></a>
-#### `shift()` {#collection-method}
+#### `shift()` {.collection-method}
 
 Метод `shift` удаляет и возвращает первый элемент из коллекции:
 
@@ -1136,7 +1136,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [2, 3, 4, 5]
 
 <a name="method-shuffle"></a>
-#### `shuffle()` {#collection-method}
+#### `shuffle()` {.collection-method}
 
 Метод `shuffle` перемешивает элементы в коллекции случайным образом::
 
@@ -1149,7 +1149,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [3, 2, 5, 1, 4] - (generated randomly)
 
 <a name="method-slice"></a>
-#### `slice()` {#collection-method}
+#### `slice()` {.collection-method}
 
 Метод `slice` возвращает часть коллекции, начиная с заданного индекса:
 
@@ -1172,7 +1172,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Полученная часть коллекции сохранит оригинальные ключи. Если вы не хотите сохранять оригинальные ключи, то можете использовать метод [`values`](#method-values), чтобы переиндексировать их.
 
 <a name="method-sort"></a>
-#### `sort()` {#collection-method}
+#### `sort()` {.collection-method}
 
 Метод `sort` сортирует коллекцию. Отсортированная коллекция сохраняет оригинальные ключи массива, поэтому в этом примере мы используем метод [`values`](#method-values) для сброса ключей и последовательной нумерации индексов:
 
@@ -1189,7 +1189,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 > {tip} Для сортировки коллекции вложенных массивов или объектов, смотрите методы [`sortBy`](#method-sortby) и [`sortByDesc`](#method-sortbydesc) methods.
 
 <a name="method-sortby"></a>
-#### `sortBy()` {#collection-method}
+#### `sortBy()` {.collection-method}
 
 Метод `sortBy` сортирует коллекцию по заданному ключу. Отсортированная коллекция сохраняет оригинальные ключи массива, поэтому в этом примере мы используем метод [`values`](#method-values) для сброса ключей и последовательной нумерации индексов:
 
@@ -1234,12 +1234,12 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     */
 
 <a name="method-sortbydesc"></a>
-#### `sortByDesc()` {#collection-method}
+#### `sortByDesc()` {.collection-method}
 
 Этот метод использует такую же сигнатуру, как и метод [`sortBy`](#method-sortby), но будет сортировать коллекцию в обратном порядке.
 
 <a name="method-splice"></a>
-#### `splice()` {#collection-method}
+#### `splice()` {.collection-method}
 
 Метод `splice` удаляет и возвращает часть элементов, начиная с заданного индекса:
 
@@ -1284,7 +1284,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1, 2, 10, 11, 4, 5]
 
 <a name="method-split"></a>
-#### `split()` {#collection-method}
+#### `split()` {.collection-method}
 
 Метод `split` разбивает коллекцию на заданное число групп:
 
@@ -1297,7 +1297,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [[1, 2], [3, 4], [5]]
 
 <a name="method-sum"></a>
-#### `sum()` {#collection-method}
+#### `sum()` {.collection-method}
 
 Метод `sum` возвращает сумму всех элементов в коллекции:
 
@@ -1331,7 +1331,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 6
 
 <a name="method-take"></a>
-#### `take()` {#collection-method}
+#### `take()` {.collection-method}
 
 Метод `take` возвращает новую коллекцию с заданным числом элементов:
 
@@ -1354,7 +1354,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [4, 5]
 
 <a name="method-tap"></a>
-#### `tap()` {#collection-method}
+#### `tap()` {.collection-method}
 
 Метод `tap` передает коллекцию заданной анонимной функции, что позволяет "подключиться" к коллекции в определенный момент и сделать что-либо с элементами, не оказывая влияния на саму коллекцию:
 
@@ -1368,7 +1368,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // 1
 
 <a name="method-times"></a>
-#### `times()` {#collection-method}
+#### `times()` {.collection-method}
 
 Статический метод `times` создает новую коллекцию, вызывая функцию заданное количество раз:
 
@@ -1397,7 +1397,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     */
 
 <a name="method-toarray"></a>
-#### `toArray()` {#collection-method}
+#### `toArray()` {.collection-method}
 
 Метод `toArray` преобразует коллекцию в простой массив. Если значения коллекции являются моделями [Eloquent](/docs/{{version}}/eloquent), то модели также будут преобразованы в массивы:
 
@@ -1414,7 +1414,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 > {note} Метод `toArray` также преобразует все вложенные объекты коллекции в массив. Если вы хотите получить базовый массив, используйте вместо этого метод [`all`](#method-all).
 
 <a name="method-tojson"></a>
-#### `toJson()` {#collection-method}
+#### `toJson()` {.collection-method}
 
 Метод `toJson` преобразует коллекцию в упорядоченную строку JSON:
 
@@ -1425,7 +1425,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // '{"name":"Desk", "price":200}'
 
 <a name="method-transform"></a>
-#### `transform()` {#collection-method}
+#### `transform()` {.collection-method}
 
 Метод `transform` перебирает коллекцию и вызывает заданную функцию обратного вызова для каждого элемента коллекции. Элементы коллекции будут заменены на значения, полученные из функции обратного вызова:
 
@@ -1442,7 +1442,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 > {note} В отличие от большинства других методов коллекции, transform() изменяет саму коллекцию. Если вместо этого вы хотите создать новую коллекцию, используйте метод [`map`](#method-map).
 
 <a name="method-union"></a>
-#### `union()` {#collection-method}
+#### `union()` {.collection-method}
 
 Метод `union` добавляет данный массив в коллекцию. Если массив содержит ключи, которые уже есть в исходной коллекции, то будут оставлены значения исходной коллекции:
 
@@ -1455,7 +1455,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1 => ['a'], 2 => ['b'], 3 => ['c']]
 
 <a name="method-unique"></a>
-#### `unique()` {#collection-method}
+#### `unique()` {.collection-method}
 
 Метод `unique` возвращает все уникальные элементы в коллекции. Полученная коллекция сохраняет оригинальные ключи массива, поэтому в этом примере мы используем метод [`values`](#method-values) для сброса ключей последовательной нумерации индексов:
 
@@ -1508,12 +1508,12 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод `unique` использует "неточные" сравнения при проверке значений элементов, то есть строка с целым значением будет считаться равной целому числу с тем же значением. Используйте метод [`uniqueStrict`](#method-uniquestrict) для фильтрации с использованием строгих сравнений.
 
 <a name="method-uniquestrict"></a>
-#### `uniqueStrict()` {#collection-method}
+#### `uniqueStrict()` {.collection-method}
 
 У этого метода та же сигнатура, как и у метода [`unique`](#method-unique); однако, все значения сравниваются путем "строгих" сравнений.
 
 <a name="method-values"></a>
-#### `values()` {#collection-method}
+#### `values()` {.collection-method}
 
 Метод `values` возвращает новую коллекцию со сброшенными ключами и последовательно пронумерованными индексами:
 
@@ -1534,7 +1534,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     */
 
 <a name="method-when"></a>
-#### `when()` {#collection-method}
+#### `when()` {.collection-method}
 
 Метод `when` выполнит заданную анонимную функцию, когда первый переданный методу элемент будет равен `true`:
 
@@ -1549,7 +1549,7 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
     // [1, 2, 3, 4]
 
 <a name="method-where"></a>
-#### `where()` {#collection-method}
+#### `where()` {.collection-method}
 
 Метод `where` фильтрует коллекцию по заданной паре ключ/значение:
 
@@ -1574,12 +1574,12 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод `where` использует "неточные" сравнения при проверке значений элементов, то есть строка с целым значением будет считаться равной целому числу с тем же значением. Используйте метод [`whereStrict`](#method-wherestrict) для фильтрации с использованием строгих сравнений.
 
 <a name="method-wherestrict"></a>
-#### `whereStrict()` {#collection-method}
+#### `whereStrict()` {.collection-method}
 
 Этот метод имеет такую же сигнатуру, как и метод [`where`](#method-where); однако, все значения сравниваются с использованием строгого сравнения.
 
 <a name="method-wherein"></a>
-#### `whereIn()` {#collection-method}
+#### `whereIn()` {.collection-method}
 
 Метод `whereIn` фильтрует коллекцию по заданным ключу/значению, содержащимся в данном массиве:
 
@@ -1604,12 +1604,12 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод `whereIn` использует "неточные" сравнения при проверке значений элементов, то есть строка с целым значением будет считаться равной целому числу с тем же значением. Используйте метод [`whereInStrict`](#method-whereinstrict) для фильтрации с использованием строгих сравнений.
 
 <a name="method-whereinstrict"></a>
-#### `whereInStrict()` {#collection-method}
+#### `whereInStrict()` {.collection-method}
 
 Этот метод имеет такую же сигнатуру, как и метод [`whereIn`](#method-wherein); однако, все значения сравниваются с использованием строгого сравнения.
 
 <a name="method-wherenotin"></a>
-#### `whereNotIn()` {#collection-method}
+#### `whereNotIn()` {.collection-method}
 
 Метод `whereNotIn` фильтрует коллекцию по заданным ключу/значению, которые не содержатся в данном массиве:
 
@@ -1634,12 +1634,12 @@ git: e2fc3cccdcdb96ccb25b95a08ff7c2d80bf9e6fd
 Метод `whereNotIn` использует "неточные" сравнения при проверке значений элементов, то есть строка с целым значением будет считаться равной целому числу с тем же значением. Используйте метод [`whereNotInStrict`](#method-wherenotinstrict) для фильтрации с использованием строгих сравнений.
 
 <a name="method-wherenotinstrict"></a>
-#### `whereNotInStrict()` {#collection-method}
+#### `whereNotInStrict()` {.collection-method}
 
 Этот метод имеет такую же сигнатуру, как и метод [`whereNotIn`](#method-wherenotin); однако, все значения сравниваются с использованием строгого сравнения.
 
 <a name="method-zip"></a>
-#### `zip()` {#collection-method}
+#### `zip()` {.collection-method}
 
 Метод `zip` объединяет все значения заданного массива со значениями исходной коллекции на соответствующем индексе:
 
