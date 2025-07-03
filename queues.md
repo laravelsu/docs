@@ -1,5 +1,5 @@
 ---
-git: 8296a6200c65ca62a5ea651ec6596997a56fbd4e
+git: fc95dc890bc4085979406a11aee71227205ca0fb
 ---
 
 # Очереди
@@ -57,9 +57,11 @@ git: 8296a6200c65ca62a5ea651ec6596997a56fbd4e
 Упомянутым выше драйверам нужны следующие зависимости:
 
 <div class="content-list" markdown="1">
+
 - Amazon SQS: `aws/aws-sdk-php ~3.0`
 - Beanstalkd: `pda/pheanstalk ~3.0`
 - Redis: `predis/predis ~1.0`
+
 </div>
 
 <a name="creating-jobs"></a>
