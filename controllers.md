@@ -555,7 +555,7 @@ Route::apiSingleton('profile', ProfileController::class)
 
 #### Исключение посредников из определенных методов
 
-Вы можете использовать метод `withoutMiddlewareFor`, чтобы исключить промежуточное программное обеспечение из определенных методов контроллера ресурсов:
+Вы можете использовать метод `withoutMiddlewareFor`, чтобы исключить посредников из определенных методов контроллера ресурсов:
 
 ```php
 Route::middleware(['auth', 'verified', 'subscribed'])->group(function () {
