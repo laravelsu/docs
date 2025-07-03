@@ -1,5 +1,5 @@
 ---
-git: fbc4a96bf50642b7ea2180ea7d7a32b8bc0b41ab
+git: fc95dc890bc4085979406a11aee71227205ca0fb
 ---
 
 # Основы работы с базами данных
@@ -10,10 +10,12 @@ git: fbc4a96bf50642b7ea2180ea7d7a32b8bc0b41ab
 В Laravel можно чрезвычайно просто взаимодействовать с БД на различных "движках", будь то сырой SQL, [гибкий построитель запросов](/docs/{{version}}/queries) или [Eloquent ORM](/docs/{{version}}/eloquent). На данный момент Laravel поддерживает четыре системы баз данных:
 
 <div class="content-list" markdown="1">
+
 - MySQL
 - PostgreSQL
 - SQLite
 - SQL Server
+
 </div>
 
 <a name="configuration"></a>
