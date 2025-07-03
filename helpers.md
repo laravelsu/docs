@@ -1,5 +1,5 @@
 ---
-git: f02fc7e8717a24c160bd4978a0b912aef2a6b52c
+git: 04e48786fc848a482342992fd9ee6a22f00f962f
 ---
 
 # Хелперы
@@ -135,11 +135,11 @@ Laravel включает множество глобальных вспомог�
 ## Список методов
 
 <style>
-    #collection-method code {
+    .collection-method code {
         font-size: 14px;
     }
 
-    #collection-method:not(.first-collection-method) {
+    .collection-method:not(.first-collection-method) {
         margin-top: 50px;
     }
 </style>
@@ -148,7 +148,7 @@ Laravel включает множество глобальных вспомог�
 ## Массивы
 
 <a name="method-array-add"></a>
-#### `array_add()` {#collection-method .first-collection-method}
+#### `array_add()` {.collection-method .first-collection-method}
 
 Функция `array_add` добавляет указанную пару ключ/значение в массив, если она там еще не существует:
 
@@ -157,7 +157,7 @@ Laravel включает множество глобальных вспомог�
     // ['name' => 'Desk', 'price' => 100]
 
 <a name="method-array-collapse"></a>
-#### `array_collapse()` {#collection-method}
+#### `array_collapse()` {.collection-method}
 
 Функция `array_collapse` собирает массив массивов в единый массив:
 
@@ -166,7 +166,7 @@ Laravel включает множество глобальных вспомог�
     // [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 <a name="method-array-divide"></a>
-#### `array_divide()` {#collection-method}
+#### `array_divide()` {.collection-method}
 
 Функция `array_divide` возвращает два массива — один с ключами, другой со значениями оригинального массива:
 
@@ -177,7 +177,7 @@ Laravel включает множество глобальных вспомог�
     // $values: ['Desk']
 
 <a name="method-array-dot"></a>
-#### `array_dot()` {#collection-method}
+#### `array_dot()` {.collection-method}
 
 Функция `array_dot` делает многоуровневый массив одноуровневым, объединяя вложенные массивы с помощью точки в именах:
 
@@ -186,7 +186,7 @@ Laravel включает множество глобальных вспомог�
     // ['foo.bar' => 'baz'];
 
 <a name="method-array-except"></a>
-#### `array_except()` {#collection-method}
+#### `array_except()` {.collection-method}
 
 Функция `array_except` удаляет указанную пару ключ/значение из массива:
 
@@ -197,7 +197,7 @@ Laravel включает множество глобальных вспомог�
     // ['name' => 'Desk']
 
 <a name="method-array-first"></a>
-#### `array_first()` {#collection-method}
+#### `array_first()` {.collection-method}
 
 Функция `array_first` возвращает первый элемент массива, удовлетворяющий требуемому условию:
 
@@ -214,7 +214,7 @@ Laravel включает множество глобальных вспомог�
     $value = array_first($array, $callback, $default);
 
 <a name="method-array-flatten"></a>
-#### `array_flatten()` {#collection-method}
+#### `array_flatten()` {.collection-method}
 
 Функция `array_flatten` сделает многоуровневый массив плоским.
 
@@ -225,7 +225,7 @@ Laravel включает множество глобальных вспомог�
     // ['Joe', 'PHP', 'Ruby'];
 
 <a name="method-array-forget"></a>
-#### `array_forget()` {#collection-method}
+#### `array_forget()` {.collection-method}
 
 Функция `array_forget` удалит указанную пару ключ/значение из многоуровневого массива, используя синтаксис имени с точкой:
 
@@ -236,7 +236,7 @@ Laravel включает множество глобальных вспомог�
     // ['products' => []]
 
 <a name="method-array-get"></a>
-#### `array_get()` {#collection-method}
+#### `array_get()` {.collection-method}
 
 Функция `array_get` вернет значение из многоуровневого массива, используя синтаксис имени с точкой:
 
@@ -251,7 +251,7 @@ Laravel включает множество глобальных вспомог�
     $value = array_get($array, 'names.john', 'default');
 
 <a name="method-array-has"></a>
-#### `array_has()` {#collection-method}
+#### `array_has()` {.collection-method}
 
 Функция `array_has` проверяет существование данного элемента или элементов в массиве, используя синтаксис имени с точкой:
 
@@ -266,7 +266,7 @@ Laravel включает множество глобальных вспомог�
     // false
 
 <a name="method-array-last"></a>
-#### `array_last()` {#collection-method}
+#### `array_last()` {.collection-method}
 
 Функция `array_last` возвращает последний элемент массива, удовлетворяющий требуемому условию:
 
@@ -279,7 +279,7 @@ Laravel включает множество глобальных вспомог�
     // 300
 
 <a name="method-array-only"></a>
-#### `array_only()` {#collection-method}
+#### `array_only()` {.collection-method}
 
 Функция `array_only` вернет из массива только указанные пары ключ/значения:
 
@@ -290,7 +290,7 @@ Laravel включает множество глобальных вспомог�
     // ['name' => 'Desk', 'price' => 100]
 
 <a name="method-array-pluck"></a>
-#### `array_pluck()` {#collection-method}
+#### `array_pluck()` {.collection-method}
 
 Функция `array_pluck` извлекает значения из многоуровневого массива, соответствующие переданному ключу:
 
@@ -310,7 +310,7 @@ Laravel включает множество глобальных вспомог�
     // [1 => 'Taylor', 2 => 'Abigail'];
 
 <a name="method-array-prepend"></a>
-#### `array_prepend()` {#collection-method}
+#### `array_prepend()` {.collection-method}
 
 Функция `array_prepend` поместит элемент в начало массива:
 
@@ -321,7 +321,7 @@ Laravel включает множество глобальных вспомог�
     // $array: ['zero', 'one', 'two', 'three', 'four']
 
 <a name="method-array-pull"></a>
-#### `array_pull()` {#collection-method}
+#### `array_pull()` {.collection-method}
 
 Функция `array_pull` извлечет значения из многоуровневого массива, соответствующие переданному ключу, и удалит их:
 
@@ -334,7 +334,7 @@ Laravel включает множество глобальных вспомог�
     // $array: ['price' => 100]
 
 <a name="method-array-set"></a>
-#### `array_set()` {#collection-method}
+#### `array_set()` {.collection-method}
 
 Функция `array_set` установит значение в многоуровневом массиве, используя синтаксис имени с точкой:
 
@@ -345,7 +345,7 @@ Laravel включает множество глобальных вспомог�
     // ['products' => ['desk' => ['price' => 200]]]
 
 <a name="method-array-sort"></a>
-#### `array_sort()` {#collection-method}
+#### `array_sort()` {.collection-method}
 
 Функция `array_sort` отсортирует массив по результатам вызовов переданной функции-замыкания:
 
@@ -366,7 +366,7 @@ Laravel включает множество глобальных вспомог�
     */
 
 <a name="method-array-sort-recursive"></a>
-#### `array_sort_recursive()` {#collection-method}
+#### `array_sort_recursive()` {.collection-method}
 
 Функция `array_sort_recursive` рекурсивно сортирует массив с помощью функции `sort`:
 
@@ -401,7 +401,7 @@ Laravel включает множество глобальных вспомог�
     */
 
 <a name="method-array-where"></a>
-#### `array_where()` {#collection-method}
+#### `array_where()` {.collection-method}
 
 Функция `array_where` фильтрует массив с помощью переданной функции-замыкания:
 
@@ -414,7 +414,7 @@ Laravel включает множество глобальных вспомог�
     // [1 => 200, 3 => 400]
 
 <a name="method-array-wrap"></a>
-#### `array_wrap()` {#collection-method}
+#### `array_wrap()` {.collection-method}
 
 Функция `array_wrap` поместит заданное значение в массив. Если это значение уже в массиве, то функция никак его не изменит:
 
@@ -425,7 +425,7 @@ Laravel включает множество глобальных вспомог�
     // [0 => 'Laravel']
 
 <a name="method-head"></a>
-#### `head()` {#collection-method}
+#### `head()` {.collection-method}
 
 Функция `head` вернет первый элемент массива:
 
@@ -436,7 +436,7 @@ Laravel включает множество глобальных вспомог�
     // 100
 
 <a name="method-last"></a>
-#### `last()` {#collection-method}
+#### `last()` {.collection-method}
 
 Функция `last` вернет последний элемент массива:
 
@@ -450,7 +450,7 @@ Laravel включает множество глобальных вспомог�
 ## Пути
 
 <a name="method-app-path"></a>
-#### `app_path()` {#collection-method}
+#### `app_path()` {.collection-method}
 
 Функция `app_path` возвращает полный путь к директории `app`. Также можно использовать функцию `app_path` для получения полного пути к указанному файлу относительно каталога приложения:
 
@@ -459,7 +459,7 @@ Laravel включает множество глобальных вспомог�
     $path = app_path('Http/Controllers/Controller.php');
 
 <a name="method-base-path"></a>
-#### `base_path()` {#collection-method}
+#### `base_path()` {.collection-method}
 
 Функция `base_path` возвращает полный путь к корневой папке приложения. Также можно использовать функцию `base_path` для получения полного пути к указанному файлу относительно корня проекта:
 
@@ -468,35 +468,35 @@ Laravel включает множество глобальных вспомог�
     $path = base_path('vendor/bin');
 
 <a name="method-config-path"></a>
-#### `config_path()` {#collection-method}
+#### `config_path()` {.collection-method}
 
 Функция `config_path` возвращает полный путь к папке настройки приложения:
 
     $path = config_path();
 
 <a name="method-database-path"></a>
-#### `database_path()` {#collection-method}
+#### `database_path()` {.collection-method}
 
 Функция `database_path` возвращает полный путь к папке базы данных приложения:
 
     $path = database_path();
 
 <a name="method-mix"></a>
-#### `mix()` {#collection-method}
+#### `mix()` {.collection-method}
 
 Функция `mix` получает путь к [версионированному файлу Mix](/docs/{{version}}/mix):
 
     mix($file);
 
 <a name="method-public-path"></a>
-#### `public_path()` {#collection-method}
+#### `public_path()` {.collection-method}
 
 Функция `public_path` возвращает полный путь к папке `public`:
 
     $path = public_path();
 
 <a name="method-resource-path"></a>
-#### `resource_path()` {#collection-method}
+#### `resource_path()` {.collection-method}
 
 Функция `resource_path` возвращает полный путь к папке `resources`. Также можно использовать функцию `resource_path` для получения полного пути к указанному файлу относительно каталога с ресурсами:
 
@@ -505,7 +505,7 @@ Laravel включает множество глобальных вспомог�
     $path = resource_path('assets/sass/app.scss');
 
 <a name="method-storage-path"></a>
-#### `storage_path()` {#collection-method}
+#### `storage_path()` {.collection-method}
 
 Функция `storage_path` возвращает полный путь к папке `storage`. Также можно использовать функцию `storage_path` для получения полного пути к указанному файлу относительно каталога хранилища:
 
@@ -517,7 +517,7 @@ Laravel включает множество глобальных вспомог�
 ## Строки
 
 <a name="method-camel-case"></a>
-#### `camel_case()` {#collection-method}
+#### `camel_case()` {.collection-method}
 
 Функция `camel_case` преобразует строку в `camelCase`:
 
@@ -526,7 +526,7 @@ Laravel включает множество глобальных вспомог�
     // fooBar
 
 <a name="method-class-basename"></a>
-#### `class_basename()` {#collection-method}
+#### `class_basename()` {.collection-method}
 
 `class_basename` возвращает имя переданного класса без пространства имен:
 
@@ -535,7 +535,7 @@ Laravel включает множество глобальных вспомог�
     // Baz
 
 <a name="method-e"></a>
-#### `e()` {#collection-method}
+#### `e()` {.collection-method}
 
 Функция `e` выполняет функцию PHP `htmlspecialchars` с опцией `double_encode`, равной `false`:
 
@@ -544,7 +544,7 @@ Laravel включает множество глобальных вспомог�
     // &lt;html&gt;foo&lt;/html&gt;
 
 <a name="method-ends-with"></a>
-#### `ends_with()` {#collection-method}
+#### `ends_with()` {.collection-method}
 
 Функция `ends_with` определяет заканчивается ли строка переданной подстрокой:
 
@@ -553,7 +553,7 @@ Laravel включает множество глобальных вспомог�
     // true
 
 <a name="method-kebab-case"></a>
-#### `kebab_case()` {#collection-method}
+#### `kebab_case()` {.collection-method}
 
 Функция `kebab_case` преобразует строку в `kebab-case`:
 
@@ -563,7 +563,7 @@ Laravel включает множество глобальных вспомог�
 
 
 <a name="method-snake-case"></a>
-#### `snake_case()` {#collection-method}
+#### `snake_case()` {.collection-method}
 
 Функция `snake_case` преобразует строку в `snake_case`:
 
@@ -572,7 +572,7 @@ Laravel включает множество глобальных вспомог�
     // foo_bar
 
 <a name="method-str-limit"></a>
-#### `str_limit()` {#collection-method}
+#### `str_limit()` {.collection-method}
 
 Функция `str_limit` ограничивает число сиволов в строке. Функция принимает строку первым аргументом, а вторым — максимальное число символов:
 
@@ -581,7 +581,7 @@ Laravel включает множество глобальных вспомог�
     // The PHP...
 
 <a name="method-starts-with"></a>
-#### `starts_with()` {#collection-method}
+#### `starts_with()` {.collection-method}
 
 Функция `starts_with` определяет начинается ли строка с переданной подстроки:
 
@@ -590,7 +590,7 @@ Laravel включает множество глобальных вспомог�
     // true
 
 <a name="method-str-after"></a>
-#### `str_after()` {#collection-method}
+#### `str_after()` {.collection-method}
 
 Функция `str_after` возвращает все, что содержится в строке после переданной подстроки:
 
@@ -599,7 +599,7 @@ Laravel включает множество глобальных вспомог�
     // ' a test'
 
 <a name="method-str-contains"></a>
-#### `str_contains()` {#collection-method}
+#### `str_contains()` {.collection-method}
 
 Функция `str_contains` определяет содержит ли строка переданную подстроку:
 
@@ -614,7 +614,7 @@ Laravel включает множество глобальных вспомог�
     // true
 
 <a name="method-str-finish"></a>
-#### `str_finish()` {#collection-method}
+#### `str_finish()` {.collection-method}
 
 Функция `str_finish` добавляет одно вхождение подстроки в конец переданной строки, если она уже не заканчивается этим вхождением:
 
@@ -624,7 +624,7 @@ Laravel включает множество глобальных вспомог�
     // this/string/
 
 <a name="method-str-is"></a>
-#### `str_is()` {#collection-method}
+#### `str_is()` {.collection-method}
 
 Функция `str_is` определяет соответствует ли строка маске. Можно использовать звёздочки (*) как символы подстановки:
 
@@ -637,7 +637,7 @@ Laravel включает множество глобальных вспомог�
     // false
 
 <a name="method-str-plural"></a>
-#### `str_plural()` {#collection-method}
+#### `str_plural()` {.collection-method}
 
 Функция `str_plural` преобразовывает слово-строку во множественное число. На данные момент функция поддерживает только английский язык:
 
@@ -660,14 +660,14 @@ Laravel включает множество глобальных вспомог�
     // child
 
 <a name="method-str-random"></a>
-#### `str_random()` {#collection-method}
+#### `str_random()` {.collection-method}
 
 Функция `str_random` создает последовательность случайных символов заданной длины. Эта функция использует PHP-функцию `random_bytes`:
 
     $string = str_random(40);
 
 <a name="method-str-singular"></a>
-#### `str_singular()` {#collection-method}
+#### `str_singular()` {.collection-method}
 
 Функция `str_singular` преобразует слово-строку в единственное число. Функция поддерживает только английский язык:
 
@@ -676,7 +676,7 @@ Laravel включает множество глобальных вспомог�
     // car
 
 <a name="method-str-slug"></a>
-#### `str_slug()` {#collection-method}
+#### `str_slug()` {.collection-method}
 
 Функция `str_slug` генерирует подходящую для URL "заготовку" из переданной строки:
 
@@ -685,7 +685,7 @@ Laravel включает множество глобальных вспомог�
     // laravel-5-framework
 
 <a name="method-studly-case"></a>
-#### `studly_case()` {#collection-method}
+#### `studly_case()` {.collection-method}
 
 Функция `studly_case` преобразует строку в `StudlyCase`:
 
@@ -694,7 +694,7 @@ Laravel включает множество глобальных вспомог�
     // FooBar
 
 <a name="method-title-case"></a>
-#### `title_case()` {#collection-method}
+#### `title_case()` {.collection-method}
 
 The `title_case` преобразует строку в `Title Case`:
 
@@ -703,14 +703,14 @@ The `title_case` преобразует строку в `Title Case`:
     // Хороший Заголовок Пишется В Правильном Регистре
 
 <a name="method-trans"></a>
-#### `trans()` {#collection-method}
+#### `trans()` {.collection-method}
 
 Функция `trans` переводит переданную языковую строку с помощью ваших [файлов локализации](/docs/{{version}}/localization):
 
     echo trans('validation.required'):
 
 <a name="method-trans-choice"></a>
-#### `trans_choice()` {#collection-method}
+#### `trans_choice()` {.collection-method}
 
 Функция `trans_choice` переводит переданную языковую строку с изменениями:
 
@@ -720,7 +720,7 @@ The `title_case` преобразует строку в `Title Case`:
 ## URL
 
 <a name="method-action"></a>
-#### `action()` {#collection-method}
+#### `action()` {.collection-method}
 
 Функция `action` генерирует URL для заданного действия контроллера. Вам не надо передавать полное пространство имён в контроллер. Вместо этого передайте имя класса контроллера в пространстве имён `App\Http\Controllers`:
 
@@ -731,21 +731,21 @@ The `title_case` преобразует строку в `Title Case`:
     $url = action('UserController@profile', ['id' => 1]);
 
 <a name="method-asset"></a>
-#### `asset()` {#collection-method}
+#### `asset()` {.collection-method}
 
 Генерирует URL к ресурсу (изображению и пр.) на основе текущей схемы запроса (HTTP или HTTPS):
 
     $url = asset('img/photo.jpg');
 
 <a name="method-secure-asset"></a>
-#### `secure_asset()` {#collection-method}
+#### `secure_asset()` {.collection-method}
 
 Генерирует URL для ресурса с использованием HTTPS:
 
     echo secure_asset('foo/bar.zip');
 
 <a name="method-route"></a>
-#### `route()` {#collection-method}
+#### `route()` {.collection-method}
 
 Функция `route` генерирует URL для заданного именованного роута:
 
@@ -760,7 +760,7 @@ The `title_case` преобразует строку в `Title Case`:
     $url = route('routeName', ['id' => 1], false);
 
 <a name="method-secure-url"></a>
-#### `secure_url()` {#collection-method}
+#### `secure_url()` {.collection-method}
 
 Функция `secure_url` генерирует полный HTTPS URL по заданному пути:
 
@@ -769,7 +769,7 @@ The `title_case` преобразует строку в `Title Case`:
     echo secure_url('user/profile', [1]);
 
 <a name="method-url"></a>
-#### `url()` {#collection-method}
+#### `url()` {.collection-method}
 
 Функция `url` генерирует полный URL по заданному пути:
 
@@ -787,7 +787,7 @@ The `title_case` преобразует строку в `Title Case`:
 ## Прочее
 
 <a name="method-abort"></a>
-#### `abort()` {#collection-method}
+#### `abort()` {.collection-method}
 
 Функция `abort` выбрасывает HTTP-исключение, которое будет отображено обработчиком исключений:
 
@@ -798,42 +798,42 @@ The `title_case` преобразует строку в `Title Case`:
     abort(401, 'Unauthorized.');
 
 <a name="method-abort-if"></a>
-#### `abort_if()` {#collection-method}
+#### `abort_if()` {.collection-method}
 
 Функция `abort_if` выбрасывает HTTP-исключение, если заданное логическое выражение равно `true`:
 
     abort_if(! Auth::user()->isAdmin(), 403);
 
 <a name="method-abort-unless"></a>
-#### `abort_unless()` {#collection-method}
+#### `abort_unless()` {.collection-method}
 
 Функция `abort_unless` выбрасывает HTTP-исключение, если заданное логическое выражение равно `false`:
 
     abort_unless(Auth::user()->isAdmin(), 403);
 
 <a name="method-auth"></a>
-#### `auth()` {#collection-method}
+#### `auth()` {.collection-method}
 
 Функция `auth` возвращает экземпляр аутентификатора. Вы можете использовать ее вместо фасада `Auth` для удобства:
 
     $user = auth()->user();
 
 <a name="method-back"></a>
-#### `back()` {#collection-method}
+#### `back()` {.collection-method}
 
 Функция `back()` создает отклик-переадресацию на предыдущую страницу пользователя:
 
     return back();
 
 <a name="method-bcrypt"></a>
-#### `bcrypt()` {#collection-method}
+#### `bcrypt()` {.collection-method}
 
 Функция `bcrypt` хеширует переданное значение с помощью Bcrypt. Вы можете использовать ее вместо фасада `Hash`:
 
     $password = bcrypt('my-secret-password');
 
 <a name="method-cache"></a>
-#### `cache()` {#collection-method}
+#### `cache()` {.collection-method}
 
 Функцию `cache` можно использовать для получения значений из кэша. Если в кэше нет заданного ключа, будет возвращено необязательное значение по умолчанию:
 
@@ -848,14 +848,14 @@ The `title_case` преобразует строку в `Title Case`:
     cache(['key' => 'value'], Carbon::now()->addSeconds(10));
 
 <a name="method-collect"></a>
-#### `collect()` {#collection-method}
+#### `collect()` {.collection-method}
 
 Функция `collect` создает экземпляр [коллекции](/docs/{{version}}/collections) из переданного массива:
 
     $collection = collect(['taylor', 'abigail']);
 
 <a name="method-config"></a>
-#### `config()` {#collection-method}
+#### `config()` {.collection-method}
 
 Функция `config` получает значение переменной из конфигурации. К значениям конфигурации можно обращаться с помощью "точечного" синтаксиса, в котором указывается имя файла и необходимый параметр. Можно указать значение по умолчанию, которое будет возвращено, если параметра не существует:
 
@@ -868,21 +868,21 @@ The `title_case` преобразует строку в `Title Case`:
     config(['app.debug' => true]);
 
 <a name="method-csrf-field"></a>
-#### `csrf_field()` {#collection-method}
+#### `csrf_field()` {.collection-method}
 
 Функция `csrf_field` создаёт скрытое поле ввода HTML `hidden`, содержащее значение CSRF-последовательности. Например, используя [синтаксис Blade](/docs/{{version}}/blade):
 
     {{ csrf_field() }}
 
 <a name="method-csrf-token"></a>
-#### `csrf_token()` {#collection-method}
+#### `csrf_token()` {.collection-method}
 
 Функция `csrf_token` позволяет получить текущее значение CSRF-последовательности:
 
     $token = csrf_token();
 
 <a name="method-dd"></a>
-#### `dd()` {#collection-method}
+#### `dd()` {.collection-method}
 
 Функция `dd` выводит дамп переменных и завершает выполнение скрипта:
 
@@ -895,14 +895,14 @@ The `title_case` преобразует строку в `Title Case`:
     dump($value);
 
 <a name="method-dispatch"></a>
-#### `dispatch()` {#collection-method}
+#### `dispatch()` {.collection-method}
 
 Функция `dispatch` помещает новую задачу в [список задач](/docs/{{version}}/queues) Laravel:
 
     dispatch(new App\Jobs\SendEmails);
 
 <a name="method-env"></a>
-#### `env()` {#collection-method}
+#### `env()` {.collection-method}
 
 Функция `env` позволяет получить значение переменной среды или вернуть значение по умолчанию:
 
@@ -912,21 +912,21 @@ The `title_case` преобразует строку в `Title Case`:
     $env = env('APP_ENV', 'production');
 
 <a name="method-event"></a>
-#### `event()` {#collection-method}
+#### `event()` {.collection-method}
 
 Функция `event` отправляет указанное [событие](/docs/{{version}}/events) его слушателям:
 
     event(new UserRegistered($user));
 
 <a name="method-factory"></a>
-#### `factory()` {#collection-method}
+#### `factory()` {.collection-method}
 
 Функция `factory` создает построитель фабрики моделей для данного класса, имени и количества. Его можно использовать при [тестировании](/docs/{{version}}/database-testing#writing-factories) или [заполнении БД](/docs/{{version}}/seeding#using-model-factories):
 
     $user = factory(App\User::class)->make();
 
 <a name="method-info"></a>
-#### `info()` {#collection-method}
+#### `info()` {.collection-method}
 
 Функция `info` будет записывать информацию в журнал:
 
@@ -937,7 +937,7 @@ The `title_case` преобразует строку в `Title Case`:
     info('Неудачная попытка входа пользователя.', ['id' => $user->id]);
 
 <a name="method-logger"></a>
-#### `logger()` {#collection-method}
+#### `logger()` {.collection-method}
 
 Функцию `logger` можно использовать, чтобы записать в журнал сообщение уровня `debug`:
 
@@ -952,7 +952,7 @@ The `title_case` преобразует строку в `Title Case`:
     logger()->error('Вам сюда нельзя.');
 
 <a name="method-method-field"></a>
-#### `method_field()` {#collection-method}
+#### `method_field()` {.collection-method}
 
 Функция `method_field` создаёт скрытое поле ввода HTML `hidden`, содержащее подмененное значение HTTP-типа формы. Например, используя [синтаксис Blade](/docs/{{version}}/blade):
 
@@ -961,7 +961,7 @@ The `title_case` преобразует строку в `Title Case`:
     </form>
 
 <a name="method-old"></a>
-#### `old()` {#collection-method}
+#### `old()` {.collection-method}
 
 Функция `old` [получает](/docs/{{version}}/requests#retrieving-input) значение "старого" ввода, переданного в сессию:
 
@@ -970,7 +970,7 @@ The `title_case` преобразует строку в `Title Case`:
     $value = old('value', 'default');
 
 <a name="method-redirect"></a>
-#### `redirect()` {#collection-method}
+#### `redirect()` {.collection-method}
 
 Функция `redirect` возвращает HTTP-отклик переадресации, или экземпляр переадресатора, если вызывается без аргументов:
 
@@ -979,7 +979,7 @@ The `title_case` преобразует строку в `Title Case`:
     return redirect()->route('route.name');
 
 <a name="method-request"></a>
-#### `request()` {#collection-method}
+#### `request()` {.collection-method}
 
 Функция `request` возвращает экземпляр текущего [запроса](/docs/{{version}}/requests) или получает элемент ввода:
 
@@ -988,7 +988,7 @@ The `title_case` преобразует строку в `Title Case`:
     $value = request('key', $default = null)
 
 <a name="method-response"></a>
-#### `response()` {#collection-method}
+#### `response()` {.collection-method}
 
 Функция `response` создает экземпляр [ответа](/docs/{{version}}/responses) или получает экземпляр фабрики ответов:
 
@@ -997,7 +997,7 @@ The `title_case` преобразует строку в `Title Case`:
     return response()->json(['foo' => 'bar'], 200, $headers);
 
 <a name="method-retry"></a>
-#### `retry()` {#collection-method}
+#### `retry()` {.collection-method}
 
 Функция `retry` пытается выполнить заданную функцию до тех пор, пока не будет достигнут заданный максимальный порог попыток. Если функция не бросает исключение, возвращается возвращаемое ею значение. Если функция бросает исключение, она будет автоматически выполнена еще раз. Если превышено максимальное количество попыток, будет брошено исключение:
 
@@ -1006,7 +1006,7 @@ The `title_case` преобразует строку в `Title Case`:
     }, 100);
 
 <a name="method-session"></a>
-#### `session()` {#collection-method}
+#### `session()` {.collection-method}
 
 Функция `session` используется для получения или задания значений сессии:
 
@@ -1023,7 +1023,7 @@ The `title_case` преобразует строку в `Title Case`:
     session()->put('key', $value);
 
 <a name="method-value"></a>
-#### `value()` {#collection-method}
+#### `value()` {.collection-method}
 
 Поведение функции `value` просто вернет данное функции значение. Однако, если передать `Closure` функции, будет выполнено `Closure` и возвращен результат:
 
@@ -1032,7 +1032,7 @@ The `title_case` преобразует строку в `Title Case`:
     });
 
 <a name="method-view"></a>
-#### `view()` {#collection-method}
+#### `view()` {.collection-method}
 
 Функция `view` получает экземпляр [шаблона](/docs/{{version}}/views):
 
