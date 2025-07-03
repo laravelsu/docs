@@ -1,5 +1,5 @@
 ---
-git: 3414ff9e5a41a50bd7a5b9ee65b43d7d85f35350
+git: b0228c0af866065235d849097e178166672265f5
 ---
 
 # Контейнер служб (service container)
@@ -268,8 +268,7 @@ class PhotoController extends Controller
 {
     public function __construct(
         #[Storage('local')] protected Filesystem $filesystem
-    )
-    {
+    ) {
         // ...
     }
 }
