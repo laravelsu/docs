@@ -1,5 +1,5 @@
 ---
-git: 1bf77dca97f57287daf890ec7860d500fbafe1b5
+git: fc95dc890bc4085979406a11aee71227205ca0fb
 ---
 
 # Laravel Cashier
