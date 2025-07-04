@@ -1,5 +1,5 @@
 ---
-git: e38f8449286561ea7e582f8a82fd6879c13b8d91
+git: 7b8ff9a05d0430022cdac899b69edd8b2ebdcb43
 ---
 
 # Консоль Artisan
@@ -184,6 +184,7 @@ Artisan::command('mail:send {user}', function (string $user) {
 ```php
 use App\Models\User;
 use App\Support\DripEmailer;
+use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('mail:send {user}', function (DripEmailer $drip, string $user) {
     $drip->send(User::find($user));
@@ -752,6 +753,7 @@ use App\Domain\Orders\Commands\SendEmails;
 
 ```php
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/user/{user}/mail', function (string $user) {
     $exitCode = Artisan::call('mail:send', [
@@ -775,6 +777,7 @@ Artisan::call('mail:send 1 --queue=default');
 
 ```php
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/mail', function () {
     $exitCode = Artisan::call('mail:send', [
@@ -801,6 +804,7 @@ $exitCode = Artisan::call('migrate:refresh', [
 
 ```php
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/user/{user}/mail', function (string $user) {
     Artisan::queue('mail:send', [
