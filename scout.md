@@ -1,5 +1,5 @@
 ---
-git: f9f6b6f85812886208efaa6bc56632cb9e79babe
+git: 53bcc8e59fb02eea74c9ddd733d4b7862ec07c9b
 ---
 
 # Laravel Scout
