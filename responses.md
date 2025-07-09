@@ -1,5 +1,5 @@
 ---
-git: d37c75d30814473cda3a5737f056fe0527287d26
+git: 190d3e51e188f12b9e85207da835780048faf486
 ---
 
 # HTTP-ответы
@@ -439,7 +439,7 @@ const sendMessage = () => {
 При отправке данных обратно в поток через `send`, активное соединение с потоком отменяется перед отправкой новых данных. Все запросы отправляются как запросы JSON `POST`.
 
 > [!WARNING]
-> Поскольку хук `useStream` делает запрос `POST` к вашему приложению, требуется действительный токен CSRF. Самый простой способ предоставить токен CSRF — это [включить его через тег `meta` в `head` макета вашего приложения](/docs/{{version}}/csrf#csrf-x-csrf-token).
+> Поскольку хук `useStream` делает запрос `POST` к вашему приложению, требуется действительный токен CSRF. Самый простой способ предоставить токен CSRF — это [включить его через тег meta в head макета вашего приложения](/docs/{{version}}/csrf#csrf-x-csrf-token).
 Второй аргумент, заданный для `useStream`, — это объект параметров, который вы можете использовать для настройки поведения потребления потока. Значения по умолчанию для этого объекта показаны ниже:
 
 ```tsx tab=React
@@ -619,7 +619,7 @@ Route::get('/users.json', function () {
 });
 ```
 
-Хук `useJsonStream` идентичен хуку [`useStream`](#sumption-streamed-responses), за исключением того, что он попытается проанализировать данные как JSON после завершения потоковой передачи:
+Хук `useJsonStream` идентичен хуку [useStream](#sumption-streamed-responses), за исключением того, что он попытается проанализировать данные как JSON после завершения потоковой передачи:
 
 ```tsx tab=React
 import { useJsonStream } from "@laravel/stream-react";
@@ -752,7 +752,7 @@ import { useEventStream } from "@laravel/stream-react";
 
 function App() {
   const { message } = useEventStream("/stream", {
-    event: "update",
+    eventName: "update",
     onMessage: (message) => {
       //
     },
@@ -774,7 +774,7 @@ function App() {
 <script setup lang="ts">
 import { useEventStream } from "@laravel/stream-vue";
 const { message } = useEventStream("/chat", {
-  event: "update",
+  eventName: "update",
   onMessage: (message) => {
     // ...
   },
