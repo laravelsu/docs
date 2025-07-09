@@ -1,5 +1,5 @@
 ---
-git: 390016b5854f02b3e6eecc718241808105e8c978
+git: 6cd5437b91adb17447046a0da5f7688ac8d092b5
 ---
 
 # Шаблонизатор Blade
@@ -277,6 +277,17 @@ class AppServiceProvider extends ServiceProvider
         {{ $value }}
     </div>
 @endsession
+```
+
+<a name="context-directives"></a>
+#### Контекстные директивы
+
+Директиву `@context` можно использовать для определения наличия значения [context](/docs/{{version}}/context). Если значение контекста существует, будет выполнен анализ содержимого шаблона в директивах `@context` и `@endcontext`. В содержимом директивы `@context` можно вывести переменную `$value` для отображения значения контекста:
+
+```blade
+@context('canonical')
+    <link href="{{ $value }}" rel="canonical">
+@endcontext
 ```
 
 <a name="switch-statements"></a>
