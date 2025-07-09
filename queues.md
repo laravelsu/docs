@@ -1,5 +1,5 @@
 ---
-git: 390399dd7e7101a8cecc9b11d3bf1f5e1e6b6760
+git: d0c3d31bb5b10774ead42265058172598de1ff67
 ---
 
 # Очереди
@@ -23,13 +23,15 @@ git: 390399dd7e7101a8cecc9b11d3bf1f5e1e6b6760
 
 Обратите внимание, что каждый пример конфигурации соединения в файле конфигурации `queue` содержит ключ `queue`. Это очередь по умолчанию, в которую будут отправляться задания при их отправке в определенное соединение. Другими словами, если вы отправляете задание без явного определения очереди, в которую оно должно быть отправлено, задание будет поставлено в очередь, определённую в ключе `queue` конфигурации соединения:
 
-    use App\Jobs\ProcessPodcast;
+```php
+use App\Jobs\ProcessPodcast;
 
-    // Это задание отправляется в очередь `default` соединения по умолчанию...
-    ProcessPodcast::dispatch();
+// Это задание отправляется в очередь `default` соединения по умолчанию...
+ProcessPodcast::dispatch();
 
-    // Это задание отправляется в очередь `emails` соединения по умолчанию...
-    ProcessPodcast::dispatch()->onQueue('emails');
+// Это задание отправляется в очередь `emails` соединения по умолчанию...
+ProcessPodcast::dispatch()->onQueue('emails');
+```
 
 Некоторым приложениям может не понадобиться помещать задания в несколько очередей, вместо этого предпочитая иметь одну простую очередь. Однако отправка заданий в несколько очередей может быть особенно полезна для приложений, определяющих приоритеты или сегментацию процесса обработки заданий, поскольку обработчик очереди Laravel позволяет вам указать, какие очереди он должен обрабатывать по приоритету. Например, если вы помещаете задания в очередь `high`, то вы можете запустить обработчик, который даст им более высокий приоритет обработки:
 
@@ -63,14 +65,16 @@ php artisan migrate
 
 Если ваше соединение с очередью Redis использует кластер Redis, то имена ваших очередей должны содержать [ключевой хеш-тег](https://redis.io/docs/reference/cluster-spec/#hash-tags). Это необходимо для того, чтобы все ключи Redis для указанной очереди были поставлены в один и тот же хеш-слот:
 
-    'redis' => [
-        'driver' => 'redis',
-        'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
-        'queue' => env('REDIS_QUEUE', '{default}'),
-        'retry_after' => env('REDIS_QUEUE_RETRY_AFTER', 90),
-        'block_for' => null,
-        'after_commit' => false,
-    ],
+```php
+'redis' => [
+    'driver' => 'redis',
+    'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+    'queue' => env('REDIS_QUEUE', '{default}'),
+    'retry_after' => env('REDIS_QUEUE_RETRY_AFTER', 90),
+    'block_for' => null,
+    'after_commit' => false,
+],
+```
 
 **Блокировка**
 
@@ -78,14 +82,16 @@ php artisan migrate
 
 Настройка этого значения зависит от загрузки очереди и может быть более эффективной, чем постоянный опрос базы данных Redis на предмет новых заданий. Например, вы можете установить значение `5`, чтобы указать, что драйвер должен блокироваться на пять секунд, ожидая, пока задание станет доступным:
 
-    'redis' => [
-        'driver' => 'redis',
-        'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
-        'queue' => env('REDIS_QUEUE', 'default'),
-        'retry_after' => env('REDIS_QUEUE_RETRY_AFTER', 90),
-        'block_for' => 5,
-        'after_commit' => false,
-    ],
+```php
+'redis' => [
+    'driver' => 'redis',
+    'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+    'queue' => env('REDIS_QUEUE', 'default'),
+    'retry_after' => env('REDIS_QUEUE_RETRY_AFTER', 90),
+    'block_for' => 5,
+    'after_commit' => false,
+],
+```
 
 > [!WARNING]
 > Установка для `block_for` значения `0` заставит обработчиков очереди блокироваться на неопределенный срок, пока задание не станет доступным. Это также предотвратит обработку таких сигналов, как `SIGTERM`, до тех пор, пока не будет обработано следующее задание.
@@ -126,34 +132,36 @@ php artisan make:job ProcessPodcast
 
 Классы заданий очень простые, обычно они содержат только метод `handle`, который вызывается, когда задание обрабатывается очередью. Для начала рассмотрим пример класса задания. В этом примере мы представим, что управляем службой публикации подкастов и нам необходимо обработать загруженные файлы подкастов перед их публикацией:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-    use App\Models\Podcast;
-    use App\Services\AudioProcessor;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Foundation\Queue\Queueable;
+use App\Models\Podcast;
+use App\Services\AudioProcessor;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-    class ProcessPodcast implements ShouldQueue
+class ProcessPodcast implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Создать новый экземпляр задания.
+     */
+    public function __construct(
+        public Podcast $podcast,
+    ) {}
+
+    /**
+     * Выполнить задание.
+     */
+    public function handle(AudioProcessor $processor): void
     {
-        use Queueable;
-
-        /**
-         * Создать новый экземпляр задания.
-         */
-        public function __construct(
-            public Podcast $podcast,
-        ) {}
-
-        /**
-         * Выполнить задание.
-         */
-        public function handle(AudioProcessor $processor): void
-        {
-            // Обработка загруженного подкаста ...
-        }
+        // Обработка загруженного подкаста ...
     }
+}
+```
 
 Обратите внимание, что в этом примере мы смогли передать [модель Eloquent](/docs/{{version}}/eloquent) непосредственно в конструктор задания. Благодаря трейту `Queueable`, который использует задание, модели Eloquent и их загруженные отношения будут корректно сериализованы и десериализованы при обработке задания.
 
@@ -166,13 +174,15 @@ php artisan make:job ProcessPodcast
 
 Если вы хотите получить полный контроль над тем, как контейнер внедряет зависимости в метод `handle`, вы можете использовать метод `bindMethod` контейнера. Метод `bindMethod` принимает функцию, которая получает задание и контейнер. В функции вы можете вызывать метод `handle`. Обычно вы должны вызывать `bindMethod` из метода `boot` вашего [сервис-провайдера](/docs/{{version}}/providers) `App\Providers\AppServiceProvider`:
 
-    use App\Jobs\ProcessPodcast;
-    use App\Services\AudioProcessor;
-    use Illuminate\Contracts\Foundation\Application;
+```php
+use App\Jobs\ProcessPodcast;
+use App\Services\AudioProcessor;
+use Illuminate\Contracts\Foundation\Application;
 
-    $this->app->bindMethod([ProcessPodcast::class, 'handle'], function (ProcessPodcast $job, Application $app) {
-        return $job->handle($app->make(AudioProcessor::class));
-    });
+$this->app->bindMethod([ProcessPodcast::class, 'handle'], function (ProcessPodcast $job, Application $app) {
+    return $job->handle($app->make(AudioProcessor::class));
+});
+```
 
 > [!WARNING]
 > Бинарные данные, например, необработанное содержимое изображения, должны быть переданы через функцию `base64_encode` перед передачей заданию. В противном случае задание может неправильно сериализоваться в JSON при отправке в очередь.
@@ -184,26 +194,30 @@ php artisan make:job ProcessPodcast
 
 Или, чтобы предотвратить сериализацию отношений, вы можете вызвать метод модели `withoutRelations` при установке значения свойства в задание. Этот метод вернет экземпляр модели без загруженных связей:
 
-    /**
-     * Создать новый экземпляр задания.
-     */
-    public function __construct(
-        Podcast $podcast,
-    ) {
-        $this->podcast = $podcast->withoutRelations();
-    }
+```php
+/**
+ * Создать новый экземпляр задания.
+ */
+public function __construct(
+    Podcast $podcast,
+) {
+    $this->podcast = $podcast->withoutRelations();
+}
+```
 
 Если вы используете свойства конструктора PHP и хотите указать, что модель Eloquent не должна сериализовать свои отношения, вы можете использовать атрибут `withoutRelations`:
 
-    use Illuminate\Queue\Attributes\WithoutRelations;
+```php
+use Illuminate\Queue\Attributes\WithoutRelations;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(
-        #[WithoutRelations]
-        public Podcast $podcast,
-    ) {}
+/**
+ * Create a new job instance.
+ */
+public function __construct(
+    #[WithoutRelations]
+    public Podcast $podcast,
+) {}
+```
 
 Если задание получает коллекцию или массив моделей Eloquent вместо одной модели, отношения между моделями в этой коллекции не будут восстановлены при десериализации и выполнении задания. Это необходимо для предотвращения чрезмерного использования ресурсов в заданиях, связанных с большим количеством моделей.
 
@@ -215,50 +229,54 @@ php artisan make:job ProcessPodcast
 
 Иногда требуется убедиться, что только один экземпляр определенного задания находится в очереди в любой момент времени. Вы можете сделать это, реализовав интерфейс `ShouldBeUnique` в своем классе задания. Этот интерфейс не требует от вас определения каких-либо дополнительных методов в вашем классе:
 
-    <?php
+```php
+<?php
 
-    use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-    class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
-    {
-        ...
-    }
+class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
+{
+    ...
+}
+```
 
 В приведенном выше примере задание `UpdateSearchIndex` уникально. Таким образом, задание не будет отправлено, если другой экземпляр задания уже находится в очереди и еще не завершил обработку.
 
 В некоторых случаях вам может потребоваться определить конкретный «ключ», делающий задание уникальным, или вы можете указать тайм-аут, по истечении которого задание больше не считается уникальным. Для этого вы можете определить свойства или методы `uniqueId` и `uniqueFor` в своем классе задания:
 
-    <?php
+```php
+<?php
 
-    use App\Models\Product;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Contracts\Queue\ShouldBeUnique;
+use App\Models\Product;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-    class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
+class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
+{
+    /**
+     * Экземпляр продукта.
+     *
+     * @var \App\Product
+     */
+    public $product;
+
+    /**
+     * Количество секунд, по истечении которых уникальная блокировка задания будет снята.
+     *
+     * @var int
+     */
+    public $uniqueFor = 3600;
+
+    /**
+     * Получить уникальный идентификатор задания.
+     */
+    public function uniqueId(): string
     {
-        /**
-         * Экземпляр продукта.
-         *
-         * @var \App\Product
-         */
-        public $product;
-
-        /**
-         * Количество секунд, по истечении которых уникальная блокировка задания будет снята.
-         *
-         * @var int
-         */
-        public $uniqueFor = 3600;
-
-        /**
-         * Получить уникальный идентификатор задания.
-         */
-        public function uniqueId(): string
-        {
-            return $this->product->id;
-        }
+        return $this->product->id;
     }
+}
+```
 
 В приведенном выше примере задание `UpdateSearchIndex` уникально по идентификатору продукта. Таким образом, любые новые отправленные задания с тем же идентификатором продукта будут игнорироваться, пока существующее задание не завершит обработку. Кроме того, если существующее задание не будет обработано в течение одного часа, уникальная блокировка будет снята, и в очередь может быть отправлено другое задание с таким же уникальным ключом.
 
@@ -270,131 +288,143 @@ php artisan make:job ProcessPodcast
 
 По умолчанию уникальные задания «разблокируются» после того, как задание завершит обработку или потерпит неудачу во всех повторных попытках. Однако, могут возникнуть ситуации, когда вы захотите, чтобы ваше задание было разблокировано непосредственно перед его обработкой. Для этого ваше задание должно реализовать контракт `ShouldBeUniqueUntilProcessing` вместо контракта `ShouldBeUnique`:
 
-    <?php
+```php
+<?php
 
-    use App\Models\Product;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
+use App\Models\Product;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 
-    class UpdateSearchIndex implements ShouldQueue, ShouldBeUniqueUntilProcessing
-    {
-        // ...
-    }
+class UpdateSearchIndex implements ShouldQueue, ShouldBeUniqueUntilProcessing
+{
+    // ...
+}
+```
 
 <a name="unique-job-locks"></a>
 #### Блокировки уникальных заданий
 
 За кулисами, когда отправляется задание `ShouldBeUnique`, Laravel пытается получить [блокировку](/docs/{{version}}/cache#atomic-locks) с ключом `uniqueId`. Если блокировка не получена, задание не отправляется. Эта блокировка снимается, когда задание завершает обработку или терпит неудачу во всех повторных попытках. По умолчанию Laravel будет использовать драйвер кеша, назначенный по умолчанию, для получения этой блокировки. Однако, если вы хотите использовать другой драйвер для получения блокировки, вы можете определить метод `uniqueVia`, возвращающий драйвер кеша, который следует использовать:
 
-    use Illuminate\Contracts\Cache\Repository;
-    use Illuminate\Support\Facades\Cache;
+```php
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Facades\Cache;
 
-    class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
+class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
+{
+    ...
+
+    /**
+     * Получить драйвер кеша для блокировки уникального задания.
+     */
+    public function uniqueVia(): Repository
     {
-        ...
-
-        /**
-         * Получить драйвер кеша для блокировки уникального задания.
-         */
-        public function uniqueVia(): Repository
-        {
-            return Cache::driver('redis');
-        }
+        return Cache::driver('redis');
     }
+}
+```
 
 > [!NOTE]
-> Если вам нужно ограничить только параллельную обработку задания, используйте вместо этого посредник [`WithoutOverlapping`](#preventing-job-overlaps).
+> Если вам нужно ограничить только параллельную обработку задания, используйте вместо этого посредник [WithoutOverlapping](#preventing-job-overlaps).
 
 <a name="encrypted-jobs"></a>
 ### Шифрование заданий
 
 Laravel позволяет вам обеспечить конфиденциальность и целостность данных задания с помощью [шифрования](/docs/{{version}}/encryption). Для начала просто добавьте интерфейс `ShouldBeEncrypted` в класс задания. Как только этот интерфейс будет добавлен в класс, Laravel автоматически зашифрует ваше задание, прежде чем поместить его в очередь:
 
-    <?php
+```php
+<?php
 
-    use Illuminate\Contracts\Queue\ShouldBeEncrypted;
-    use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-    class UpdateSearchIndex implements ShouldQueue, ShouldBeEncrypted
-    {
-        // ...
-    }
+class UpdateSearchIndex implements ShouldQueue, ShouldBeEncrypted
+{
+    // ...
+}
+```
 
 <a name="job-middleware"></a>
 ## Посредник (middleware) задания
 
 Посредник задания позволяет обернуть пользовательскую логику вокруг выполнения заданий в очереди, уменьшая шаблонность самих заданий. Например, рассмотрим следующий метод `handle`, который использует функции ограничения частоты, позволяющие обрабатывать только одно задание каждые пять секунд:
 
-    use Illuminate\Support\Facades\Redis;
+```php
+use Illuminate\Support\Facades\Redis;
 
-    /**
-     * Выполнить задание.
-     */
-    public function handle(): void
-    {
-        Redis::throttle('key')->block(0)->allow(1)->every(5)->then(function () {
-            info('Lock obtained...');
+/**
+ * Выполнить задание.
+ */
+public function handle(): void
+{
+    Redis::throttle('key')->block(0)->allow(1)->every(5)->then(function () {
+        info('Lock obtained...');
 
-            // Обработка задания...
-        }, function () {
-            // Не удалось получить блокировку...
+        // Обработка задания...
+    }, function () {
+        // Не удалось получить блокировку...
 
-            return $this->release(5);
-        });
-    }
+        return $this->release(5);
+    });
+}
+```
 
 Хотя этот код действителен, реализация метода `handle` становится «шумной», так как она загромождена логикой ограничения частоты Redis. Кроме того, эта логика ограничения частоты должна быть продублирована для любых других заданий, для которых мы хотим установить ограничение частоты.
 
 Вместо ограничения частоты в методе `handle` мы могли бы определить посредника задания, который обрабатывает ограничение частоты. В Laravel нет места по умолчанию для посредников заданий, поэтому вы можете разместить их в любом месте вашего приложения. В этом примере мы поместим его в каталог `app/Jobs/Middleware`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs\Middleware;
+namespace App\Jobs\Middleware;
 
-    use Closure;
-    use Illuminate\Support\Facades\Redis;
+use Closure;
+use Illuminate\Support\Facades\Redis;
 
-    class RateLimited
+class RateLimited
+{
+    /**
+     * Обработать задание в очереди.
+     *
+     * @param  \Closure(object): void  $next
+     */
+    public function handle(object $job, Closure $next): void
     {
-        /**
-         * Обработать задание в очереди.
-         *
-         * @param  \Closure(object): void  $next
-         */
-        public function handle(object $job, Closure $next): void
-        {
-            Redis::throttle('key')
-                    ->block(0)->allow(1)->every(5)
-                    ->then(function () use ($job, $next) {
-                        // Блокировка получена...
-
-                        $next($job);
-                    }, function () use ($job) {
-                        // Не удалось получить блокировку...
-
-                        $job->release(5);
-                    });
-        }
+        Redis::throttle('key')
+            ->block(0)->allow(1)->every(5)
+            ->then(function () use ($job, $next) {
+                // Блокировка получена...
+            
+                $next($job);
+            }, function () use ($job) {
+                // Не удалось получить блокировку...
+            
+                $job->release(5);
+            });
     }
+}
+```
 
 Как вы можете видеть, как и [посредник маршрута](/docs/{{version}}/middleware), посредник задания получает обрабатываемое задание и функцию, которая должна быть вызвана для продолжения обработки задания.
 
-После создания посредника задания он может быть назначен заданию, вернув их из метода `middleware` задания. Этот метод не существует для заданий, созданных с помощью команды `make:job` Artisan, поэтому вам нужно будет вручную добавить его в свой класс задания:
+Вы можете создать новый класс промежуточного программного обеспечения задания с помощью команды Artisan `make:job-middleware`. После создания посредника задания он может быть назначен заданию, вернув их из метода `middleware` задания. Этот метод не существует для заданий, созданных с помощью команды `make:job` Artisan, поэтому вам нужно будет вручную добавить его в свой класс задания:
 
-    use App\Jobs\Middleware\RateLimited;
+```php
+use App\Jobs\Middleware\RateLimited;
 
-    /**
-     * Получить посредника, через которого должно пройти задание.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [new RateLimited];
-    }
+/**
+ * Получить посредника, через которого должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [new RateLimited];
+}
+```
 
 > [!NOTE]
-> Посредник заданий также может быть назначен слушателям событий, почтовым отправлениям или уведомлениям - если они выполняются через очередь.
+> Посредник заданий также можно назначить [слушателям событий в очереди](/docs/{{version}}/events#queued-event-listeners), [почтовым сообщениям в очереди](/docs/{{version}}/mail#queueing-mail) и [уведомлениям в очереди](/docs/{{version}}/notifications#queueing-notifications).
 
 <a name="rate-limiting"></a>
 ### Ограничение частоты
@@ -403,52 +433,74 @@ Laravel позволяет вам обеспечить конфиденциал�
 
 Например, вы можете разрешить пользователям выполнять резервное копирование своих данных один раз в час, при этом не накладывая таких ограничений на премиум-клиентов. Для этого вы можете определить `RateLimiter` в методе `boot` вашего `AppServiceProvider`:
 
-    use Illuminate\Cache\RateLimiting\Limit;
-    use Illuminate\Support\Facades\RateLimiter;
+```php
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 
-    /**
-     * Загрузка любых служб приложения.
-     */
-    public function boot(): void
-    {
-        RateLimiter::for('backups', function (object $job) {
-            return $job->user->vipCustomer()
-                        ? Limit::none()
-                        : Limit::perHour(1)->by($job->user->id);
-        });
-    }
+/**
+ * Загрузка любых служб приложения.
+ */
+public function boot(): void
+{
+    RateLimiter::for('backups', function (object $job) {
+        return $job->user->vipCustomer()
+            ? Limit::none()
+            : Limit::perHour(1)->by($job->user->id);
+    });
+}
+```
 
 В приведенном выше примере мы определили часовой лимит частоты; однако вы можете легко определить ограничение на основе минут, используя метод `perMinute`. Кроме того, вы можете передать любое значение методу `by` ограничения; однако это значение чаще всего используется для сегментации ограничений частоты по клиентам:
 
-    return Limit::perMinute(50)->by($job->user->id);
+```php
+return Limit::perMinute(50)->by($job->user->id);
+```
 
 После того как вы определили ограничение частоты, вы можете назначить ограничитель частоты своему заданию резервного копирования с помощью посредника `Illuminate\Queue\Middleware\RateLimited`. Каждый раз, когда задание превышает ограничение частоты, этот посредник отправляет задание обратно в очередь с соответствующей задержкой в зависимости от продолжительности ограничения частоты.
 
-    use Illuminate\Queue\Middleware\RateLimited;
+```php
+use Illuminate\Queue\Middleware\RateLimited;
 
-    /**
-     * Получить посредника, через которого должно пройти задание.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [new RateLimited('backups')];
-    }
+/**
+ * Получить посредника, через которого должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [new RateLimited('backups')];
+}
+```
 
-Возвращение задания с ограниченной частотой обратно в очередь все равно увеличит общее количество «попыток» (`attempts`) задания. Возможно, вы захотите соответствующим образом настроить свойства `tries` и `maxExceptions` в своем классе задания. Или вы можете использовать метод [`retryUntil`](#time-based-attempts), чтобы определить время, по истечению которого попыток выполнения задания больше не будет.
+Возвращение задания с ограниченной частотой обратно в очередь все равно увеличит общее количество «попыток» (`attempts`) задания. Возможно, вы захотите соответствующим образом настроить свойства `tries` и `maxExceptions` в своем классе задания. Или вы можете использовать метод [retryUntil](#time-based-attempts), чтобы определить время, по истечению которого попыток выполнения задания больше не будет.
+
+Используя метод `releaseAfter`, вы также можете указать количество секунд, которое должно пройти до повторной попытки выполнения завершенного задания:
+
+```php
+/**
+ * Получить посредника через которое должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new RateLimited('backups'))->releaseAfter(60)];
+}
+```
 
 Если вы не хотите, чтобы задание возвращалось в очередь, если оно ограничено по частоте, вы можете использовать метод `dontRelease`:
 
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new RateLimited('backups'))->dontRelease()];
-    }
+```php
+/**
+ * Get the middleware the job should pass through.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new RateLimited('backups'))->dontRelease()];
+}
+```
 
 > [!NOTE]
 > Если вы используете Redis, то вы можете использовать посредника `Illuminate\Queue\Middleware\RateLimitedWithRedis`, который лучше настроен для Redis и более эффективен, чем базовый посредник с ограничением частоты.
@@ -460,53 +512,61 @@ Laravel включает посредника `Illuminate\Queue\Middleware\Witho
 
 Например, представим, что у вас есть задание в очереди, которое обновляет кредитный рейтинг пользователя, и вы хотите предотвратить дублирование задания обновления кредитного рейтинга для одного и того же идентификатора пользователя. Для этого вы можете вернуть посредника `WithoutOverlapping` из метода `middleware` вашего задания:
 
-    use Illuminate\Queue\Middleware\WithoutOverlapping;
+```php
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-    /**
-     * Получить посредника, через которого должно пройти задание.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [new WithoutOverlapping($this->user->id)];
-    }
+/**
+ * Получить посредника, через которого должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [new WithoutOverlapping($this->user->id)];
+}
+```
 
 Любые перекрывающиеся задания одного и того же типа будут возвращены в очередь. Можно также указать время в секундах, которое должно пройти до повторной попытки возвращенного задания:
 
-    /**
-     * Получить посредника, через которого должно пройти задание.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping($this->order->id))->releaseAfter(60)];
-    }
+```php
+/**
+ * Получить посредника, через которого должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new WithoutOverlapping($this->order->id))->releaseAfter(60)];
+}
+```
 
 Если вы хотите немедленно удалить все перекрывающиеся задания, чтобы они не повторялись, вы можете использовать метод `dоntRelease`:
 
-    /**
-     * Получить посредника, через которого должно пройти задание.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping($this->order->id))->dontRelease()];
-    }
+```php
+/**
+ * Получить посредника, через которого должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new WithoutOverlapping($this->order->id))->dontRelease()];
+}
+```
 
 Посредник `WithoutOverlapping` работает благодаря функции атомарной блокировки Laravel. Но иногда ваше задание может неожиданно завершиться неудачей или таймаутом таким образом, что блокировка не будет освобождена. Поэтому вы можете явно определить время истечения блокировки с помощью метода `expireAfter`. Например, в приведенном ниже примере Laravel даст указание освободить блокировку `WithoutOverlapping` через три минуты после начала обработки задания:
 
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new WithoutOverlapping($this->order->id))->expireAfter(180)];
-    }
+```php
+/**
+ * Get the middleware the job should pass through.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new WithoutOverlapping($this->order->id))->expireAfter(180)];
+}
+```
 
 > [!WARNING]
 > Для посредника `WithoutOverlapping` требуется драйвер кеша, который поддерживает [блокировки](/docs/{{version}}/cache#atomic-locks). В настоящее время драйверы кеша `memcached`, `redis`, `dynamodb`, `database`, `file`, и `array` поддерживают атомарные блокировки.
@@ -551,90 +611,117 @@ Laravel содержит посредника `Illuminate\Queue\Middleware\Throt
 
 Например, представим себе задание в очереди, взаимодействующее со сторонним API, который начинает выбрасывать исключения. Чтобы ограничить исключения, вы можете вернуть посредника `ThrottlesExceptions` из метода `middleware` вашего задания. Как правило, этот посредник должен быть связан с заданием, которое реализует [попытки, основанные на времени](#time-based-attempts):
 
-    use DateTime;
-    use Illuminate\Queue\Middleware\ThrottlesExceptions;
+```php
+use DateTime;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
 
-    /**
-     * Получить посредника, через которого должно пройти задание.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [new ThrottlesExceptions(10, 5 * 60)];
-    }
+/**
+ * Получить посредника, через которого должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [new ThrottlesExceptions(10, 5 * 60)];
+}
 
-    /**
-     * Задать временной предел попыток выполнить задания.
-     */
-    public function retryUntil(): DateTime
-    {
-        return now()->addMinutes(30);
-    }
+/**
+ * Задать временной предел попыток выполнить задания.
+ */
+public function retryUntil(): DateTime
+{
+    return now()->addMinutes(30);
+}
+```
 
 Первый аргумент конструктора посредника — это количество исключений, которые задание может выбросить перед ограничением. Второй аргумент конструктора — это количество секунд, которое должно пройти, прежде чем будет предпринято повторное выполнение задания после его ограничения. В приведенном выше примере кода, если задание выбросит 10 последовательных исключений, мы подождем 5 минут перед его повторной попыткой выполнения, ограниченную 30-минутным лимитом времени.
 
 Когда задание вызывает исключение, но порог исключения еще не достигнут, то задание обычно немедленно повторяется. Однако вы можете указать количество минут, на которые такое задание должно быть отложено, вызвав метод `backoff` при определении метода `middleware`:
 
-    use Illuminate\Queue\Middleware\ThrottlesExceptions;
+```php
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
 
-    /**
-     * Получить посредника, через которого должно пройти задание.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new ThrottlesExceptions(10, 5 * 60))->backoff(5)];
-    }
+/**
+ * Получить посредника, через которого должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new ThrottlesExceptions(10, 5 * 60))->backoff(5)];
+}
+```
 
 Внутренне этот посредник использует систему кеширования Laravel для реализации ограничений частоты, а имя класса задания используется в качестве «ключа» кеша. Вы можете переопределить этот ключ, вызвав метод `by` при определении метода `middleware` вашего задания. Это может быть полезно, если у вас есть несколько заданий, взаимодействующих с одной и той же сторонней службой, и вы хотите, чтобы у них была общая «корзина» ограничений:
 
-    use Illuminate\Queue\Middleware\ThrottlesExceptions;
+```php
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
 
-    /**
-     * Получить посредника, через которого должно пройти задание.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new ThrottlesExceptions(10, 10 * 60))->by('key')];
-    }
+/**
+ * Получить посредника, через которого должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new ThrottlesExceptions(10, 10 * 60))->by('key')];
+}
+```
 
 По умолчанию это промежуточное программное обеспечение будет регулировать каждое исключение. Вы можете изменить это поведение, вызвав метод `when` при подключении посредника к вашему заданию. Исключение будет регулироваться только в том случае, если закрытие, предоставленное методу `when`, вернет `true`:
 
-    use Illuminate\Http\Client\HttpClientException;
-    use Illuminate\Queue\Middleware\ThrottlesExceptions;
+```php
+use Illuminate\Http\Client\HttpClientException;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
 
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new ThrottlesExceptions(10, 10 * 60))->when(
-            fn (Throwable $throwable) => $throwable instanceof HttpClientException
-        )];
-    }
+/**
+ * Get the middleware the job should pass through.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new ThrottlesExceptions(10, 10 * 60))->when(
+        fn (Throwable $throwable) => $throwable instanceof HttpClientException
+    )];
+}
+```
+
+В отличие от метода `when`, который возвращает задание в очередь или выдает исключение, метод `deleteWhen` позволяет полностью удалить задание при возникновении определенного исключения:
+
+```php
+use App\Exceptions\CustomerDeletedException;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
+
+/**
+ * Get the middleware the job should pass through.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new ThrottlesExceptions(2, 10 * 60))->deleteWhen(CustomerDeletedException::class)];
+}
+```
 
 Если вы хотите, чтобы регулируемые исключения сообщались обработчику исключений вашего приложения, вы можете сделать это, вызвав метод report при подключении посредника к вашему заданию. При желании вы можете предоставить замыкание для метода `report`, и об исключении будет сообщено только в том случае, если данное замыкание возвращает `true`:
 
-    use Illuminate\Http\Client\HttpClientException;
-    use Illuminate\Queue\Middleware\ThrottlesExceptions;
+```php
+use Illuminate\Http\Client\HttpClientException;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
 
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
-    public function middleware(): array
-    {
-        return [(new ThrottlesExceptions(10, 10 * 60))->report(
-            fn (Throwable $throwable) => $throwable instanceof HttpClientException
-        )];
-    }
+/**
+ * Get the middleware the job should pass through.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new ThrottlesExceptions(10, 10 * 60))->report(
+        fn (Throwable $throwable) => $throwable instanceof HttpClientException
+    )];
+}
+```
 
 > [!NOTE]
 > Если вы используете Redis в качестве драйвера кеша вашего приложения, то вы можете использовать класс `Illuminate\Queue\Middleware\ThrottlesExceptionsWithRedis`. Этот класс более эффективен при управлении ограничениями исключений с помощью Redis.
@@ -644,71 +731,78 @@ Laravel содержит посредника `Illuminate\Queue\Middleware\Throt
 
 Посредник `Skip` позволяет вам указать, что задание должно быть пропущено/удалено без необходимости изменения логики задания. Метод `Skip::when` удаляет задание, если данное условие оценивается как `true`, а метод `Skip::unless` удаляет задание, если условие оценивается как `false`:
 
-    use Illuminate\Queue\Middleware\Skip;
+```php
+use Illuminate\Queue\Middleware\Skip;
 
-    /**
-    * Get the middleware the job should pass through.
-    */
-    public function middleware(): array
-    {
-        return [
-            Skip::when($someCondition),
-        ];
-    }
+/**
+* Get the middleware the job should pass through.
+*/
+public function middleware(): array
+{
+    return [
+        Skip::when($someCondition),
+    ];
+}
+```
 
 Вы также можете передать `Closure` методам `when` и `unless` для более сложной условной оценки:
 
-    use Illuminate\Queue\Middleware\Skip;
+```php
+use Illuminate\Queue\Middleware\Skip;
 
-    /**
-    * Get the middleware the job should pass through.
-    */
-    public function middleware(): array
-    {
-        return [
-            Skip::when(function (): bool {
-                return $this->shouldSkip();
-            }),
-        ];
-    }
+/**
+* Get the middleware the job should pass through.
+*/
+public function middleware(): array
+{
+    return [
+        Skip::when(function (): bool {
+            return $this->shouldSkip();
+        }),
+    ];
+}
+```
 
 <a name="dispatching-jobs"></a>
 ## Отправка заданий
 
 После того как вы написали свой класс задания, вы можете отправить его, используя метод `dispatch` самого задания. Аргументы, переданные методу `dispatch`, будут переданы конструктору задания:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use App\Jobs\ProcessPodcast;
-    use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
-    use Illuminate\Http\Request;
+use App\Jobs\ProcessPodcast;
+use App\Models\Podcast;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
-    class PodcastController extends Controller
+class PodcastController extends Controller
+{
+    /**
+     * Сохранить новый подкаст.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        /**
-         * Сохранить новый подкаст.
-         */
-        public function store(Request $request): RedirectResponse
-        {
-            $podcast = Podcast::create(/* ... */);
+        $podcast = Podcast::create(/* ... */);
 
-            // ...
+        // ...
 
-            ProcessPodcast::dispatch($podcast);
+        ProcessPodcast::dispatch($podcast);
 
-            return redirect('/podcasts');
-        }
+        return redirect('/podcasts');
     }
+}
+```
 
 Если требуется отправить задание по условию, то можно использовать методы `dispatchIf` и `dispatchUnless`:
 
-    ProcessPodcast::dispatchIf($accountActive, $podcast);
+```php
+ProcessPodcast::dispatchIf($accountActive, $podcast);
 
-    ProcessPodcast::dispatchUnless($accountSuspended, $podcast);
+ProcessPodcast::dispatchUnless($accountSuspended, $podcast);
+```
 
 В новых приложениях Laravel драйвер `sync` является драйвером очереди по-умолчанию. Этот драйвер выполняет задания синхронно во время запроса, что часто бывает удобно при локальной разработке. Если вы действительно хотите поставить задания в очередь для фоновой обработки, вы можете указать другой драйвер очереди в файле конфигурации вашего приложения `config/queue.php`.
 
@@ -717,37 +811,40 @@ Laravel содержит посредника `Illuminate\Queue\Middleware\Throt
 
 Если вы хотите указать, что задание не должно быть немедленно доступно для обработчика очереди, вы можете использовать метод `delay` при отправке задания. Например, давайте укажем, что задание не должно быть доступно для обработки в течение 10 минут после его отправки:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use App\Jobs\ProcessPodcast;
-    use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
-    use Illuminate\Http\Request;
+use App\Jobs\ProcessPodcast;
+use App\Models\Podcast;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
-    class PodcastController extends Controller
+class PodcastController extends Controller
+{
+    /**
+     * Сохранить новый подкаст.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        /**
-         * Сохранить новый подкаст.
-         */
-        public function store(Request $request): RedirectResponse
-        {
-            $podcast = Podcast::create(/* ... */);
+        $podcast = Podcast::create(/* ... */);
 
-            // ...
+        // ...
 
-            ProcessPodcast::dispatch($podcast)
-                        ->delay(now()->addMinutes(10));
+        ProcessPodcast::dispatch($podcast)
+            ->delay(now()->addMinutes(10));
 
-            return redirect('/podcasts');
-        }
+        return redirect('/podcasts');
     }
+}
+```
 
 В некоторых случаях для заданий может быть настроена задержка по умолчанию. Если вам нужно обойти эту задержку и отправить задание на немедленную обработку, вы можете использовать метод `withoutDelay`:
 
-    ProcessPodcast::dispatch($podcast)->withoutDelay();
+```php
+ProcessPodcast::dispatch($podcast)->withoutDelay();
+```
 
 > [!WARNING]
 > У сервиса очередей Amazon SQS максимальное время задержки составляет 15 минут.
@@ -757,50 +854,55 @@ Laravel содержит посредника `Illuminate\Queue\Middleware\Throt
 
 В качестве альтернативы, метод `dispatchAfterResponse` задерживает отправку задания до тех пор, пока HTTP-ответ не будет отправлен в браузер пользователя, если ваш веб-сервер использует FastCGI. Это по прежнему позволит пользователю получить ответ от приложения, даже если задание в очереди все еще выполняется. Обычно это следует использовать только для заданий, которые занимают около секунды, например, для отправки электронного письма. Поскольку они обрабатываются в рамках текущего HTTP-запроса, отправляемые таким образом задания не требуют запуска обработчика очереди для их обработки:
 
-    use App\Jobs\SendNotification;
+```php
+use App\Jobs\SendNotification;
 
-    SendNotification::dispatchAfterResponse();
+SendNotification::dispatchAfterResponse();
+```
 
 Вы также можете отправить замыкание и связать метод `afterResponse` с помощником `dispatch`, чтобы выполнить функцию после того, как HTTP-ответ был отправлен в браузер:
 
-    use App\Mail\WelcomeMessage;
-    use Illuminate\Support\Facades\Mail;
+```php
+use App\Mail\WelcomeMessage;
+use Illuminate\Support\Facades\Mail;
 
-    dispatch(function () {
-        Mail::to('taylor@example.com')->send(new WelcomeMessage);
-    })->afterResponse();
+dispatch(function () {
+    Mail::to('taylor@example.com')->send(new WelcomeMessage);
+})->afterResponse();
+```
 
 <a name="synchronous-dispatching"></a>
 ### Синхронная отправка
 
 Если вы хотите отправить задание немедленно (синхронно), то вы можете использовать метод `dispatchSync`. При использовании этого метода задание не будет поставлено в очередь и будет выполнено немедленно в рамках текущего процессе:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use App\Jobs\ProcessPodcast;
-    use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
-    use Illuminate\Http\Request;
+use App\Jobs\ProcessPodcast;
+use App\Models\Podcast;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
-    class PodcastController extends Controller
+class PodcastController extends Controller
+{
+    /**
+     * Сохранить новый подкаст.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        /**
-         * Сохранить новый подкаст.
-         */
-        public function store(Request $request): RedirectResponse
-        {
-            $podcast = Podcast::create(/* ... */);
+        $podcast = Podcast::create(/* ... */);
 
-            // Создание подкаста...
+        // Создание подкаста...
 
-            ProcessPodcast::dispatchSync($podcast);
+        ProcessPodcast::dispatchSync($podcast);
 
-            return redirect('/podcasts');
-        }
+        return redirect('/podcasts');
     }
+}
+```
 
 <a name="jobs-and-database-transactions"></a>
 ### Задания и транзакции базы данных
@@ -809,11 +911,13 @@ Laravel содержит посредника `Illuminate\Queue\Middleware\Throt
 
 К счастью, Laravel содержит несколько методов решения этой проблемы. Во-первых, вы можете задать параметр соединения `after_commit` в массиве конфигурации соединения к очереди:
 
-    'redis' => [
-        'driver' => 'redis',
-        // ...
-        'after_commit' => true,
-    ],
+```php
+'redis' => [
+    'driver' => 'redis',
+    // ...
+    'after_commit' => true,
+],
+```
 
 Когда параметр `after_commit` имеет значение `true`, вы можете отправлять задания в транзакциях базы данных; однако, Laravel будет ждать, пока все открытые родительские транзакции базы данных будут завершены, прежде чем фактически отправить задание. Если в настоящее время нет открытых транзакций, задание будет отправлено немедленно.
 
@@ -827,39 +931,47 @@ Laravel содержит посредника `Illuminate\Queue\Middleware\Throt
 
 Если вы не установите для параметра конфигурации соединения очереди `after_commit` значение `true`, то вы все равно можете указать, что конкретное задание должно быть отправлено после того, как все открытые транзакции базы данных будут завершены. Для этого вы можете связать метод `afterCommit` с операцией отправки:
 
-    use App\Jobs\ProcessPodcast;
+```php
+use App\Jobs\ProcessPodcast;
 
-    ProcessPodcast::dispatch($podcast)->afterCommit();
+ProcessPodcast::dispatch($podcast)->afterCommit();
+```
 
 Аналогично, если для параметра конфигурации `after_commit` установлено значение `true`, вы можете указать, что конкретное задание должно быть отправлено немедленно, не дожидаясь завершения каких-либо открытых транзакций базы данных:
 
-    ProcessPodcast::dispatch($podcast)->beforeCommit();
+```php
+ProcessPodcast::dispatch($podcast)->beforeCommit();
+```
 
 <a name="job-chaining"></a>
 ### Цепочка заданий
 
 Цепочка заданий позволяет указать список заданий в очереди, которые должны выполняться последовательно после успешного выполнения основного задания. Если одно задание в последовательности завершается неуспешно, то остальные задания не выполняются. Чтобы выполнить цепочку заданий в очереди, вы можете использовать метод `chain`, фасада `Bus`. Командная шина Laravel – это компонент нижнего уровня, на котором построена диспетчеризация заданий в очереди:
 
-    use App\Jobs\OptimizePodcast;
-    use App\Jobs\ProcessPodcast;
-    use App\Jobs\ReleasePodcast;
-    use Illuminate\Support\Facades\Bus;
+```php
+use App\Jobs\OptimizePodcast;
+use App\Jobs\ProcessPodcast;
+use App\Jobs\ReleasePodcast;
+use Illuminate\Support\Facades\Bus;
 
-    Bus::chain([
-        new ProcessPodcast,
-        new OptimizePodcast,
-        new ReleasePodcast,
-    ])->dispatch();
+Bus::chain([
+    new ProcessPodcast,
+    new OptimizePodcast,
+    new ReleasePodcast,
+])->dispatch();
+```
 
 В дополнение к цепочке экземпляров класса задания вы также можете передавать функции:
 
-    Bus::chain([
-        new ProcessPodcast,
-        new OptimizePodcast,
-        function () {
-            Podcast::update(/* ... */);
-        },
-    ])->dispatch();
+```php
+Bus::chain([
+    new ProcessPodcast,
+    new OptimizePodcast,
+    function () {
+        Podcast::update(/* ... */);
+    },
+])->dispatch();
+```
 
 > [!WARNING]
 > Удаление заданий с помощью метода `$this->delete()` внутри задания не остановит обработку связанных заданий. Цепочка прекратит выполнение только в случае сбоя задания в цепочке.
@@ -869,11 +981,13 @@ Laravel содержит посредника `Illuminate\Queue\Middleware\Throt
 
 Если вы хотите указать соединение и очередь, которые должны использоваться для связанных заданий, вы можете использовать методы `onConnection` и `onQueue`. Эти методы указывают соединение и имя очереди, которые следует использовать, если заданию явно не назначено другое соединение / очередь:
 
-    Bus::chain([
-        new ProcessPodcast,
-        new OptimizePodcast,
-        new ReleasePodcast,
-    ])->onConnection('redis')->onQueue('podcasts')->dispatch();
+```php
+Bus::chain([
+    new ProcessPodcast,
+    new OptimizePodcast,
+    new ReleasePodcast,
+])->onConnection('redis')->onQueue('podcasts')->dispatch();
+```
 
 <a name="adding-jobs-to-the-chain"></a>
 #### Добавление заданий в цепочку
@@ -901,16 +1015,18 @@ public function handle(): void
 
 При объединении заданий в цепочку вы можете использовать метод `catch`, чтобы указать функцию, которая должна вызываться, если задание в цепочке завершается неуспешно. Данная функция получит экземпляр `Throwable`, спровоцировавшего провал задания:
 
-    use Illuminate\Support\Facades\Bus;
-    use Throwable;
+```php
+use Illuminate\Support\Facades\Bus;
+use Throwable;
 
-    Bus::chain([
-        new ProcessPodcast,
-        new OptimizePodcast,
-        new ReleasePodcast,
-    ])->catch(function (Throwable $e) {
-        // Задание в цепочке не выполнено...
-    })->dispatch();
+Bus::chain([
+    new ProcessPodcast,
+    new OptimizePodcast,
+    new ReleasePodcast,
+])->catch(function (Throwable $e) {
+    // Задание в цепочке не выполнено...
+})->dispatch();
+```
 
 > [!WARNING]
 > Поскольку функции-замыкания сериализуются и выполняются позже в очереди Laravel, вам не следует использовать $this в замыканиях.
@@ -923,114 +1039,122 @@ public function handle(): void
 
 Помещая задания в разные очереди, вы можете «классифицировать» свои задания в очереди и даже определять приоритеты, сколько обработчиков вы назначаете в разные очереди. Имейте в виду, что при этом задания не отправляются в разные «соединения» очередей, как определено в файле конфигурации очереди, а только в определенные очереди в рамках одного соединения. Чтобы указать очередь, используйте метод `onQueue` при отправке задания:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use App\Jobs\ProcessPodcast;
-    use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
-    use Illuminate\Http\Request;
+use App\Jobs\ProcessPodcast;
+use App\Models\Podcast;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
-    class PodcastController extends Controller
+class PodcastController extends Controller
+{
+    /**
+     * Сохранить новый подкаст.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        /**
-         * Сохранить новый подкаст.
-         */
-        public function store(Request $request): RedirectResponse
-        {
-            $podcast = Podcast::create(/* ... */);
+        $podcast = Podcast::create(/* ... */);
 
-            // Создание подкаста...
+        // Создание подкаста...
 
-            ProcessPodcast::dispatch($podcast)->onQueue('processing');
+        ProcessPodcast::dispatch($podcast)->onQueue('processing');
 
-            return redirect('/podcasts');
-        }
+        return redirect('/podcasts');
     }
+}
+```
 
 Кроме того, вы можете указать очередь задания, вызвав метод `onQueue` в конструкторе задания:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-     use Illuminate\Contracts\Queue\ShouldQueue;
-     use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-    class ProcessPodcast implements ShouldQueue
+class ProcessPodcast implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Создать новый экземпляр задания.
+     */
+    public function __construct()
     {
-        use Queueable;
-
-        /**
-         * Создать новый экземпляр задания.
-         */
-        public function __construct()
-        {
-            $this->onQueue('processing');
-        }
+        $this->onQueue('processing');
     }
+}
+```
 
 <a name="dispatching-to-a-particular-connection"></a>
 #### Отправка в конкретное соединение
 
 Если ваше приложение взаимодействует с несколькими соединениями очередей, то вы можете указать, на какое соединение отправить задание, используя метод `onConnection`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Http\Controllers\Controller;
-    use App\Jobs\ProcessPodcast;
-    use App\Models\Podcast;
-    use Illuminate\Http\RedirectResponse;
-    use Illuminate\Http\Request;
+use App\Jobs\ProcessPodcast;
+use App\Models\Podcast;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
-    class PodcastController extends Controller
+class PodcastController extends Controller
+{
+    /**
+     * Сохранить новый подкаст.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        /**
-         * Сохранить новый подкаст.
-         */
-        public function store(Request $request): RedirectResponse
-        {
-            $podcast = Podcast::create(/* ... */);
+        $podcast = Podcast::create(/* ... */);
 
-            // Создание подкаста...
+        // Создание подкаста...
 
-            ProcessPodcast::dispatch($podcast)->onConnection('sqs');
+        ProcessPodcast::dispatch($podcast)->onConnection('sqs');
 
-            return redirect('/podcasts');
-        }
+        return redirect('/podcasts');
     }
+}
+```
 
 Вы можете связать методы `onConnection` и `onQueue` вместе, чтобы указать соединение и очередь для задания:
 
-    ProcessPodcast::dispatch($podcast)
-                  ->onConnection('sqs')
-                  ->onQueue('processing');
+```php
+ProcessPodcast::dispatch($podcast)
+    ->onConnection('sqs')
+    ->onQueue('processing');
+```
 
 Кроме того, вы можете указать соединение задания, вызвав метод `onConnection` в конструкторе задания:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-     use Illuminate\Contracts\Queue\ShouldQueue;
-     use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-    class ProcessPodcast implements ShouldQueue
+class ProcessPodcast implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Создать новый экземпляр задания.
+     */
+    public function __construct()
     {
-        use Queueable;
-
-        /**
-         * Создать новый экземпляр задания.
-         */
-        public function __construct()
-        {
-            $this->onConnection('sqs');
-        }
+        $this->onConnection('sqs');
     }
+}
+```
 
 <a name="max-job-attempts-and-timeout"></a>
 ### Указание максимального количества попыток задания / значений тайм-аута
@@ -1050,88 +1174,98 @@ php artisan queue:work --tries=3
 
 Вы можете применить более детальный подход, указав максимальное количество попыток выполнения задания для самого класса задания. Если для задания указано максимальное количество попыток, оно будет иметь приоритет над значением `--tries`, указанным в командной строке:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-    class ProcessPodcast implements ShouldQueue
-    {
-        /**
-         * Количество попыток выполнения задания.
-         *
-         * @var int
-         */
-        public $tries = 5;
-    }
+class ProcessPodcast implements ShouldQueue
+{
+    /**
+     * Количество попыток выполнения задания.
+     *
+     * @var int
+     */
+    public $tries = 5;
+}
+```
 
 Если вам необходимо динамически управлять максимальным числом попыток выполнения конкретного задания, вы можете определить метод `tries` внутри задания:
 
-    /**
-     * Определите количество попыток выполнения задания.
-     */
-    public function tries(): int
-    {
-        return 5;
-    }
+```php
+/**
+ * Определите количество попыток выполнения задания.
+ */
+public function tries(): int
+{
+    return 5;
+}
+```
 
 <a name="time-based-attempts"></a>
 #### Попытки, основанные на времени
 
 В качестве альтернативы определению количества попыток выполнения задания до того, как оно завершится ошибкой, вы можете определить время, когда прекратить попытки выполнения задания. Это позволяет выполнять задание любое количество раз в течение заданного периода времени. Чтобы определить время, через которое больше не следует пытаться выполнить задание, добавьте метод `retryUntil` в свой класс задания. Этот метод должен возвращать экземпляр `DateTime`:
 
-    use DateTime;
+```php
+use DateTime;
 
-    /**
-     * Задать временной предел попыток выполнить задания.
-     */
-    public function retryUntil(): DateTime
-    {
-        return now()->addMinutes(10);
-    }
+/**
+ * Задать временной предел попыток выполнить задания.
+ */
+public function retryUntil(): DateTime
+{
+    return now()->addMinutes(10);
+}
+```
+
+Если определены оба метода `retryUntil` и `tries`, Laravel отдает приоритет методу `retryUntil`.
 
 > [!NOTE]
-> Вы также можете определить свойство `$tries` или метод `retryUntil` в ваших [слушателях событий](/docs/{{version}}/events#queued-event-listeners).
+> Вы также можете определить свойство `$tries` или метод `retryUntil` в ваших [слушателях событий в очереди](/docs/{{version}}/events#queued-event-listeners) и [уведомлениях в очереди](/docs/{{version}}/notifications#queueing-notifications).
 
 <a name="max-exceptions"></a>
 #### Максимальное количество исключений
 
 Иногда вы можете указать, что задание может быть выполнено много раз, но должно завершиться ошибкой, если повторные попытки инициированы заданным количеством необработанных исключений (в отличие от отправки напрямую методом `release`). Для этого вы можете определить свойство `maxExceptions` в своем классе задания:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-    use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Redis;
 
-    class ProcessPodcast implements ShouldQueue
+class ProcessPodcast implements ShouldQueue
+{
+    /**
+     * Количество попыток выполнения задания.
+     *
+     * @var int
+     */
+    public $tries = 25;
+
+    /**
+     * Максимальное количество разрешенных необработанных исключений.
+     *
+     * @var int
+     */
+    public $maxExceptions = 3;
+
+    /**
+     * Выполнить задание.
+     */
+    public function handle(): void
     {
-        /**
-         * Количество попыток выполнения задания.
-         *
-         * @var int
-         */
-        public $tries = 25;
-
-        /**
-         * Максимальное количество разрешенных необработанных исключений.
-         *
-         * @var int
-         */
-        public $maxExceptions = 3;
-
-        /**
-         * Выполнить задание.
-         */
-        public function handle(): void
-        {
-            Redis::throttle('key')->allow(10)->every(60)->then(function () {
-                // Блокировка получена, обрабатываем подкаст...
-            }, function () {
-                // Невозможно получить блокировку...
-                return $this->release(10);
-            });
-        }
+        Redis::throttle('key')->allow(10)->every(60)->then(function () {
+            // Блокировка получена, обрабатываем подкаст...
+        }, function () {
+            // Невозможно получить блокировку...
+            return $this->release(10);
+        });
     }
+}
+```
 
 В этом примере задание высвобождается на десять секунд, если приложение не может получить блокировку Redis, и будет продолжать повторяться до 25 раз. Однако задание завершится ошибкой, если оно вызовет три необработанных исключения.
 
@@ -1150,19 +1284,21 @@ php artisan queue:work --timeout=30
 
 Вы также можете определить таймаут в самом классе задания. В этом случае это значение будет иметь приоритет над любым таймаутом, указанным в командной строке:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-    class ProcessPodcast implements ShouldQueue
-    {
-        /**
-         * Количество секунд, в течение которых задание может выполняться до истечения тайм-аута.
-         *
-         * @var int
-         */
-        public $timeout = 120;
-    }
+class ProcessPodcast implements ShouldQueue
+{
+    /**
+     * Количество секунд, в течение которых задание может выполняться до истечения тайм-аута.
+     *
+     * @var int
+     */
+    public $timeout = 120;
+}
+```
 
 Иногда процессы блокировки ввода-вывода, такие, как сокеты или исходящие HTTP-соединения, могут не учитывать указанный вами таймаут. Следовательно, при использовании этих функций вы всегда должны пытаться указать таймаут, используя их API. Например, при использовании Guzzle вы всегда должны указывать значение таймаута соединения и запроса.
 
@@ -1193,45 +1329,110 @@ public $failOnTimeout = true;
 
 По желанию можно вручную вернуть задание в очередь, чтобы его можно было повторить позже. Вы можете сделать это, вызвав метод `release`:
 
-    /**
-     * Выполнить задание.
-     */
-    public function handle(): void
-    {
-        // ...
+```php
+/**
+ * Выполнить задание.
+ */
+public function handle(): void
+{
+    // ...
 
-        $this->release();
-    }
+    $this->release();
+}
+```
 
 По умолчанию метод `release` помещает задание обратно в очередь для немедленной обработки. Однако вы можете указать очереди не делать задание доступным для обработки до тех пор, пока не истечет заданное количество секунд, передав целое число или экземпляр даты в методе `release`:
 
-    $this->release(10);
+```php
+$this->release(10);
 
-    $this->release(now()->addSeconds(10));
+$this->release(now()->addSeconds(10));
+```
 
 <a name="manually-failing-a-job"></a>
 #### Пометка задания неудачным
 
 Иногда требуется вручную пометить задание как «неудачное». Для этого вы можете вызвать метод `fail`:
 
-    /**
-     * Выполнить задание.
-     */
-    public function handle(): void
-    {
-        // ...
+```php
+/**
+ * Выполнить задание.
+ */
+public function handle(): void
+{
+    // ...
 
-        $this->fail();
-    }
+    $this->fail();
+}
+```
 
 Если вы хотите пометить свою работу как неудавшуюся из-за обнаруженного исключения, то вы можете передать исключение методу `fail`. Или, для удобства, вы можете передать строковое сообщение об ошибке, которое будет преобразовано для вас в исключение:
 
-    $this->fail($exception);
+```php
+$this->fail($exception);
 
-    $this->fail('Something went wrong.');
+$this->fail('Something went wrong.');
+```
 
 > [!NOTE]
 > Для получения дополнительной информации об обработке невыполненных заданий обратитесь к [документации по разбору неудачных заданий](#dealing-with-failed-jobs).
+
+<a name="fail-jobs-on-exceptions"></a>
+#### Невыполнение заданий по определенным исключениям
+
+[Посредник задания](#job-middleware) `FailOnException` позволяет сократить количество повторных попыток при возникновении определённых исключений. Это позволяет повторять попытки при возникновении временных исключений, таких как внешние ошибки API, но при этом окончательно завершать задание при постоянных исключениях, таких как отзыв прав пользователя:
+
+```php
+<?php
+
+namespace App\Jobs;
+
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\FailOnException;
+use Illuminate\Support\Facades\Http;
+
+class SyncChatHistory implements ShouldQueue
+{
+    use InteractsWithQueue;
+
+    public $tries = 3;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(
+        public User $user,
+    ) {}
+
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        $user->authorize('sync-chat-history');
+
+        $response = Http::throw()->get(
+            "https://chat.laravel.test/?user={$user->uuid}"
+        );
+
+        // ...
+    }
+
+    /**
+     * Get the middleware the job should pass through.
+     */
+    public function middleware(): array
+    {
+        return [
+            new FailOnException([AuthorizationException::class])
+        ];
+    }
+}
+```
 
 <a name="job-batching"></a>
 ## Пакетная обработка заданий
@@ -1249,62 +1450,66 @@ php artisan migrate
 
 Чтобы определить задание с возможностью пакетной передачи, вы, как обычно, должны [создать задание в очереди](#creating-jobs); тем не менее, вы должны добавить к классу задания трейт `Illuminate\Bus\Batchable`. Этот трейт обеспечивает доступ к методу `batch`, использующийся для получения текущего пакета, в котором выполняется задание:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-    use Illuminate\Bus\Batchable;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Bus\Batchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-    class ImportCsv implements ShouldQueue
+class ImportCsv implements ShouldQueue
+{
+    use Batchable, Queueable;
+
+    /**
+     * Выполнить задание.
+     */
+    public function handle(): void
     {
-        use Batchable, Queueable;
+        if ($this->batch()->cancelled()) {
+            // Определяем, был ли пакет отменен...
 
-        /**
-         * Выполнить задание.
-         */
-        public function handle(): void
-        {
-            if ($this->batch()->cancelled()) {
-                // Определяем, был ли пакет отменен...
-
-                return;
-            }
-
-            // Импортируем часть CSV-файла...
+            return;
         }
+
+        // Импортируем часть CSV-файла...
     }
+}
+```
 
 <a name="dispatching-batches"></a>
 ### Отправка пакета заданий
 
 Чтобы отправить пакет заданий, вы должны использовать метод `batch` фасада `Bus`. Основное преимущество обработки заданий одним пакетом - в том, что можно исполнить некий код по завершению этого пакета. Этот код добавляется в виде функций в аргументах методов `then`, `catch` и `finally`. Каждая из этих функций получит при вызове экземпляр `Illuminate\Bus\Batch`. В этом примере мы представим, что отправляем в очередь пакет заданий, каждое из которых обрабатывает указанное количество строк из файла CSV:
 
-    use App\Jobs\ImportCsv;
-    use Illuminate\Bus\Batch;
-    use Illuminate\Support\Facades\Bus;
-    use Throwable;
+```php
+use App\Jobs\ImportCsv;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
+use Throwable;
 
-    $batch = Bus::batch([
-        new ImportCsv(1, 100),
-        new ImportCsv(101, 200),
-        new ImportCsv(201, 300),
-        new ImportCsv(301, 400),
-        new ImportCsv(401, 500),
-    ])->before(function (Batch $batch) {
-        // Пакет заданий создан, но не добавлено ни одно задание...
-    })->progress(function (Batch $batch) {
-        // Одна задача успешно завершена...
-    })->then(function (Batch $batch) {
-        // Все задания успешно завершены...
-    })->catch(function (Batch $batch, Throwable $e) {
-        // Обнаружено первое проваленное задание из пакета...
-    })->finally(function (Batch $batch) {
-        // Завершено выполнение пакета...
-    })->dispatch();
+$batch = Bus::batch([
+    new ImportCsv(1, 100),
+    new ImportCsv(101, 200),
+    new ImportCsv(201, 300),
+    new ImportCsv(301, 400),
+    new ImportCsv(401, 500),
+])->before(function (Batch $batch) {
+    // Пакет заданий создан, но не добавлено ни одно задание...
+})->progress(function (Batch $batch) {
+    // Одна задача успешно завершена...
+})->then(function (Batch $batch) {
+    // Все задания успешно завершены...
+})->catch(function (Batch $batch, Throwable $e) {
+    // Обнаружено первое проваленное задание из пакета...
+})->finally(function (Batch $batch) {
+    // Завершено выполнение пакета...
+})->dispatch();
 
-    return $batch->id;
+return $batch->id;
+```
 
 Идентификатор пакета, к которому можно получить доступ через свойство `$batch->id`, можно использовать для [запроса к командной шине Laravel](#inspecting-batches) для получения информации о пакете после того, как он был отправлен.
 
@@ -1316,96 +1521,108 @@ php artisan migrate
 
 Некоторые инструменты, такие как Laravel Horizon и Laravel Telescope, могут предоставлять более удобную для пользователя отладочную информацию о пакет, если пакеты имеют имена. Чтобы присвоить пакету произвольное имя, вы можете вызвать метод `name` при определении пакета:
 
-    $batch = Bus::batch([
-        // ...
-    ])->then(function (Batch $batch) {
-        // Все задания успешно завершены...
-    })->name('Import CSV')->dispatch();
+```php
+$batch = Bus::batch([
+    // ...
+])->then(function (Batch $batch) {
+    // Все задания успешно завершены...
+})->name('Import CSV')->dispatch();
+```
 
 <a name="batch-connection-queue"></a>
 #### Соединение и очередь пакета
 
 Если вы хотите указать соединение и очередь, которые должны использоваться для пакетных заданий, то вы можете использовать методы `onConnection` и `onQueue`. Все пакетные задания должны выполняться в одном соединении и в одной очереди:
 
-    $batch = Bus::batch([
-        // ...
-    ])->then(function (Batch $batch) {
-        // Все задания успешно завершены...
-    })->onConnection('redis')->onQueue('imports')->dispatch();
+```php
+$batch = Bus::batch([
+    // ...
+])->then(function (Batch $batch) {
+    // Все задания успешно завершены...
+})->onConnection('redis')->onQueue('imports')->dispatch();
+```
 
 <a name="chains-and-batches"></a>
 #### Цепочки заданий (Chains) и Пакеты (Batches)
 
 Вы можете определить набор [связанных заданий](#job-chaining) в пакете, поместив связанные задания в массив. Например, мы можем выполнить две цепочки заданий параллельно и выполнить замыкание, когда обе цепочки заданий завершат обработку:
 
-    use App\Jobs\ReleasePodcast;
-    use App\Jobs\SendPodcastReleaseNotification;
-    use Illuminate\Bus\Batch;
-    use Illuminate\Support\Facades\Bus;
+```php
+use App\Jobs\ReleasePodcast;
+use App\Jobs\SendPodcastReleaseNotification;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
 
-    Bus::batch([
-        [
-            new ReleasePodcast(1),
-            new SendPodcastReleaseNotification(1),
-        ],
-        [
-            new ReleasePodcast(2),
-            new SendPodcastReleaseNotification(2),
-        ],
-    ])->then(function (Batch $batch) {
-        // ...
-    })->dispatch();
+Bus::batch([
+    [
+        new ReleasePodcast(1),
+        new SendPodcastReleaseNotification(1),
+    ],
+    [
+        new ReleasePodcast(2),
+        new SendPodcastReleaseNotification(2),
+    ],
+])->then(function (Batch $batch) {
+    // ...
+})->dispatch();
+```
 
 И наоборот, вы можете запускать пакеты заданий внутри [цепочки](#job-chaining), определяя пакеты внутри цепочки. Например, вы можете сначала запустить пакет заданий для выпуска нескольких подкастов, а затем пакет заданий для отправки уведомлений о выпуске:
 
-    use App\Jobs\FlushPodcastCache;
-    use App\Jobs\ReleasePodcast;
-    use App\Jobs\SendPodcastReleaseNotification;
-    use Illuminate\Support\Facades\Bus;
+```php
+use App\Jobs\FlushPodcastCache;
+use App\Jobs\ReleasePodcast;
+use App\Jobs\SendPodcastReleaseNotification;
+use Illuminate\Support\Facades\Bus;
 
-    Bus::chain([
-        new FlushPodcastCache,
-        Bus::batch([
-            new ReleasePodcast(1),
-            new ReleasePodcast(2),
-        ]),
-        Bus::batch([
-            new SendPodcastReleaseNotification(1),
-            new SendPodcastReleaseNotification(2),
-        ]),
-    ])->dispatch();
+Bus::chain([
+    new FlushPodcastCache,
+    Bus::batch([
+        new ReleasePodcast(1),
+        new ReleasePodcast(2),
+    ]),
+    Bus::batch([
+        new SendPodcastReleaseNotification(1),
+        new SendPodcastReleaseNotification(2),
+    ]),
+])->dispatch();
+```
 
 <a name="adding-jobs-to-batches"></a>
 ### Добавление заданий в пакет заданий
 
 Иногда может быть полезно добавить дополнительные задания в пакет, непосредственно из задания, уже находящегося в пакете. Этот шаблон может быть полезен, когда вам нужно выполнить пакетную обработку тысяч заданий, выполнение которых может занять слишком много времени во время веб-запроса, когда формируется пакет. Таким образом, вместо этого вы можете отправить начальный пакет заданий «загрузчику», которые дополнят пакет еще большим количеством заданий:
 
-    $batch = Bus::batch([
-        new LoadImportBatch,
-        new LoadImportBatch,
-        new LoadImportBatch,
-    ])->then(function (Batch $batch) {
-        // Все задания успешно завершены...
-    })->name('Import Contacts')->dispatch();
+```php
+$batch = Bus::batch([
+    new LoadImportBatch,
+    new LoadImportBatch,
+    new LoadImportBatch,
+])->then(function (Batch $batch) {
+    // Все задания успешно завершены...
+})->name('Import Contacts')->dispatch();
+```
 
 В этом примере мы будем использовать задание `LoadImportBatch`, чтобы дополнить пакет дополнительными заданиями. Для этого мы можем использовать метод `add` экземпляра пакета, к которому можно получить доступ через метод `batch` задания:
 
-    use App\Jobs\ImportContacts;
-    use Illuminate\Support\Collection;
+```php
+use App\Jobs\ImportContacts;
+use Illuminate\Support\Collection;
 
-    /**
-     * Выполнить задание.
-     */
-    public function handle(): void
-    {
-        if ($this->batch()->cancelled()) {
-            return;
-        }
-
-        $this->batch()->add(Collection::times(1000, function () {
-            return new ImportContacts;
-        }));
+/**
+ * Выполнить задание.
+ */
+public function handle(): void
+{
+    if ($this->batch()->cancelled()) {
+        return;
     }
+
+    $this->batch()->add(Collection::times(1000, function () {
+        return new ImportContacts;
+    }));
+}
+```
 
 > [!WARNING]
 > Вы можете добавлять задания в пакет только из задания, которое принадлежит к тому же пакету.
@@ -1415,35 +1632,37 @@ php artisan migrate
 
 Экземпляр `Illuminate\Bus\Batch`, который передается замыканиям по завершению пакета, имеет множество свойств и методов, помогающих взаимодействовать с данным пакетом заданий и его анализа:
 
-    // UUID пакета...
-    $batch->id;
+```php
+// UUID пакета...
+$batch->id;
 
-    // Название пакета (если применимо)...
-    $batch->name;
+// Название пакета (если применимо)...
+$batch->name;
 
-    // Количество заданий, назначенных пакету...
-    $batch->totalJobs;
+// Количество заданий, назначенных пакету...
+$batch->totalJobs;
 
-    // Количество заданий, которые не были обработаны очередью...
-    $batch->pendingJobs;
+// Количество заданий, которые не были обработаны очередью...
+$batch->pendingJobs;
 
-    // Количество неудачных заданий...
-    $batch->failedJobs;
+// Количество неудачных заданий...
+$batch->failedJobs;
 
-    // Количество заданий, обработанных на данный момент...
-    $batch->processedJobs();
+// Количество заданий, обработанных на данный момент...
+$batch->processedJobs();
 
-    // Процент завершения пакетной обработки (0-100)...
-    $batch->progress();
+// Процент завершения пакетной обработки (0-100)...
+$batch->progress();
 
-    // Указывает, завершено ли выполнение пакета...
-    $batch->finished();
+// Указывает, завершено ли выполнение пакета...
+$batch->finished();
 
-    // Отменить выполнение пакета...
-    $batch->cancel();
+// Отменить выполнение пакета...
+$batch->cancel();
 
-    // Указывает, был ли пакет отменен...
-    $batch->cancelled();
+// Указывает, был ли пакет отменен...
+$batch->cancelled();
+```
 
 <a name="returning-batches-from-routes"></a>
 #### Возврат пакетов заданий из маршрутов
@@ -1452,43 +1671,49 @@ php artisan migrate
 
 Чтобы получить пакет по его идентификатору, вы можете использовать метод `findBatch` фасада `Bus`:
 
-    use Illuminate\Support\Facades\Bus;
-    use Illuminate\Support\Facades\Route;
+```php
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Route;
 
-    Route::get('/batch/{batchId}', function (string $batchId) {
-        return Bus::findBatch($batchId);
-    });
+Route::get('/batch/{batchId}', function (string $batchId) {
+    return Bus::findBatch($batchId);
+});
+```
 
 <a name="cancelling-batches"></a>
 ### Отмена пакетов
 
 Иногда требуется отменить выполнение определенного пакета. Это можно сделать, вызвав метод `cancel` экземпляра `Illuminate\Bus\Batch`:
 
-    /**
-     * Выполнить задание.
-     */
-    public function handle(): void
-    {
-        if ($this->user->exceedsImportLimit()) {
-            return $this->batch()->cancel();
-        }
-
-        if ($this->batch()->cancelled()) {
-            return;
-        }
+```php
+/**
+ * Выполнить задание.
+ */
+public function handle(): void
+{
+    if ($this->user->exceedsImportLimit()) {
+        return $this->batch()->cancel();
     }
+
+    if ($this->batch()->cancelled()) {
+        return;
+    }
+}
+```
 
 Как вы, возможно, заметили в предыдущих примерах, пакетные задания обычно должны определить, был ли соответствующий пакет отменен, прежде чем продолжить выполнение. Однако для удобства вместо этого вы можете назначить заданию `SkipIfBatchCancelled` [middleware](#job-middleware). Как следует из названия, это middleware будет инструктировать Laravel не обрабатывать задание, если соответствующий пакет был отменен:
 
-    use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
+```php
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
-    /**
-     * Get the middleware the job should pass through.
-     */
-    public function middleware(): array
-    {
-        return [new SkipIfBatchCancelled];
-    }
+/**
+ * Get the middleware the job should pass through.
+ */
+public function middleware(): array
+{
+    return [new SkipIfBatchCancelled];
+}
+```
 
 <a name="batch-failures"></a>
 ### Отказы в пакете заданий
@@ -1500,11 +1725,13 @@ php artisan migrate
 
 Когда задание в пакете завершается неуспешно, Laravel автоматически помечает пакет как «отмененный». При желании вы можете отключить это поведение, чтобы при провале задания пакет не отмечался автоматически как отмененный. Это может быть выполнено путем вызова метода `allowFailures` при отправке пакета:
 
-    $batch = Bus::batch([
-        // ...
-    ])->then(function (Batch $batch) {
-        // Все задания успешно завершены...
-    })->allowFailures()->dispatch();
+```php
+$batch = Bus::batch([
+    // ...
+])->then(function (Batch $batch) {
+    // Все задания успешно завершены...
+})->allowFailures()->dispatch();
+```
 
 <a name="retrying-failed-batch-jobs"></a>
 #### Повторная попытка выполнения неудачных пакетных заданий
@@ -1520,27 +1747,35 @@ php artisan queue:retry-batch 32dbc76c-4f82-4749-b610-a639fe0099b5
 
 Если не применять очистку, то таблица `job_batches` может очень быстро накапливать записи. Чтобы избежать этого, вы должны [запланировать](/docs/{{version}}/scheduling) ежедневный запуск команды `queue:prune-batches` Artisan:
 
-    use Illuminate\Support\Facades\Schedule;
+```php
+use Illuminate\Support\Facades\Schedule;
 
-    Schedule::command('queue:prune-batches')->daily();
+Schedule::command('queue:prune-batches')->daily();
+```
 
 По умолчанию все готовые пакеты, возраст которых превышает 24 часа, будут удалены. Вы можете использовать параметр `hours` при вызове команды, чтобы определить, как долго хранить пакетные данные. Например, следующая команда удалит все пакеты, завершенные более 48 часов назад:
 
-    use Illuminate\Support\Facades\Schedule;
+```php
+use Illuminate\Support\Facades\Schedule;
 
-    Schedule::command('queue:prune-batches --hours=48')->daily();
+Schedule::command('queue:prune-batches --hours=48')->daily();
+```
 
 Иногда в таблице `jobs_batches` могут накапливаться записи пакетов, которые так и не были успешно завершены, например, пакеты, в которых задание не удалось выполнить, и это задание так и не было успешно перезапущено. Вы можете поручить команде `queue:prune-batches` очистить эти незавершенные пакетные записи, используя опцию `unfinished`:
 
-    use Illuminate\Support\Facades\Schedule;
+```php
+use Illuminate\Support\Facades\Schedule;
 
-    Schedule::command('queue:prune-batches --hours=48 --unfinished=72')->daily();
+Schedule::command('queue:prune-batches --hours=48 --unfinished=72')->daily();
+```
 
 Аналогично, ваша таблица `jobs_batches` может также накапливать записи об отмененных пакетах. Вы можете указать команде `queue:prune-batches` удалить эти отмененные пакетные записи, используя флаг `cancelled`:
 
-    use Illuminate\Support\Facades\Schedule;
+```php
+use Illuminate\Support\Facades\Schedule;
 
-    Schedule::command('queue:prune-batches --hours=48 --cancelled=72')->daily();
+Schedule::command('queue:prune-batches --hours=48 --cancelled=72')->daily();
+```
 
 <a name="storing-batches-in-dynamodb"></a>
 ### Хранение пакетов в DynamoDB
@@ -1601,21 +1836,33 @@ composer require aws/aws-sdk-php
 
 Вместо отправки класса задания в очередь вы также можете отправить функцию. Это отлично подходит для быстрых и простых задач, которые необходимо выполнять вне текущего цикла запроса. При отправке функции в очередь содержимое кода функции криптографически подписывается, поэтому его нельзя изменить при передаче:
 
-    $podcast = App\Podcast::find(1);
+```php
+$podcast = App\Podcast::find(1);
 
-    dispatch(function () use ($podcast) {
-        $podcast->publish();
-    });
+dispatch(function () use ($podcast) {
+    $podcast->publish();
+});
+```
+
+Чтобы присвоить имя замыканию в очереди, которое может использоваться панелями мониторинга отчетов об очередях, а также отображаться командой `queue:work`, можно использовать метод `name`:
+
+```php
+dispatch(function () {
+    // ...
+})->name('Publish Podcast');
+```
 
 Используя метод `catch`, вы можете определить функцию, которая должна быть выполнена, если анонимная очередь не завершится успешно после исчерпания всех [сконфигурированных попыток повтора](#max-job-attempts-and-timeout) вашей очереди:
 
-    use Throwable;
+```php
+use Throwable;
 
-    dispatch(function () use ($podcast) {
-        $podcast->publish();
-    })->catch(function (Throwable $e) {
-        // Это задание завершилось неудачно...
-    });
+dispatch(function () use ($podcast) {
+    $podcast->publish();
+})->catch(function (Throwable $e) {
+    // Это задание завершилось неудачно...
+});
+```
 
 > [!WARNING]
 > Поскольку функции-замыкания в`catch` сериализуются и выполняются очередью Laravel позднее, вам не следует использовать `$this` в обратных вызовах `catch`.
@@ -1635,7 +1882,7 @@ php artisan queue:work
 > [!NOTE]
 > Чтобы процесс `queue:work` работал постоянно в фоновом режиме, вам следует использовать диспетчер процессов, такой как [Supervisor](#supervisor-configuration), чтобы гарантировать, что worker очереди не перестанет работать.
 
-Вы можете включить флаг `-v` при вызове команды `queue:work`, если хотите, чтобы идентификаторы обработанных заданий были включены в output команды:
+Вы можете включить флаг `-v` при вызове команды `queue:work`, если хотите, чтобы идентификаторы обработанных заданий, имена подключений и имена очередей были включены в output команды:
 
 ```shell
 php artisan queue:work -v
@@ -1733,7 +1980,9 @@ php artisan queue:work --force
 
 Иногда вы можете установить приоритетность обработки очередей. Например, в конфигурационном файле `config/queue.php` для очереди по умолчанию вашего соединения `redis` вы можете установить `low`. По желанию можно поместить задание в очередь с «высоким» (`high`) приоритетом, например:
 
-    dispatch((new Job)->onQueue('high'));
+```php
+dispatch((new Job)->onQueue('high'));
+```
 
 Чтобы запустить обработчика, который проверяет, что все задания очереди `high` обработаны, прежде чем переходить к любым заданиям в очереди `low`, передайте разделенный запятыми список имен очередей команде `work`:
 
@@ -1797,7 +2046,7 @@ sudo apt-get install supervisor
 ```
 
 > [!NOTE]
-> Если настройка Supervisor и управление им самостоятельно кажется ошеломляющим, рассмотрите возможность использования [Laravel Forge](https://forge.laravel.com), который автоматически установит и настроит Supervisor для ваших проектов Laravel.
+> Если настройка Supervisor и управление им самостоятельно кажется ошеломляющим, рассмотрите возможность использования [Laravel Cloud](https://cloud.laravel.com), который предоставляет полностью управляемую платформу для запуска обработчиков очередей Laravel.
 
 <a name="configuring-supervisor"></a>
 #### Настройка Supervisor
@@ -1866,77 +2115,85 @@ php artisan queue:work redis --tries=3 --backoff=3
 
 Если вы хотите настроить, сколько секунд Laravel должен ждать перед повторной попыткой выполнения каждого из заданий, для которого возникло исключение, вы можете сделать это, определив свойство `$backoff` в своем классе задания:
 
-    /**
-     * Количество секунд ожидания перед повторной попыткой выполнения задания.
-     *
-     * @var int
-     */
-    public $backoff = 3;
+```php
+/**
+ * Количество секунд ожидания перед повторной попыткой выполнения задания.
+ *
+ * @var int
+ */
+public $backoff = 3;
+```
 
 Если вам требуется более сложная логика для определения времени отсрочки выполнения задания, вы можете определить метод `backoff` для своего класса задания:
 
-    /**
-    * Рассчитать количество секунд ожидания перед повторной попыткой выполнения задания.
-    */
-    public function backoff(): int
-    {
-        return 3;
-    }
+```php
+/**
+* Рассчитать количество секунд ожидания перед повторной попыткой выполнения задания.
+*/
+public function backoff(): int
+{
+    return 3;
+}
+```
 
 Вы можете легко настроить «экспоненциальную» отсрочку, возвращая массив значений отсрочки из метода `backoff`. В этом примере задержка повторной попытки выполнения будет составлять 1 секунду для первой попытки, 5 секунд для второй попытки и 10 секунд для третьей попытки, и 10 секунд для каждой последующей повторной попытки, если осталось еще попыток:
 
-    /**
-    * Рассчитать количество секунд ожидания перед повторной попыткой выполнения задания.
-    *
-    * @return array<int, int>
-    */
-    public function backoff(): array
-    {
-        return [1, 5, 10];
-    }
+```php
+/**
+* Рассчитать количество секунд ожидания перед повторной попыткой выполнения задания.
+*
+* @return array<int, int>
+*/
+public function backoff(): array
+{
+    return [1, 5, 10];
+}
+```
 
 <a name="cleaning-up-after-failed-jobs"></a>
 ### Очистка после неудачных заданий
 
 В случае сбоя определенного задания вы можете отправить предупреждение своим пользователям или отменить любые действия, которые были частично выполнены заданием. Для этого вы можете определить метод `failed` в своем классе работы. Экземпляр `Throwable`, который привел к сбою задания, будет передан методу `failed`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Jobs;
+namespace App\Jobs;
 
-    use App\Models\Podcast;
-    use App\Services\AudioProcessor;
-    use Illuminate\Contracts\Queue\ShouldQueue;
-    use Illuminate\Foundation\Queue\Queueable;
-    use Throwable;
+use App\Models\Podcast;
+use App\Services\AudioProcessor;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
-    class ProcessPodcast implements ShouldQueue
+class ProcessPodcast implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Создать новый экземпляр задания.
+     */
+    public function __construct(
+        public Podcast $podcast,
+    ) {}
+
+    /**
+     * Выполнить задание.
+     */
+    public function handle(AudioProcessor $processor): void
     {
-        use Queueable;
-
-        /**
-         * Создать новый экземпляр задания.
-         */
-        public function __construct(
-            public Podcast $podcast,
-        ) {}
-
-        /**
-         * Выполнить задание.
-         */
-        public function handle(AudioProcessor $processor): void
-        {
-            // Process uploaded podcast...
-        }
-
-        /**
-         * Обработать провал задания.
-         */
-        public function failed(?Throwable $exception): void
-        {
-            // Отправляем пользователю уведомление об ошибке и т.д.
-        }
+        // Process uploaded podcast...
     }
+
+    /**
+     * Обработать провал задания.
+     */
+    public function failed(?Throwable $exception): void
+    {
+        // Отправляем пользователю уведомление об ошибке и т.д.
+    }
+}
+```
 
 > [!WARNING]
 > Перед вызовом метода `failed` создается новый экземпляр задания. Поэтому все изменения свойств класса, которые могли произойти в методе `handle`, будут потеряны.
@@ -1996,12 +2253,14 @@ php artisan queue:flush
 
 Для удобства вы можете выбрать автоматическое удаление заданий с отсутствующими моделями, установив для свойства задания `$deleteWhenMissingModels` значение `true`. Когда для этого свойства установлено значение `true`, Laravel отбрасывает задание, не вызывая исключения:
 
-    /**
-     * Удалить задание, если модели больше не существуют.
-     *
-     * @var bool
-     */
-    public $deleteWhenMissingModels = true;
+```php
+/**
+ * Удалить задание, если модели больше не существуют.
+ *
+ * @var bool
+ */
+public $deleteWhenMissingModels = true;
+```
 
 <a name="pruning-failed-jobs"></a>
 ### Удаление неудачных заданий
@@ -2057,36 +2316,38 @@ QUEUE_FAILED_DRIVER=null
 
 Если вы хотите зарегистрировать слушатель событий, который будет вызываться при сбое задания, вы можете использовать метод `failing` фасада `Queue`. Вызывать его можно например из метода `boot` сервис-провайдера `AppServiceProvider`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use Illuminate\Support\Facades\Queue;
-    use Illuminate\Support\ServiceProvider;
-    use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Queue\Events\JobFailed;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Регистрация любых служб приложения.
+     */
+    public function register(): void
     {
-        /**
-         * Регистрация любых служб приложения.
-         */
-        public function register(): void
-        {
-            // ...
-        }
-
-        /**
-         * Загрузка любых служб приложения.
-         */
-        public function boot(): void
-        {
-            Queue::failing(function (JobFailed $event) {
-                // $event->connectionName
-                // $event->job
-                // $event->exception
-            });
-        }
+        // ...
     }
+
+    /**
+     * Загрузка любых служб приложения.
+     */
+    public function boot(): void
+    {
+        Queue::failing(function (JobFailed $event) {
+            // $event->connectionName
+            // $event->job
+            // $event->exception
+        });
+    }
+}
+```
 
 <a name="clearing-jobs-from-queues"></a>
 ## Удаление заданий из очередей
@@ -2135,11 +2396,11 @@ public function boot(): void
 {
     Event::listen(function (QueueBusy $event) {
         Notification::route('mail', 'dev@example.com')
-                ->notify(new QueueHasLongWaitTime(
-                    $event->connection,
-                    $event->queue,
-                    $event->size
-                ));
+            ->notify(new QueueHasLongWaitTime(
+                $event->connection,
+                $event->queue,
+                $event->size
+            ));
     });
 }
 ```
@@ -2226,9 +2487,11 @@ class ExampleTest extends TestCase
 
 Вы можете передать функцию-замыкание методам `assertPushed` или `assertNotPushed`, чтобы подтвердить, что задание было отправлено и прошло заданный «тест на истинность». Если было отправлено хотя бы одно задание, которое проходит заданный тест, то утверждение будет успешным:
 
-    Queue::assertPushed(function (ShipOrder $job) use ($order) {
-        return $job->order->id === $order->id;
-    });
+```php
+Queue::assertPushed(function (ShipOrder $job) use ($order) {
+    return $job->order->id === $order->id;
+});
+```
 
 <a name="faking-a-subset-of-jobs"></a>
 ### Подделка определённого списка заданий
@@ -2264,41 +2527,49 @@ public function test_orders_can_be_shipped(): void
 
 Вы можете подделать все задания, кроме набора указанных, используя метод `except`:
 
-    Queue::fake()->except([
-        ShipOrder::class,
-    ]);
+```php
+Queue::fake()->except([
+    ShipOrder::class,
+]);
+```
 
 <a name="testing-job-chains"></a>
 ### Тестирование цепочку заданий
 
 Чтобы протестировать цепочки заданий, вам нужно будет использовать возможности фасада `Bus`. Метод `assertChained` фасада `Bus` может использоваться для подтверждения того, что [цепочка заданий](/docs/{{version}}/queues#job-chaining) была отправлена. Метод `assertChained` принимает массив связанных заданий в качестве первого аргумента:
 
-    use App\Jobs\RecordShipment;
-    use App\Jobs\ShipOrder;
-    use App\Jobs\UpdateInventory;
-    use Illuminate\Support\Facades\Bus;
+```php
+use App\Jobs\RecordShipment;
+use App\Jobs\ShipOrder;
+use App\Jobs\UpdateInventory;
+use Illuminate\Support\Facades\Bus;
 
-    Bus::fake();
+Bus::fake();
 
-    // ...
+// ...
 
-    Bus::assertChained([
-        ShipOrder::class,
-        RecordShipment::class,
-        UpdateInventory::class
-    ]);
+Bus::assertChained([
+    ShipOrder::class,
+    RecordShipment::class,
+    UpdateInventory::class
+]);
+```
 
 Как вы можете видеть в приведенном выше примере, массив цепочки заданий может быть массивом имен классов заданий. Однако вы также можете предоставить массив реальных экземпляров заданий. При этом Laravel гарантирует, что экземпляры заданий относятся к одному и тому же классу и имеют одинаковые значения свойств, что и связанные задания, отправленные вашим приложением:
 
-    Bus::assertChained([
-        new ShipOrder,
-        new RecordShipment,
-        new UpdateInventory,
-    ]);
+```php
+Bus::assertChained([
+    new ShipOrder,
+    new RecordShipment,
+    new UpdateInventory,
+]);
+```
 
 Вы можете использовать метод `assertDispatchedWithoutChain`, чтобы подтвердить, что задание было отправлено без цепочки заданий:
 
-    Bus::assertDispatchedWithoutChain(ShipOrder::class);
+```php
+Bus::assertDispatchedWithoutChain(ShipOrder::class);
+```
 
 <a name="testing-chain-modifications"></a>
 #### Модификации цепочки тестирования
@@ -2328,55 +2599,65 @@ $job->assertDoesntHaveChain();
 
 Если ваша цепочка заданий [содержит пакет заданий](#chains-and-batches), вы можете утверждать, что связанный пакет соответствует вашим ожиданиям, вставив определение `Bus::chainedBatch` в assert цепочки:
 
-    use App\Jobs\ShipOrder;
-    use App\Jobs\UpdateInventory;
-    use Illuminate\Bus\PendingBatch;
-    use Illuminate\Support\Facades\Bus;
+```php
+use App\Jobs\ShipOrder;
+use App\Jobs\UpdateInventory;
+use Illuminate\Bus\PendingBatch;
+use Illuminate\Support\Facades\Bus;
 
-    Bus::assertChained([
-        new ShipOrder,
-        Bus::chainedBatch(function (PendingBatch $batch) {
-            return $batch->jobs->count() === 3;
-        }),
-        new UpdateInventory,
-    ]);
+Bus::assertChained([
+    new ShipOrder,
+    Bus::chainedBatch(function (PendingBatch $batch) {
+        return $batch->jobs->count() === 3;
+    }),
+    new UpdateInventory,
+]);
+```
 
 <a name="testing-job-batches"></a>
 ### Тестирование пакетов заданий
 
 Метод `assertBatched` фасада `Bus` может использоваться для подтверждения того, что [пакет заданий](/docs/{{version}}/queues#job-batching) был отправлен. Замыкание, данное методу `assertBatched`, получает экземпляр `Illuminate\Bus\PendingBatch`, который можно использовать для проверки заданий в пакете:
 
-    use Illuminate\Bus\PendingBatch;
-    use Illuminate\Support\Facades\Bus;
+```php
+use Illuminate\Bus\PendingBatch;
+use Illuminate\Support\Facades\Bus;
 
-    Bus::fake();
+Bus::fake();
 
-    // ...
+// ...
 
-    Bus::assertBatched(function (PendingBatch $batch) {
-        return $batch->name == 'import-csv' &&
-               $batch->jobs->count() === 10;
-    });
+Bus::assertBatched(function (PendingBatch $batch) {
+    return $batch->name == 'import-csv' &&
+        $batch->jobs->count() === 10;
+});
+```
 
 Вы можете использовать метод `assertBatchCount`, чтобы подтвердить, что было отправлено заданное количество пакетов:
 
-    Bus::assertBatchCount(3);
+```php
+Bus::assertBatchCount(3);
+```
 
 Вы можете использовать `assertNothingBatched`, чтобы подтвердить, что никакие пакеты не были отправлены:
 
-    Bus::assertNothingBatched();
+```php
+Bus::assertNothingBatched();
+```
 
 <a name="testing-job-batch-interaction"></a>
 #### Тестирования заданий / Взаимодействие пакетов
 
 Кроме того, иногда вам может потребоваться протестировать взаимодействие отдельного задания с его базовым пакетом. Например, вам может потребоваться проверить, не отменило ли задание дальнейшую обработку своего пакета. Для этого вам необходимо назначить заданию поддельный пакет с помощью метода `withFakeBatch`. Метод `withFakeBatch` возвращает массив, содержащий экземпляр задания и поддельный пакет:
 
-    [$job, $batch] = (new ShipOrder)->withFakeBatch();
+```php
+[$job, $batch] = (new ShipOrder)->withFakeBatch();
 
-    $job->handle();
+$job->handle();
 
-    $this->assertTrue($batch->cancelled());
-    $this->assertEmpty($batch->added);
+$this->assertTrue($batch->cancelled());
+$this->assertEmpty($batch->added);
+```
 
 <a name="testing-job-queue-interactions"></a>
 ### Тестирование взаимодействия заданий и очередей
@@ -2406,51 +2687,55 @@ $job->assertNotFailed();
 
 Используя методы `before` и `after` [фасада](/docs/{{version}}/facades) `Queue`, вы можете указать функции, которые будут выполняться до или после обработки задания в очереди. Эти функции – прекрасная возможность для дополнительной регистрации или увеличения счётчиков для панели мониторинга. Как правило, вызов этих методов осуществляется в методе `boot` [сервис-провайдера](/docs/{{version}}/providers). Например, мы можем использовать `AppServiceProvider`, который включен в Laravel:
 
-    <?php
+```php
+<?php
 
-    namespace App\Providers;
+namespace App\Providers;
 
-    use Illuminate\Support\Facades\Queue;
-    use Illuminate\Support\ServiceProvider;
-    use Illuminate\Queue\Events\JobProcessed;
-    use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
 
-    class AppServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Регистрация любых служб приложения.
+     */
+    public function register(): void
     {
-        /**
-         * Регистрация любых служб приложения.
-         */
-        public function register(): void
-        {
-            // ...
-        }
-
-        /**
-         * Загрузка любых служб приложения.
-         */
-        public function boot(): void
-        {
-            Queue::before(function (JobProcessing $event) {
-                // $event->connectionName
-                // $event->job
-                // $event->job->payload()
-            });
-
-            Queue::after(function (JobProcessed $event) {
-                // $event->connectionName
-                // $event->job
-                // $event->job->payload()
-            });
-        }
+        // ...
     }
+
+    /**
+     * Загрузка любых служб приложения.
+     */
+    public function boot(): void
+    {
+        Queue::before(function (JobProcessing $event) {
+            // $event->connectionName
+            // $event->job
+            // $event->job->payload()
+        });
+
+        Queue::after(function (JobProcessed $event) {
+            // $event->connectionName
+            // $event->job
+            // $event->job->payload()
+        });
+    }
+}
+```
 
 Используя метод `looping` [фасада](/docs/{{version}}/facades) `Queue`, вы можете указать замыкания, которые выполняются до того, как обработчик попытается получить задание из очереди. Например, вы можете зарегистрировать замыкание для отката любых транзакций, оставшихся открытыми из-за ранее неудачного задания:
 
-    use Illuminate\Support\Facades\DB;
-    use Illuminate\Support\Facades\Queue;
+```php
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 
-    Queue::looping(function () {
-        while (DB::transactionLevel() > 0) {
-            DB::rollBack();
-        }
-    });
+Queue::looping(function () {
+    while (DB::transactionLevel() > 0) {
+        DB::rollBack();
+    }
+});
+```
