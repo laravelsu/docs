@@ -1,5 +1,5 @@
 ---
-git: fa5ace397db97fb06e50fdbe630a9bd0080ce30d
+git: cd7f1a1761f347146c43ba9561f1432500e7722e
 ---
 
 # Логирование
@@ -504,7 +504,7 @@ Laravel Pail - это пакет, который позволяет вам ле�
 ### Установка
 
 > [!WARNING]
-> Laravel Pail поддерживает [PHP 8.2+](https://php.net/releases/) и расширение [PCNTL](https://www.php.net/manual/en/book.pcntl.php).
+> Для Laravel Pail требуется PHP расширение [PCNTL](https://www.php.net/manual/en/book.pcntl.php).
 
 Чтобы начать работу, установите Pail в свой проект с помощью менеджера пакетов Composer:
 
