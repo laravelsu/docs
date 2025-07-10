@@ -1,5 +1,5 @@
 ---
-git: 6417cf466e0f2aa3cdf7b931b060ccdfc816d7a2
+git: 80571fd8a98d00070fcccf922d39f676a49e783c
 ---
 
 # Глобальные помощники (helpers)
@@ -92,6 +92,8 @@ Laravel содержит множество глобальных «вспомо�
 - [Number::format](#method-number-format)
 - [Number::ordinal](#method-number-ordinal)
 - [Number::pairs](#method-number-pairs)
+- [Number::parseInt](#method-number-parse-int)
+- [Number::parseFloat](#method-number-parse-float)
 - [Number::percentage](#method-number-percentage)
 - [Number::spell](#method-number-spell)
 - [Number::spellOrdinal](#method-number-spell-ordinal)
@@ -284,7 +286,7 @@ $value = Arr::boolean($array, 'name');
 <a name="method-array-collapse"></a>
 #### `Arr::collapse()`
 
-Метод `Arr::collapse` сворачивает массив массивов в один массив:
+Метод `Arr::collapse` сворачивает массив массивов или коллекций в один массив:
 
 ```php
 use Illuminate\Support\Arr;
@@ -1691,6 +1693,40 @@ $result = Number::pairs(25, 10, offset: 0);
 // [[0, 10], [10, 20], [20, 25]]
 ```
 
+<a name="method-number-parse-int"></a>
+#### `Number::parseInt()`
+
+Метод `Number::parseInt` преобразует строку в целое число в соответствии с указанной локалью:
+
+```php
+use Illuminate\Support\Number;
+
+$result = Number::parseInt('10.123');
+
+// (int) 10
+
+$result = Number::parseInt('10,123', locale: 'fr');
+
+// (int) 10
+```
+
+<a name="method-number-parse-float"></a>
+#### `Number::parseFloat()`
+
+Метод `Number::parseFloat` преобразует строку в число с плавающей точкой в ​​соответствии с указанной локалью:
+
+```php
+use Illuminate\Support\Number;
+
+$result = Number::parseFloat('10');
+
+// (float) 10.0
+
+$result = Number::parseFloat('10', locale: 'fr');
+
+// (float) 10.0
+```
+
 <a name="method-number-percentage"></a>
 #### `Number::percentage()`
 
@@ -2352,6 +2388,8 @@ $token = csrf_token();
 $password = decrypt($value);
 ```
 
+Для обратного действия `decrypt` см. функцию [encrypt](#method-encrypt).
+
 <a name="method-dd"></a>
 #### `dd()`
 
@@ -2404,6 +2442,8 @@ dump($value1, $value2, $value3, ...);
 ```php
 $secret = encrypt('my-secret-value');
 ```
+
+Для обратного действия `encrypt` см. функцию [decrypt](#method-decrypt).
 
 <a name="method-env"></a>
 #### `env()`
