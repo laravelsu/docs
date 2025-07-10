@@ -1,5 +1,5 @@
 ---
-git: 97e713da10ce740be90f259c765a6cd7c1a4c504
+git: 10e0cacd168bd6a2fe9606365bccec4d6a11563a
 ---
 
 # Установка
@@ -195,11 +195,11 @@ herd open
 <a name="ide-support"></a>
 ## Поддержка IDE
 
-Вы можете использовать любой редактор кода при разработке приложений Laravel; однако [PhpStorm](https://www.jetbrains.com/phpstorm/laravel/) предлагает обширную поддержку для Laravel и его экосистемы, включая [Laravel Pint](https://www.jetbrains.com/help/phpstorm/using-laravel-pint.html).
+При разработке приложений Laravel вы можете использовать любой редактор кода по своему усмотрению. Если вы ищете легкие и расширяемые редакторы, [VS Code](https://code.visualstudio.com) или [Cursor](https://cursor.com) в сочетании с официальным [расширением Laravel VS Code](https://marketplace.visualstudio.com/items?itemName=laravel.vscode-laravel) предлагают отличную поддержку Laravel с такими функциями, как подсветка синтаксиса, сниппеты, интеграция команд Artisan и интеллектуальное автодополнение для моделей Eloquent, маршрутов, посредников, ресурсов, конфигураций и Inertia.js.
 
-Кроме того, поддерживаемый сообществом плагин PhpStorm [Laravel Idea](https://laravel-idea.com/) предлагает различные полезные дополнения для IDE, включая генерацию кода, автодополнение синтаксиса Eloquent, автодополнение правил валидации и многое другое.
+[PhpStorm](https://www.jetbrains.com/phpstorm/laravel/) от JetBrains в сочетании с [плагином Laravel Idea](https://laravel-idea.com/) обеспечивает расширенную поддержку Laravel и его экосистемы, включая Laravel Pint, Larastan и Pest. Поддержка фреймворка охватывает шаблоны Blade, интеллектуальное автодополнение для моделей Eloquent, маршрутов, представлений, переводов и компонентов, а также мощную генерацию кода и навигацию по проектам Laravel.
 
-Если вы разрабатываете в [Visual Studio Code (VS Code)](https://code.visualstudio.com), теперь доступно официальное [расширение Laravel для VS Code](https://marketplace.visualstudio.com/items?itemName=laravel.vscode-laravel). Оно добавляет инструменты, специально разработанные для Laravel, прямо в вашу среду разработки, повышая удобство и продуктивность.
+Тем, кто ищет облачный опыт разработки, [Firebase Studio](https://firebase.studio/) предоставляет мгновенный доступ к разработке на Laravel прямо в браузере. Firebase Studio не требует настройки и позволяет легко начать разработку приложений Laravel с любого устройства.
 
 <a name="next-steps"></a>
 ## Следующие шаги
