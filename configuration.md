@@ -1,5 +1,5 @@
 ---
-git: 4223ed3fb9af969df6803cc81a21d5e803236ae0
+git: 6c78ad4185b3c4b1c7cdcf8449d26d9face29f2b
 ---
 
 # Конфигурирование
@@ -213,6 +213,7 @@ Config::integer('config-key');
 Config::float('config-key');
 Config::boolean('config-key');
 Config::array('config-key');
+Config::collection('config-key');
 ```
 
 <a name="configuration-caching"></a>
