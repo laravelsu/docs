@@ -1,5 +1,5 @@
 ---
-git: a15bc84b1841e692f4e07f0a743dcad9104a8c69
+git: f52fc17d93bcfe5c46fa19014b1d16280e78827d
 ---
 
 # Отправка электронной почты
@@ -330,7 +330,10 @@ return new Envelope(
 Кроме того, вы можете определить глобальный адрес `reply_to` в конфигурационном файле `config/mail.php`:
 
 ```php
-'reply_to' => ['address' => 'example@example.com', 'name' => 'App Name'],
+'reply_to' => [
+    'address' => 'example@example.com',
+    'name' => 'App Name',
+],
 ```
 
 <a name="configuring-the-view"></a>
@@ -351,7 +354,7 @@ public function content(): Content
 ```
 
 > [!NOTE]
-> Вы можете создать каталог `resources/views/emails` для размещения всех ваших шаблонов электронной почты; однако, вы можете размещать их где угодно в каталоге `resources/views`.
+> Вы можете создать каталог `resources/views/mail` для размещения всех ваших шаблонов электронной почты; однако, вы можете размещать их где угодно в каталоге `resources/views`.
 
 <a name="plain-text-emails"></a>
 #### Письма с обычным текстом
@@ -473,7 +476,7 @@ class OrderShipped extends Mailable
 }
 ```
 
-После того как данные были переданы методу `with`, они автоматически станут доступны в вашем шаблоне, поэтому вы можете получить к ним доступ так же, как и к любым другим данным в ваших шаблонах Blade:
+После того как данные были переданы через параметр `with`, они автоматически станут доступны в вашем шаблоне, поэтому вы можете получить к ним доступ так же, как и к любым другим данным в ваших шаблонах Blade:
 
 ```blade
 <div>
@@ -740,7 +743,7 @@ public function envelope(): Envelope
 }
 ```
 
-Если ваше приложение использует драйвер Mailgun, вы можете проконсультироваться с документацией Mailgun для получения дополнительной информации о [тегах](https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/#tagging) и [метаданных](https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/#attaching-data-to-messages). Аналогично, вы можете проконсультироваться с документацией Postmark для получения дополнительной информации о поддержке [тегов](https://postmarkapp.com/blog/tags-support-for-smtp) и [метаданных](https://postmarkapp.com/support/article/1125-custom-metadata-faq).
+Если ваше приложение использует драйвер Mailgun, вы можете проконсультироваться с документацией Mailgun для получения дополнительной информации о [тегах](https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/#tags) и [метаданных](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/#attaching-metadata-to-messages). Аналогично, вы можете проконсультироваться с документацией Postmark для получения дополнительной информации о поддержке [тегов](https://postmarkapp.com/blog/tags-support-for-smtp) и [метаданных](https://postmarkapp.com/support/article/1125-custom-metadata-faq).
 
 Если ваше приложение использует Amazon SES для отправки электронных писем, вы должны использовать метод `metadata` для добавления [тегов SES](https://docs.aws.amazon.com/ses/latest/APIReference/API_MessageTag.html) к сообщению.
 
