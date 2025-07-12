@@ -1,5 +1,5 @@
 ---
-git: 9285ebd7ead1718ccf21905b2bf71bc84b1a8c17
+git: e9aa20cbaaf2369a32811769d8cfabd897fb268d
 ---
 
 # HTTP-клиент
@@ -119,7 +119,7 @@ $response = Http::get('http://example.com/users', [
 Http::retry(3, 100)->withQueryParameters([
     'name' => 'Taylor',
     'page' => 1,
-])->get('http://example.com/users')
+])->get('http://example.com/users');
 ```
 
 <a name="sending-form-url-encoded-requests"></a>
