@@ -1,5 +1,5 @@
 ---
-git: d636b0efcb462b894e8f18dd73f1b72f37a74881
+git: 6fe1c617a9b22f441d604787cdaaee783478c4d4
 ---
 
 # Авторизация
@@ -148,8 +148,8 @@ Laravel предлагает два основных способа автори
 
     Gate::define('edit-settings', function (User $user) {
         return $user->isAdmin
-                    ? Response::allow()
-                    : Response::deny('Вы должны быть администратором.');
+            ? Response::allow()
+            : Response::deny('Вы должны быть администратором.');
     });
 
 Даже когда вы возвращаете ответ авторизации из вашего шлюза, метод `Gate::allows` все равно будет возвращать простое логическое значение; однако вы можете использовать метод `Gate::inspect`, чтобы получить полный возвращенный шлюзом ответ авторизации:
@@ -179,8 +179,8 @@ Laravel предлагает два основных способа автори
 
     Gate::define('edit-settings', function (User $user) {
         return $user->isAdmin
-                    ? Response::allow()
-                    : Response::denyWithStatus(404);
+            ? Response::allow()
+            : Response::denyWithStatus(404);
     });
 
 Поскольку скрытие ресурсов с помощью ответа `404` является общепринятым подходом в веб-приложениях, для удобства предлагается метод `denyAsNotFound`:
@@ -191,8 +191,8 @@ Laravel предлагает два основных способа автори
 
     Gate::define('edit-settings', function (User $user) {
         return $user->isAdmin
-                    ? Response::allow()
-                    : Response::denyAsNotFound();
+            ? Response::allow()
+            : Response::denyAsNotFound();
     });
 
 <a name="intercepting-gate-checks"></a>
@@ -342,8 +342,8 @@ php artisan make:policy PostPolicy --model=Post
     public function update(User $user, Post $post): Response
     {
         return $user->id === $post->user_id
-                    ? Response::allow()
-                    : Response::deny('You do not own this post.');
+            ? Response::allow()
+            : Response::deny('You do not own this post.');
     }
 
 При возврате ответа авторизации из вашей политики метод `Gate::allows` все равно будет возвращать простое логическое значение; однако вы можете использовать метод `Gate::inspect`, чтобы получить полный возвращенный шлюзом ответ авторизации:
@@ -379,8 +379,8 @@ php artisan make:policy PostPolicy --model=Post
     public function update(User $user, Post $post): Response
     {
         return $user->id === $post->user_id
-                    ? Response::allow()
-                    : Response::denyWithStatus(404);
+            ? Response::allow()
+            : Response::denyWithStatus(404);
     }
 
 Поскольку скрытие ресурсов с помощью ответа `404` является общепринятым подходом в веб-приложениях, для удобства предлагается метод `denyAsNotFound`:
@@ -395,8 +395,8 @@ php artisan make:policy PostPolicy --model=Post
     public function update(User $user, Post $post): Response
     {
         return $user->id === $post->user_id
-                    ? Response::allow()
-                    : Response::denyAsNotFound();
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
 <a name="methods-without-models"></a>
