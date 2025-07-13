@@ -1,5 +1,5 @@
 ---
-git: 4f4c78e4a04ac1c09c8092016ff2434c9c0532a0
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Процессы
@@ -96,16 +96,16 @@ $result = Process::timeout(60)->idleTimeout(30)->run('bash import.sh');
 
 ```php
 $result = Process::forever()
-            ->env(['IMPORT_PATH' => __DIR__])
-            ->run('bash import.sh');
+    ->env(['IMPORT_PATH' => __DIR__])
+    ->run('bash import.sh');
 ```
 
 Если вы хотите удалить унаследованную переменную среды из вызванного процесса, вы можете предоставить этой переменной среды значение `false`:
 
 ```php
 $result = Process::forever()
-            ->env(['LOAD_PATH' => false])
-            ->run('bash import.sh');
+    ->env(['LOAD_PATH' => false])
+    ->run('bash import.sh');
 ```
 
 <a name="tty-mode"></a>
@@ -489,8 +489,8 @@ Process::fake([
 ```php
 Process::fake([
     'ls *' => Process::sequence()
-                ->push(Process::result('First invocation'))
-                ->push(Process::result('Second invocation')),
+        ->push(Process::result('First invocation'))
+        ->push(Process::result('Second invocation')),
 ]);
 ```
 
@@ -522,11 +522,11 @@ To properly fake this process, we need to be able to describe how many times the
 ```php
 Process::fake([
     'bash import.sh' => Process::describe()
-            ->output('First line of standard output')
-            ->errorOutput('First line of error output')
-            ->output('Second line of standard output')
-            ->exitCode(0)
-            ->iterations(3),
+        ->output('First line of standard output')
+        ->errorOutput('First line of error output')
+        ->output('Second line of standard output')
+        ->exitCode(0)
+        ->iterations(3),
 ]);
 ```
 
