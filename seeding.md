@@ -1,5 +1,5 @@
 ---
-git: 9f36b02f2c2968ad2c6945df79d9eaf31dfdd224
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # База данных · Наполнение фиктивными данными
@@ -67,9 +67,9 @@ php artisan make:seeder UserSeeder
     public function run(): void
     {
         User::factory()
-                ->count(50)
-                ->hasPosts(1)
-                ->create();
+            ->count(50)
+            ->hasPosts(1)
+            ->create();
     }
 
 <a name="calling-additional-seeders"></a>
