@@ -1,5 +1,5 @@
 ---
-git: c4b06525d9893aaa7d45c71e162945fde065238e
+git: 6fe1c617a9b22f441d604787cdaaee783478c4d4
 ---
 
 # Сброс пароля
@@ -68,8 +68,8 @@ git: c4b06525d9893aaa7d45c71e162945fde065238e
         );
 
         return $status === Password::ResetLinkSent
-                    ? back()->with(['status' => __($status)])
-                    : back()->withErrors(['email' => __($status)]);
+            ? back()->with(['status' => __($status)])
+            : back()->withErrors(['email' => __($status)]);
     })->middleware('guest')->name('password.email');
 
 Прежде чем двигаться дальше, давайте рассмотрим этот маршрут более подробно. Сначала проверяется атрибут запроса `email`. Затем мы будем использовать встроенный в Laravel «брокер паролей» через фасад `Password`, чтобы отправить пользователю ссылку для сброса пароля. Брокер паролей позаботится о получении пользователя по указанному полю (в данном случае по адресу электронной почты) и отправит пользователю ссылку для сброса пароля через встроенную [систему уведомлений](notifications) Laravel.
@@ -131,8 +131,8 @@ git: c4b06525d9893aaa7d45c71e162945fde065238e
         );
 
         return $status === Password::PasswordReset
-                    ? redirect()->route('login')->with('status', __($status))
-                    : back()->withErrors(['email' => [__($status)]]);
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withErrors(['email' => [__($status)]]);
     })->middleware('guest')->name('password.update');
 
 Прежде чем двигаться дальше, давайте рассмотрим этот маршрут более подробно. Сначала проверяются атрибуты запроса `token`, `email`, и `password`. Далее мы будем использовать встроенный в Laravel «брокер паролей» (через фасад `Password`) для проверки учетных данных запроса сброса пароля.
