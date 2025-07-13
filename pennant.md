@@ -1,5 +1,5 @@
 ---
-git: 933bda5f2aa87567d24096f8967a4c287ee6b9f3
+git: 6fe1c617a9b22f441d604787cdaaee783478c4d4
 ---
 
 
@@ -173,8 +173,8 @@ class PodcastController
     public function index(Request $request): Response
     {
         return Feature::active('new-api')
-                ? $this->resolveNewApiResponse($request)
-                : $this->resolveLegacyApiResponse($request);
+            ? $this->resolveNewApiResponse($request)
+            : $this->resolveLegacyApiResponse($request);
     }
 
     // ...
@@ -185,8 +185,8 @@ class PodcastController
 
 ```php
 return Feature::for($user)->active('new-api')
-        ? $this->resolveNewApiResponse($request)
-        : $this->resolveLegacyApiResponse($request);
+    ? $this->resolveNewApiResponse($request)
+    : $this->resolveLegacyApiResponse($request);
 ```
 
 Pennant также предлагает несколько дополнительных удобных методов, которые могут оказаться полезными при определении активна ли функция или нет:
@@ -234,8 +234,8 @@ class PodcastController
     public function index(Request $request): Response
     {
         return Feature::active(NewApi::class)
-                ? $this->resolveNewApiResponse($request)
-                : $this->resolveLegacyApiResponse($request);
+            ? $this->resolveNewApiResponse($request)
+            : $this->resolveLegacyApiResponse($request);
     }
 
     // ...
@@ -483,8 +483,8 @@ class NewApi
 
 ```php
 return Feature::for($user)->active('new-api')
-        ? $this->resolveNewApiResponse($request)
-        : $this->resolveLegacyApiResponse($request);
+    ? $this->resolveNewApiResponse($request)
+    : $this->resolveLegacyApiResponse($request);
 ```
 
 Конечно, возможности функций не ограничиваются «пользователями». Представьте, что вы создали новый способ выставления счетов, которую вы распространяете на целые команды, а не на отдельных пользователей.  Возможно, вы хотели бы, чтобы для более старых команды новый способ внедрялся бы медленнее, чем для новых команды. Ваше замыкание для определения функции может выглядеть примерно так:
