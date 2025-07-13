@@ -1,5 +1,5 @@
 ---
-git: f6715ca87507f0e5f8dc2ed862e0d47743359504
+git: a61f12b92f0aadef75dac1458fa131719c801a06
 ---
 
 # Сборка ресурсов (Vite)
@@ -899,6 +899,70 @@ export default defineConfig({
     build: {
       manifest: 'assets.json', // Customize the manifest filename...
     },
+});
+```
+
+<a name="cors"></a>
+### Совместное использование ресурсов сервера разработки между разными источниками (CORS)
+
+Если у вас возникли проблемы с кросс-источником общего доступа к ресурсам (CORS) в браузере при загрузке ресурсов с сервера разработки Vite, вам может потребоваться предоставить вашему пользовательскому источнику доступ к серверу разработки. Vite в сочетании с плагином Laravel позволяет использовать следующие источники без дополнительной настройки:
+
+- `::1`
+- `127.0.0.1`
+- `localhost`
+- `*.test`
+- `*.localhost`
+- `APP_URL` in the project's `.env`
+
+Самый простой способ разрешить использование собственного источника в вашем проекте — убедиться, что переменная окружения `APP_URL` вашего приложения соответствует источнику, который вы просматриваете в браузере. Например, если вы просматриваете `https://my-app.laravel`, вам следует обновить `.env`, чтобы он соответствовал:
+
+```env
+APP_URL=https://my-app.laravel
+```
+
+Если вам требуется более детальный контроль над источниками, например, поддержка нескольких источников, используйте [комплексную и гибкую встроенную настройку сервера CORS в Vite](https://vite.dev/config/server-options.html#server-cors). Например, вы можете указать несколько источников в параметре конфигурации `server.cors.origin` в файле `vite.config.js` проекта:
+
+```js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: 'resources/js/app.js',
+            refresh: true,
+        }),
+    ],
+    server: {  // [tl! add]
+        cors: {  // [tl! add]
+            origin: [  // [tl! add]
+                'https://backend.laravel',  // [tl! add]
+                'http://admin.laravel:8566',  // [tl! add]
+            ],  // [tl! add]
+        },  // [tl! add]
+    },  // [tl! add]
+});
+```
+
+Вы также можете включить шаблоны регулярных выражений, которые могут быть полезны, если вы хотите разрешить все источники для заданного домена верхнего уровня, например `*.laravel`:
+
+```js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: 'resources/js/app.js',
+            refresh: true,
+        }),
+    ],
+    server: {  // [tl! add]
+        cors: {  // [tl! add]
+            origin: [ // [tl! add]
+                // Supports: SCHEME://DOMAIN.laravel[:PORT] [tl! add]
+                /^https?:\/\/.*\.laravel(:\d+)?$/, //[tl! add]
+            ], // [tl! add]
+        }, // [tl! add]
+    }, // [tl! add]
 });
 ```
 
