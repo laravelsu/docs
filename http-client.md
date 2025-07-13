@@ -1,5 +1,5 @@
 ---
-git: 519c46b94461471dcb4bf2f4692e4edb481b808c
+git: 490a49880947432a645dc53cd5613683996ef7f0
 ---
 
 # HTTP-клиент
@@ -551,9 +551,9 @@ $response = Http::github()->get('/');
     Http::fake([
         // Заглушка серии ответов для адресов GitHub...
         'github.com/*' => Http::sequence()
-                                ->push('Hello World', 200)
-                                ->push(['foo' => 'bar'], 200)
-                                ->pushStatus(404),
+            ->push('Hello World', 200)
+            ->push(['foo' => 'bar'], 200)
+            ->pushStatus(404),
     ]);
 
 Когда все ответы в этой последовательности будут использованы, любые дальнейшие запросы приведут к выбросу исключения. Если вы хотите указать ответ по умолчанию, который должен возвращаться, когда последовательность пуста, то используйте метод `whenEmpty`:
@@ -561,16 +561,16 @@ $response = Http::github()->get('/');
     Http::fake([
         // Заглушка серии ответов для адресов GitHub...
         'github.com/*' => Http::sequence()
-                                ->push('Hello World', 200)
-                                ->push(['foo' => 'bar'], 200)
-                                ->whenEmpty(Http::response()),
+            ->push('Hello World', 200)
+            ->push(['foo' => 'bar'], 200)
+            ->whenEmpty(Http::response()),
     ]);
 
 Если вы хотите подделать серию ответов без указания конкретного шаблона URL, который следует подделать, то используйте метод `Http::fakeSequence`:
 
     Http::fakeSequence()
-            ->push('Hello World', 200)
-            ->whenEmpty(Http::response());
+        ->push('Hello World', 200)
+        ->whenEmpty(Http::response());
 
 <a name="fake-callback"></a>
 #### Анонимные фальсификаторы
