@@ -1,5 +1,5 @@
 ---
-git: cf389d90871ca35d24b1fd1f8d728c3ffe085edd
+git: 6fe1c617a9b22f441d604787cdaaee783478c4d4
 ---
 
 # Пакет Laravel Telescope
@@ -218,8 +218,8 @@ Telescope позволяет искать записи по «метке». Ча
 
         Telescope::tag(function (IncomingEntry $entry) {
             return $entry->type === 'request'
-                        ? ['status:'.$entry->content['response_status']]
-                        : [];
+                ? ['status:'.$entry->content['response_status']]
+                : [];
         });
      }
 
