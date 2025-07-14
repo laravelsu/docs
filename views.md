@@ -1,5 +1,5 @@
 ---
-git: 7bc9d62c85d5195d61e62e2d1ae403afa511c80d
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # HTML-шаблоны
@@ -104,8 +104,8 @@ php artisan make:view greeting
 В качестве альтернативы передаче полного массива данных вспомогательной функции `view` вы можете использовать метод `with` для добавления некоторых данных в шаблон. Метод `with` возвращает экземпляр объекта представления, так что вы можете продолжить связывание методов перед возвратом шаблона:
 
     return view('greeting')
-                ->with('name', 'Victoria')
-                ->with('occupation', 'Astronaut');
+        ->with('name', 'Victoria')
+        ->with('occupation', 'Astronaut');
 
 <a name="sharing-data-with-all-views"></a>
 ### Общедоступные данные для всех шаблонов
