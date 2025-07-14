@@ -1,5 +1,5 @@
 ---
-git: ac72220c4eafabc7b815005c135a54d13395f918
+git: 6727a4c34e03c1f11bf3593dcacf57f091d821f6
 ---
 
 # Тестирование · Имитация (Мок)
@@ -165,7 +165,7 @@ class UserControllerTest extends TestCase
 
 use Illuminate\Support\Facades\Cache;
 
-test('values are be stored in cache', function () {
+test('values are stored in cache', function () {
     Cache::spy();
 
     $response = $this->get('/');
@@ -179,7 +179,7 @@ test('values are be stored in cache', function () {
 ```php tab=PHPUnit
 use Illuminate\Support\Facades\Cache;
 
-public function test_values_are_be_stored_in_cache(): void
+public function test_values_are_stored_in_cache(): void
 {
     Cache::spy();
 
