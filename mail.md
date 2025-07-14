@@ -1,5 +1,5 @@
 ---
-git: 34ce2334289e77fb46bbf05f7089852d39217e40
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Отправка электронной почты
@@ -30,7 +30,11 @@ git: 34ce2334289e77fb46bbf05f7089852d39217e40
 composer require symfony/mailgun-mailer symfony/http-client
 ```
 
-Затем установите опцию `default` в конфигурационном файле `config/mail.php` вашего приложения в значение `mailgun` и добавьте следующий массив конфигурации в ваш массив `mailers`:
+Далее вам нужно внести два изменения в файл конфигурации `config/mail.php` вашего приложения. Во-первых, установите `mailgun` в качестве почтовой программы по умолчанию:
+
+    'default' => env('MAIL_MAILER', 'mailgun'),
+
+Во-вторых, добавьте следующий массив конфигурации в ваш массив `mailers`:
 
     'mailgun' => [
         'transport' => 'mailgun',
@@ -457,8 +461,8 @@ php artisan make:mail OrderShipped
     {
         return [
             Attachment::fromPath('/path/to/file')
-                    ->as('name.pdf')
-                    ->withMime('application/pdf'),
+                ->as('name.pdf')
+                ->withMime('application/pdf'),
         ];
     }
 
@@ -490,8 +494,8 @@ php artisan make:mail OrderShipped
     {
         return [
             Attachment::fromStorage('/path/to/file')
-                    ->as('name.pdf')
-                    ->withMime('application/pdf'),
+                ->as('name.pdf')
+                ->withMime('application/pdf'),
         ];
     }
 
@@ -506,8 +510,8 @@ php artisan make:mail OrderShipped
     {
         return [
             Attachment::fromStorageDisk('s3', '/path/to/file')
-                    ->as('name.pdf')
-                    ->withMime('application/pdf'),
+                ->as('name.pdf')
+                ->withMime('application/pdf'),
         ];
     }
 
@@ -525,7 +529,7 @@ php artisan make:mail OrderShipped
     {
         return [
             Attachment::fromData(fn () => $this->pdf, 'Report.pdf')
-                    ->withMime('application/pdf'),
+                ->withMime('application/pdf'),
         ];
     }
 
@@ -611,8 +615,8 @@ php artisan make:mail OrderShipped
 Laravel также предоставляет дополнительные методы, которые вы можете использовать для настройки ваших вложений. Например, вы можете использовать методы `as` и `withMime` для настройки имени файла и MIME-типа:
 
     return Attachment::fromPath('/путь/к/файлу')
-            ->as('Имя фотографии')
-            ->withMime('image/jpeg');
+        ->as('Имя фотографии')
+        ->withMime('image/jpeg');
 
 <a name="headers"></a>
 ### Заголовки
@@ -852,8 +856,8 @@ php artisan vendor:publish --tag=laravel-mail
 По умолчанию Laravel будет отправлять электронную почту, используя почтовую программу, настроенную как почтовую программу `default` в файле конфигурации вашего приложения `mail`. Однако вы можете использовать метод `mailer` для отправки сообщения с использованием определенной конфигурации почтовой программы:
 
     Mail::mailer('postmark')
-            ->to($request->user())
-            ->send(new OrderShipped($order));
+        ->to($request->user())
+        ->send(new OrderShipped($order));
 
 <a name="queueing-mail"></a>
 ### Очередь почты
@@ -886,8 +890,8 @@ php artisan vendor:publish --tag=laravel-mail
 Поскольку все почтовые классы, сгенерированные с помощью команды `make:mail`, используют трейт `Illuminate\Bus\Queueable`, вы можете вызвать методы `onQueue` и `onConnection` для любого экземпляра почтового класса, что позволит вам указать соединение и имя очереди для сообщения:
 
     $message = (new OrderShipped($order))
-                    ->onConnection('sqs')
-                    ->onQueue('emails');
+        ->onConnection('sqs')
+        ->onQueue('emails');
 
     Mail::to($request->user())
         ->cc($moreUsers)
@@ -1190,8 +1194,8 @@ class ExampleTest extends TestCase
     Mail::assertSent(OrderShipped::class, function (OrderShipped $mail) {
         return $mail->hasAttachment(
             Attachment::fromPath('/путь/к/файлу')
-                    ->as('name.pdf')
-                    ->withMime('application/pdf')
+                ->as('name.pdf')
+                ->withMime('application/pdf')
         );
     });
 
