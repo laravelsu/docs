@@ -1,5 +1,5 @@
 ---
-git: 2d98e85816cdf258c3eec0f8a7341983c4dc95aa
+git: e473f8cece1cbf8dd8287ab020421335db90c63b
 ---
 
 # Построитель запросов
@@ -490,6 +490,15 @@ $users = DB::table('users')
 $users = DB::table('users')->where('votes', 100)->get();
 ```
 
+Вы также можете предоставить ассоциативный массив методу `where` для быстрого выполнения запросов по нескольким столбцам:
+
+```php
+$users = DB::table('users')->where([
+    'first_name' => 'Jane',
+    'last_name' => 'Doe',
+])->get();
+```
+
 Как упоминалось ранее, вы можете использовать любой оператор, который поддерживается вашей системой баз данных:
 
 ```php
@@ -655,23 +664,43 @@ $users = DB::table('users')
     ->get();
 ```
 
-Вы можете использовать `whereJsonContains` для запроса массивов JSON.
+Для запроса массивов JSON можно использовать методы `whereJsonContains` и `whereJsonDoesntContain`:
 
 ```php
 $users = DB::table('users')
     ->whereJsonContains('options->languages', 'en')
     ->get();
+
+$users = DB::table('users')
+    ->whereJsonDoesntContain('options->languages', 'en')
+    ->get();
 ```
 
-Если ваше приложение использует базы данных MariaDB, MySQL или PostgreSQL, вы можете передать массив значений методу `whereJsonContains`:
+Если ваше приложение использует базы данных MariaDB, MySQL или PostgreSQL, вы можете передать массив значений методам `whereJsonContains` и `whereJsonDoesntContain`:
 
 ```php
 $users = DB::table('users')
     ->whereJsonContains('options->languages', ['en', 'de'])
     ->get();
+
+$users = DB::table('users')
+    ->whereJsonDoesntContain('options->languages', ['en', 'de'])
+    ->get();
 ```
 
-Вы можете использовать метод `whereJsonLength` для запроса массивов JSON по их длине:
+Кроме того, вы можете использовать методы `whereJsonContainsKey` или `whereJsonDoesntContainKey` для получения результатов, которые включают или не включают ключ JSON:
+
+```php
+$users = DB::table('users')
+    ->whereJsonContainsKey('preferences->dietary_requirements')
+    ->get();
+
+$users = DB::table('users')
+    ->whereJsonDoesntContainKey('preferences->dietary_requirements')
+    ->get();
+```
+
+Наконец, вы можете использовать метод `whereJsonLength` для запроса массивов JSON по их длине:
 
 ```php
 $users = DB::table('users')
@@ -809,6 +838,24 @@ $patients = DB::table('patients')
 ```php
 $patients = DB::table('patients')
     ->whereNotBetweenColumns('weight', ['minimum_allowed_weight', 'maximum_allowed_weight'])
+    ->get();
+```
+
+**whereValueBetween / whereValueNotBetween / orWhereValueBetween / orWhereValueNotBetween**
+
+Метод `whereValueBetween` проверяет, находится ли заданное значение между значениями двух столбцов одного типа в одной строке таблицы:
+
+```php
+$patients = DB::table('products')
+    ->whereValueBetween(100, ['min_price', 'max_price'])
+    ->get();
+```
+
+Метод `whereValueNotBetween` проверяет, что значение лежит за пределами значений двух столбцов в одной строке таблицы:
+
+```php
+$patients = DB::table('products')
+    ->whereValueNotBetween(100, ['min_price', 'max_price'])
     ->get();
 ```
 
