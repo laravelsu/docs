@@ -1,5 +1,5 @@
 ---
-git: ad340137755df077c5efe7d0a57e3579aa1e0ca2
+git: b6423cc99296ad64a5f09ab1d9dab653de9366a2
 ---
 
 # События (Events)
@@ -65,6 +65,12 @@ php artisan make:listener
 
     ->withEvents(discover: [
         __DIR__.'/../app/Domain/Orders/Listeners',
+    ])
+
+Вы можете выполнить поиск слушателей в нескольких похожих каталогах, используя символ `*` в качестве подстановочного знака:
+
+    ->withEvents(discover: [
+        __DIR__.'/../app/Domain/*/Listeners',
     ])
 
 Команда `event:list` может использоваться для вывода списка всех слушателей, зарегистрированных в вашем приложении:
