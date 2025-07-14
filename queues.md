@@ -1,5 +1,5 @@
 ---
-git: 390399dd7e7101a8cecc9b11d3bf1f5e1e6b6760
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Очереди
@@ -364,16 +364,16 @@ Laravel позволяет вам обеспечить конфиденциал�
         public function handle(object $job, Closure $next): void
         {
             Redis::throttle('key')
-                    ->block(0)->allow(1)->every(5)
-                    ->then(function () use ($job, $next) {
-                        // Блокировка получена...
+                ->block(0)->allow(1)->every(5)
+                ->then(function () use ($job, $next) {
+                    // Блокировка получена...
 
-                        $next($job);
-                    }, function () use ($job) {
-                        // Не удалось получить блокировку...
+                    $next($job);
+                }, function () use ($job) {
+                    // Не удалось получить блокировку...
 
-                        $job->release(5);
-                    });
+                    $job->release(5);
+                });
         }
     }
 
@@ -413,8 +413,8 @@ Laravel позволяет вам обеспечить конфиденциал�
     {
         RateLimiter::for('backups', function (object $job) {
             return $job->user->vipCustomer()
-                        ? Limit::none()
-                        : Limit::perHour(1)->by($job->user->id);
+                ? Limit::none()
+                : Limit::perHour(1)->by($job->user->id);
         });
     }
 
@@ -739,7 +739,7 @@ Laravel содержит посредника `Illuminate\Queue\Middleware\Throt
             // ...
 
             ProcessPodcast::dispatch($podcast)
-                        ->delay(now()->addMinutes(10));
+                ->delay(now()->addMinutes(10));
 
             return redirect('/podcasts');
         }
@@ -1007,8 +1007,8 @@ public function handle(): void
 Вы можете связать методы `onConnection` и `onQueue` вместе, чтобы указать соединение и очередь для задания:
 
     ProcessPodcast::dispatch($podcast)
-                  ->onConnection('sqs')
-                  ->onQueue('processing');
+        ->onConnection('sqs')
+        ->onQueue('processing');
 
 Кроме того, вы можете указать соединение задания, вызвав метод `onConnection` в конструкторе задания:
 
@@ -2135,11 +2135,11 @@ public function boot(): void
 {
     Event::listen(function (QueueBusy $event) {
         Notification::route('mail', 'dev@example.com')
-                ->notify(new QueueHasLongWaitTime(
-                    $event->connection,
-                    $event->queue,
-                    $event->size
-                ));
+            ->notify(new QueueHasLongWaitTime(
+                $event->connection,
+                $event->queue,
+                $event->size
+            ));
     });
 }
 ```
