@@ -474,7 +474,7 @@ Schema::table('users', function (Blueprint $table) {
 
 <div class="collection-method-list" markdown="1">
 
-[binary](#column-method-binary)
+- [binary](#column-method-binary)
 
 </div>
 
@@ -507,8 +507,8 @@ Schema::table('users', function (Blueprint $table) {
 
 <div class="collection-method-list" markdown="1">
 
-[geography](#column-method-geography)
-[geometry](#column-method-geometry)
+- [geography](#column-method-geography)
+- [geometry](#column-method-geometry)
 
 </div>
 
