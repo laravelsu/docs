@@ -1,5 +1,5 @@
 ---
-git: b874bc07a34f0a9c960f3e1b7ced2370724abcf9
+git: f3aeb1ff964ea1de53d806ade1cd2f5ba4cb131e
 ---
 
 # Тестирование · Тесты HTTP
@@ -213,8 +213,8 @@ test('an action that requires authentication', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)
-                     ->withSession(['banned' => false])
-                     ->get('/');
+        ->withSession(['banned' => false])
+        ->get('/');
 
     //
 });
@@ -235,8 +235,8 @@ class ExampleTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)
-                         ->withSession(['banned' => false])
-                         ->get('/');
+            ->withSession(['banned' => false])
+            ->get('/');
 
         //
     }
@@ -291,7 +291,7 @@ class ExampleTest extends TestCase
 }
 ```
 
-В качестве альтернативы вы можете использовать методы `dd`, `ddHeaders` и `ddSession`, чтобы выгрузить информацию об ответе и затем остановить выполнение:
+В качестве альтернативы вы можете использовать методы `dd`, `ddHeaders`, `ddSession` и `ddJson`, чтобы выгрузить информацию об ответе и затем остановить выполнение:
 
 ```php tab=Pest
 <?php
@@ -303,6 +303,7 @@ test('basic test', function () {
 
     $response->ddSession();
 
+    $response->ddJson();
     $response->dd();
 });
 ```
@@ -438,7 +439,7 @@ test('making an api request', function () {
         ->assertStatus(201)
         ->assertJson([
             'created' => true,
-         ]);
+        ]);
 });
 ```
 
@@ -583,11 +584,11 @@ test('fluent json', function () {
     $response
         ->assertJson(fn (AssertableJson $json) =>
             $json->where('id', 1)
-                 ->where('name', 'Victoria Faith')
-                 ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
-                 ->whereNot('status', 'pending')
-                 ->missing('password')
-                 ->etc()
+                ->where('name', 'Victoria Faith')
+                ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
+                ->whereNot('status', 'pending')
+                ->missing('password')
+                ->etc()
         );
 });
 ```
@@ -605,11 +606,11 @@ public function test_fluent_json(): void
     $response
         ->assertJson(fn (AssertableJson $json) =>
             $json->where('id', 1)
-                 ->where('name', 'Victoria Faith')
-                 ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
-                 ->whereNot('status', 'pending')
-                 ->missing('password')
-                 ->etc()
+                ->where('name', 'Victoria Faith')
+                ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
+                ->whereNot('status', 'pending')
+                ->missing('password')
+                ->etc()
         );
 }
 ```
@@ -629,21 +630,21 @@ public function test_fluent_json(): void
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->has('data')
-             ->missing('message')
+            ->missing('message')
     );
 
 Кроме того, методы `hasAll` и `missingAll` позволяют одновременно утверждать наличие или отсутствие нескольких атрибутов:
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->hasAll(['status', 'data'])
-             ->missingAll(['message', 'code'])
+            ->missingAll(['message', 'code'])
     );
 
 Вы можете использовать метод `hasAny`, чтобы определить, присутствует ли хотя бы один из заданного списка атрибутов:
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->has('status')
-             ->hasAny('data', 'message', 'code')
+            ->hasAny('data', 'message', 'code')
     );
 
 <a name="asserting-against-json-collections"></a>
@@ -660,13 +661,13 @@ public function test_fluent_json(): void
     $response
         ->assertJson(fn (AssertableJson $json) =>
             $json->has(3)
-                 ->first(fn (AssertableJson $json) =>
+                ->first(fn (AssertableJson $json) =>
                     $json->where('id', 1)
-                         ->where('name', 'Victoria Faith')
-                         ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
-                         ->missing('password')
-                         ->etc()
-                 )
+                        ->where('name', 'Victoria Faith')
+                        ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
+                        ->missing('password')
+                        ->etc()
+                )
         );
 
 <a name="scoping-json-collection-assertions"></a>
@@ -686,14 +687,14 @@ public function test_fluent_json(): void
     $response
         ->assertJson(fn (AssertableJson $json) =>
             $json->has('meta')
-                 ->has('users', 3)
-                 ->has('users.0', fn (AssertableJson $json) =>
+                ->has('users', 3)
+                ->has('users.0', fn (AssertableJson $json) =>
                     $json->where('id', 1)
-                         ->where('name', 'Victoria Faith')
-                         ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
-                         ->missing('password')
-                         ->etc()
-                 )
+                        ->where('name', 'Victoria Faith')
+                        ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
+                        ->missing('password')
+                        ->etc()
+                )
         );
 
 Однако вместо того, чтобы делать два отдельных вызова метода `has` для утверждения в отношении коллекции `users`, вы можете сделать один вызов, обеспеченный замыканием в качестве третьего параметра. При этом автоматически вызывается замыкание, область действия которого будет ограниченно уровнем вложенности первого элемента коллекции:
@@ -701,13 +702,13 @@ public function test_fluent_json(): void
     $response
         ->assertJson(fn (AssertableJson $json) =>
             $json->has('meta')
-                 ->has('users', 3, fn (AssertableJson $json) =>
+                ->has('users', 3, fn (AssertableJson $json) =>
                     $json->where('id', 1)
-                         ->where('name', 'Victoria Faith')
-                         ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
-                         ->missing('password')
-                         ->etc()
-                 )
+                        ->where('name', 'Victoria Faith')
+                        ->where('email', fn (string $email) => str($email)->is('victoria@gmail.com'))
+                        ->missing('password')
+                        ->etc()
+                )
         );
 
 <a name="asserting-json-types"></a>
@@ -717,7 +718,7 @@ public function test_fluent_json(): void
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->whereType('id', 'integer')
-             ->whereAllType([
+            ->whereAllType([
                 'users.0.name' => 'string',
                 'meta' => 'array'
             ])
@@ -727,7 +728,7 @@ public function test_fluent_json(): void
 
     $response->assertJson(fn (AssertableJson $json) =>
         $json->whereType('name', 'string|null')
-             ->whereType('id', ['string', 'integer'])
+            ->whereType('id', ['string', 'integer'])
     );
 
 Методы `whereType` и `whereAllType` применимы к следующим типам: `string`, `integer`, `double`, `boolean`, `array`, и `null`.
@@ -922,6 +923,7 @@ class ExampleTest extends TestCase
 - [assertMovedPermanently](#assert-moved-permanently)
 - [assertContent](#assert-content)
 - [assertNoContent](#assert-no-content)
+- [assertStreamed](#assert-streamed)
 - [assertStreamedContent](#assert-streamed-content)
 - [assertNotFound](#assert-not-found)
 - [assertOk](#assert-ok)
@@ -1320,6 +1322,13 @@ class ExampleTest extends TestCase
 Утверждает, что ответ имеет код `204` состояния HTTP – `no content`:
 
     $response->assertNoContent($status = 204);
+
+<a name="assert-streamed"></a>
+#### assertStreamed
+
+Подтвердите, что ответ был потоковым ответом:
+
+    $response->assertStreamed();
 
 <a name="assert-streamed-content"></a>
 #### assertStreamedContent
