@@ -1,5 +1,5 @@
 ---
-git: 3ed0888fdb29edbb04d290707a2819f739dc5b7b
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Маршрутизация
@@ -596,15 +596,15 @@ Laravel автоматически извлечет модели Eloquent, оп�
     use Illuminate\Support\Facades\Redirect;
 
     Route::get('/locations/{location:slug}', [LocationsController::class, 'show'])
-            ->name('locations.view')
-            ->missing(function (Request $request) {
-                return Redirect::route('locations.index');
-            });
+        ->name('locations.view')
+        ->missing(function (Request $request) {
+            return Redirect::route('locations.index');
+        });
 
 <a name="implicit-enum-binding"></a>
 ### Неявное привязывание Enum
 
-PHP 8.1 ввёл поддержку [Enum (Перечислений)](https://www.php.net/manual/ru/language.enumerations.backed.php). Чтобы дополнить эту функцию, Laravel позволяет указывать [поддерживаемый Enum](https://www.php.net/manual/ru/language.enumerations.backed.php) в определении маршрута, и Laravel будет вызывать маршрут только в том случае, если сегмент маршрута соответствует допустимому значению Enum. В противном случае автоматически будет возвращен ответ HTTP 404. Например, учитывая следующий Enum:
+PHP 8.1 ввёл поддержку [Enum (Перечислений)](https://www.php.net/manual/ru/language.enumerations.backed.php). Чтобы дополнить эту функцию, Laravel позволяет указывать [перечисление в виде строки](https://www.php.net/manual/ru/language.enumerations.backed.php) в определении маршрута, и Laravel будет вызывать маршрут только в том случае, если сегмент маршрута соответствует допустимому значению Enum. В противном случае автоматически будет возвращен ответ HTTP 404. Например, учитывая следующий Enum:
 
 ```php
 <?php
@@ -767,8 +767,8 @@ protected function boot(): void
 
     RateLimiter::for('uploads', function (Request $request) {
         return $request->user()->vipCustomer()
-                    ? Limit::none()
-                    : Limit::perMinute(100);
+            ? Limit::none()
+            : Limit::perMinute(100);
     });
 
 <a name="segmenting-rate-limits"></a>
@@ -778,16 +778,16 @@ protected function boot(): void
 
     RateLimiter::for('uploads', function (Request $request) {
         return $request->user()->vipCustomer()
-                    ? Limit::none()
-                    : Limit::perMinute(100)->by($request->ip());
+            ? Limit::none()
+            : Limit::perMinute(100)->by($request->ip());
     });
 
 Чтобы проиллюстрировать эту функцию на другом примере, мы можем ограничить доступ к маршруту до 100 раз в минуту для каждого аутентифицированного ID пользователя или 10 раз в минуту для каждого IP-адреса для гостей:
 
     RateLimiter::for('uploads', function (Request $request) {
         return $request->user()
-                    ? Limit::perMinute(100)->by($request->user()->id)
-                    : Limit::perMinute(10)->by($request->ip());
+            ? Limit::perMinute(100)->by($request->user()->id)
+            : Limit::perMinute(10)->by($request->ip());
     });
 
 <a name="multiple-rate-limits"></a>
