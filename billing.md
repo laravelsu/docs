@@ -1,5 +1,5 @@
 ---
-git: 667396a7971720b717079436ff1fe8682168d72e
+git: 3445d6676db9e00f8f6ab2ae50911384d35c1990
 ---
 
 
@@ -776,8 +776,8 @@ cardButton.addEventListener('click', async (e) => {
 Если вы хотите установить конкретное [количество](https://stripe.com/docs/billing/subscriptions/quantities) для получения цены при создании подписки вам следует вызвать метод `quantity` в конструкторе подписок перед созданием подписки:
 
     $user->newSubscription('default', 'price_monthly')
-         ->quantity(5)
-         ->create($paymentMethod);
+        ->quantity(5)
+        ->create($paymentMethod);
 
 <a name="additional-details"></a>
 #### Дополнительные сведения
@@ -796,14 +796,14 @@ cardButton.addEventListener('click', async (e) => {
 Если вы хотите применить купон при создании подписки, вы можете использовать метод `withCoupon`:
 
     $user->newSubscription('default', 'price_monthly')
-         ->withCoupon('code')
-         ->create($paymentMethod);
+        ->withCoupon('code')
+        ->create($paymentMethod);
 
 Или, если вы хотите применить [промокод Stripe](https://stripe.com/docs/billing/subscriptions/discounts/codes), вы можете использовать метод `withPromotionCode`:
 
     $user->newSubscription('default', 'price_monthly')
-         ->withPromotionCode('promo_code_id')
-         ->create($paymentMethod);
+        ->withPromotionCode('promo_code_id')
+        ->create($paymentMethod);
 
 Указанный идентификатор промо-кода должен быть идентификатором Stripe API, присвоенным промо-коду, а не промо-кодом, с которым сталкивается клиент. Если вам нужно найти идентификатор промо-кода на основе предоставленного клиентского промо-кода, вы можете использовать метод `findPromotionCode`:
 
@@ -1038,8 +1038,8 @@ cardButton.addEventListener('click', async (e) => {
 Если вы хотите поменять тарифы и отменить любой пробный период, на котором в данный момент находится клиент, вы можете воспользоваться методом `skipTrial`:
 
     $user->subscription('default')
-            ->skipTrial()
-            ->swap('price_yearly');
+        ->skipTrial()
+        ->swap('price_yearly');
 
 Если вы хотите поменять тарифы и немедленно выставить счет клиенту, не дожидаясь его следующего цикла выставления счетов, вы можете использовать метод `swapAndInvoice`:
 
@@ -1171,8 +1171,8 @@ cardButton.addEventListener('click', async (e) => {
     $user = User::find(1);
 
     $user->subscription('default')
-            ->findItemOrFail('price_basic')
-            ->swap('price_pro');
+        ->findItemOrFail('price_basic')
+        ->swap('price_pro');
 
 <a name="proration"></a>
 #### Пропорция
@@ -1263,9 +1263,9 @@ Stripe позволяет вашим клиентам иметь одновре�
 Вы также можете запустить "расчетную" подписку через [Stripe Checkout](#checkout заказ):
 
     $checkout = Auth::user()
-            ->newSubscription('default', [])
-            ->meteredPrice('price_metered')
-            ->checkout();
+        ->newSubscription('default', [])
+        ->meteredPrice('price_metered')
+        ->checkout();
 
     return view('your-checkout-view', [
         'checkout' => $checkout,
@@ -1375,8 +1375,8 @@ Cashier также предлагает методы `isNotTaxExempt`, `isTaxExe
         $anchor = Carbon::parse('first day of next month');
 
         $request->user()->newSubscription('default', 'price_monthly')
-                    ->anchorBillingCycleOn($anchor->startOfDay())
-                    ->create($request->paymentMethodId);
+            ->anchorBillingCycleOn($anchor->startOfDay())
+            ->create($request->paymentMethodId);
 
         // ...
     });
@@ -1441,8 +1441,8 @@ Cashier также предлагает методы `isNotTaxExempt`, `isTaxExe
 
     Route::post('/user/subscribe', function (Request $request) {
         $request->user()->newSubscription('default', 'price_monthly')
-                    ->trialDays(10)
-                    ->create($request->paymentMethodId);
+            ->trialDays(10)
+            ->create($request->paymentMethodId);
 
         // ...
     });
@@ -1457,8 +1457,8 @@ Cashier также предлагает методы `isNotTaxExempt`, `isTaxExe
     use Carbon\Carbon;
 
     $user->newSubscription('default', 'price_monthly')
-                ->trialUntil(Carbon::now()->addDays(10))
-                ->create($paymentMethod);
+        ->trialUntil(Carbon::now()->addDays(10))
+        ->create($paymentMethod);
 
 Вы можете определить, находится ли пользователь в пределах своего пробного периода, используя либо метод `onTrial` экземпляра пользователя, либо метод `onTrial` экземпляра подписки. Два приведенных ниже примера эквивалентны:
 
@@ -1818,7 +1818,7 @@ Cashier автоматически обрабатывает отмены под�
 
 Перед тем как создавать PDF-файлы счетов, вы должны использовать Composer для установки библиотеки Dompdf, которая является рендерером счетов по умолчанию для Cashier:
 
-```php
+```shell
 composer require dompdf/dompdf
 ```
 
@@ -2067,7 +2067,7 @@ Cashier Stripe также предоставляет поддержку [Stripe 
 
     try {
         $subscription = $user->newSubscription('default', 'price_monthly')
-                                ->create($paymentMethod);
+            ->create($paymentMethod);
     } catch (IncompletePayment $exception) {
         return redirect()->route(
             'cashier.payment',
