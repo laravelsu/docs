@@ -1,5 +1,5 @@
 ---
-git: 8fb4d801525a6cafcfd40b71b1f9c22bf6bb90d3
+git: 490a49880947432a645dc53cd5613683996ef7f0
 ---
 
 # Валидация
@@ -530,8 +530,8 @@ public function after(): array
 
             if ($validator->fails()) {
                 return redirect('/post/create')
-                            ->withErrors($validator)
-                            ->withInput();
+                    ->withErrors($validator)
+                    ->withInput();
             }
 
             // Получить проверенные данные...
@@ -818,81 +818,156 @@ $validator->after([
 
 Ниже приведен список всех доступных правил валидации и их функций:
 
+#### Булевы значения
+
 <div class="docs-column-list" markdown="1">
 
 - [Accepted](#rule-accepted)
 - [Accepted If](#rule-accepted-if)
+- [Boolean](#rule-boolean)
+- [Declined](#rule-declined)
+- [Declined If](#rule-declined-if)
+
+</div>
+
+#### Строки
+
+<div class="docs-column-list" markdown="1">
+
 - [Active URL](#rule-active-url)
-- [After (Date)](#rule-after)
-- [After Or Equal (Date)](#rule-after-or-equal)
 - [Alpha](#rule-alpha)
 - [Alpha Dash](#rule-alpha-dash)
 - [Alpha Numeric](#rule-alpha-num)
-- [Array](#rule-array)
 - [Ascii](#rule-ascii)
-- [Bail](#rule-bail)
-- [Before (Date)](#rule-before)
-- [Before Or Equal (Date)](#rule-before-or-equal)
-- [Between](#rule-between)
-- [Boolean](#rule-boolean)
 - [Confirmed](#rule-confirmed)
-- [Contains](#rule-contains)
 - [Current Password](#rule-current-password)
-- [Date](#rule-date)
-- [Date Equals](#rule-date-equals)
-- [Date Format](#rule-date-format)
-- [Decimal](#rule-decimal)
-- [Declined](#rule-declined)
-- [Declined If](#rule-declined-if)
 - [Different](#rule-different)
-- [Digits](#rule-digits)
-- [Digits Between](#rule-digits-between)
-- [Dimensions (Image Files)](#rule-dimensions)
-- [Distinct](#rule-distinct)
 - [Doesnt Start With](#rule-doesnt-start-with)
 - [Doesnt End With](#rule-doesnt-end-with)
 - [Email](#rule-email)
 - [Ends With](#rule-ends-with)
 - [Enum](#rule-enum)
+- [Hex Color](#rule-hex-color)
+- [In](#rule-in)
+- [IP Address](#rule-ip)
+- [JSON](#rule-json)
+- [Lowercase](#rule-lowercase)
+- [MAC Address](#rule-mac)
+- [Max](#rule-max)
+- [Min](#rule-min)
+- [Not In](#rule-not-in)
+- [Regular Expression](#rule-regex)
+- [Not Regular Expression](#rule-not-regex)
+- [Same](#rule-same)
+- [Size](#rule-size)
+- [Starts With](#rule-starts-with)
+- [String](#rule-string)
+- [Uppercase](#rule-uppercase)
+- [URL](#rule-url)
+- [ULID](#rule-ulid)
+- [UUID](#rule-uuid)
+
+</div>
+
+#### Числа
+
+<div class="docs-column-list" markdown="1">
+
+- [Between](#rule-between)
+- [Decimal](#rule-decimal)
+- [Different](#rule-different)
+- [Digits](#rule-digits)
+- [Digits Between](#rule-digits-between)
+- [Greater Than](#rule-gt)
+- [Greater Than Or Equal](#rule-gte)
+- [Integer](#rule-integer)
+- [Less Than](#rule-lt)
+- [Less Than Or Equal](#rule-lte)
+- [Max](#rule-max)
+- [Max Digits](#rule-max-digits)
+- [Min](#rule-min)
+- [Min Digits](#rule-min-digits)
+- [Multiple Of](#rule-multiple-of)
+- [Numeric](#rule-numeric)
+- [Same](#rule-same)
+- [Size](#rule-size)
+
+</div>
+
+#### Массивы
+
+<div class="docs-column-list" markdown="1">
+
+- [Array](#rule-array)
+- [Between](#rule-between)
+- [Contains](#rule-contains)
+- [Distinct](#rule-distinct)
+- [In Array](#rule-in-array)
+- [List](#rule-list)
+- [Max](#rule-max)
+- [Min](#rule-min)
+- [Size](#rule-size)
+
+</div>
+
+#### Даты
+
+<div class="docs-column-list" markdown="1">
+
+- [After](#rule-after)
+- [After Or Equal](#rule-after-or-equal)
+- [Before](#rule-before)
+- [Before Or Equal](#rule-before-or-equal)
+- [Date](#rule-date)
+- [Date Equals](#rule-date-equals)
+- [Date Format](#rule-date-format)
+- [Different](#rule-different)
+- [Timezone](#rule-timezone)
+
+</div>
+
+#### Файлы
+
+<div class="docs-column-list" markdown="1">
+
+- [Between](#rule-between)
+- [Dimensions](#rule-dimensions)
+- [Extensions](#rule-extensions)
+- [File](#rule-file)
+- [Image](#rule-image)
+- [Max](#rule-max)
+- [MIME Types](#rule-mimetypes)
+- [MIME Type By File Extension](#rule-mimes)
+- [Size](#rule-size)
+
+</div>
+
+#### База данных
+
+<div class="docs-column-list" markdown="1">
+
+- [Exists](#rule-exists)
+- [Unique](#rule-unique)
+
+</div>
+
+#### Утилиты
+
+<div class="docs-column-list" markdown="1">
+
+- [Bail](#rule-bail)
 - [Exclude](#rule-exclude)
 - [Exclude If](#rule-exclude-if)
 - [Exclude Unless](#rule-exclude-unless)
 - [Exclude With](#rule-exclude-with)
 - [Exclude Without](#rule-exclude-without)
-- [Exists (Database)](#rule-exists)
-- [Extensions](#rule-extensions)
-- [File](#rule-file)
 - [Filled](#rule-filled)
-- [Greater Than](#rule-gt)
-- [Greater Than Or Equal](#rule-gte)
-- [Hex Color](#rule-hex-color)
-- [Image (File)](#rule-image)
-- [In](#rule-in)
-- [In Array](#rule-in-array)
-- [Integer](#rule-integer)
-- [IP Address](#rule-ip)
-- [JSON](#rule-json)
-- [Less Than](#rule-lt)
-- [Less Than Or Equal](#rule-lte)
-- [List](#rule-list)
-- [Lowercase](#rule-lowercase)
-- [MAC Address](#rule-mac)
-- [Max](#rule-max)
-- [Max Digits](#rule-max-digits)
-- [MIME Types](#rule-mimetypes)
-- [MIME Type By File Extension](#rule-mimes)
-- [Min](#rule-min)
-- [Min Digits](#rule-min-digits)
 - [Missing](#rule-missing)
 - [Missing If](#rule-missing-if)
 - [Missing Unless](#rule-missing-unless)
 - [Missing With](#rule-missing-with)
 - [Missing With All](#rule-missing-with-all)
-- [Multiple Of](#rule-multiple-of)
-- [Not In](#rule-not-in)
-- [Not Regex](#rule-not-regex)
 - [Nullable](#rule-nullable)
-- [Numeric](#rule-numeric)
 - [Present](#rule-present)
 - [Present If](#rule-present-if)
 - [Present Unless](#rule-present-unless)
@@ -902,7 +977,6 @@ $validator->after([
 - [Prohibited If](#rule-prohibited-if)
 - [Prohibited Unless](#rule-prohibited-unless)
 - [Prohibits](#rule-prohibits)
-- [Regular Expression](#rule-regex)
 - [Required](#rule-required)
 - [Required If](#rule-required-if)
 - [Required If Accepted](#rule-required-if-accepted)
@@ -913,17 +987,7 @@ $validator->after([
 - [Required Without](#rule-required-without)
 - [Required Without All](#rule-required-without-all)
 - [Required Array Keys](#rule-required-array-keys)
-- [Same](#rule-same)
-- [Size](#rule-size)
 - [Sometimes](#validating-when-present)
-- [Starts With](#rule-starts-with)
-- [String](#rule-string)
-- [Timezone](#rule-timezone)
-- [Unique (Database)](#rule-unique)
-- [Uppercase](#rule-uppercase)
-- [URL](#rule-url)
-- [ULID](#rule-ulid)
-- [UUID](#rule-uuid)
 
 </div>
 
@@ -953,10 +1017,35 @@ $validator->after([
 
     'finish_date' => 'required|date|after:start_date'
 
+Для удобства правила на основе даты можно создавать с помощью свободного конструктора правил `date`:
+
+    use Illuminate\Validation\Rule;
+
+    'start_date' => [
+        'required',
+        Rule::date()->after(today()->addDays(7)),
+    ],
+
+Методы `afterToday` и `todayOrAfter` можно использовать для быстрого выражения того, что дата должна быть после сегодняшнего дня или сегодняшнего дня или после, соответственно:
+
+    'start_date' => [
+        'required',
+        Rule::date()->afterToday(),
+    ],
+
 <a name="rule-after-or-equal"></a>
 #### after\_or\_equal:_date_
 
 Проверяемое поле должно иметь значение после указанной даты или равное ей. Для получения дополнительной информации см. правило [after](#rule-after).
+
+Для удобства правила на основе даты можно создавать с помощью свободного конструктора правил `date`:
+
+    use Illuminate\Validation\Rule;
+
+    'start_date' => [
+        'required',
+        Rule::date()->afterOrEqual(today()->addDays(7)),
+    ],
 
 <a name="rule-alpha"></a>
 #### alpha
@@ -1035,10 +1124,35 @@ $validator->after([
 
 Проверяемое поле должно быть значением, предшествующим указанной дате. Даты будут переданы в функцию PHP `strtotime` для преобразования в действительный экземпляр `DateTime`. Кроме того, как и в правиле [`after`](#rule-after), имя другого проверяемого поля может быть указано в качестве значения `date`.
 
+Для удобства правила на основе даты можно также создавать с помощью свободного конструктора правил `date`:
+
+    use Illuminate\Validation\Rule;
+
+    'start_date' => [
+        'required',
+        Rule::date()->before(today()->subDays(7)),
+    ],
+
+Методы `beforeToday` и `todayOrBefore` можно использовать для быстрого выражения того, что дата должна быть до сегодняшнего дня или сегодняшнего дня или до, соответственно:
+
+    'start_date' => [
+        'required',
+        Rule::date()->beforeToday(),
+    ],
+
 <a name="rule-before-or-equal"></a>
 #### before\_or\_equal:_date_
 
 Проверяемое поле должно иметь значение, предшествующее указанной дате или равное ей. Даты будут переданы в функцию PHP `strtotime` для преобразования в действительный экземпляр `DateTime`. Кроме того, как и в правиле [`after`](#rule-after), имя другого проверяемого поля может быть указано в качестве значения `date`.
+
+Для удобства правила на основе даты можно также создавать с помощью свободного конструктора правил `date`:
+
+    use Illuminate\Validation\Rule;
+
+    'start_date' => [
+        'required',
+        Rule::date()->beforeOrEqual(today()->subDays(7)),
+    ],
 
 <a name="rule-between"></a>
 #### between:_min_,_max_
@@ -1083,6 +1197,15 @@ $validator->after([
 #### date_format:_format_,...
 
 Проверяемое поле должно соответствовать одному из предоставленных _formats_. При валидации поля следует использовать **либо** `date`, **либо** `date_format`, а не то и другое вместе. Это правило валидации поддерживает все форматы, поддерживаемые классом [`DateTime`](https://www.php.net/manual/ru/class.datetime.php) PHP.
+
+Для удобства правила на основе даты можно создавать с помощью свободного конструктора правил `date`:
+
+    use Illuminate\Validation\Rule;
+
+    'start_date' => [
+        'required',
+        Rule::date()->format('Y-m-d'),
+    ],
 
 <a name="rule-decimal"></a>
 #### decimal:_min_,_max_
@@ -1133,7 +1256,7 @@ $validator->after([
 
     'avatar' => 'dimensions:ratio=3/2'
 
-Поскольку это правило требует нескольких аргументов, вы можете использовать метод `Rule::dimensions` для гибкости составления правила:
+Поскольку это правило требует нескольких аргументов, часто удобнее использовать метод `Rule::dimensions` для быстрого построения правила:
 
     use Illuminate\Support\Facades\Validator;
     use Illuminate\Validation\Rule;
@@ -1141,7 +1264,10 @@ $validator->after([
     Validator::make($data, [
         'avatar' => [
             'required',
-            Rule::dimensions()->maxWidth(1000)->maxHeight(500)->ratio(3 / 2),
+            Rule::dimensions()
+                ->maxWidth(1000)
+                ->maxHeight(500)
+                ->ratio(3 / 2),
         ],
     ]);
 
@@ -1181,16 +1307,30 @@ $validator->after([
 
 <!-- <div class="content-list" markdown="1"> -->
 
-- `rfc`: `RFCValidation`
-- `strict`: `NoRFCWarningsValidation`
-- `dns`: `DNSCheckValidation`
-- `spoof`: `SpoofCheckValidation`
-- `filter`: `FilterEmailValidation`
-- `filter_unicode`: `FilterEmailValidation::unicode()`
+- `rfc`: `RFCValidation` - Проверьте адрес электронной почты в соответствии с RFC 5322.
+- `strict`: `NoRFCWarningsValidation` - Проверьте адрес электронной почты в соответствии с RFC 5322, отклонив конечные точки или несколько последовательных точек.
+- `dns`: `DNSCheckValidation` - Убедитесь, что домен адреса электронной почты имеет действительную запись MX.
+- `spoof`: `SpoofCheckValidation` - Убедитесь, что адрес электронной почты не содержит омографов или вводящих в заблуждение символов Unicode.
+- `filter`: `FilterEmailValidation` - Убедитесь, что адрес электронной почты действителен в соответствии с функцией PHP `filter_var`.
+- `filter_unicode`: `FilterEmailValidation::unicode()` - Убедитесь, что адрес электронной почты действителен в соответствии с функцией PHP `filter_var`, допускающей некоторые символы Unicode.
 
 <!-- </div> -->
 
-Валидатор `filter`, который использует функцию `filter_var` PHP, поставляется с Laravel и применялся по умолчанию до Laravel версии 5.8.
+Для удобства правила проверки адресов электронной почты можно создать с помощью конструктора правил Fluent:
+
+```php
+use Illuminate\Validation\Rule;
+
+$request->validate([
+    'email' => [
+        'required',
+        Rule::email()
+            ->rfcCompliant(strict: false)
+            ->validateMxRecord()
+            ->preventSpoofing()
+    ],
+]);
+```
 
 > [!WARNING]
 > Валидаторы `dns` и `spoof` требуют расширения `intl` PHP.
@@ -1836,6 +1976,16 @@ Rule::enum(ServerStatus::class)
 
     'email' => Rule::unique('users')->where(fn (Builder $query) => $query->where('account_id', 1))
 
+**Игнорирование мягко удаленных записей при проверке уникальности:**
+
+По умолчанию правило уникальности учитывает записи, удалённые с помощью функции обратной связи, при определении уникальности. Чтобы исключить записи, удалённые с помощью функции обратной связи, из проверки уникальности, можно вызвать метод `withoutTrashed`:
+
+    Rule::unique('users')->withoutTrashed();
+
+Если в вашей модели для обратимо удаленных записей используется имя столбца, отличное от `deleted_at`, вы можете указать имя столбца при вызове метода `withoutTrashed`:
+
+    Rule::unique('users')->withoutTrashed('was_deleted_at');
+
 <a name="rule-uppercase"></a>
 #### uppercase
 
@@ -2073,42 +2223,60 @@ Laravel предоставляет различные правила валид�
         ],
     ]);
 
-Если ваше приложение принимает изображения, загруженные пользователями, вы можете использовать метод `image` правила `File`, чтобы указать, что загруженный файл должен быть изображением. Кроме того, правило `dimensions` может быть использовано для ограничения размеров изображения:
+<a name="validating-files-file-types"></a>
+#### Валидация типов файлов
 
-    use Illuminate\Support\Facades\Validator;
-    use Illuminate\Validation\Rule;
-    use Illuminate\Validation\Rules\File;
+Несмотря на то, что при вызове метода `types` достаточно указать только расширения, этот метод фактически проверяет тип MIME файла, считывая его содержимое и определяя его тип. Полный список типов MIME и соответствующих им расширений можно найти по следующему адресу:
 
-    Validator::validate($input, [
-        'photo' => [
-            'required',
-            File::image()
-                ->min(1024)
-                ->max(12 * 1024)
-                ->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),
-        ],
-    ]);
-
-> [!NOTE]
-> Дополнительную информацию о валидации размеров изображения можно найти в [документации по правилу dimensions](#rule-dimensions).
+[https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types](https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types)
 
 <a name="validating-files-file-sizes"></a>
-#### Размеры файлов
+#### Валидация размера файлов
 
 Для удобства минимальные и максимальные размеры файлов могут быть указаны в виде строки с суффиксом, указывающим единицы измерения размера файла. Поддерживаются суффиксы `kb`, `mb`, `gb` и `tb`:
 
 ```php
-File::image()
+File::types(['mp3', 'wav'])
     ->min('1kb')
-    ->max('10mb')
+    ->max('10mb');
 ```
 
-<a name="validating-files-file-types"></a>
-#### Типы файлов
+<a name="validating-files-image-files"></a>
+#### Проверка файлов изображений
 
-Несмотря на то, что вам нужно указать только расширения при вызове метода `types`, этот метод фактически проверяет MIME-тип файла, считывая содержимое файла и угадывая его MIME-тип. Полный список MIME-типов и их соответствующих расширений можно найти по следующему адресу:
+Чтобы проверить, являются ли загруженные файлы изображениями, можно использовать метод конструктора `image` правила `File`. Правило `File::image()` гарантирует, что проверяемый файл является изображением (jpg, jpeg, png, bmp, gif, svg или webp):
 
-[https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types](https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types)
+```php
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
+
+Validator::validate($input, [
+    'photo' => [
+        'required',
+        File::image(),
+    ],
+]);
+```
+
+<a name="validating-files-image-dimensions"></a>
+#### Проверка размеров изображения
+
+Вы также можете проверить размеры изображения. Например, чтобы убедиться, что загруженное изображение имеет ширину не менее 1000 пикселей и высоту не менее 500 пикселей, можно использовать правило `dimensions`:
+
+```php
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
+
+File::image()->dimensions(
+    Rule::dimensions()
+        ->maxWidth(1000)
+        ->maxHeight(500)
+)
+```
+
+> [!NOTE]  
+> Более подробную информацию о проверке размеров изображения можно найти в [документации по правилам измерений](#rule-dimensions).
 
 <a name="validating-passwords"></a>
 ## Валидация паролей
@@ -2176,8 +2344,8 @@ public function boot(): void
         $rule = Password::min(8);
 
         return $this->app->isProduction()
-                    ? $rule->mixedCase()->uncompromised()
-                    : $rule;
+            ? $rule->mixedCase()->uncompromised()
+            : $rule;
     });
 }
 ```
