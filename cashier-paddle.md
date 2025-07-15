@@ -1,5 +1,5 @@
 ---
-git: 6b78d379a055aefcd8e8ae8eed0bf7efac6f79f9
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Laravel Cashier (Paddle)
@@ -1035,8 +1035,9 @@ Paddle позволяет вашим клиентам иметь несколь�
     use Illuminate\Http\Request;
 
     Route::get('/user/subscribe', function (Request $request) {
-        $checkout = $request->user()->subscribe('pri_monthly')
-                    ->returnTo(route('home'));
+        $checkout = $request->user()
+            ->subscribe('pri_monthly')
+            ->returnTo(route('home'));
 
         return view('billing', ['checkout' => $checkout]);
     });
@@ -1102,7 +1103,8 @@ Cashier называет этот тип пробной версии «обще�
     use Illuminate\Http\Request;
 
     Route::get('/user/subscribe', function (Request $request) {
-        $checkout = $user->subscribe('pri_monthly')
+        $checkout = $request->user()
+            ->subscribe('pri_monthly')
             ->returnTo(route('home'));
 
         return view('billing', ['checkout' => $checkout]);
