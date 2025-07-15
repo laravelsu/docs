@@ -1,5 +1,5 @@
 ---
-git: 2a4226eadcd991901858e699f9c0ae62c13f90e5
+git: 83b872eb2e81df9bead2eef7155bbc42b78c55b8
 ---
 
 # Eloquent · Отношения
@@ -149,8 +149,8 @@ Eloquent определяет имя внешнего ключа, анализи
 Поскольку все отношения построены на базе построителей запросов, вы можете добавить дополнительные ограничения в запрос отношения, вызвав метод `comments` и продолжая связывать условия с запросом:
 
     $comment = Post::find(1)->comments()
-                        ->where('title', 'foo')
-                        ->first();
+        ->where('title', 'foo')
+        ->first();
 
 Подобно методу `hasOne`, вы также можете переопределить внешние и локальные ключи, передав дополнительные аргументы методу `hasMany`:
 
@@ -576,6 +576,53 @@ return $this->through('environments')->has('deployments');
 return $this->throughEnvironments()->hasDeployments();
 ```
 
+<a name="scoped-relationships"></a>
+### Ограниченные отношения
+
+Часто в модели добавляются дополнительные методы, ограничивающие отношения. Например, можно добавить метод `featuredPosts` в модель `User`, который ограничивает более широкое отношение `posts` дополнительным ограничением `where`:
+
+    <?php
+
+    namespace App\Models;
+
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Relations\HasMany;
+
+    class User extends Model
+    {
+        /**
+         * Get the user's posts.
+         */
+        public function posts(): HasMany
+        {
+            return $this->hasMany(Post::class)->latest();
+        }
+
+        /**
+         * Get the user's featured posts.
+         */
+        public function featuredPosts(): HasMany
+        {
+            return $this->posts()->where('featured', true);
+        }
+    }
+
+Однако при попытке создать модель с помощью метода `featuredPosts` её атрибут `featured` не будет установлен в значение `true`. Если вы хотите создавать модели с помощью методов связи и указывать атрибуты, которые должны быть добавлены ко всем моделям, созданным с помощью этой связи, вы можете использовать метод `withAttributes` при построении запроса связи:
+
+    /**
+     * Get the user's featured posts.
+     */
+    public function featuredPosts(): HasMany
+    {
+        return $this->posts()->withAttributes(['featured' => true]);
+    }
+
+Метод `withAttributes` добавит ограничения предложения `where` к запросу, используя заданные атрибуты, а также добавит заданные атрибуты к любым моделям, созданным с помощью метода отношения:
+
+    $post = $user->featuredPosts()->create(['title' => 'Featured Post']);
+
+    $post->featured; // true
+
 <a name="many-to-many"></a>
 ## Отношения Многие ко многим
 
@@ -704,8 +751,8 @@ return $this->throughEnvironments()->hasDeployments();
 Например, если ваше приложение содержит пользователей, которые могут подписаться на подкасты, вы, вероятно, имеете отношение «многие-ко-многим» между пользователями и подкастами. По желанию можно переименовать атрибут `pivot` промежуточной таблицы на `subscription`. Это можно сделать с помощью метода `as` при определении отношения:
 
     return $this->belongsToMany(Podcast::class)
-                    ->as('subscription')
-                    ->withTimestamps();
+        ->as('subscription')
+        ->withTimestamps();
 
 После указания атрибута промежуточной таблицы, вы можете получить доступ к данным промежуточной таблицы, используя указанное имя:
 
@@ -721,29 +768,34 @@ return $this->throughEnvironments()->hasDeployments();
 Вы также можете отфильтровать результаты, возвращаемые запросами отношения `belongsToMany`, используя методы `wherePivot`, `wherePivotIn`, `wherePivotNotIn`, `wherePivotBetween`, `wherePivotNotBetween`, `wherePivotNull` и `wherePivotNotNull` при определении отношения:
 
     return $this->belongsToMany(Role::class)
-                    ->wherePivot('approved', 1);
+        ->wherePivot('approved', 1);
 
     return $this->belongsToMany(Role::class)
-                    ->wherePivotIn('priority', [1, 2]);
+        ->wherePivotIn('priority', [1, 2]);
 
     return $this->belongsToMany(Role::class)
-                    ->wherePivotNotIn('priority', [1, 2]);
+        ->wherePivotNotIn('priority', [1, 2]);
 
     return $this->belongsToMany(Podcast::class)
-                    ->as('subscriptions')
-                    ->wherePivotBetween('created_at', ['2020-01-01 00:00:00', '2020-12-31 00:00:00']);
+        ->as('subscriptions')
+        ->wherePivotBetween('created_at', ['2020-01-01 00:00:00', '2020-12-31 00:00:00']);
 
     return $this->belongsToMany(Podcast::class)
-                    ->as('subscriptions')
-                    ->wherePivotNotBetween('created_at', ['2020-01-01 00:00:00', '2020-12-31 00:00:00']);
+        ->as('subscriptions')
+        ->wherePivotNotBetween('created_at', ['2020-01-01 00:00:00', '2020-12-31 00:00:00']);
 
     return $this->belongsToMany(Podcast::class)
-                    ->as('subscriptions')
-                    ->wherePivotNull('expired_at');
+        ->as('subscriptions')
+        ->wherePivotNull('expired_at');
 
     return $this->belongsToMany(Podcast::class)
-                    ->as('subscriptions')
-                    ->wherePivotNotNull('expired_at');
+        ->as('subscriptions')
+        ->wherePivotNotNull('expired_at');
+
+Метод `wherePivot` добавляет ограничение в виде предложения where к запросу, но не добавляет указанное значение при создании новых моделей через заданное отношение. Если вам нужно и запросить, и создать отношение с определенным значением опорного значения, вы можете использовать метод `withPivotValue`:
+
+    return $this->belongsToMany(Role::class)
+        ->withPivotValue('approved', 1);
 
 <a name="ordering-queries-via-intermediate-table-columns"></a>
 ### Сортировка запросов по столбцам сводной таблицы
@@ -751,8 +803,8 @@ return $this->throughEnvironments()->hasDeployments();
 Вы можете упорядочить результаты запросов отношений `belongsToMany`, используя метод `orderByPivot`. В следующем примере мы получим все последние значки для пользователя:
 
     return $this->belongsToMany(Badge::class)
-                    ->where('rank', 'gold')
-                    ->orderByPivot('created_at', 'desc');
+        ->where('rank', 'gold')
+        ->orderByPivot('created_at', 'desc');
 
 <a name="defining-custom-intermediate-table-models"></a>
 ### Определение пользовательских моделей сводных таблиц
@@ -1299,9 +1351,9 @@ public function bestImage()
 Как показано в приведенном выше примере, вы можете добавлять дополнительные ограничения к отношениям при их запросе. Однако, будьте осторожны при создании цепочек выражений `orWhere` с отношением, поскольку предложения `orWhere` будут логически сгруппированы на том же уровне, что и ограничение отношения:
 
     $user->posts()
-            ->where('active', 1)
-            ->orWhere('votes', '>=', 100)
-            ->get();
+        ->where('active', 1)
+        ->orWhere('votes', '>=', 100)
+        ->get();
 
 В приведенном выше примере будет сгенерирован следующий SQL. Как видите, выражение `or` предписывает запросу возвращать _любой_ пост с более чем 100 голосами. Запрос больше не ограничен конкретным пользователем:
 
@@ -1316,11 +1368,11 @@ where user_id = ? and active = 1 or votes >= 100
     use Illuminate\Database\Eloquent\Builder;
 
     $user->posts()
-            ->where(function (Builder $query) {
-                return $query->where('active', 1)
-                             ->orWhere('votes', '>=', 100);
-            })
-            ->get();
+        ->where(function (Builder $query) {
+            return $query->where('active', 1)
+                ->orWhere('votes', '>=', 100);
+        })
+        ->get();
 
 В приведенном выше примере будет получен следующий SQL. Обратите внимание, что логическая группировка правильно сгруппировала ограничения, и запрос остается ограниченным для конкретного пользователя:
 
@@ -1467,8 +1519,8 @@ where user_id = ? and (active = 1 or votes >= 100)
 Иногда вам может потребоваться запросить дочерние элементы родительского отношения «morph to». Вы можете сделать это, используя методы `whereMorphedTo` и `whereNotMorphedTo`, которые автоматически определят правильное сопоставление типов морфинга для данной модели. Эти методы принимают имя отношения `morphTo` в качестве первого аргумента и соответствующую родительскую модель в качестве второго аргумента:
 
     $comments = Comment::whereMorphedTo('commentable', $post)
-                          ->orWhereMorphedTo('commentable', $video)
-                          ->get();
+        ->orWhereMorphedTo('commentable', $video)
+        ->get();
 
 <a name="querying-all-morph-to-related-models"></a>
 #### Запрос всех связанных моделей
@@ -1543,8 +1595,8 @@ where user_id = ? and (active = 1 or votes >= 100)
 Если вы комбинируете `withCount` с оператором `SELECT`, убедитесь, что вы вызываете `withCount` после метода `select`:
 
     $posts = Post::select(['title', 'body'])
-                    ->withCount('comments')
-                    ->get();
+        ->withCount('comments')
+        ->get();
 
 <a name="other-aggregate-functions"></a>
 ### Другие агрегатные функции
@@ -1576,8 +1628,8 @@ where user_id = ? and (active = 1 or votes >= 100)
 Если вы комбинируете эти агрегатные методы с оператором `select`, убедитесь, что вы вызываете их после метода `select`:
 
     $posts = Post::select(['title', 'body'])
-                    ->withExists('comments')
-                    ->get();
+        ->withExists('comments')
+        ->get();
 
 <a name="counting-related-models-on-morph-to-relationships"></a>
 ### Подсчет связанных моделей отношений Morph To
