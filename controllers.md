@@ -1,5 +1,5 @@
 ---
-git: ead3a5b4b11c267f20ee1065eb3f9aa98fc986e1
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Контроллеры
@@ -140,6 +140,9 @@ php artisan make:controller ProvisionServer --invokable
         ];
     }
 
+> [!WARNING]  
+> Контроллеры, реализующие `Illuminate\Routing\Controllers\HasMiddleware`, не должны расширять `Illuminate\Routing\Controller`.
+
 <a name="resource-controllers"></a>
 ## Ресурсные контроллеры
 
@@ -189,9 +192,9 @@ php artisan make:controller PhotoController --resource
     use Illuminate\Support\Facades\Redirect;
 
     Route::resource('photos', PhotoController::class)
-            ->missing(function (Request $request) {
-                return Redirect::route('photos.index');
-            });
+        ->missing(function (Request $request) {
+            return Redirect::route('photos.index');
+        });
 
 <a name="soft-deleted-models"></a>
 #### Модели с мягким удалением
