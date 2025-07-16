@@ -1,5 +1,5 @@
 ---
-git: 88b6f0d99c9f89ca38266d9fa0c3b4ea3df3c85e
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # База данных · Начало работы
@@ -456,10 +456,10 @@ public function boot(): void
 {
     Event::listen(function (DatabaseBusy $event) {
         Notification::route('mail', 'dev@example.com')
-                ->notify(new DatabaseApproachingMaxConnections(
-                    $event->connectionName,
-                    $event->connections
-                ));
+            ->notify(new DatabaseApproachingMaxConnections(
+                $event->connectionName,
+                $event->connections
+            ));
     });
 }
 ```
