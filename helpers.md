@@ -1,5 +1,5 @@
 ---
-git: 1e8496c232c2e3f17179c7ad8d751f9c795ce16a
+git: f65a8dc921c1b2501f74869b36747cffcb46e1f5
 ---
 
 # Глобальные помощники (helpers)
@@ -46,6 +46,7 @@ Laravel содержит множество глобальных «вспомо�
 - [Arr::pull](#method-array-pull)
 - [Arr::query](#method-array-query)
 - [Arr::random](#method-array-random)
+- [Arr::reject](#method-array-reject)
 - [Arr::set](#method-array-set)
 - [Arr::shuffle](#method-array-shuffle)
 - [Arr::sort](#method-array-sort)
@@ -735,6 +736,21 @@ Laravel содержит множество глобальных «вспомо�
     $items = Arr::random($array, 2);
 
     // [2, 5] - (retrieved randomly)
+
+<a name="method-array-reject"></a>
+#### `Arr::reject()`
+
+Метод `Arr::reject` удаляет элементы из массива, используя заданное замыкание:
+
+    use Illuminate\Support\Arr;
+
+    $array = [100, '200', 300, '400', 500];
+
+    $filtered = Arr::reject($array, function (string|int $value, int $key) {
+        return is_string($value);
+    });
+
+    // [0 => 100, 2 => 300, 4 => 500]
 
 <a name="method-array-set"></a>
 #### `Arr::set()`
@@ -2558,19 +2574,19 @@ use App\Models\User;
 use Illuminate\Support\Facades\Pipeline;
 
 $user = Pipeline::send($user)
-            ->through([
-                function (User $user, Closure $next) {
-                    // ...
-
-                    return $next($user);
-                },
-                function (User $user, Closure $next) {
-                    // ...
-
-                    return $next($user);
-                },
-            ])
-            ->then(fn (User $user) => $user);
+    ->through([
+        function (User $user, Closure $next) {
+            // ...
+    
+            return $next($user);
+        },
+        function (User $user, Closure $next) {
+            // ...
+    
+            return $next($user);
+        },
+    ])
+    ->then(fn (User $user) => $user);
 ```
 
 Как видите, каждый вызываемый класс или замыкание указанное в pipeline получает входные данные и замыкание `$next`. Вызов замыкания `$next` приведет к вызову следующего вызываемого объекта в пайплайне. Как вы могли заметить, это очень похоже на [middleware](/docs/{{version}}/middleware).
@@ -2581,12 +2597,12 @@ $user = Pipeline::send($user)
 
 ```php
 $user = Pipeline::send($user)
-            ->through([
-                GenerateProfilePhoto::class,
-                ActivateSubscription::class,
-                SendWelcomeEmail::class,
-            ])
-            ->then(fn (User $user) => $user);
+    ->through([
+        GenerateProfilePhoto::class,
+        ActivateSubscription::class,
+        SendWelcomeEmail::class,
+    ])
+    ->then(fn (User $user) => $user);
 ```
 
 <a name="sleep"></a>
@@ -2751,3 +2767,22 @@ $start->diffForHumans(); // 1 second ago
 ```
 
 Класс `Sleep` используется внутри Laravel при приостановке выполнения. Например, помощник [retry](#method-retry) использует класс `Sleep` при задержке, что обеспечивает лучшую тестируемость при использовании данного помощника.
+
+<a name="timebox"></a>
+### Timebox
+
+Класс `Timebox` в Laravel гарантирует, что заданный обратный вызов всегда будет выполняться в течение фиксированного времени, даже если фактическое выполнение завершится раньше. Это особенно полезно для криптографических операций и проверок аутентификации пользователей, где злоумышленники могут использовать различия во времени выполнения для получения конфиденциальной информации.
+
+Если выполнение превышает фиксированную длительность, `Timebox` не действует. Разработчик должен выбрать достаточно большое время для фиксированной длительности, чтобы учесть наихудшие сценарии.
+
+Метод вызова принимает замыкание и ограничение по времени в микросекундах, а затем выполняет замыкание и ждет, пока не будет достигнуто ограничение по времени:
+
+```php
+use Illuminate\Support\Timebox;
+
+(new Timebox)->call(function ($timebox) {
+    // ...
+}, microseconds: 10000);
+```
+
+Если внутри замыкания возникает исключение, этот класс учитывает заданную задержку и повторно создает исключение после задержки.
