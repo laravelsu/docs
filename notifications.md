@@ -1,5 +1,5 @@
 ---
-git: e589c65973ef8668df016fc27f4f37e07d8abf26
+git: 5098e264dd073b4bcd80b643e717cf6c341e169b
 ---
 
 # Уведомления
@@ -288,10 +288,10 @@ php artisan make:notification InvoicePaid
     use Illuminate\Support\Facades\Notification;
 
     Notification::route('mail', 'taylor@example.com')
-                ->route('vonage', '5555555555')
-                ->route('slack', '#slack-channel')
-                ->route('broadcast', [new Channel('channel-name')])
-                ->notify(new InvoicePaid($invoice));
+        ->route('vonage', '5555555555')
+        ->route('slack', '#slack-channel')
+        ->route('broadcast', [new Channel('channel-name')])
+        ->notify(new InvoicePaid($invoice));
 
 Если вы хотите указать имя получателя при отправке уведомления по запросу на маршрут `mail`, вы можете предоставить массив, содержащий адрес электронной почты в качестве ключа и имя в качестве значения первого элемента в массиве:
 
@@ -324,11 +324,11 @@ php artisan make:notification InvoicePaid
         $url = url('/invoice/'.$this->invoice->id);
 
         return (new MailMessage)
-                    ->greeting('Hello!')
-                    ->line('One of your invoices has been paid!')
-                    ->lineIf($this->amount > 0, "Amount paid: {$this->amount}")
-                    ->action('View Invoice', $url)
-                    ->line('Thank you for using our application!');
+            ->greeting('Hello!')
+            ->line('One of your invoices has been paid!')
+            ->lineIf($this->amount > 0, "Amount paid: {$this->amount}")
+            ->action('View Invoice', $url)
+            ->line('Thank you for using our application!');
     }
 
 > [!NOTE]
@@ -352,9 +352,9 @@ php artisan make:notification InvoicePaid
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->error()
-                    ->subject('Invoice Payment Failed')
-                    ->line('...');
+            ->error()
+            ->subject('Invoice Payment Failed')
+            ->line('...');
     }
 
 Этот подход помогает ясно передать пользователю, что сообщение содержит информацию об ошибке, повышая визуальную восприимчивость и понимание сообщения.
@@ -410,8 +410,8 @@ php artisan make:notification InvoicePaid
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->from('barrett@example.com', 'Barrett Blair')
-                    ->line('...');
+            ->from('barrett@example.com', 'Barrett Blair')
+            ->line('...');
     }
 
 <a name="customizing-the-recipient"></a>
@@ -457,8 +457,8 @@ php artisan make:notification InvoicePaid
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject('Notification Subject')
-                    ->line('...');
+            ->subject('Notification Subject')
+            ->line('...');
     }
 
 <a name="customizing-the-mailer"></a>
@@ -472,8 +472,8 @@ php artisan make:notification InvoicePaid
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->mailer('postmark')
-                    ->line('...');
+            ->mailer('postmark')
+            ->line('...');
     }
 
 <a name="customizing-the-templates"></a>
@@ -496,8 +496,8 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->greeting('Hello!')
-                    ->attach('/path/to/file');
+            ->greeting('Hello!')
+            ->attach('/path/to/file');
     }
 
 > [!NOTE]
@@ -511,11 +511,11 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->greeting('Hello!')
-                    ->attach('/path/to/file', [
-                        'as' => 'name.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
+            ->greeting('Hello!')
+            ->attach('/path/to/file', [
+                'as' => 'name.pdf',
+                'mime' => 'application/pdf',
+            ]);
     }
 
 В отличие от прикрепления файлов к почтовым отправлениям, вы не можете прикреплять файл непосредственно с диска файлового хранилища с помощью `attachFromStorage`. Лучше использовать метод `attach` с абсолютным путем к файлу на диске. В качестве альтернативы вы можете вернуть [отправление](/docs/{{version}}/mail#generating-mailables) из метода `toMail`:
@@ -528,8 +528,8 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): Mailable
     {
         return (new InvoicePaidMailable($this->invoice))
-                    ->to($notifiable->email)
-                    ->attachFromStorage('/path/to/file');
+            ->to($notifiable->email)
+            ->attachFromStorage('/path/to/file');
     }
 
 При необходимости к сообщению можно прикрепить несколько файлов, используя метод `attachMany`:
@@ -540,14 +540,14 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->greeting('Hello!')
-                    ->attachMany([
-                        '/path/to/forge.svg',
-                        '/path/to/vapor.svg' => [
-                            'as' => 'Logo.svg',
-                            'mime' => 'image/svg+xml',
-                        ],
-                    ]);
+            ->greeting('Hello!')
+            ->attachMany([
+                '/path/to/forge.svg',
+                '/path/to/vapor.svg' => [
+                    'as' => 'Logo.svg',
+                    'mime' => 'image/svg+xml',
+                ],
+            ]);
     }
 
 <a name="raw-data-attachments"></a>
@@ -561,10 +561,10 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->greeting('Hello!')
-                    ->attachData($this->pdf, 'name.pdf', [
-                        'mime' => 'application/pdf',
-                    ]);
+            ->greeting('Hello!')
+            ->attachData($this->pdf, 'name.pdf', [
+                'mime' => 'application/pdf',
+            ]);
     }
 
 <a name="adding-tags-metadata"></a>
@@ -578,9 +578,9 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->greeting('Comment Upvoted!')
-                    ->tag('upvote')
-                    ->metadata('comment_id', $this->comment->id);
+            ->greeting('Comment Upvoted!')
+            ->tag('upvote')
+            ->metadata('comment_id', $this->comment->id);
     }
 
 Если ваше приложение использует драйвер Mailgun, вы можете обратиться к документации Mailgun для получения дополнительной информации о [тегах](https://documentation.mailgun.com/en/latest/user_manual.html#tagging-1) и [метаданных](https://documentation.mailgun.com/en/latest/user_manual.html#attaching-data-to-messages). Аналогично, документацию Postmark можно также проконсультировать для получения информации о их поддержке [тегов](https://postmarkapp.com/blog/tags-support-for-smtp) и [метаданных](https://postmarkapp.com/support/article/1125-custom-metadata-faq).
@@ -600,11 +600,11 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->withSymfonyMessage(function (Email $message) {
-                        $message->getHeaders()->addTextHeader(
-                            'Custom-Header', 'Header Value'
-                        );
-                    });
+            ->withSymfonyMessage(function (Email $message) {
+                $message->getHeaders()->addTextHeader(
+                    'Custom-Header', 'Header Value'
+                );
+            });
     }
 
 <a name="using-mailables"></a>
@@ -621,7 +621,7 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): Mailable
     {
         return (new InvoicePaidMailable($this->invoice))
-                    ->to($notifiable->email);
+            ->to($notifiable->email);
     }
 
 <a name="mailables-and-on-demand-notifications"></a>
@@ -639,11 +639,11 @@ php artisan vendor:publish --tag=laravel-notifications
     public function toMail(object $notifiable): Mailable
     {
         $address = $notifiable instanceof AnonymousNotifiable
-                ? $notifiable->routeNotificationFor('mail')
-                : $notifiable->email;
+            ? $notifiable->routeNotificationFor('mail')
+            : $notifiable->email;
 
         return (new InvoicePaidMailable($this->invoice))
-                    ->to($address);
+            ->to($address);
     }
 
 <a name="previewing-mail-notifications"></a>
@@ -658,7 +658,7 @@ php artisan vendor:publish --tag=laravel-notifications
         $invoice = Invoice::find(1);
 
         return (new InvoicePaid($invoice))
-                    ->toMail($invoice->user);
+            ->toMail($invoice->user);
     });
 
 <a name="markdown-mail-notifications"></a>
@@ -685,8 +685,8 @@ php artisan make:notification InvoicePaid --markdown=mail.invoice.paid
         $url = url('/invoice/'.$this->invoice->id);
 
         return (new MailMessage)
-                    ->subject('Invoice Paid')
-                    ->markdown('mail.invoice.paid', ['url' => $url]);
+            ->subject('Invoice Paid')
+            ->markdown('mail.invoice.paid', ['url' => $url]);
     }
 
 <a name="writing-the-message"></a>
@@ -771,9 +771,9 @@ php artisan vendor:publish --tag=laravel-mail
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->theme('invoice')
-                    ->subject('Invoice Paid')
-                    ->markdown('mail.invoice.paid', ['url' => $url]);
+            ->theme('invoice')
+            ->subject('Invoice Paid')
+            ->markdown('mail.invoice.paid', ['url' => $url]);
     }
 
 <a name="database-notifications"></a>
@@ -813,16 +813,24 @@ php artisan migrate
         ];
     }
 
-Когда уведомление сохраняется в базе данных вашего приложения, столбец `type` заполняется именем класса уведомления. Однако вы можете настроить это поведение, определив метод `databaseType` в вашем классе уведомления:
+При сохранении уведомления в базе данных вашего приложения столбец `type` по умолчанию будет содержать имя класса уведомления, а столбец `read_at` будет иметь значение `null`. Однако вы можете настроить это поведение, определив методы `databaseType` и `initialDatabaseReadAtValue` в классе уведомления:
+
+    use Illuminate\Support\Carbon;
 
     /**
-     * Получить тип уведомления для базы данных.
-     *
-     * @return string
+     * Get the notification's database type.
      */
     public function databaseType(object $notifiable): string
     {
         return 'invoice-paid';
+    }
+
+    /**
+     * Get the initial value for the "read_at" column.
+     */
+    public function initialDatabaseReadAtValue(): ?Carbon
+    {
+        return null;
     }
 
 Этот метод позволяет вам устанавливать пользовательский тип уведомления, который будет сохранен в столбце `type` в таблице уведомлений базы данных. Это может быть полезно для более удобного отслеживания и фильтрации уведомлений по типу.
@@ -911,8 +919,8 @@ php artisan migrate
 Все транслируемые уведомления ставятся в очередь для трансляции. Если вы хотите изменить соединение очереди или имя очереди, которое используется для постановки в очередь трансляции, то вы можете использовать методы `onConnection` и `onQueue` экземпляра `BroadcastMessage`:
 
     return (new BroadcastMessage($data))
-                    ->onConnection('sqs')
-                    ->onQueue('broadcasts');
+        ->onConnection('sqs')
+        ->onQueue('broadcasts');
 
 <a name="customizing-the-notification-type"></a>
 #### Изменение типа транслируемого уведомления
@@ -992,7 +1000,7 @@ php artisan migrate
     public function toVonage(object $notifiable): VonageMessage
     {
         return (new VonageMessage)
-                    ->content('Your SMS message content');
+            ->content('Your SMS message content');
     }
 
 <a name="unicode-content"></a>
@@ -1008,8 +1016,8 @@ php artisan migrate
     public function toVonage(object $notifiable): VonageMessage
     {
         return (new VonageMessage)
-                    ->content('Your unicode message')
-                    ->unicode();
+            ->content('Your unicode message')
+            ->unicode();
     }
 
 <a name="customizing-the-from-number"></a>
@@ -1025,8 +1033,8 @@ php artisan migrate
     public function toVonage(object $notifiable): VonageMessage
     {
         return (new VonageMessage)
-                    ->content('Your SMS message content')
-                    ->from('15554443333');
+            ->content('Your SMS message content')
+            ->from('15554443333');
     }
 
 <a name="adding-a-client-reference"></a>
@@ -1042,8 +1050,8 @@ php artisan migrate
     public function toVonage(object $notifiable): VonageMessage
     {
         return (new VonageMessage)
-                    ->clientReference((string) $notifiable->id)
-                    ->content('Your SMS message content');
+            ->clientReference((string) $notifiable->id)
+            ->content('Your SMS message content');
     }
 
 <a name="routing-sms-notifications"></a>
@@ -1118,20 +1126,20 @@ composer require laravel/slack-notification-channel
     public function toSlack(object $notifiable): SlackMessage
     {
         return (new SlackMessage)
-                ->text('One of your invoices has been paid!')
-                ->headerBlock('Invoice Paid')
-                ->contextBlock(function (ContextBlock $block) {
-                    $block->text('Customer #1234');
-                })
-                ->sectionBlock(function (SectionBlock $block) {
-                    $block->text('An invoice has been paid.');
-                    $block->field("*Invoice No:*\n1000")->markdown();
-                    $block->field("*Invoice Recipient:*\ntaylor@laravel.com")->markdown();
-                })
-                ->dividerBlock()
-                ->sectionBlock(function (SectionBlock $block) {
-                    $block->text('Congratulations!');
-                });
+            ->text('One of your invoices has been paid!')
+            ->headerBlock('Invoice Paid')
+            ->contextBlock(function (ContextBlock $block) {
+                $block->text('Customer #1234');
+            })
+            ->sectionBlock(function (SectionBlock $block) {
+                $block->text('An invoice has been paid.');
+                $block->field("*Invoice No:*\n1000")->markdown();
+                $block->field("*Invoice Recipient:*\ntaylor@laravel.com")->markdown();
+            })
+            ->dividerBlock()
+            ->sectionBlock(function (SectionBlock $block) {
+                $block->text('Congratulations!');
+            });
     }
 
 <a name="using-slacks-block-kit-builder-template"></a>
@@ -1169,7 +1177,7 @@ composer require laravel/slack-notification-channel
         JSON;
 
         return (new SlackMessage)
-                ->usingBlockKitTemplate($template);
+            ->usingBlockKitTemplate($template);
     }
 
 <a name="slack-interactivity"></a>
@@ -1190,21 +1198,21 @@ composer require laravel/slack-notification-channel
     public function toSlack(object $notifiable): SlackMessage
     {
         return (new SlackMessage)
-                ->text('One of your invoices has been paid!')
-                ->headerBlock('Invoice Paid')
-                ->contextBlock(function (ContextBlock $block) {
-                    $block->text('Customer #1234');
-                })
-                ->sectionBlock(function (SectionBlock $block) {
-                    $block->text('An invoice has been paid.');
-                })
-                ->actionsBlock(function (ActionsBlock $block) {
-                     // ID defaults to "button_acknowledge_invoice"...
-                    $block->button('Acknowledge Invoice')->primary();
-
-                    // Manually configure the ID...
-                    $block->button('Deny')->danger()->id('deny_invoice');
-                });
+            ->text('One of your invoices has been paid!')
+            ->headerBlock('Invoice Paid')
+            ->contextBlock(function (ContextBlock $block) {
+                $block->text('Customer #1234');
+            })
+            ->sectionBlock(function (SectionBlock $block) {
+                $block->text('An invoice has been paid.');
+            })
+            ->actionsBlock(function (ActionsBlock $block) {
+                 // ID defaults to "button_acknowledge_invoice"...
+                $block->button('Acknowledge Invoice')->primary();
+            
+                // Manually configure the ID...
+                $block->button('Deny')->danger()->id('deny_invoice');
+            });
     }
 
 <a name="slack-confirmation-modals"></a>
@@ -1224,25 +1232,25 @@ composer require laravel/slack-notification-channel
     public function toSlack(object $notifiable): SlackMessage
     {
         return (new SlackMessage)
-                ->text('One of your invoices has been paid!')
-                ->headerBlock('Invoice Paid')
-                ->contextBlock(function (ContextBlock $block) {
-                    $block->text('Customer #1234');
-                })
-                ->sectionBlock(function (SectionBlock $block) {
-                    $block->text('An invoice has been paid.');
-                })
-                ->actionsBlock(function (ActionsBlock $block) {
-                    $block->button('Acknowledge Invoice')
-                        ->primary()
-                        ->confirm(
-                            'Acknowledge the payment and send a thank you email?',
-                            function (ConfirmObject $dialog) {
-                                $dialog->confirm('Yes');
-                                $dialog->deny('No');
-                            }
-                        );
-                });
+            ->text('One of your invoices has been paid!')
+            ->headerBlock('Invoice Paid')
+            ->contextBlock(function (ContextBlock $block) {
+                $block->text('Customer #1234');
+            })
+            ->sectionBlock(function (SectionBlock $block) {
+                $block->text('An invoice has been paid.');
+            })
+            ->actionsBlock(function (ActionsBlock $block) {
+                $block->button('Acknowledge Invoice')
+                    ->primary()
+                    ->confirm(
+                        'Acknowledge the payment and send a thank you email?',
+                        function (ConfirmObject $dialog) {
+                            $dialog->confirm('Yes');
+                            $dialog->deny('No');
+                        }
+                    );
+            });
     }
 
 <a name="inspecting-slack-blocks"></a>
