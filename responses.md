@@ -1,5 +1,5 @@
 ---
-git: 0f44074a2b2d10fe6ccc0f72d57574c7c8a360f5
+git: 7f9f41282ae4fd38bb8797c474ddacbd82ebab64
 ---
 
 # HTTP-ответы
@@ -34,7 +34,7 @@ git: 0f44074a2b2d10fe6ccc0f72d57574c7c8a360f5
 
     Route::get('/home', function () {
         return response('Hello World', 200)
-                      ->header('Content-Type', 'text/plain');
+            ->header('Content-Type', 'text/plain');
     });
 
 <a name="eloquent-models-and-collections"></a>
@@ -54,18 +54,18 @@ git: 0f44074a2b2d10fe6ccc0f72d57574c7c8a360f5
 Имейте в виду, что большинство методов ответа можно объединять в цепочку вызовов для гибкого создания экземпляров ответа. Например, вы можете использовать метод `header` для добавления серии заголовков к ответу перед его отправкой обратно пользователю:
 
     return response($content)
-                ->header('Content-Type', $type)
-                ->header('X-Header-One', 'Header Value')
-                ->header('X-Header-Two', 'Header Value');
+        ->header('Content-Type', $type)
+        ->header('X-Header-One', 'Header Value')
+        ->header('X-Header-Two', 'Header Value');
 
 Или вы можете использовать метод `withHeaders`, чтобы указать массив заголовков, которые будут добавлены к ответу:
 
     return response($content)
-                ->withHeaders([
-                    'Content-Type' => $type,
-                    'X-Header-One' => 'Header Value',
-                    'X-Header-Two' => 'Header Value',
-                ]);
+        ->withHeaders([
+            'Content-Type' => $type,
+            'X-Header-One' => 'Header Value',
+            'X-Header-Two' => 'Header Value',
+        ]);
 
 <a name="cache-control-middleware"></a>
 #### Посредник управления кешем
@@ -244,8 +244,8 @@ Laravel содержит посредник `cache.headers`, используе�
 Если вам нужен контроль над статусом и заголовками ответа, но также необходимо вернуть [HTML-шаблон](/docs/{{version}}/views) в качестве содержимого ответа, то вы должны использовать метод `view`:
 
     return response()
-                ->view('hello', $data, 200)
-                ->header('Content-Type', $type);
+        ->view('hello', $data, 200)
+        ->header('Content-Type', $type);
 
 Конечно, вы можете использовать глобальный помощник `view`, даже если вам не нужно передавать собственные код состояния или заголовки HTTP.
 
@@ -262,8 +262,8 @@ Laravel содержит посредник `cache.headers`, используе�
 Если вы хотите создать ответ JSONP, вы можете использовать метод `json` в сочетании с методом `withCallback`:
 
     return response()
-                ->json(['name' => 'Abigail', 'state' => 'CA'])
-                ->withCallback($request->input('callback'));
+        ->json(['name' => 'Abigail', 'state' => 'CA'])
+        ->withCallback($request->input('callback'));
 
 <a name="file-downloads"></a>
 ### Ответы для загрузки файлов
@@ -323,6 +323,39 @@ Laravel содержит посредник `cache.headers`, используе�
         ]);
     });
 
+<a name="event-streams"></a>
+#### Потоки событий
+
+Метод `eventStream` может использоваться для возврата потокового ответа на события, отправленные сервером (SSE), с использованием типа контента `text/event-stream`. Метод `eventStream` принимает замыкание, которое должно [выдавать](https://www.php.net/manual/en/language.generators.overview.php) ответы потоку по мере их появления:
+
+```php
+Route::get('/chat', function () {
+    return response()->eventStream(function () {
+        $stream = OpenAI::client()->chat()->createStreamed(...);
+
+        foreach ($stream as $response) {
+            yield $response->choices[0];
+        }
+    });
+});
+```
+
+Этот поток событий может быть использован через объект [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) фронтендом вашего приложения. Метод `eventStream` автоматически отправит обновление `</stream>` в поток событий после завершения потока:
+
+```js
+const source = new EventSource('/chat');
+
+source.addEventListener('update', (event) => {
+    if (event.data === '</stream>') {
+        source.close();
+
+        return;
+    }
+
+    console.log(event.data);
+})
+```
+
 <a name="streamed-downloads"></a>
 #### Потоковые загрузки
 
@@ -332,8 +365,8 @@ Laravel содержит посредник `cache.headers`, используе�
 
     return response()->streamDownload(function () {
         echo GitHub::api('repo')
-                    ->contents()
-                    ->readme('laravel', 'laravel')['contents'];
+            ->contents()
+            ->readme('laravel', 'laravel')['contents'];
     }, 'laravel-readme.md');
 
 <a name="response-macros"></a>
