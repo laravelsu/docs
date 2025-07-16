@@ -1,5 +1,5 @@
 ---
-git: 24a9f991e9a7aa18f32e4ed48a5b2abd6ab0b99d
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Тестирование · Тесты консольных команд
@@ -62,11 +62,11 @@ Laravel позволяет вам легко «имитировать» ввод
 ```php tab=Pest
 test('console command', function () {
     $this->artisan('question')
-         ->expectsQuestion('What is your name?', 'Taylor Otwell')
-         ->expectsQuestion('Which language do you prefer?', 'PHP')
-         ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
-         ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
-         ->assertExitCode(0);
+        ->expectsQuestion('What is your name?', 'Taylor Otwell')
+        ->expectsQuestion('Which language do you prefer?', 'PHP')
+        ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
+        ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
+        ->assertExitCode(0);
 });
 ```
 
@@ -77,11 +77,11 @@ test('console command', function () {
 public function test_console_command(): void
 {
     $this->artisan('question')
-         ->expectsQuestion('What is your name?', 'Taylor Otwell')
-         ->expectsQuestion('Which language do you prefer?', 'PHP')
-         ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
-         ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
-         ->assertExitCode(0);
+        ->expectsQuestion('What is your name?', 'Taylor Otwell')
+        ->expectsQuestion('Which language do you prefer?', 'PHP')
+        ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
+        ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
+        ->assertExitCode(0);
 }
 ```
 
@@ -90,12 +90,12 @@ public function test_console_command(): void
 ```php tab=Pest
 test('console command', function () {
     $this->artisan('example')
-         ->expectsSearch('What is your name?', search: 'Tay', answers: [
+        ->expectsSearch('What is your name?', search: 'Tay', answers: [
             'Taylor Otwell',
             'Taylor Swift',
             'Darian Taylor'
-         ], answer: 'Taylor Otwell')
-         ->assertExitCode(0);
+        ], answer: 'Taylor Otwell')
+        ->assertExitCode(0);
 });
 ```
 
@@ -106,12 +106,12 @@ test('console command', function () {
 public function test_console_command(): void
 {
     $this->artisan('example')
-         ->expectsSearch('What is your name?', search: 'Tay', answers: [
+        ->expectsSearch('What is your name?', search: 'Tay', answers: [
             'Taylor Otwell',
             'Taylor Swift',
             'Darian Taylor'
-         ], answer: 'Taylor Otwell')
-         ->assertExitCode(0);
+        ], answer: 'Taylor Otwell')
+        ->assertExitCode(0);
 }
 ```
 
@@ -120,8 +120,8 @@ public function test_console_command(): void
 ```php tab=Pest
 test('console command', function () {
     $this->artisan('example')
-         ->doesntExpectOutput()
-         ->assertExitCode(0);
+        ->doesntExpectOutput()
+        ->assertExitCode(0);
 });
 ```
 
@@ -132,8 +132,8 @@ test('console command', function () {
 public function test_console_command(): void
 {
     $this->artisan('example')
-            ->doesntExpectOutput()
-            ->assertExitCode(0);
+        ->doesntExpectOutput()
+        ->assertExitCode(0);
 }
 ```
 
@@ -142,8 +142,8 @@ public function test_console_command(): void
 ```php tab=Pest
 test('console command', function () {
     $this->artisan('example')
-         ->expectsOutputToContain('Taylor')
-         ->assertExitCode(0);
+        ->expectsOutputToContain('Taylor')
+        ->assertExitCode(0);
 });
 ```
 
@@ -154,8 +154,8 @@ test('console command', function () {
 public function test_console_command(): void
 {
     $this->artisan('example')
-            ->expectsOutputToContain('Taylor')
-            ->assertExitCode(0);
+        ->expectsOutputToContain('Taylor')
+        ->assertExitCode(0);
 }
 ```
 
