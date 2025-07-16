@@ -1,5 +1,5 @@
 ---
-git: 0db6ab246107750937a39f29489a0af33be7266b
+git: 271e9a15ce8c8a1f61f5c49a8aa51bfb1d834553
 ---
 
 # Контейнер служб (service container)
@@ -206,16 +206,16 @@ $this->app->singletonIf(Transistor::class, function (Application $app) {
     use Illuminate\Support\Facades\Storage;
 
     $this->app->when(PhotoController::class)
-              ->needs(Filesystem::class)
-              ->give(function () {
-                  return Storage::disk('local');
-              });
+        ->needs(Filesystem::class)
+        ->give(function () {
+            return Storage::disk('local');
+        });
 
     $this->app->when([VideoController::class, UploadController::class])
-              ->needs(Filesystem::class)
-              ->give(function () {
-                  return Storage::disk('s3');
-              });
+        ->needs(Filesystem::class)
+        ->give(function () {
+            return Storage::disk('s3');
+        });
 
 <a name="contextual-attributes"></a>
 ### Контекстуальные атрибуты
@@ -296,34 +296,36 @@ Route::get('/user', function (#[CurrentUser] User $user) {
 
 Вы можете создавать свои собственные контекстные атрибуты, реализуя контракт `Illuminate\Contracts\Container\ContextualAttribute`. Контейнер вызовет метод `resolve` вашего атрибута, который должен разрешить значение, которое должно быть введено в класс, использующий атрибут. В приведенном ниже примере мы повторно реализуем встроенный атрибут Laravel `Config`:
 
-    <?php
+```php
+<?php
 
-    namespace App\Attributes;
+namespace App\Attributes;
 
-    use Illuminate\Contracts\Container\ContextualAttribute;
+use Illuminate\Contracts\Container\ContextualAttribute;
 
-    #[Attribute(Attribute::TARGET_PARAMETER)]
-    class Config implements ContextualAttribute
+#[Attribute(Attribute::TARGET_PARAMETER)]
+class Config implements ContextualAttribute
+{
+    /**
+     * Создаем новый экземпляр атрибута.
+     */
+    public function __construct(public string $key, public mixed $default = null)
     {
-        /**
-         * Создаем новый экземпляр атрибута.
-         */
-        public function __construct(public string $key, public mixed $default = null)
-        {
-        }
-
-        /**
-         * Разрешаем значение конфигурации.
-         *
-         * @param  self  $attribute
-         * @param  \Illuminate\Contracts\Container\Container  $container
-         * @return mixed
-         */
-        public static function resolve(self $attribute, Container $container)
-        {
-            return $container->make('config')->get($attribute->key, $attribute->default);
-        }
     }
+
+    /**
+     * Разрешаем значение конфигурации.
+     *
+     * @param  self  $attribute
+     * @param  \Illuminate\Contracts\Container\Container  $container
+     * @return mixed
+     */
+    public static function resolve(self $attribute, Container $container)
+    {
+        return $container->make('config')->get($attribute->key, $attribute->default);
+    }
+}
+```
 
 <a name="binding-primitives"></a>
 ### Связывание примитивов
@@ -333,8 +335,8 @@ Route::get('/user', function (#[CurrentUser] User $user) {
     use App\Http\Controllers\UserController;
 
     $this->app->when(UserController::class)
-              ->needs('$variableName')
-              ->give($value);
+        ->needs('$variableName')
+        ->give($value);
 
 Иногда класс может зависеть от массива экземпляров, объединенных [меткой](#tagging). Используя метод `giveTagged`, вы можете легко их внедрить:
 
@@ -381,24 +383,24 @@ Route::get('/user', function (#[CurrentUser] User $user) {
 Используя контекстную привязку, вы можете внедрить такую зависимость, используя метод `give` с замыканием, которое возвращает массив внедряемых экземпляров `Filter`:
 
     $this->app->when(Firewall::class)
-              ->needs(Filter::class)
-              ->give(function (Application $app) {
-                    return [
-                        $app->make(NullFilter::class),
-                        $app->make(ProfanityFilter::class),
-                        $app->make(TooLongFilter::class),
-                    ];
-              });
+        ->needs(Filter::class)
+        ->give(function (Application $app) {
+            return [
+                $app->make(NullFilter::class),
+                $app->make(ProfanityFilter::class),
+                $app->make(TooLongFilter::class),
+            ];
+        });
 
 Для удобства вы также можете просто передать массив имен классов, которые будут предоставлены контейнером всякий раз, когда для `Firewall` нужны экземпляры `Filter`:
 
     $this->app->when(Firewall::class)
-              ->needs(Filter::class)
-              ->give([
-                  NullFilter::class,
-                  ProfanityFilter::class,
-                  TooLongFilter::class,
-              ]);
+        ->needs(Filter::class)
+        ->give([
+            NullFilter::class,
+            ProfanityFilter::class,
+            TooLongFilter::class,
+        ]);
 
 <a name="variadic-tag-dependencies"></a>
 #### Метки вариативных зависимостей
