@@ -1,5 +1,5 @@
 ---
-git: 1a3d112255c8d0da2cbc10ebe581deebdd172ae2
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Фасады (Facades)
@@ -70,8 +70,8 @@ use Illuminate\Support\Facades\Cache;
 
 test('basic example', function () {
     Cache::shouldReceive('get')
-         ->with('key')
-         ->andReturn('value');
+        ->with('key')
+        ->andReturn('value');
 
     $response = $this->get('/cache');
 
@@ -88,8 +88,8 @@ use Illuminate\Support\Facades\Cache;
 public function test_basic_example(): void
 {
     Cache::shouldReceive('get')
-         ->with('key')
-         ->andReturn('value');
+        ->with('key')
+        ->andReturn('value');
 
     $response = $this->get('/cache');
 
@@ -122,8 +122,8 @@ public function test_basic_example(): void
     public function test_basic_example(): void
     {
         Cache::shouldReceive('get')
-             ->with('key')
-             ->andReturn('value');
+            ->with('key')
+            ->andReturn('value');
 
         $response = $this->get('/cache');
 
