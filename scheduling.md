@@ -1,5 +1,5 @@
 ---
-git: ace0221459d884e41a90aa4c3a23cff35248a5d4
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Планирование задач
@@ -160,10 +160,10 @@ php artisan schedule:list
 
     // Запускаем по будням ежечасно с 8 утра до 5 вечера...
     Schedule::command('foo')
-              ->weekdays()
-              ->hourly()
-              ->timezone('America/Chicago')
-              ->between('8:00', '17:00');
+        ->weekdays()
+        ->hourly()
+        ->timezone('America/Chicago')
+        ->between('8:00', '17:00');
 
 Список дополнительных ограничений расписания можно найти ниже:
 
@@ -196,8 +196,8 @@ php artisan schedule:list
     use Illuminate\Support\Facades\Schedule;
 
     Schedule::command('emails:send')
-                    ->hourly()
-                    ->days([0, 3]);
+        ->hourly()
+        ->days([0, 3]);
 
 В качестве альтернативы вы можете использовать константы, доступные в классе `Illuminate\Console\Scheduling\Schedule`, при указании дней, в которые должна выполняться задача:
 
@@ -205,8 +205,8 @@ php artisan schedule:list
     use Illuminate\Console\Scheduling\Schedule;
 
     Facades\Schedule::command('emails:send')
-                    ->hourly()
-                    ->days([Schedule::SUNDAY, Schedule::WEDNESDAY]);
+        ->hourly()
+        ->days([Schedule::SUNDAY, Schedule::WEDNESDAY]);
 
 <a name="between-time-constraints"></a>
 #### Ограничения с временными интервалами
@@ -214,14 +214,14 @@ php artisan schedule:list
 Метод `between` может использоваться для ограничения выполнения задачи в зависимости от времени суток:
 
     Schedule::command('emails:send')
-                        ->hourly()
-                        ->between('7:00', '22:00');
+        ->hourly()
+        ->between('7:00', '22:00');
 
 Точно так же метод `unlessBetween` может использоваться для исключения определенных периодов времени выполнения задачи:
 
     Schedule::command('emails:send')
-                        ->hourly()
-                        ->unlessBetween('23:00', '4:00');
+        ->hourly()
+        ->unlessBetween('23:00', '4:00');
 
 <a name="truth-test-constraints"></a>
 #### Условные ограничения
@@ -246,8 +246,8 @@ php artisan schedule:list
 Метод `environment` может использоваться для выполнения задач только в указанных окружениях, согласно определению [переменной `APP_ENV` окружения](/docs/{{version}}/configuration#environment-configuration):
 
     Schedule::command('emails:send')
-                ->daily()
-                ->environments(['staging', 'production']);
+        ->daily()
+        ->environments(['staging', 'production']);
 
 <a name="timezones"></a>
 ### Часовые пояса
@@ -257,12 +257,12 @@ php artisan schedule:list
     use Illuminate\Support\Facades\Schedule;
 
     Schedule::command('report:generate')
-             ->timezone('America/New_York')
-             ->at('2:00')
+        ->timezone('America/New_York')
+        ->at('2:00')
 
 Если вы постоянно назначаете один и тот же часовой пояс для всех запланированных задач, то вы можете указать, какой часовой пояс должен быть назначен всем расписаниям, определив параметр `schedule_timezone` в файле конфигурации `app` вашего приложения:
 
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => 'UTC',
 
     'schedule_timezone' => 'America/Chicago',
 
@@ -299,9 +299,9 @@ php artisan schedule:list
     use Illuminate\Support\Facades\Schedule;
 
     Schedule::command('report:generate')
-                    ->fridays()
-                    ->at('17:00')
-                    ->onOneServer();
+        ->fridays()
+        ->at('17:00')
+        ->onOneServer();
 
 <a name="naming-unique-jobs"></a>
 #### Именование заданий одного сервера
@@ -310,14 +310,14 @@ php artisan schedule:list
 
 ```php
 Schedule::job(new CheckUptime('https://laravel.com'))
-            ->name('check_uptime:laravel.com')
-            ->everyFiveMinutes()
-            ->onOneServer();
+    ->name('check_uptime:laravel.com')
+    ->everyFiveMinutes()
+    ->onOneServer();
 
 Schedule::job(new CheckUptime('https://vapor.laravel.com'))
-            ->name('check_uptime:vapor.laravel.com')
-            ->everyFiveMinutes()
-            ->onOneServer();
+    ->name('check_uptime:vapor.laravel.com')
+    ->everyFiveMinutes()
+    ->onOneServer();
 ```
 
 Аналогично, для запланированных замыканий также необходимо присвоить имя, если они должны выполняться на одном сервере:
@@ -337,8 +337,8 @@ Schedule::call(fn () => User::resetApiRequestCount())
     use Illuminate\Support\Facades\Schedule;
 
     Schedule::command('analytics:report')
-             ->daily()
-             ->runInBackground();
+        ->daily()
+        ->runInBackground();
 
 > [!WARNING]
 > Метод `runInBackground` может использоваться только при планировании задач с помощью методов `command` и `exec`.
@@ -429,27 +429,27 @@ php artisan schedule:work
     use Illuminate\Support\Facades\Schedule;
 
     Schedule::command('emails:send')
-             ->daily()
-             ->sendOutputTo($filePath);
+        ->daily()
+        ->sendOutputTo($filePath);
 
 Если вы хотите добавить результат в указанный файл, то используйте метод `appendOutputTo`:
 
     Schedule::command('emails:send')
-             ->daily()
-             ->appendOutputTo($filePath);
+        ->daily()
+        ->appendOutputTo($filePath);
 
 Используя метод `emailOutputTo`, вы можете отправить результат по электронной почте на любой адрес. Перед отправкой результатов выполнения задачи по электронной почте вам следует настроить [почтовые службы](/docs/{{version}}/mail) Laravel:
 
     Schedule::command('report:generate')
-             ->daily()
-             ->sendOutputTo($filePath)
-             ->emailOutputTo('taylor@example.com');
+        ->daily()
+        ->sendOutputTo($filePath)
+        ->emailOutputTo('taylor@example.com');
 
 Если вы хотите отправить результат по электронной почте только в том случае, если запланированная (Artisan или системная) команда завершается ненулевым кодом возврата, используйте метод `emailOutputOnFailure`:
 
     Schedule::command('report:generate')
-             ->daily()
-             ->emailOutputOnFailure('taylor@example.com');
+        ->daily()
+        ->emailOutputOnFailure('taylor@example.com');
 
 > [!WARNING]
 > Методы `emailOutputTo`, `emailOutputOnFailure`, `sendOutputTo`, and `appendOutputTo` могут использоваться только при планировании задач с помощью методов `command` и `exec`.
@@ -462,37 +462,37 @@ php artisan schedule:work
     use Illuminate\Support\Facades\Schedule;
 
     Schedule::command('emails:send')
-             ->daily()
-             ->before(function () {
-                 // Задача готова к выполнению...
-             })
-             ->after(function () {
-                 // Задача выполнена...
-             });
+    ->daily()
+    ->before(function () {
+        // Задача готова к выполнению...
+    })
+    ->after(function () {
+        // Задача выполнена...
+    });
 
 Методы `onSuccess` и `onFailure` позволяют указать замыкания, которые будут выполняться в случае успешного или неудачного выполнения запланированной задачи. Ошибка означает, что запланированная (Artisan или системная) команда завершилась ненулевым кодом возврата:
 
     Schedule::command('emails:send')
-             ->daily()
-             ->onSuccess(function () {
-                 // Задача успешно выполнена...
-             })
-             ->onFailure(function () {
-                 // Не удалось выполнить задачу...
-             });
+        ->daily()
+        ->onSuccess(function () {
+            // Задача успешно выполнена...
+        })
+        ->onFailure(function () {
+            // Не удалось выполнить задачу...
+        });
 
 Если из вашей команды доступен вывод результата, то вы можете получить к нему доступ в ваших хуках `after`, `onSuccess` или `onFailure`, указав тип экземпляра `Illuminate\Support\Stringable` в качестве аргумента `$output` замыкания при определении вашего хука:
 
     use Illuminate\Support\Stringable;
 
     Schedule::command('emails:send')
-             ->daily()
-             ->onSuccess(function (Stringable $output) {
-                 // Задача успешно выполнена...
-             })
-             ->onFailure(function (Stringable $output) {
-                 // Не удалось выполнить задачу...
-             });
+        ->daily()
+        ->onSuccess(function (Stringable $output) {
+            // Задача успешно выполнена...
+        })
+        ->onFailure(function (Stringable $output) {
+            // Не удалось выполнить задачу...
+        });
 
 <a name="pinging-urls"></a>
 #### Пингование URL-адресов
@@ -500,28 +500,28 @@ php artisan schedule:work
 Используя методы `pingBefore` и `thenPing`, планировщик может автоматически пинговать по-указанному URL до или после выполнения задачи. Этот метод полезен для уведомления внешней службы, такой как [Envoyer](https://envoyer.io), о том, что ваша запланированная задача запущена или завершена:
 
     Schedule::command('emails:send')
-             ->daily()
-             ->pingBefore($url)
-             ->thenPing($url);
+        ->daily()
+        ->pingBefore($url)
+        ->thenPing($url);
 
 Методы `pingOnSuccess` и `pingOnFailure` можно использовать для проверки связи с заданным URL-адресом только в случае успешного или неудачного выполнения задачи. Сбой означает, что запланированная Artisan или системная команда завершилась с ненулевым кодом выхода:
 
     Schedule::command('emails:send')
-             ->daily()
-             ->pingOnSuccess($successUrl)
-             ->pingOnFailure($failureUrl);
+        ->daily()
+        ->pingOnSuccess($successUrl)
+        ->pingOnFailure($failureUrl);
 
 Методы `pingBeforeIf`, `thenPingIf`, `pingOnSuccessIf` и `pingOnFailureIf` могут использоваться для проверки связи с заданным URL-адресом только в том случае, если заданное условие `true`:
 
     Schedule::command('emails:send')
-             ->daily()
-             ->pingBeforeIf($condition, $url)
-             ->thenPingIf($condition, $url);             
+        ->daily()
+        ->pingBeforeIf($condition, $url)
+        ->thenPingIf($condition, $url);             
 
     Schedule::command('emails:send')
-             ->daily()
-             ->pingOnSuccessIf($condition, $successUrl)
-             ->pingOnFailureIf($condition, $failureUrl);
+        ->daily()
+        ->pingOnSuccessIf($condition, $successUrl)
+        ->pingOnFailureIf($condition, $failureUrl);
 
 <a name="events"></a>
 ## События
