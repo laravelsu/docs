@@ -1,5 +1,5 @@
 ---
-git: 3a2fa3ea59532f3239ae737ae78d0ffd1922c4c8
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Eloquent · Ресурсы API (Resource)
@@ -730,9 +730,9 @@ php artisan make:resource UserCollection
 Вы также можете добавить данные верхнего уровня при создании экземпляров ресурсов в своем маршруте или контроллере. Метод `additional`, доступный для всех ресурсов, принимает массив данных, которые должны быть добавлены в ответ ресурса:
 
     return (new UserCollection(User::all()->load('roles')))
-                    ->additional(['meta' => [
-                        'key' => 'value',
-                    ]]);
+        ->additional(['meta' => [
+            'key' => 'value',
+        ]]);
 
 <a name="resource-responses"></a>
 ## Ответы ресурса
@@ -753,8 +753,8 @@ php artisan make:resource UserCollection
 
     Route::get('/user', function () {
         return (new UserResource(User::find(1)))
-                    ->response()
-                    ->header('X-Value', 'True');
+            ->response()
+            ->header('X-Value', 'True');
     });
 
 В качестве альтернативы вы можете определить метод `withResponse` внутри самого ресурса. Этот метод будет вызываться, только когда ресурс будет возвращен как самый верхний ресурс в ответе:
