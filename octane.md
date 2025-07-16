@@ -1,5 +1,5 @@
 ---
-git: 0fb74b53ead24933cdc2024aa979675b45e6e821
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Laravel Octane
@@ -569,15 +569,15 @@ php artisan octane:start --workers=4 --task-workers=6
 
 ```php
 Octane::tick('simple-ticker', fn () => ray('Ticking...'))
-        ->seconds(10);
+    ->seconds(10);
 ```
 
 Используя метод `immediate`, вы можете указать Octane немедленно вызывать обратный вызов тика при первоначальной загрузке сервера Octane и каждые N секунд после этого:
 
 ```php
 Octane::tick('simple-ticker', fn () => ray('Ticking...'))
-        ->seconds(10)
-        ->immediate();
+    ->seconds(10)
+    ->immediate();
 ```
 
 <a name="the-octane-cache"></a>
