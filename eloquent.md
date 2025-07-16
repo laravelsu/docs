@@ -1,5 +1,5 @@
 ---
-git: d973103c480300debe835bf11748435e5af58bfb
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Eloquent · Начало работы
@@ -368,9 +368,9 @@ Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
 Метод Eloquent `all` вернет все результаты из таблицы модели. Однако, поскольку каждая модель Eloquent служит [построителем запросов](/docs/{{version}}/queries), вы можете добавить дополнительные условия к запросам, а затем вызвать метод `get` для получения результатов:
 
     $flights = Flight::where('active', 1)
-                   ->orderBy('name')
-                   ->take(10)
-                   ->get();
+        ->orderBy('name')
+        ->take(10)
+        ->get();
 
 > [!NOTE]
 > Поскольку модель Eloquent является построителем запросов, вам следует просмотреть все методы, предлагаемые [построителем запросов](/docs/{{version}}/queries). Вы можете использовать любой из этих методов при написании запросов Eloquent.
@@ -710,8 +710,8 @@ Eloquent также предлагает поддержку расширенны
 Обновления также могут выполняться для моделей, соответствующих указанному запросу. В этом примере все рейсы, которые активны и имеют пункт назначения в Сан-Диего, будут помечены как задержанные:
 
     Flight::where('active', 1)
-          ->where('destination', 'San Diego')
-          ->update(['delayed' => 1]);
+        ->where('destination', 'San Diego')
+        ->update(['delayed' => 1]);
 
 Метод `update` ожидает массив пар ключей и значений, представляющих столбцы, которые должны быть обновлены. Метод `update` возвращает количество затронутых строк.
 
@@ -889,10 +889,6 @@ Eloquent содержит методы `isDirty`, `isClean` и `wasChanged` дл
 
     $flight->delete();
 
-Вы можете вызвать метод `truncate`, чтобы удалить все записи базы данных, связанные с моделью. Операция `truncate` также сбрасывает все автоинкрементные идентификаторы в связанной с моделью таблице:
-
-    Flight::truncate();
-
 <a name="deleting-an-existing-model-by-its-primary-key"></a>
 #### Удаление существующей модели по ее первичному ключу
 
@@ -919,6 +915,10 @@ Eloquent содержит методы `isDirty`, `isClean` и `wasChanged` дл
 Конечно, вы можете создать запрос Eloquent для удаления всех моделей, соответствующих условиям запроса. В этом примере мы удалим все рейсы, помеченные как неактивные. Как и массовые обновления, массовые удаления не вызывают никаких событий модели для удаляемых моделей:
 
     $deleted = Flight::where('active', 0)->delete();
+
+Чтобы удалить все модели в таблице, необходимо выполнить запрос без добавления каких-либо условий:
+
+    $deleted = Flight::query()->delete();
 
 > [!WARNING]
 > События модели Eloquent `deleting`, и `deleted` при массовом удалении не будут инициированы для удаленных моделей. Это связано с тем, что модели фактически не извлекаются при выполнении оператора `delete`.
@@ -1003,8 +1003,8 @@ Eloquent содержит методы `isDirty`, `isClean` и `wasChanged` дл
     use App\Models\Flight;
 
     $flights = Flight::withTrashed()
-                    ->where('account_id', 1)
-                    ->get();
+        ->where('account_id', 1)
+        ->get();
 
 Метод `withTrashed` также используется в запросе, использующем [отношения](/docs/{{version}}/eloquent-relationships):
 
@@ -1016,8 +1016,8 @@ Eloquent содержит методы `isDirty`, `isClean` и `wasChanged` дл
 Метод `onlyTrashed` будет извлекать **только** программно удаленные модели:
 
     $flights = Flight::onlyTrashed()
-                    ->where('airline_id', 1)
-                    ->get();
+        ->where('airline_id', 1)
+        ->get();
 
 <a name="pruning-models"></a>
 ## Периодическое удаление (pruning) старых записей
@@ -1355,6 +1355,37 @@ Eloquent также позволяет вам определять глобал�
 После того как ожидаемые аргументы были добавлены в сигнатуру метода диапазона, вы можете передать аргументы при вызове диапазона:
 
     $users = User::ofType('admin')->get();
+
+<a name="pending-attributes"></a>
+### Ожидаемые атрибуты
+
+Если вы хотите использовать диапазоны для создания моделей, имеющих те же атрибуты, что и те, которые используются для ограничения диапазона, вы можете использовать метод `withAttributes` при построении запроса диапазона:
+
+    <?php
+
+    namespace App\Models;
+
+    use Illuminate\Database\Eloquent\Builder;
+    use Illuminate\Database\Eloquent\Model;
+
+    class Post extends Model
+    {
+        /**
+         * Scope the query to only include drafts.
+         */
+        public function scopeDraft(Builder $query): void
+        {
+            $query->withAttributes([
+                'hidden' => true,
+            ]);
+        }
+    }
+
+Метод `withAttributes` добавит условия `where` к запросу, используя заданные атрибуты, а также добавит заданные атрибуты к любым моделям, созданным с помощью диапазона:
+
+    $draft = Post::draft()->create(['title' => 'In Progress']);
+
+    $draft->hidden; // true
 
 <a name="comparing-models"></a>
 ## Сравнение моделей
