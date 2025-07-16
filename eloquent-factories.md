@@ -1,5 +1,5 @@
 ---
-git: dc8015a44281e30a45bd98de4a5830b56d002392
+git: 490a49880947432a645dc53cd5613683996ef7f0
 ---
 
 # Eloquent: Фабрики (Factory)
@@ -254,12 +254,12 @@ php artisan make:factory PostFactory
     use Illuminate\Database\Eloquent\Factories\Sequence;
 
     $users = User::factory()
-                    ->count(10)
-                    ->state(new Sequence(
-                        ['admin' => 'Y'],
-                        ['admin' => 'N'],
-                    ))
-                    ->create();
+        ->count(10)
+        ->state(new Sequence(
+            ['admin' => 'Y'],
+            ['admin' => 'N'],
+        ))
+        ->create();
 
 В этом примере пять пользователей будут созданы со значением `admin`, равным `Y`, и пять пользователей – со значением `admin`, равным `N`.
 
@@ -268,28 +268,28 @@ php artisan make:factory PostFactory
     use Illuminate\Database\Eloquent\Factories\Sequence;
 
     $users = User::factory()
-                    ->count(10)
-                    ->state(new Sequence(
-                        fn (Sequence $sequence) => ['role' => UserRoles::all()->random()],
-                    ))
-                    ->create();
+        ->count(10)
+        ->state(new Sequence(
+            fn (Sequence $sequence) => ['role' => UserRoles::all()->random()],
+        ))
+        ->create();
 
 Внутри замыкания последовательности вы можете получить доступ к свойствам `$index` или `$count` экземпляра последовательности, который вводится в замыкание. Свойство `$index` содержит номер текущей итерации, а свойство `$count` - общее количество итераций:
 
     $users = User::factory()
-                    ->count(10)
-                    ->sequence(fn (Sequence $sequence) => ['name' => 'Name '.$sequence->index])
-                    ->create();
+        ->count(10)
+        ->sequence(fn (Sequence $sequence) => ['name' => 'Name '.$sequence->index])
+        ->create();
 
 Для удобства последовательности также можно применять с использованием метода `sequence`, который внутренне просто вызывает метод `state`. Метод `sequence` принимает замыкание или массивы атрибутов для последовательности:
 
     $users = User::factory()
-                    ->count(2)
-                    ->sequence(
-                        ['name' => 'First User'],
-                        ['name' => 'Second User'],
-                    )
-                    ->create();
+        ->count(2)
+        ->sequence(
+            ['name' => 'First User'],
+            ['name' => 'Second User'],
+        )
+        ->create();
 
 <a name="factory-relationships"></a>
 ## Отношения
@@ -303,26 +303,26 @@ php artisan make:factory PostFactory
     use App\Models\User;
 
     $user = User::factory()
-                ->has(Post::factory()->count(3))
-                ->create();
+        ->has(Post::factory()->count(3))
+        ->create();
 
 По соглашению, при передаче модели `Post` методу `has`, Laravel будет предполагать, что модель `User` должна иметь метод `posts`, который определяет отношения. При необходимости вы можете явно указать имя отношения, которым вы хотите управлять:
 
     $user = User::factory()
-                ->has(Post::factory()->count(3), 'posts')
-                ->create();
+        ->has(Post::factory()->count(3), 'posts')
+        ->create();
 
 Конечно, вы можете выполнять манипуляции с состоянием связанных моделей. Кроме того, вы можете преобразовать состояние связанной модели с помощью замыкания, предоставив ему доступ к родительской модели:
 
     $user = User::factory()
-                ->has(
-                    Post::factory()
-                            ->count(3)
-                            ->state(function (array $attributes, User $user) {
-                                return ['user_type' => $user->type];
-                            })
-                )
-                ->create();
+        ->has(
+            Post::factory()
+                    ->count(3)
+                    ->state(function (array $attributes, User $user) {
+                        return ['user_type' => $user->type];
+                    })
+        )
+        ->create();
 
 <a name="has-many-relationships-using-magic-methods"></a>
 #### Использование магических методов Has Many
@@ -330,24 +330,24 @@ php artisan make:factory PostFactory
 Для удобства вы можете использовать магические методы отношений фабрики Laravel для построения отношений. Например, в следующем примере будет использоваться соглашение, определяющее, что связанные модели должны быть созданы с помощью метода отношений `posts` модели `User`:
 
     $user = User::factory()
-                ->hasPosts(3)
-                ->create();
+        ->hasPosts(3)
+        ->create();
 
 При использовании магических методов для создания отношений фабрики вы можете передать массив атрибутов для их переопределения в связанных моделях:
 
     $user = User::factory()
-                ->hasPosts(3, [
-                    'published' => false,
-                ])
-                ->create();
+        ->hasPosts(3, [
+            'published' => false,
+        ])
+        ->create();
 
 Вы можете преобразовать состояние связанной модели с помощью замыкания, предоставив ему доступ к родительской модели:
 
     $user = User::factory()
-                ->hasPosts(3, function (array $attributes, User $user) {
-                    return ['user_type' => $user->type];
-                })
-                ->create();
+        ->hasPosts(3, function (array $attributes, User $user) {
+            return ['user_type' => $user->type];
+        })
+        ->create();
 
 <a name="belongs-to-relationships"></a>
 ### Отношения Belongs To
@@ -358,20 +358,20 @@ php artisan make:factory PostFactory
     use App\Models\User;
 
     $posts = Post::factory()
-                ->count(3)
-                ->for(User::factory()->state([
-                    'name' => 'Jessica Archer',
-                ]))
-                ->create();
+        ->count(3)
+        ->for(User::factory()->state([
+            'name' => 'Jessica Archer',
+        ]))
+        ->create();
 
 Если у вас уже есть экземпляр родительской модели, который должен быть связан с создаваемыми вами моделями, вы можете передать экземпляр модели методу `for`:
 
     $user = User::factory()->create();
 
     $posts = Post::factory()
-                ->count(3)
-                ->for($user)
-                ->create();
+        ->count(3)
+        ->for($user)
+        ->create();
 
 <a name="belongs-to-relationships-using-magic-methods"></a>
 #### Использование магических методов Belongs To
@@ -379,11 +379,11 @@ php artisan make:factory PostFactory
 Для удобства вы можете использовать магические методы отношений фабрики Laravel для построения отношений Belongs To. Например, в следующем примере будет использоваться соглашение, чтобы определить, что три поста должны принадлежать отношениям `user` в модели `Post`:
 
     $posts = Post::factory()
-                ->count(3)
-                ->forUser([
-                    'name' => 'Jessica Archer',
-                ])
-                ->create();
+        ->count(3)
+        ->forUser([
+            'name' => 'Jessica Archer',
+        ])
+        ->create();
 
 <a name="many-to-many-relationships"></a>
 ### Отношения Many To Many
@@ -394,8 +394,8 @@ php artisan make:factory PostFactory
     use App\Models\User;
 
     $user = User::factory()
-                ->has(Role::factory()->count(3))
-                ->create();
+        ->has(Role::factory()->count(3))
+        ->create();
 
 <a name="pivot-table-attributes"></a>
 #### Атрибуты сводной таблицы
@@ -406,33 +406,33 @@ php artisan make:factory PostFactory
     use App\Models\User;
 
     $user = User::factory()
-                ->hasAttached(
-                    Role::factory()->count(3),
-                    ['active' => true]
-                )
-                ->create();
+        ->hasAttached(
+            Role::factory()->count(3),
+            ['active' => true]
+        )
+        ->create();
 
 Вы можете преобразовать состояние связанной модели с помощью замыкания, предоставив ему доступ к родительской модели:
 
     $user = User::factory()
-                ->hasAttached(
-                    Role::factory()
-                        ->count(3)
-                        ->state(function (array $attributes, User $user) {
-                            return ['name' => $user->name.' Role'];
-                        }),
-                    ['active' => true]
-                )
-                ->create();
+        ->hasAttached(
+            Role::factory()
+                ->count(3)
+                ->state(function (array $attributes, User $user) {
+                    return ['name' => $user->name.' Role'];
+                }),
+            ['active' => true]
+        )
+        ->create();
 
 Если у вас уже есть экземпляры модели, которые вы хотите прикрепить к создаваемым моделям, вы можете передать экземпляры модели методу `hasAttached`. В этом примере всем трем пользователям будут назначены одни и те же три роли:
 
     $roles = Role::factory()->count(3)->create();
 
     $user = User::factory()
-                ->count(3)
-                ->hasAttached($roles, ['active' => true])
-                ->create();
+        ->count(3)
+        ->hasAttached($roles, ['active' => true])
+        ->create();
 
 <a name="many-to-many-relationships-using-magic-methods"></a>
 #### Использование магических методов Many To Many
@@ -440,10 +440,10 @@ php artisan make:factory PostFactory
 Для удобства вы можете использовать магические методы отношений фабрики Laravel для построения отношений Many To Many. Например, в следующем примере будет использоваться соглашение, чтобы определить, что связанные модели должны быть созданы с помощью метода отношений `roles` модели `User`:
 
     $user = User::factory()
-                ->hasRoles(1, [
-                    'name' => 'Editor'
-                ])
-                ->create();
+        ->hasRoles(1, [
+            'name' => 'Editor'
+        ])
+        ->create();
 
 <a name="polymorphic-relationships"></a>
 ### Полиморфные отношения
@@ -472,17 +472,17 @@ php artisan make:factory PostFactory
     use App\Models\Video;
 
     $videos = Video::factory()
-                ->hasAttached(
-                    Tag::factory()->count(3),
-                    ['public' => true]
-                )
-                ->create();
+        ->hasAttached(
+            Tag::factory()->count(3),
+            ['public' => true]
+        )
+        ->create();
 
 Конечно, магический метод `has` также используется для создания полиморфных отношений Many To Many:
 
     $videos = Video::factory()
-                ->hasTags(3, ['public' => true])
-                ->create();
+        ->hasTags(3, ['public' => true])
+        ->create();
 
 <a name="defining-relationships-within-factories"></a>
 ### Определение отношений внутри фабрик
