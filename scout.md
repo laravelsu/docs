@@ -1,5 +1,5 @@
 ---
-git: 34ce2334289e77fb46bbf05f7089852d39217e40
+git: a03b68d4a9fa901420016c9ec67053ba44de47bc
 ---
 
 # Laravel Scout
@@ -254,6 +254,49 @@ Todo::search('Groceries')->options([
             'price' => (float) $this->price,
         ];
     }
+
+<a name="configuring-indexes-for-algolia"></a>
+#### Настройка параметров индекса (Algolia)
+
+Иногда может потребоваться настроить дополнительные параметры индексов Algolia. Хотя управлять этими параметрами можно через пользовательский интерфейс Algolia, иногда эффективнее управлять желаемым состоянием конфигурации индекса непосредственно из конфигурационного файла `config/scout.php` вашего приложения.
+
+Такой подход позволяет развернуть эти настройки через автоматизированный конвейер развёртывания вашего приложения, избегая ручной настройки и обеспечивая согласованность в различных средах. Вы можете настроить фильтруемые атрибуты, ранжирование, фасетирование и [любые другие поддерживаемые параметры](https://www.algolia.com/doc/rest-api/search/#tag/Indices/operation/setSettings).
+
+Для начала добавьте настройки для каждого индекса в файл конфигурации `config/scout.php` вашего приложения:
+
+```php
+use App\Models\User;
+use App\Models\Flight;
+
+'algolia' => [
+    'id' => env('ALGOLIA_APP_ID', ''),
+    'secret' => env('ALGOLIA_SECRET', ''),
+    'index-settings' => [
+        User::class => [
+            'searchableAttributes' => ['id', 'name', 'email'],
+            'attributesForFaceting'=> ['filterOnly(email)'],
+            // Other settings fields...
+        ],
+        Flight::class => [
+            'searchableAttributes'=> ['id', 'destination'],
+        ],
+    ],
+],
+```
+
+Если модель, лежащая в основе индекса, допускает обратимое удаление и включена в массив `index-settings`, Scout автоматически включит поддержку фасетирования для моделей с обратимым удалением в этом индексе. Если у вас нет других атрибутов фасетирования для индекса модели с обратимым удалением, вы можете просто добавить пустую запись в массив `index-settings` для этой модели:
+
+```php
+'index-settings' => [
+    Flight::class => []
+],
+```
+
+После настройки параметров индекса приложения необходимо вызвать Artisan-команду `scout:sync-index-settings`. Эта команда сообщит Algolia о текущих настройках индекса. Для удобства вы можете включить эту команду в процесс развёртывания:
+
+```shell
+php artisan scout:sync-index-settings
+```
 
 <a name="configuring-filterable-data-for-meilisearch"></a>
 #### Настройка фильтруемых данных и параметров индекса (Meilisearch)
