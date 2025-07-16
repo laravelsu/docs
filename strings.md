@@ -1,5 +1,5 @@
 ---
-git: 06bc7bd2acc706e564254994b1d3ed7baad8f5f2
+git: 40c254f33b0bcb4a58e60af7ba9171167baa2440
 ---
 
 # Строки
@@ -2848,9 +2848,9 @@ $repeated = Str::of('a')->repeat(5);
     use Illuminate\Support\Stringable;
 
     $string = Str::of('Taylor')
-                    ->when(true, function (Stringable $string) {
-                        return $string->append(' Otwell');
-                    });
+        ->when(true, function (Stringable $string) {
+            return $string->append(' Otwell');
+        });
 
     // 'Taylor Otwell'
 
@@ -2865,9 +2865,9 @@ $repeated = Str::of('a')->repeat(5);
     use Illuminate\Support\Stringable;
 
     $string = Str::of('tony stark')
-                ->whenContains('tony', function (Stringable $string) {
-                    return $string->title();
-                });
+        ->whenContains('tony', function (Stringable $string) {
+            return $string->title();
+        });
 
     // 'Tony Stark'
 
@@ -2879,9 +2879,9 @@ $repeated = Str::of('a')->repeat(5);
     use Illuminate\Support\Stringable;
 
     $string = Str::of('tony stark')
-                ->whenContains(['tony', 'hulk'], function (Stringable $string) {
-                    return $string->title();
-                });
+        ->whenContains(['tony', 'hulk'], function (Stringable $string) {
+            return $string->title();
+        });
 
     // Tony Stark
 
@@ -2894,9 +2894,9 @@ $repeated = Str::of('a')->repeat(5);
     use Illuminate\Support\Stringable;
 
     $string = Str::of('tony stark')
-                    ->whenContainsAll(['tony', 'stark'], function (Stringable $string) {
-                        return $string->title();
-                    });
+        ->whenContainsAll(['tony', 'stark'], function (Stringable $string) {
+            return $string->title();
+        });
 
     // 'Tony Stark'
 
@@ -3088,6 +3088,6 @@ Str::of('Hello, world!')->wordCount(); // 2
 
     // "Laravel"
 
-    Str::is('is')->wrap(before: 'This ', after: ' Laravel!');
+    Str::of('is')->wrap(before: 'This ', after: ' Laravel!');
 
     // This is Laravel!
