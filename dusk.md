@@ -1,5 +1,5 @@
 ---
-git: 131983e0a57076fc769cc402876338704aa5810a
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Laravel Dusk
@@ -304,10 +304,10 @@ test('basic example', function () {
 
     $this->browse(function (Browser $browser) use ($user) {
         $browser->visit('/login')
-                ->type('email', $user->email)
-                ->type('password', 'password')
-                ->press('Login')
-                ->assertPathIs('/home');
+            ->type('email', $user->email)
+            ->type('password', 'password')
+            ->press('Login')
+            ->assertPathIs('/home');
     });
 });
 ```
@@ -337,10 +337,10 @@ class ExampleTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/login')
-                    ->type('email', $user->email)
-                    ->type('password', 'password')
-                    ->press('Login')
-                    ->assertPathIs('/home');
+                ->type('email', $user->email)
+                ->type('password', 'password')
+                ->press('Login')
+                ->assertPathIs('/home');
         });
     }
 }
@@ -355,17 +355,17 @@ class ExampleTest extends DuskTestCase
 
     $this->browse(function (Browser $first, Browser $second) {
         $first->loginAs(User::find(1))
-              ->visit('/home')
-              ->waitForText('Message');
+            ->visit('/home')
+            ->waitForText('Message');
 
         $second->loginAs(User::find(2))
-               ->visit('/home')
-               ->waitForText('Message')
-               ->type('message', 'Hey Taylor')
-               ->press('Send');
+            ->visit('/home')
+            ->waitForText('Message')
+            ->type('message', 'Hey Taylor')
+            ->press('Send');
 
         $first->waitForText('Hey Taylor')
-              ->assertSee('Jeffrey Way');
+            ->assertSee('Jeffrey Way');
     });
 
 <a name="navigation"></a>
@@ -443,8 +443,8 @@ class ExampleTest extends DuskTestCase
 
     $this->browse(function (Browser $browser) use ($user) {
         $browser->visit('/pay')
-                ->scrollToElement('#credit-card-details')
-                ->assertSee('Enter Credit Card Details');
+            ->scrollToElement('#credit-card-details')
+            ->assertSee('Enter Credit Card Details');
     });
 
 <a name="authentication"></a>
@@ -457,7 +457,7 @@ class ExampleTest extends DuskTestCase
 
     $this->browse(function (Browser $browser) {
         $browser->loginAs(User::find(1))
-              ->visit('/home');
+            ->visit('/home');
     });
 
 > [!WARNING]
@@ -604,7 +604,7 @@ Dusk содержит множество методов для взаимоде�
 Чтобы добавить текст в поле, не очищая его содержимое, вы можете использовать метод `append`:
 
     $browser->type('tags', 'foo')
-            ->append('tags', ', bar, baz');
+        ->append('tags', ', bar, baz');
 
 Вы можете очистить значение поля с помощью метода `clear`:
 
@@ -619,7 +619,7 @@ Dusk содержит множество методов для взаимоде�
 Вы можете использовать метод `appendSlowly` для медленного добавления текста:
 
     $browser->type('tags', 'foo')
-            ->appendSlowly('tags', ', bar, baz');
+        ->appendSlowly('tags', ', bar, baz');
 
 <a name="dropdowns"></a>
 #### Выпадающие списки
@@ -804,8 +804,8 @@ Dusk также предоставляет метод `withKeyboard`, котор
     $browser->clickAndHold('.selector');
 
     $browser->clickAndHold()
-            ->pause(1000)
-            ->releaseMouse();
+        ->pause(1000)
+        ->releaseMouse();
 
 Метод `controlClick` может быть использован для симуляции события `ctrl+click` в браузере:
 
@@ -880,7 +880,7 @@ Dusk содержит различные методы для взаимодей�
 
     $browser->with('.table', function (Browser $table) {
         $table->assertSee('Hello World')
-              ->clickLink('Delete');
+            ->clickLink('Delete');
     });
 
 Иногда требуется выполнить утверждения за пределами текущей области. Вы можете использовать для этого методы `elsewhere` и `elsewhereWhenAvailable`:
@@ -967,7 +967,7 @@ Dusk содержит различные методы для взаимодей�
 
     $browser->whenAvailable('.modal', function (Browser $modal) {
         $modal->assertSee('Hello World')
-              ->press('OK');
+            ->press('OK');
     });
 
 <a name="waiting-for-text"></a>
@@ -1041,7 +1041,7 @@ Dusk содержит различные методы для взаимодей�
 Поскольку необходимость дождаться перезагрузки страницы обычно возникает после нажатия кнопки, вы можете использовать метод `clickAndWaitForReload` для удобства:
 
     $browser->clickAndWaitForReload('.selector')
-            ->assertSee('something');
+        ->assertSee('something');
 
 <a name="waiting-on-javascript-expressions"></a>
 #### Ожидание выражений JavaScript
@@ -1106,7 +1106,7 @@ Dusk содержит различные методы для взаимодей�
 Иногда вы не можете щелкнуть элемент, потому что он находится за пределами области просмотра браузера. Метод `scrollIntoView` будет прокручивать окно браузера до тех пор, пока элемент с указанным селектором не окажется видимым:
 
     $browser->scrollIntoView('.selector')
-            ->click('.selector');
+        ->click('.selector');
 
 <a name="available-assertions"></a>
 ## Доступные утверждения
@@ -1756,7 +1756,7 @@ Dusk даже позволяет вам делать утверждения о �
 test('vue', function () {
     $this->browse(function (Browser $browser) {
         $browser->visit('/')
-                ->assertVue('user.name', 'Taylor', '@profile-component');
+            ->assertVue('user.name', 'Taylor', '@profile-component');
     });
 });
 ```
@@ -1769,7 +1769,7 @@ public function test_vue(): void
 {
     $this->browse(function (Browser $browser) {
         $browser->visit('/')
-                ->assertVue('user.name', 'Taylor', '@profile-component');
+            ->assertVue('user.name', 'Taylor', '@profile-component');
     });
 }
 ```
@@ -1852,9 +1852,9 @@ public function test_vue(): void
     use Tests\Browser\Pages\CreatePlaylist;
 
     $browser->visit('/dashboard')
-            ->clickLink('Create Playlist')
-            ->on(new CreatePlaylist)
-            ->assertSee('@create');
+        ->clickLink('Create Playlist')
+        ->on(new CreatePlaylist)
+        ->assertSee('@create');
 
 <a name="shorthand-selectors"></a>
 ### Псевдонимы селекторов
@@ -1916,8 +1916,8 @@ public function test_vue(): void
         public function createPlaylist(Browser $browser, string $name): void
         {
             $browser->type('name', $name)
-                    ->check('share')
-                    ->press('Create Playlist');
+                ->check('share')
+                ->press('Create Playlist');
         }
     }
 
@@ -1926,8 +1926,8 @@ public function test_vue(): void
     use Tests\Browser\Pages\Dashboard;
 
     $browser->visit(new Dashboard)
-            ->createPlaylist('My Playlist')
-            ->assertSee('My Playlist');
+        ->createPlaylist('My Playlist')
+        ->assertSee('My Playlist');
 
 <a name="components"></a>
 ## Компоненты для тестов
@@ -1989,15 +1989,15 @@ public function test_vue(): void
         public function selectDate(Browser $browser, int $year, int $month, int $day): void
         {
             $browser->click('@date-field')
-                    ->within('@year-list', function (Browser $browser) use ($year) {
-                        $browser->click($year);
-                    })
-                    ->within('@month-list', function (Browser $browser) use ($month) {
-                        $browser->click($month);
-                    })
-                    ->within('@day-list', function (Browser $browser) use ($day) {
-                        $browser->click($day);
-                    });
+                ->within('@year-list', function (Browser $browser) use ($year) {
+                    $browser->click($year);
+                })
+                ->within('@month-list', function (Browser $browser) use ($month) {
+                    $browser->click($month);
+                })
+                ->within('@day-list', function (Browser $browser) use ($day) {
+                    $browser->click($day);
+                });
         }
     }
 
@@ -2018,10 +2018,10 @@ uses(DatabaseMigrations::class);
 test('basic example', function () {
     $this->browse(function (Browser $browser) {
         $browser->visit('/')
-                ->within(new DatePicker, function (Browser $browser) {
-                    $browser->selectDate(2019, 1, 30);
-                })
-                ->assertSee('January');
+            ->within(new DatePicker, function (Browser $browser) {
+                $browser->selectDate(2019, 1, 30);
+            })
+            ->assertSee('January');
     });
 });
 ```
@@ -2045,10 +2045,10 @@ class ExampleTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                    ->within(new DatePicker, function (Browser $browser) {
-                        $browser->selectDate(2019, 1, 30);
-                    })
-                    ->assertSee('January');
+                ->within(new DatePicker, function (Browser $browser) {
+                    $browser->selectDate(2019, 1, 30);
+                })
+                ->assertSee('January');
         });
     }
 }
