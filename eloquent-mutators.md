@@ -1,5 +1,5 @@
 ---
-git: 20492202acc86e4f234fa2320cb126f19493cbc6
+git: 0790883cb65b64c49bcdca57b5d114bf2ccb5abb
 ---
 
 # Eloquent · Мутаторы и типизация
@@ -502,7 +502,7 @@ Eloquent также позволяет вам преобразовывать з�
     $users = User::select([
         'users.*',
         'last_posted_at' => Post::selectRaw('MAX(created_at)')
-                ->whereColumn('user_id', 'users.id')
+            ->whereColumn('user_id', 'users.id')
     ])->get();
 
 Атрибут `last_posted_at` результатов этого запроса будет простой строкой. Было бы замечательно, если бы мы могли применить типизацию `datetime` этого атрибута при выполнении запроса. К счастью, мы можем добиться этого с помощью метода `withCasts`:
@@ -510,7 +510,7 @@ Eloquent также позволяет вам преобразовывать з�
     $users = User::select([
         'users.*',
         'last_posted_at' => Post::selectRaw('MAX(created_at)')
-                ->whereColumn('user_id', 'users.id')
+            ->whereColumn('user_id', 'users.id')
     ])->withCasts([
         'last_posted_at' => 'datetime'
     ])->get();
@@ -714,8 +714,8 @@ php artisan make:cast Hash --inbound
         public function set(Model $model, string $key, mixed $value, array $attributes): string
         {
             return is_null($this->algorithm)
-                        ? bcrypt($value)
-                        : hash($this->algorithm, $value);
+                ? bcrypt($value)
+                : hash($this->algorithm, $value);
         }
     }
 
