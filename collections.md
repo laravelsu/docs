@@ -1,5 +1,5 @@
 ---
-git: 660e0c0b5d1a90c8d7e04b1711032d4499496ee2
+git: d83edfc43fa745bc73531b830248326262771f07
 ---
 
 # Коллекции
@@ -75,154 +75,157 @@ git: 660e0c0b5d1a90c8d7e04b1711032d4499496ee2
 
  <div class="docs-column-list" markdown="1">
 
-- [`after`](#method-after)
-- [`all()`](#method-all)
-- [`average()`](#method-average)
-- [`avg()`](#method-avg)
-- [`before`](#method-before)
-- [`chunk()`](#method-chunk)
-- [`chunkWhile()`](#method-chunkwhile)
-- [`collapse()`](#method-collapse)
-- [`collect()`](#method-collect)
-- [`combine()`](#method-combine)
-- [`concat()`](#method-concat)
-- [`contains()`](#method-contains)
-- [`containsOneItem()`](#method-containsoneitem)
-- [`containsStrict()`](#method-containsstrict)
-- [`count()`](#method-count)
-- [`countBy()`](#method-countBy)
-- [`crossJoin()`](#method-crossjoin)
-- [`dd()`](#method-dd)
-- [`diff()`](#method-diff)
-- [`diffAssoc()`](#method-diffassoc)
-- [`diffAssocUsing()`](#method-diffassocusing)
-- [`diffKeys()`](#method-diffkeys)
-- [`doesntContain`](#method-doesntcontain)
-- [`dot()`](#method-dot)
-- [`dump()`](#method-dump)
-- [`duplicates()`](#method-duplicates)
-- [`duplicatesStrict()`](#method-duplicatesstrict)
-- [`each()`](#method-each)
-- [`eachSpread()`](#method-eachspread)
-- [`ensure()`](#method-ensure)
-- [`every()`](#method-every)
-- [`except()`](#method-except)
-- [`filter()`](#method-filter)
-- [`first()`](#method-first)
-- [`firstOrFail()`](#method-first-or-fail)
-- [`firstWhere()`](#method-firstwhere)
-- [`flatMap()`](#method-flatmap)
-- [`flatten()`](#method-flatten)
-- [`flip()`](#method-flip)
-- [`forget()`](#method-forget)
-- [`forPage()`](#method-forpage)
-- [`get()`](#method-get)
-- [`groupBy()`](#method-groupby)
-- [`has()`](#method-has)
-- [`hasAny()`](#method-hasany)
-- [`implode()`](#method-implode)
-- [`intersect()`](#method-intersect)
-- [`intersectAssoc()`](#method-intersectAssoc)
-- [`intersectByKeys()`](#method-intersectbykeys)
-- [`isEmpty()`](#method-isempty)
-- [`isNotEmpty()`](#method-isnotempty)
-- [`join()`](#method-join)
-- [`keyBy()`](#method-keyby)
-- [`keys()`](#method-keys)
-- [`last()`](#method-last)
-- [`lazy()`](#method-lazy)
-- [`macro()`](#method-macro)
-- [`make()`](#method-make)
-- [`map()`](#method-map)
-- [`mapInto()`](#method-mapinto)
-- [`mapSpread()`](#method-mapspread)
-- [`mapToGroups()`](#method-maptogroups)
-- [`mapWithKeys()`](#method-mapwithkeys)
-- [`max()`](#method-max)
-- [`median()`](#method-median)
-- [`merge()`](#method-merge)
-- [`mergeRecursive()`](#method-mergerecursive)
-- [`min()`](#method-min)
-- [`mode()`](#method-mode)
-- [`multiply`](#method-multiply)
-- [`nth()`](#method-nth)
-- [`only()`](#method-only)
-- [`pad()`](#method-pad)
-- [`partition()`](#method-partition)
-- [`percentage()`](#method-percentage)
-- [`pipe()`](#method-pipe)
-- [`pipeInto()`](#method-pipeinto)
-- [`pipeThrough()`](#method-pipethrough)
-- [`pluck()`](#method-pluck)
-- [`pop()`](#method-pop)
-- [`prepend()`](#method-prepend)
-- [`pull()`](#method-pull)
-- [`push()`](#method-push)
-- [`put()`](#method-put)
-- [`random()`](#method-random)
-- [`range`](#method-range)
-- [`reduce()`](#method-reduce)
-- [`reduceSpread`](#method-reduce-spread)
-- [`reject()`](#method-reject)
-- [`replace()`](#method-replace)
-- [`replaceRecursive()`](#method-replacerecursive)
-- [`reverse()`](#method-reverse)
-- [`search()`](#method-search)
+- [after](#method-after)
+- [all()](#method-all)
+- [average()](#method-average)
+- [avg()](#method-avg)
+- [before](#method-before)
+- [chunk()](#method-chunk)
+- [chunkWhile()](#method-chunkwhile)
+- [collapse()](#method-collapse)
+- [collapseWithKeys](#method-collapsewithkeys)
+- [collect()](#method-collect)
+- [combine()](#method-combine)
+- [concat()](#method-concat)
+- [contains()](#method-contains)
+- [containsOneItem()](#method-containsoneitem)
+- [containsStrict()](#method-containsstrict)
+- [count()](#method-count)
+- [countBy()](#method-countBy)
+- [crossJoin()](#method-crossjoin)
+- [dd()](#method-dd)
+- [diff()](#method-diff)
+- [diffAssoc()](#method-diffassoc)
+- [diffAssocUsing()](#method-diffassocusing)
+- [diffKeys()](#method-diffkeys)
+- [doesntContain](#method-doesntcontain)
+- [dot()](#method-dot)
+- [dump()](#method-dump)
+- [duplicates()](#method-duplicates)
+- [duplicatesStrict()](#method-duplicatesstrict)
+- [each()](#method-each)
+- [eachSpread()](#method-eachspread)
+- [ensure()](#method-ensure)
+- [every()](#method-every)
+- [except()](#method-except)
+- [filter()](#method-filter)
+- [first()](#method-first)
+- [firstOrFail()](#method-first-or-fail)
+- [firstWhere()](#method-firstwhere)
+- [flatMap()](#method-flatmap)
+- [flatten()](#method-flatten)
+- [flip()](#method-flip)
+- [forget()](#method-forget)
+- [forPage()](#method-forpage)
+- [get()](#method-get)
+- [groupBy()](#method-groupby)
+- [has()](#method-has)
+- [hasAny()](#method-hasany)
+- [implode()](#method-implode)
+- [intersect()](#method-intersect)
+- [intersectUsing](#method-intersectusing)
+- [intersectAssoc()](#method-intersectAssoc)
+- [intersectAssocUsing](#method-intersectassocusing)
+- [intersectByKeys()](#method-intersectbykeys)
+- [isEmpty()](#method-isempty)
+- [isNotEmpty()](#method-isnotempty)
+- [join()](#method-join)
+- [keyBy()](#method-keyby)
+- [keys()](#method-keys)
+- [last()](#method-last)
+- [lazy()](#method-lazy)
+- [macro()](#method-macro)
+- [make()](#method-make)
+- [map()](#method-map)
+- [mapInto()](#method-mapinto)
+- [mapSpread()](#method-mapspread)
+- [mapToGroups()](#method-maptogroups)
+- [mapWithKeys()](#method-mapwithkeys)
+- [max()](#method-max)
+- [median()](#method-median)
+- [merge()](#method-merge)
+- [mergeRecursive()](#method-mergerecursive)
+- [min()](#method-min)
+- [mode()](#method-mode)
+- [multiply](#method-multiply)
+- [nth()](#method-nth)
+- [only()](#method-only)
+- [pad()](#method-pad)
+- [partition()](#method-partition)
+- [percentage()](#method-percentage)
+- [pipe()](#method-pipe)
+- [pipeInto()](#method-pipeinto)
+- [pipeThrough()](#method-pipethrough)
+- [pluck()](#method-pluck)
+- [pop()](#method-pop)
+- [prepend()](#method-prepend)
+- [pull()](#method-pull)
+- [push()](#method-push)
+- [put()](#method-put)
+- [random()](#method-random)
+- [range](#method-range)
+- [reduce()](#method-reduce)
+- [reduceSpread](#method-reduce-spread)
+- [reject()](#method-reject)
+- [replace()](#method-replace)
+- [replaceRecursive()](#method-replacerecursive)
+- [reverse()](#method-reverse)
+- [search()](#method-search)
 - [select](#method-select)
-- [`shift()`](#method-shift)
-- [`shuffle()`](#method-shuffle)
-- [`skip()`](#method-skip)
-- [`skipUntil()`](#method-skipuntil)
-- [`skipWhile()`](#method-skipwhile)
-- [`slice()`](#method-slice)
-- [`sliding`](#method-sliding)
-- [`sole`](#method-sole)
-- [`some()`](#method-some)
-- [`sort()`](#method-sort)
-- [`sortBy()`](#method-sortby)
-- [`sortByDesc()`](#method-sortbydesc)
-- [`sortDesc()`](#method-sortdesc)
-- [`sortKeys()`](#method-sortkeys)
-- [`sortKeysDesc()`](#method-sortkeysdesc)
-- [`sortKeysUsing()`](#method-sortkeysusing)
-- [`splice()`](#method-splice)
-- [`split()`](#method-split)
-- [`splitIn()`](#method-splitin)
-- [`sum()`](#method-sum)
-- [`take()`](#method-take)
-- [`takeUntil()`](#method-takeuntil)
-- [`takeWhile()`](#method-takewhile)
-- [`tap()`](#method-tap)
-- [`times()`](#method-times)
-- [`toArray()`](#method-toarray)
-- [`toJson()`](#method-tojson)
-- [`transform()`](#method-transform)
-- [`undot()`](#method-undot)
-- [`union()`](#method-union)
-- [`unique()`](#method-unique)
-- [`uniqueStrict()`](#method-uniquestrict)
-- [`unless()`](#method-unless)
-- [`unlessEmpty()`](#method-unlessempty)
-- [`unlessNotEmpty()`](#method-unlessnotempty)
-- [`unwrap()`](#method-unwrap)
-- [`value()`](#method-value)
-- [`values()`](#method-values)
-- [`when()`](#method-when)
-- [`whenEmpty()`](#method-whenempty)
-- [`whenNotEmpty()`](#method-whennotempty)
-- [`where()`](#method-where)
-- [`whereStrict()`](#method-wherestrict)
-- [`whereBetween()`](#method-wherebetween)
-- [`whereIn()`](#method-wherein)
-- [`whereInStrict()`](#method-whereinstrict)
-- [`whereInstanceOf()`](#method-whereinstanceof)
-- [`whereNotBetween()`](#method-wherenotbetween)
-- [`whereNotIn()`](#method-wherenotin)
-- [`whereNotInStrict()`](#method-wherenotinstrict)
-- [`whereNotNull()`](#method-wherenotnull)
-- [`whereNull()`](#method-wherenull)
-- [`wrap()`](#method-wrap)
-- [`zip()`](#method-zip)
+- [shift()](#method-shift)
+- [shuffle()](#method-shuffle)
+- [skip()](#method-skip)
+- [skipUntil()](#method-skipuntil)
+- [skipWhile()](#method-skipwhile)
+- [slice()](#method-slice)
+- [sliding](#method-sliding)
+- [sole](#method-sole)
+- [some()](#method-some)
+- [sort()](#method-sort)
+- [sortBy()](#method-sortby)
+- [sortByDesc()](#method-sortbydesc)
+- [sortDesc()](#method-sortdesc)
+- [sortKeys()](#method-sortkeys)
+- [sortKeysDesc()](#method-sortkeysdesc)
+- [sortKeysUsing()](#method-sortkeysusing)
+- [splice()](#method-splice)
+- [split()](#method-split)
+- [splitIn()](#method-splitin)
+- [sum()](#method-sum)
+- [take()](#method-take)
+- [takeUntil()](#method-takeuntil)
+- [takeWhile()](#method-takewhile)
+- [tap()](#method-tap)
+- [times()](#method-times)
+- [toArray()](#method-toarray)
+- [toJson()](#method-tojson)
+- [transform()](#method-transform)
+- [undot()](#method-undot)
+- [union()](#method-union)
+- [unique()](#method-unique)
+- [uniqueStrict()](#method-uniquestrict)
+- [unless()](#method-unless)
+- [unlessEmpty()](#method-unlessempty)
+- [unlessNotEmpty()](#method-unlessnotempty)
+- [unwrap()](#method-unwrap)
+- [value()](#method-value)
+- [values()](#method-values)
+- [when()](#method-when)
+- [whenEmpty()](#method-whenempty)
+- [whenNotEmpty()](#method-whennotempty)
+- [where()](#method-where)
+- [whereStrict()](#method-wherestrict)
+- [whereBetween()](#method-wherebetween)
+- [whereIn()](#method-wherein)
+- [whereInStrict()](#method-whereinstrict)
+- [whereInstanceOf()](#method-whereinstanceof)
+- [whereNotBetween()](#method-wherenotbetween)
+- [whereNotIn()](#method-wherenotin)
+- [whereNotInStrict()](#method-wherenotinstrict)
+- [whereNotNull()](#method-wherenotnull)
+- [whereNull()](#method-wherenull)
+- [wrap()](#method-wrap)
+- [zip()](#method-zip)
 
  </div>
 
@@ -371,6 +374,28 @@ git: 660e0c0b5d1a90c8d7e04b1711032d4499496ee2
     $collapsed->all();
 
     // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+<a name="method-collapsewithkeys"></a>
+#### `collapseWithKeys()`
+
+Метод `collapseWithKeys` объединяет коллекцию массивов или коллекций в одну коллекцию, сохраняя исходные ключи нетронутыми:
+
+    $collection = collect([
+      ['first'  => collect([1, 2, 3])],
+      ['second' => [4, 5, 6]],
+      ['third'  => collect([7, 8, 9])]
+    ]);
+
+
+    $collapsed = $collection->collapseWithKeys();
+
+    $collapsed->all();
+
+    // [
+    //     'first'  => [1, 2, 3],
+    //     'second' => [4, 5, 6],
+    //     'third'  => [7, 8, 9],
+    // ]
 
 <a name="method-collect"></a>
 #### `collect()`
@@ -1259,6 +1284,21 @@ git: 660e0c0b5d1a90c8d7e04b1711032d4499496ee2
 > [!NOTE]
 > Поведение этого метода изменяется при использовании [коллекций Eloquent](/docs/{{version}}/eloquent-collections#method-intersect).
 
+<a name="method-intersectusing"></a>
+#### `intersectUsing()`
+
+Метод `intersectUsing` удаляет из исходной коллекции все значения, отсутствующие в заданном `array` или коллекции, используя пользовательский обратный вызов для сравнения значений. Результирующая коллекция сохранит ключи исходной коллекции:
+
+    $collection = collect(['Desk', 'Sofa', 'Chair']);
+
+    $intersect = $collection->intersectUsing(['desk', 'chair', 'bookcase'], function ($a, $b) {
+        return strcasecmp($a, $b);
+    });
+
+    $intersect->all();
+
+    // [0 => 'Desk', 2 => 'Chair']
+
 <a name="method-intersectAssoc"></a>
 #### `intersectAssoc()`
 
@@ -1279,6 +1319,29 @@ git: 660e0c0b5d1a90c8d7e04b1711032d4499496ee2
     $intersect->all();
 
     // ['size' => 'M']
+
+<a name="method-intersectassocusing"></a>
+#### `intersectAssocUsing()`
+
+Метод `intersectAssocUsing` сравнивает исходную коллекцию с другой коллекцией или `массивом`, возвращая пары ключ/значение, присутствующие в обеих, используя пользовательский обратный вызов сравнения для определения равенства как ключей, так и значений:
+
+    $collection = collect([
+        'color' => 'red',
+        'Size' => 'M',
+        'material' => 'cotton',
+    ]);
+
+    $intersect = $collection->intersectAssocUsing([
+        'color' => 'blue',
+        'size' => 'M',
+        'material' => 'polyester',
+    ], function ($a, $b) {
+        return strcasecmp($a, $b);
+    });
+
+    $intersect->all();
+
+    // ['Size' => 'M']
 
 <a name="method-intersectbykeys"></a>
 #### `intersectByKeys()`
