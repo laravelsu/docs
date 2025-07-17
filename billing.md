@@ -1,5 +1,5 @@
 ---
-git: b277950e07920ed147758944504688ec3d1adc0b
+git: 3b2df518ad4702fcf8e956abf83ac173a6ce071b
 ---
 
 
@@ -1689,7 +1689,7 @@ Route::post('/user/subscribe', function (Request $request) {
 Метод `trialUntil` позволяет вам предоставить экземпляр `DateTime`, который указывает, когда должен закончиться пробный период:
 
 ```php
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 $user->newSubscription('default', 'price_monthly')
     ->trialUntil(Carbon::now()->addDays(10))
