@@ -1,5 +1,5 @@
 ---
-git: f7e4066c46587c736f860b0d2757eb22d1fe755f
+git: 0a19df6e95c129ece88b9cc1615e99f6f9b2ba4c
 ---
 
 # Глобальные помощники (helpers)
@@ -623,7 +623,7 @@ $isList = Arr::isList(['product' => ['name' => 'Desk', 'price' => 100]]);
 <a name="method-array-join"></a>
 #### `Arr::join()`
 
-Метод `Arr::join` объединяет элементы массива в строку. Используя второй аргумента этого метода вы также можете указать строку для соединения последнего элемента массива:
+Метод `Arr::join` объединяет элементы массива в строку. Используя третий аргумента этого метода вы также можете указать строку для соединения последнего элемента массива:
 
 ```php
 use Illuminate\Support\Arr;
@@ -634,9 +634,9 @@ $joined = Arr::join($array, ', ');
 
 // Tailwind, Alpine, Laravel, Livewire
 
-$joined = Arr::join($array, ', ', ' and ');
+$joined = Arr::join($array, ', ', ', and ');
 
-// Tailwind, Alpine, Laravel and Livewire
+// Tailwind, Alpine, Laravel, and Livewire
 ```
 
 <a name="method-array-keyby"></a>
@@ -1465,7 +1465,7 @@ data_forget($data, 'products.*.price');
 <a name="method-head"></a>
 #### `head()`
 
-Функция `head` возвращает первый элемент переданного массива:
+Функция `head` возвращает первый элемент переданного массива. Если массив пуст, будет возвращено `false`:
 
 ```php
 $array = [100, 200, 300];
@@ -1478,7 +1478,7 @@ $first = head($array);
 <a name="method-last"></a>
 #### `last()`
 
-Функция `last` возвращает последний элемент переданного массива:
+Функция `last` возвращает последний элемент переданного массива. Если массив пуст, будет возвращено `false`:
 
 ```php
 $array = [100, 200, 300];
@@ -2474,7 +2474,7 @@ event(new UserRegistered($user));
 Функция `fake` получает экземпляр [Faker](https://github.com/FakerPHP/Faker) из контейнера, что может быть полезно при создании фиктивных данных в фабриках моделей, наполнении базы данных, тестировании и создании макетов представлений:
 
 ```blade
-@for($i = 0; $i < 10; $i++)
+@for ($i = 0; $i < 10; $i++)
     <dl>
         <dt>Name</dt>
         <dd>{{ fake()->name() }}</dd>
