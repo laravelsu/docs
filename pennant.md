@@ -1,5 +1,5 @@
 ---
-git: e5abed8708ebe7e51820e3062629dbec5407607c
+git: 3b2df518ad4702fcf8e956abf83ac173a6ce071b
 ---
 
 
@@ -497,7 +497,7 @@ return Feature::for($user)->active('new-api')
 
 ```php
 use App\Models\Team;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Lottery;
 use Laravel\Pennant\Feature;
 
