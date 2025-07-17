@@ -108,4 +108,4 @@ git: ba26bf537650a1d758f14140f6372cebde5b5535
     - [Socialite](/docs/{{version}}/socialite)
     - [Telescope](/docs/{{version}}/telescope)
     - [Valet](/docs/{{version}}/valet)
-- [API Документация](https://laravel.com/api/12.x)
+- [API Документация](https://api.laravel.com/docs/12.x)
