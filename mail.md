@@ -1,5 +1,5 @@
 ---
-git: f52fc17d93bcfe5c46fa19014b1d16280e78827d
+git: 2fc3ac7cb75eaa8537e73713000ada6048cb980a
 ---
 
 # Отправка электронной почты
@@ -58,7 +58,7 @@ composer require symfony/mailgun-mailer symfony/http-client
 ],
 ```
 
-Если вы не используете [регион Mailgun](https://documentation.mailgun.com/en/latest/api-intro.html#mailgun-regions) США, то вы можете определить конечную точку своего региона в конфигурации файла `services`:
+Если вы не используете [регион Mailgun](https://documentation.mailgun.com/docs/mailgun/api-reference/#mailgun-regions) США, то вы можете определить конечную точку своего региона в конфигурации файла `services`:
 
 ```php
 'mailgun' => [
@@ -224,6 +224,7 @@ MAILERSEND_API_KEY=ваш-ключ-api
             'mailgun',
             'sendmail',
         ],
+        'retry_after' => 60,
     ],
 
     // ...
@@ -249,6 +250,7 @@ MAILERSEND_API_KEY=ваш-ключ-api
             'ses',
             'postmark',
         ],
+        'retry_after' => 60,
     ],
 
     // ...
@@ -1120,7 +1122,7 @@ Mail::to($request->user())->locale('es')->send(
 ```
 
 <a name="user-preferred-locales"></a>
-### Предпочитаемые пользователем локализации
+#### Предпочитаемые пользователем локализации
 
 Иногда приложения хранят предпочтительный язык каждого пользователя. Реализуя контракт `HasLocalePreference` в ваших моделях, вы можете указать Laravel использовать этот сохраненный язык при отправке почты:
 
@@ -1151,9 +1153,7 @@ Mail::to($request->user())->send(new OrderShipped($order));
 <a name="testing-mailable-content"></a>
 ### Тестирование содержимого отправлений
 
-Laravel предоставляет разнообразные методы для анализа структуры вашего класса для отправки электронной почты. Кроме того, Laravel предоставляет несколько удобных методов для проверки наличия ожидаемого содержимого в вашем классе для отправки электронной почты. Эти методы включают в себя: `assertSeeInHtml`, `assertDontSeeInHtml`, `assertSeeInOrderInHtml`, `assertSeeInText`, `assertDontSeeInText`, `assertSeeInOrderInText`, `assertHasAttachment`, `assertHasAttachedData`, `assertHasAttachmentFromStorage` и `assertHasAttachmentFromStorageDisk`.
-
-Как и следовало ожидать, утверждения «HTML» утверждают, что HTML-версия вашего почтового сообщения содержит переданную строку, в то время как утверждения «текст» утверждают, что текстовая версия вашего почтового сообщения содержит переданную строку:
+Laravel предоставляет множество методов для проверки структуры почтовых сообщений. Кроме того, Laravel предлагает несколько удобных методов для проверки того, что ваше почтовое сообщение содержит ожидаемый контент:
 
 ```php tab=Pest
 use App\Mail\InvoicePaid;
@@ -1174,10 +1174,11 @@ test('mailable content', function () {
     $mailable->assertHasMetadata('key', 'value');
 
     $mailable->assertSeeInHtml($user->email);
-    $mailable->assertSeeInHtml('Invoice Paid');
+    $mailable->assertDontSeeInHtml('Invoice Not Paid');
     $mailable->assertSeeInOrderInHtml(['Invoice Paid', 'Thanks']);
 
     $mailable->assertSeeInText($user->email);
+    $mailable->assertDontSeeInText('Invoice Not Paid');
     $mailable->assertSeeInOrderInText(['Invoice Paid', 'Thanks']);
 
     $mailable->assertHasAttachment('/path/to/file');
@@ -1208,10 +1209,11 @@ public function test_mailable_content(): void
     $mailable->assertHasMetadata('key', 'value');
 
     $mailable->assertSeeInHtml($user->email);
-    $mailable->assertSeeInHtml('Invoice Paid');
+    $mailable->assertDontSeeInHtml('Invoice Not Paid');
     $mailable->assertSeeInOrderInHtml(['Invoice Paid', 'Thanks']);
 
     $mailable->assertSeeInText($user->email);
+    $mailable->assertDontSeeInText('Invoice Not Paid');
     $mailable->assertSeeInOrderInText(['Invoice Paid', 'Thanks']);
 
     $mailable->assertHasAttachment('/path/to/file');
@@ -1221,6 +1223,8 @@ public function test_mailable_content(): void
     $mailable->assertHasAttachmentFromStorageDisk('s3', '/path/to/file', 'name.pdf', ['mime' => 'application/pdf']);
 }
 ```
+
+Как и следовало ожидать, утверждения «HTML» утверждают, что HTML-версия вашего почтового сообщения содержит заданную строку, тогда как утверждения «text» утверждают, что версия вашего почтового сообщения в виде простого текста содержит заданную строку.
 
 <a name="testing-mailable-sending"></a>
 ### Тестирование отправки почтовых сообщений
@@ -1430,9 +1434,13 @@ class LogMessage
 <a name="custom-transports"></a>
 ## Пользовательские транспорты
 
-Laravel включает в себя разнообразные транспорты для отправки электронной почты; однако, возможно, вам захочется написать собственные для доставки электронной почты через другие службы, которые Laravel не поддерживает "из коробки". Для начала определите класс, который расширяет класс `Symfony\Component\Mailer\Transport\AbstractTransport`. Затем реализуйте методы `doSend` и `__toString()` в вашем транспорте:
+Laravel включает в себя разнообразные транспорты для отправки электронной почты; однако, возможно, вам захочется написать собственные для доставки электронной почты через другие службы, которые Laravel не поддерживает "из коробки". Для начала определите класс, который расширяет класс `Symfony\Component\Mailer\Transport\AbstractTransport`. Затем реализуйте методы `doSend` и `__toString` в вашем транспорте:
 
 ```php
+<?php
+
+namespace App\Mail;
+
 use MailchimpTransactional\ApiClient;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
@@ -1477,11 +1485,12 @@ class MailchimpTransport extends AbstractTransport
 }
 ```
 
-После того как вы определите свой собственный транспорт, вы можете зарегистрировать его с помощью метода `extend`, предоставляемого фасадом `Mail`. Обычно это следует делать в методе `boot` служб-поставщиков вашего приложения, который находится в службе `AppServiceProvider`. Вам передается аргумент `$config`, который содержит массив конфигурации, определенной для отправителя почты в конфигурационном файле `config/mail.php` вашего приложения:
+После того как вы определите свой собственный транспорт, вы можете зарегистрировать его с помощью метода `extend`, предоставляемого фасадом `Mail`. Обычно это следует делать в методе `boot` объекта `AppServiceProvider` вашего приложения. Вам передается аргумент `$config`, который содержит массив конфигурации, определенной для отправителя почты в конфигурационном файле `config/mail.php` вашего приложения:
 
 ```php
 use App\Mail\MailchimpTransport;
 use Illuminate\Support\Facades\Mail;
+use MailchimpTransactional\ApiClient;
 
 /**
  * Bootstrap any application services.
@@ -1489,7 +1498,11 @@ use Illuminate\Support\Facades\Mail;
 public function boot(): void
 {
     Mail::extend('mailchimp', function (array $config = []) {
-        return new MailchimpTransport(/* ... */);
+        $client = new ApiClient;
+
+        $client->setApiKey($config['key']);
+
+        return new MailchimpTransport($client);
     });
 }
 ```
@@ -1499,6 +1512,7 @@ public function boot(): void
 ```php
 'mailchimp' => [
     'transport' => 'mailchimp',
+    'key' => env('MAILCHIMP_API_KEY'),
     // ...
 ],
 ```
@@ -1517,7 +1531,7 @@ composer require symfony/brevo-mailer symfony/http-client
 
 ```php
 'brevo' => [
-    'key' => 'ваш-ключ-api',
+    'key' => env('BREVO_API_KEY'),
 ],
 ```
 
