@@ -1,5 +1,5 @@
 ---
-git: 013514ac88989dc577ee6bef4776849db35be151
+git: 7b138d0703c77f8b1771d6f628166f35b515a006
 ---
 
 # Коллекции
@@ -2312,6 +2312,18 @@ $collection->push(5);
 $collection->all();
 
 // [1, 2, 3, 4, 5]
+```
+
+Вы также можете добавить несколько элементов в конец коллекции:
+
+```php
+$collection = collect([1, 2, 3, 4]);
+
+$collection->push(5, 6, 7);
+
+$collection->all();
+
+// [1, 2, 3, 4, 5, 6, 7]
 ```
 
 <a name="method-put"></a>
