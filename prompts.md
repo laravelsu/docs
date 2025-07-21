@@ -1,5 +1,5 @@
 ---
-git: 3ef82c24ec0d5e82bd988c070eaed235fa01c1b8
+git: 14acbfa08feb1ebc700e249758e011c3782c47bd
 ---
 
 # Prompts (Подсказки)
@@ -839,8 +839,8 @@ table(
 use function Laravel\Prompts\spin;
 
 $response = spin(
-    message: 'Получение ответа...',
-    callback: fn () => Http::get('http://example.com')
+    callback: fn () => Http::get('http://example.com'),
+    message: 'Получение ответа...'
 );
 ```
 
