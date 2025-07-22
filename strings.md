@@ -1,5 +1,5 @@
 ---
-git: 4bb1622040e31b4727b3399946d1aec0a587c59c
+git: 37b513606d6566439920facd4603b6b251dea105
 ---
 
 # Строки
@@ -618,7 +618,7 @@ $result = Str::doesntStartWith('This is my name', 'That');
 Если передан массив возможных значений, метод `doesntStartWith` вернет `true`, если строка не начинается ни с одного из заданных значений:
 
 ```php
-$result = Str::doesntStartWith('This is my name', ['This', 'That', 'There']);
+$result = Str::doesntStartWith('This is my name', ['What', 'That', 'There']);
 
 // true
 ```
@@ -2305,7 +2305,7 @@ $result = Str::of('This is my name')->doesntStartWith('That');
 ```php
 use Illuminate\Support\Str;
 
-$result = Str::of('This is my name')->doesntStartWith(['This', 'That', 'There']);
+$result = Str::of('This is my name')->doesntStartWith(['What', 'That', 'There']);
 
 // true
 ```
