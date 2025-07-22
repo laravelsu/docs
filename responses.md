@@ -1,5 +1,5 @@
 ---
-git: 190d3e51e188f12b9e85207da835780048faf486
+git: b3c1a5ceea69156c002bab55039e48e28aaae0ad
 ---
 
 # HTTP-ответы
@@ -368,7 +368,7 @@ Route::get('/stream', function () {
 
 ```php
 Route::post('/chat', function () {
-    return response()->stream(function (): void {
+    return response()->stream(function (): Generator {
         $stream = OpenAI::client()->chat()->createStreamed(...);
 
          foreach ($stream as $response) {
