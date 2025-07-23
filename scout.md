@@ -1,5 +1,5 @@
 ---
-git: 53bcc8e59fb02eea74c9ddd733d4b7862ec07c9b
+git: 6de28dd6ce5a1bcb1b3e9e914f9799740f0a4897
 ---
 
 # Laravel Scout
@@ -508,6 +508,12 @@ SCOUT_DRIVER=collection
 
 ```shell
 php artisan scout:import "App\Models\Post"
+```
+
+Команду `scout:queue` можно использовать для импорта всех существующих записей с помощью [очередей заданий](/docs/{{version}}/queues):
+
+```shell
+php artisan scout:queue "App\Models\Post" --chunk=500
 ```
 
 Команду `flush` можно использовать для удаления всех записей из поисковых индексов:
