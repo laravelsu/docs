@@ -1,5 +1,5 @@
 ---
-git: b0228c0af866065235d849097e178166672265f5
+git: 9589deca38d84d979570b9c77a1dc866c540b2c7
 ---
 
 # Контейнер служб (service container)
@@ -162,6 +162,22 @@ $this->app->singletonIf(Transistor::class, function (Application $app) {
 });
 ```
 
+В качестве альтернативы вы можете пометить интерфейс или класс атрибутом `#[Singleton]`, чтобы указать контейнеру, что он должен быть разрешен один раз:
+
+```php
+<?php
+
+namespace App\Services;
+
+use Illuminate\Container\Attributes\Singleton;
+
+#[Singleton]
+class Transistor
+{
+    // ...
+}
+```
+
 <a name="binding-scoped"></a>
 #### Связывание одиночек с заданной областью действия
 
@@ -183,6 +199,22 @@ $this->app->scoped(Transistor::class, function (Application $app) {
 $this->app->scopedIf(Transistor::class, function (Application $app) {
     return new Transistor($app->make(PodcastParser::class));
 });
+```
+
+В качестве альтернативы вы можете пометить интерфейс или класс атрибутом `#[Scoped]`, чтобы указать контейнеру, что он должен быть разрешен один раз в течение данного запроса/жизненного цикла задания Laravel:
+
+```php
+<?php
+
+namespace App\Services;
+
+use Illuminate\Container\Attributes\Scoped;
+
+#[Scoped]
+class Transistor
+{
+    // ...
+}
 ```
 
 <a name="binding-instances"></a>
