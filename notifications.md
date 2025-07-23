@@ -1,5 +1,5 @@
 ---
-git: 959677ceed407801e48087206102a743eaeafe0f
+git: 3fb881c11eadf8a7cdb623cbee51d649d32a02ea
 ---
 
 # Уведомления
@@ -1321,7 +1321,6 @@ composer require laravel/slack-notification-channel
 ```php
 use Illuminate\Notifications\Slack\BlockKit\Blocks\ContextBlock;
 use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
-use Illuminate\Notifications\Slack\BlockKit\Composites\ConfirmObject;
 use Illuminate\Notifications\Slack\SlackMessage;
 
 /**
