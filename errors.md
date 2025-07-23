@@ -1,5 +1,5 @@
 ---
-git: 2fa3c520544f7f90b9fd8645f6f8d29c532df10c
+git: 33c3fe19a0a465de53989b27501e2b947287fd85
 ---
 
 # Обработка ошибок (Exception)
@@ -189,6 +189,20 @@ class PodcastProcessingException extends Exception implements ShouldntReport
 {
     //
 }
+```
+
+Если вам требуется еще больший контроль над тем, когда определенный тип исключения игнорируется, вы можете предоставить замыкание для метода `dontReportWhen`:
+
+```php
+use App\Exceptions\InvalidOrderException;
+use Throwable;
+
+->withExceptions(function (Exceptions $exceptions) {
+    $exceptions->dontReportWhen(function (Throwable $e) {
+        return $e instanceof PodcastProcessingException &&
+               $e->reason() === 'Subscription expired';
+    });
+})
 ```
 
 Внутри Laravel уже игнорирует некоторые типы ошибок, например исключения, возникающие из-за ошибок 404 HTTP или ответов 419 HTTP, сгенерированных недействительными токенами CSRF. Если вы хотите указать Laravel прекратить игнорировать определенный тип исключения, вы можете использовать метод исключения `stopIgnoring` в файле `bootstrap/app.php` вашего приложения:
