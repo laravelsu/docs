@@ -1,5 +1,5 @@
 ---
-git: d62aa21a3514ea379fab16382aa963ae31d570ef
+git: 48e782c6404968793cb883c4ae071977850decc3
 ---
 
 # События (Events)
@@ -438,6 +438,62 @@ class SendShipmentNotification implements ShouldQueueAfterCommit
 > [!NOTE]
 > Чтобы узнать больше о том, как обойти эти проблемы, просмотрите документацию, касающуюся [заданий в очереди и транзакций базы данных](/docs/{{version}}/queues#jobs-and-database-transactions).
 
+<a name="queued-listener-middleware"></a>
+### Посредники для прослушивания в очереди
+
+Прослушиватели заданий, помещенные в очередь, также могут использовать [посредников заданий](/docs/{{version}}/queues#job-middleware). Посредники заданий позволяет обернуть пользовательскую логику вокруг выполнения прослушивателей заданий, сокращая количество шаблонного кода в самих прослушивателях. После создания посредников заданий их можно присоединить к прослушивателю, вернув их из метода `middleware` прослушивателя:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\OrderShipped;
+use App\Jobs\Middleware\RateLimited;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class SendShipmentNotification implements ShouldQueue
+{
+    /**
+     * Handle the event.
+     */
+    public function handle(OrderShipped $event): void
+    {
+        // Process the event...
+    }
+
+    /**
+     * Get the middleware the listener should pass through.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(OrderShipped $event): array
+    {
+        return [new RateLimited];
+    }
+}
+```
+
+<a name="encrypted-queued-listeners"></a>
+#### Зашифрованные очереди прослушивателей
+
+Laravel позволяет гарантировать конфиденциальность и целостность данных слушателя в очереди с помощью [шифрования](/docs/{{version}}/encryption). Для начала просто добавьте интерфейс `ShouldBeEncrypted` в класс слушателя. После добавления этого интерфейса в класс Laravel автоматически зашифрует ваш слушатель перед его помещением в очередь:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\OrderShipped;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class SendShipmentNotification implements ShouldQueue, ShouldBeEncrypted
+{
+    // ...
+}
+```
+
 <a name="handling-failed-jobs"></a>
 ### Обработка невыполненных заданий
 
@@ -540,7 +596,7 @@ public $backoff = 3;
 /**
  * Рассчитайте количество секунд ожидания перед повторной попыткой прослушивателя в очереди.
  */
-public function backoff(): int
+public function backoff(OrderShipped $event): int
 {
     return 3;
 }
@@ -552,11 +608,100 @@ public function backoff(): int
 /**
  * Рассчитайте количество секунд ожидания перед повторной попыткой прослушивателя в очереди.
  *
- * @return array<int, int>
+ * @return list<int>
  */
-public function backoff(): array
+public function backoff(OrderShipped $event): array
 {
     return [1, 5, 10];
+}
+```
+
+<a name="specifying-queued-listener-max-exceptions"></a>
+#### Указание максимального количества исключений для прослушивателя в очереди
+
+Иногда может потребоваться указать, что прослушиватель, находящийся в очереди, может быть запущен много раз, но должен завершиться неудачей, если повторные попытки будут вызваны заданным количеством необработанных исключений (в отличие от непосредственного освобождения методом `release`). Для этого можно определить свойство `maxExceptions` в классе прослушивателя:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\OrderShipped;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+
+class SendShipmentNotification implements ShouldQueue
+{
+    use InteractsWithQueue;
+
+    /**
+     * The number of times the queued listener may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 25;
+
+    /**
+     * The maximum number of unhandled exceptions to allow before failing.
+     *
+     * @var int
+     */
+    public $maxExceptions = 3;
+
+    /**
+     * Handle the event.
+     */
+    public function handle(OrderShipped $event): void
+    {
+        // Process the event...
+    }
+}
+```
+
+В этом примере прослушиватель будет повторен до 25 раз. Однако прослушиватель завершится ошибкой, если он выдаст три необработанных исключения.
+
+<a name="specifying-queued-listener-timeout"></a>
+#### Указание тайм-аута очереди прослушивателя
+
+Зачастую вы примерно знаете, сколько времени займёт выполнение ваших слушателей в очереди. Поэтому Laravel позволяет указать значение тайм-аута. Если слушатель обрабатывается дольше, чем указано в значении тайм-аута, обрабатывающий его обработчик завершится с ошибкой. Вы можете определить максимальное время выполнения слушателя в секундах, определив свойство `$timeout` в классе слушателя:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\OrderShipped;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class SendShipmentNotification implements ShouldQueue
+{
+    /**
+     * The number of seconds the listener can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 120;
+}
+```
+
+Если вы хотите указать, что прослушиватель должен быть помечен как неудачный по истечении времени ожидания, вы можете определить свойство `$failOnTimeout` в классе прослушивателя:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\OrderShipped;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class SendShipmentNotification implements ShouldQueue
+{
+    /**
+     * Indicate if the listener should be marked as failed on timeout.
+     *
+     * @var bool
+     */
+    public $failOnTimeout = true;
 }
 ```
 
