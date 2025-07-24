@@ -1,5 +1,5 @@
 ---
-git: 3fb881c11eadf8a7cdb623cbee51d649d32a02ea
+git: e0108313cd6f3f456f49349cd3625442d7a2401b
 ---
 
 # Уведомления
@@ -653,7 +653,7 @@ public function toMail(object $notifiable): MailMessage
 }
 ```
 
-Если ваше приложение использует драйвер Mailgun, вы можете обратиться к документации Mailgun для получения дополнительной информации о [тегах](https://documentation.mailgun.com/en/latest/user_manual.html#tagging-1) и [метаданных](https://documentation.mailgun.com/en/latest/user_manual.html#attaching-data-to-messages). Аналогично, документацию Postmark можно также проконсультировать для получения информации о их поддержке [тегов](https://postmarkapp.com/blog/tags-support-for-smtp) и [метаданных](https://postmarkapp.com/support/article/1125-custom-metadata-faq).
+Если ваше приложение использует драйвер Mailgun, вы можете обратиться к документации Mailgun для получения дополнительной информации о [тегах](https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/#tags) и [метаданных](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/#attaching-metadata-to-messages). Аналогично, документацию Postmark можно также проконсультировать для получения информации о их поддержке [тегов](https://postmarkapp.com/blog/tags-support-for-smtp) и [метаданных](https://postmarkapp.com/support/article/1125-custom-metadata-faq).
 
 Если ваше приложение использует Amazon SES для отправки электронных писем, вы должны использовать метод `metadata` для прикрепления [тегов SES](https://docs.aws.amazon.com/ses/latest/APIReference/API_MessageTag.html) к сообщению.
 
@@ -950,6 +950,16 @@ foreach ($user->notifications as $notification) {
 $user = App\Models\User::find(1);
 
 foreach ($user->unreadNotifications as $notification) {
+    echo $notification->type;
+}
+```
+
+Если вы хотите получить только «прочитанные» уведомления, вы можете использовать отношение `readNotifications`:
+
+```php
+$user = App\Models\User::find(1);
+
+foreach ($user->readNotifications as $notification) {
     echo $notification->type;
 }
 ```
