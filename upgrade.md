@@ -1,5 +1,5 @@
 ---
-git: 10ca661ad531827702383dac4a4fa77e5975d7dd
+git: 6bc6cd05d1b1754de15eb73e6160384c7aaa094f
 ---
 
 # Руководство по обновлению
@@ -31,10 +31,11 @@ git: 10ca661ad531827702383dac4a4fa77e5975d7dd
 <!-- <div class="content-list" markdown="1"> -->
 
 - [Carbon 3](#carbon-3)  
-- [Сопоставление индексов результатов в Concurrency](#concurrency-result-index-mapping)  
-- [Разрешение зависимостей контейнера](#container-class-dependency-resolution)  
-- [Проверка изображений больше не включает SVG](#image-validation)  
-- [Просмотр баз данных с несколькими схемами](#multi-schema-database-inspecting)  
+- [Сопоставление индексов результатов в Concurrency](#concurrency-result-index-mapping)
+- [Разрешение зависимостей контейнера](#container-class-dependency-resolution)
+- [Проверка изображений больше не включает SVG](#image-validation)
+- [Корневой путь по умолчанию для локального диска файловой системы](#local-filesystem-disk-default-root-path)
+- [Просмотр баз данных с несколькими схемами](#multi-schema-database-inspecting)
 - [Слияние вложенных массивов в запросах](#nested-array-request-merging)
 
 <!-- </div> -->
@@ -235,11 +236,23 @@ $request->mergeIfMissing([
 
 Если раньше вы рассчитывали, что ключ `'user.last_name'` создаст одноуровневый массив — пересмотрите логику.
 
+<a name="storage"></a>
+### Хранилище
+
+<a name="local-filesystem-disk-default-root-path"></a>
+#### Корневой путь по умолчанию для локального диска файловой системы
+
+**Вероятность влияния: низкая**
+
+Если ваше приложение явно не определяет `local` диск в конфигурации файловой системы, Laravel теперь будет по умолчанию использовать `storage/app/private` в качестве корня локального диска. В предыдущих версиях это был `storage/app`. В результате вызовы `Storage::disk('local')` будут читать и записывать данные в `storage/app/private`, если не указано иное. Чтобы восстановить прежнее поведение, вы можете вручную определить `local` диск и указать нужный путь к корню.
+
 <a name="validation"></a>
 ### Валидация
 
 <a name="image-validation"></a>
 #### Правило `image` больше не пропускает SVG
+
+**Вероятность влияния: низкая**
 
 Теперь по умолчанию SVG-файлы не считаются изображениями при использовании правила `image`. Чтобы разрешить SVG, укажите это явно:
 
