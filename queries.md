@@ -1,5 +1,5 @@
 ---
-git: e473f8cece1cbf8dd8287ab020421335db90c63b
+git: bba3e74166b0efc8624a44211fd0b698b6791087
 ---
 
 # Построитель запросов
@@ -1607,7 +1607,7 @@ class Paginate
     public function __construct(
         private string $sortBy = 'timestamp',
         private string $sortDirection = 'desc',
-        private string $perPage = 25,
+        private int $perPage = 25,
     ) {
         //
     }
