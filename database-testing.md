@@ -1,5 +1,5 @@
 ---
-git: 4223ed3fb9af969df6803cc81a21d5e803236ae0
+git: 0dce9eb1e2fa25f7d945cb6073c6ec40609cb0f5
 ---
 
 # Тестирование · База данных
@@ -252,7 +252,7 @@ $this->assertNotSoftDeleted($user);
 <a name="assert-model-exists"></a>
 #### assertModelExists
 
-Утверждает, что данная модель существует в базе данных:
+Утверждает, что данная модель или коллекция моделей существует в базе данных:
 
 ```php
 use App\Models\User;
@@ -265,7 +265,7 @@ $this->assertModelExists($user);
 <a name="assert-model-missing"></a>
 #### assertModelMissing
 
-Утверждает, что данной модели не существует в базе данных:
+Утверждает, что данной модели или коллекции моделей не существует в базе данных:
 
 ```php
 use App\Models\User;
