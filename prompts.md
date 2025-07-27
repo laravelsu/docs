@@ -1,5 +1,5 @@
 ---
-git: 14acbfa08feb1ebc700e249758e011c3782c47bd
+git: 097ebc343c5ba6bc5daaaebc2ab3d79cebe8c8dc
 ---
 
 # Prompts (Подсказки)
@@ -982,3 +982,49 @@ TextPrompt::fallbackUsing(function (TextPrompt $prompt) use ($input, $output) {
 ```
 
 Резервные варианты должны быть настроены индивидуально для каждого класса prompt. Замыкание будет получать экземпляр класса prompt и должно возвращать соответствующий тип для prompt.
+
+<a name="testing"></a>
+## Тестирование
+
+Laravel предоставляет ряд методов для проверки того, что ваша команда отображает ожидаемые сообщения Prompt:
+
+```php tab=Pest
+test('report generation', function () {
+    $this->artisan('report:generate')
+        ->expectsPromptsInfo('Welcome to the application!')
+        ->expectsPromptsWarning('This action cannot be undone')
+        ->expectsPromptsError('Something went wrong')
+        ->expectsPromptsAlert('Important notice!')
+        ->expectsPromptsIntro('Starting process...')
+        ->expectsPromptsOutro('Process completed!')
+        ->expectsPromptsTable(
+            headers: ['Name', 'Email'],
+            rows: [
+                ['Taylor Otwell', 'taylor@example.com'],
+                ['Jason Beggs', 'jason@example.com'],
+            ]
+        )
+        ->assertExitCode(0);
+});
+```
+
+```php tab=PHPUnit
+public function test_report_generation(): void
+{
+    $this->artisan('report:generate')
+        ->expectsPromptsInfo('Welcome to the application!')
+        ->expectsPromptsWarning('This action cannot be undone')
+        ->expectsPromptsError('Something went wrong')
+        ->expectsPromptsAlert('Important notice!')
+        ->expectsPromptsIntro('Starting process...')
+        ->expectsPromptsOutro('Process completed!')
+        ->expectsPromptsTable(
+            headers: ['Name', 'Email'],
+            rows: [
+                ['Taylor Otwell', 'taylor@example.com'],
+                ['Jason Beggs', 'jason@example.com'],
+            ]
+        )
+        ->assertExitCode(0);
+}
+```
