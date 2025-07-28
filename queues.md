@@ -1,5 +1,5 @@
 ---
-git: 3ef82c24ec0d5e82bd988c070eaed235fa01c1b8
+git: e6614cccb4af772862d5d666e7b7ad9878790765
 ---
 
 # Очереди
@@ -2437,8 +2437,11 @@ test('orders can be shipped', function () {
     // Assert a job was not pushed...
     Queue::assertNotPushed(AnotherJob::class);
 
-    // Assert that a Closure was pushed to the queue...
+    // Assert that a closure was pushed to the queue...
     Queue::assertClosurePushed();
+
+    // Assert that a closure was not pushed...
+    Queue::assertClosureNotPushed();
 
     // Assert the total number of jobs that were pushed...
     Queue::assertCount(3);
@@ -2476,8 +2479,11 @@ class ExampleTest extends TestCase
         // Assert a job was not pushed...
         Queue::assertNotPushed(AnotherJob::class);
 
-        // Assert that a Closure was pushed to the queue...
+        // Assert that a closure was pushed to the queue...
         Queue::assertClosurePushed();
+
+        // Assert that a closure was not pushed...
+        Queue::assertClosureNotPushed();
 
         // Assert the total number of jobs that were pushed...
         Queue::assertCount(3);
@@ -2485,11 +2491,17 @@ class ExampleTest extends TestCase
 }
 ```
 
-Вы можете передать функцию-замыкание методам `assertPushed` или `assertNotPushed`, чтобы подтвердить, что задание было отправлено и прошло заданный «тест на истинность». Если было отправлено хотя бы одно задание, которое проходит заданный тест, то утверждение будет успешным:
+Вы можете передать функцию-замыкание методам `assertPushed`, `assertNotPushed`, `assertClosurePushed` или `assertClosureNotPushed`, чтобы подтвердить, что задание было отправлено и прошло заданный «тест на истинность». Если было отправлено хотя бы одно задание, которое проходит заданный тест, то утверждение будет успешным:
 
 ```php
+use Illuminate\Queue\CallQueuedClosure;
+
 Queue::assertPushed(function (ShipOrder $job) use ($order) {
     return $job->order->id === $order->id;
+});
+
+Queue::assertClosurePushed(function (CallQueuedClosure $job) {
+    return $job->name === 'validate-order';
 });
 ```
 
