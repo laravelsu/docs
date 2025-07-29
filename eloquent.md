@@ -1,5 +1,5 @@
 ---
-git: 84b720160d5ee80455b6b562df5f734b03a68ccb
+git: e409a8d8e4e05dd907a0b9ef21a541742ae42857
 ---
 
 # Eloquent · Начало работы
