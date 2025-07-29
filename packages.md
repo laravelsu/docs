@@ -1,5 +1,5 @@
 ---
-git: cec5ac61ad6b4e98b054d7a389c6ada4f5812c4b
+git: b6f3de3ba54d97a4e74edc5472f864ec5fe7ccab
 ---
 
 # Разработка пакетов
