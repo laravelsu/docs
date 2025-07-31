@@ -1,5 +1,5 @@
 ---
-git: 84413739f127e00727a102c4994551108e62cff7
+git: 462c210d1d8b5e34d4a3035c65148f76112ca1d4
 ---
 
 # Контроллеры
@@ -178,6 +178,15 @@ Route::resource('photos', PhotoController::class);
 
 ```php
 Route::resources([
+    'photos' => PhotoController::class,
+    'posts' => PostController::class,
+]);
+```
+
+Метод `softDeletableResources` регистрирует множество контроллеров ресурсов, все из которых используют метод `withTrashed`:
+
+```php
+Route::softDeletableResources([
     'photos' => PhotoController::class,
     'posts' => PostController::class,
 ]);
