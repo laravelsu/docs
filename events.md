@@ -1,5 +1,5 @@
 ---
-git: 4a9b178d5ea888b05a487b394d1c322429a74fac
+git: f28266e681ad56973a00c7990dba526128d3b5fd
 ---
 
 # События (Events)
