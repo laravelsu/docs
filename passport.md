@@ -1,5 +1,5 @@
 ---
-git: 2db745c10a3a367c6bcafb5bfe019fb5d3009ca9
+git: 8035e585737b0e942bd6a92289e5bdb0cfa25823
 ---
 
 # Laravel Passport
@@ -928,7 +928,7 @@ Route::get('/orders', function (Request $request) {
 ```php
 Route::get('/orders', function (Request $request) {
     // Токен доступа действителен, клиент является владельцем ресурса и имеет обе области действия: «servers:read» и «servers:create»...
-})->middleware(EnsureClientIsResourceOwner::using('servers:read', 'servers:create');
+})->middleware(EnsureClientIsResourceOwner::using('servers:read', 'servers:create'));
 ```
 
 <a name="retrieving-tokens"></a>
@@ -1152,7 +1152,7 @@ use Laravel\Passport\Http\Middleware\CheckToken;
 
 Route::get('/orders', function () {
     // Access token has both "orders:read" and "orders:create" scopes...
-})->middleware(['auth:api', CheckToken::using('orders:read', 'orders:create');
+})->middleware(['auth:api', CheckToken::using('orders:read', 'orders:create')]);
 ```
 
 <a name="check-for-any-scopes"></a>
@@ -1165,7 +1165,7 @@ use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 
 Route::get('/orders', function () {
     // Access token has either "orders:read" or "orders:create" scope...
-})->middleware(['auth:api', CheckTokenForAnyScope::using('orders:read', 'orders:create');
+})->middleware(['auth:api', CheckTokenForAnyScope::using('orders:read', 'orders:create')]);
 ```
 
 <a name="checking-scopes-on-a-token-instance"></a>
