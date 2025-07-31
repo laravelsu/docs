@@ -1,5 +1,5 @@
 ---
-git: bba3e74166b0efc8624a44211fd0b698b6791087
+git: 4d2579e3a11ad725724355549d0a3532c66e0424
 ---
 
 # Построитель запросов
@@ -661,6 +661,10 @@ Laravel также поддерживает запросы к типам сто�
 ```php
 $users = DB::table('users')
     ->where('preferences->dining->meal', 'salad')
+    ->get();
+
+$users = DB::table('users')
+    ->whereIn('preferences->dining->meal', ['pasta', 'salad', 'sandwiches'])
     ->get();
 ```
 
