@@ -1,5 +1,5 @@
 ---
-git: 7b138d0703c77f8b1771d6f628166f35b515a006
+git: 2a0504f3579486c15577b685ba9dcca3a13e088b
 ---
 
 # Коллекции
@@ -109,6 +109,7 @@ $translated = $collection->toLocale('es');
 - [diffAssocUsing](#method-diffassocusing)
 - [diffKeys](#method-diffkeys)
 - [doesntContain](#method-doesntcontain)
+- [doesntContainStrict](#method-doesntcontainstrict)
 - [dot](#method-dot)
 - [dump](#method-dump)
 - [duplicates](#method-duplicates)
@@ -815,6 +816,11 @@ $collection->doesntContain('product', 'Bookcase');
 ```
 
 Метод `doesntContain` использует "не строгое" сравнение при проверке значений элементов, что означает, что строка с целым значением будет считаться равной целому числу того же значения.
+
+<a name="method-doesntcontainstrict"></a>
+#### `doesntContainStrict()`
+
+Этот метод имеет ту же сигнатуру, что и метод [doesntContain](#method-doesntcontain); однако все значения сравниваются с использованием «строгих» сравнений.
 
 <a name="method-dot"></a>
 #### `dot()`
