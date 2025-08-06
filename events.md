@@ -1,5 +1,5 @@
 ---
-git: f28266e681ad56973a00c7990dba526128d3b5fd
+git: e75354ea889c0d73fcc77fe28c3f8aa13407955d
 ---
 
 # События (Events)
@@ -917,6 +917,9 @@ test('orders can be shipped', function () {
     // Утвердите, что событие было отправлено дважды...
     Event::assertDispatched(OrderShipped::class, 2);
 
+    // Подтвердите, что событие было отправлено один раз...
+    Event::assertDispatchedOnce(OrderShipped::class);
+
     // Утвердите, что событие не было отправлено...
     Event::assertNotDispatched(OrderFailedToShip::class);
 
@@ -951,6 +954,9 @@ class ExampleTest extends TestCase
 
         // Утвердите, что событие было отправлено дважды...
         Event::assertDispatched(OrderShipped::class, 2);
+
+        // Подтвердите, что событие было отправлено один раз...
+        Event::assertDispatchedOnce(OrderShipped::class);
 
         // Утвердите, что событие не было отправлено...
         Event::assertNotDispatched(OrderFailedToShip::class);
