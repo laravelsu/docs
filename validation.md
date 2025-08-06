@@ -1,5 +1,5 @@
 ---
-git: 16978eb4f5adeb0a1106895336a07b902cf062b4
+git: 133fd4a47a9fa2bda7332f02d4d051d214d98285
 ---
 
 # Валидация
@@ -997,6 +997,7 @@ Validator::make($request->all(), [
 - [Array](#rule-array)
 - [Between](#rule-between)
 - [Contains](#rule-contains)
+- [Doesnt Contain](#rule-doesnt-contain)
 - [Distinct](#rule-distinct)
 - [In Array](#rule-in-array)
 - [In Array Keys](#rule-in-array-keys)
@@ -1324,6 +1325,24 @@ Validator::make($data, [
         'required',
         'array',
         Rule::contains(['admin', 'editor']),
+    ],
+]);
+```
+
+<a name="rule-doesnt-contain"></a>
+#### doesnt_contain:_foo_,_bar_,...
+
+Проверяемое поле должно быть массивом, не содержащим ни одного из заданных значений параметров. Поскольку это правило часто требует «развертывания» массива, для его быстрого построения можно использовать метод `Rule::doesntContain`:
+
+```php
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
+Validator::make($data, [
+    'roles' => [
+        'required',
+        'array',
+        Rule::doesntContain(['admin', 'editor']),
     ],
 ]);
 ```
@@ -1755,6 +1774,12 @@ Validator::make($input, [
 #### integer
 
 Проверяемое поле должно быть целым числом.
+
+Вы можете использовать параметр `strict`, чтобы считать поле допустимым только в том случае, если его тип — `integer`. Строки с целыми значениями будут считаться недопустимыми:
+
+```php
+'age' => 'integer:strict'
+```
 
 > [!WARNING]
 > Это правило валидации не проверяет, что значение поля относится к типу переменной `integer`, а только что значение поля относится к типу, принятому правилом `FILTER_VALIDATE_INT` PHP. Если вам нужно проверить значение поля в качестве числа, используйте это правило в сочетании с [правилом валидации `numeric`](#rule-numeric).
