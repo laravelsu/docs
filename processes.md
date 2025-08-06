@@ -1,5 +1,5 @@
 ---
-git: 902aaf97857b1c02499fe0dda7114ce036eb5db8
+git: 81b78b501445b530a7bcb9e75fd64baf71b2b241
 ---
 
 # Процессы
@@ -203,7 +203,7 @@ Laravel также позволяет назначать строковые кл
 $result = Process::pipe(function (Pipe $pipe) {
     $pipe->as('first')->command('cat example.txt');
     $pipe->as('second')->command('grep -i "laravel"');
-})->start(function (string $type, string $output, string $key) {
+}, function (function (string $type, string $output, string $key) {
     // ...
 });
 ```
@@ -409,8 +409,8 @@ Route::get('/import', function () {
 ```php tab=Pest
 <?php
 
-use Illuminate\Process\PendingProcess;
 use Illuminate\Contracts\Process\ProcessResult;
+use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\Process;
 
 test('process is invoked', function () {
@@ -434,8 +434,8 @@ test('process is invoked', function () {
 
 namespace Tests\Feature;
 
-use Illuminate\Process\PendingProcess;
 use Illuminate\Contracts\Process\ProcessResult;
+use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\Process;
 use Tests\TestCase;
 
@@ -607,7 +607,7 @@ use Illuminate\Support\Facades\Process;
 Process::assertRanTimes('ls -la', times: 3);
 ```
 
-Метод `assertRanTimes` также принимает замыкание, которое получит экземпляр процесса и результат процесса, что позволяет вам проверить настроенные опции процесса. Если это замыкание возвращает `true` и процесс был вызван указанное количество раз, утверждение будет "пройдено":
+Метод `assertRanTimes` также принимает замыкание, которое получит экземпляры `PendingProcess` и `ProcessResult`, что позволяет вам проверить настроенные опции процесса. Если это замыкание возвращает `true` и процесс был вызван указанное количество раз, утверждение будет "пройдено":
 
 ```php
 Process::assertRanTimes(function (PendingProcess $process, ProcessResult $result) {
