@@ -1,5 +1,5 @@
 ---
-git: 2fc3ac7cb75eaa8537e73713000ada6048cb980a
+git: 0b3e9aed130423081fe36b63e63b0c274adbcc5c
 ---
 
 # Отправка электронной почты
@@ -1334,7 +1334,8 @@ Mail::assertSent(OrderShipped::class, function (OrderShipped $mail) use ($user) 
            $mail->hasBcc('...') &&
            $mail->hasReplyTo('...') &&
            $mail->hasFrom('...') &&
-           $mail->hasSubject('...');
+           $mail->hasSubject('...') &&
+           $mail->usesMailer('ses');
 });
 ```
 
