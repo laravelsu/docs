@@ -1,5 +1,5 @@
 ---
-git: 0a19df6e95c129ece88b9cc1615e99f6f9b2ba4c
+git: a3d14a367e6dd4c268b21630f14a0d553c2c5df6
 ---
 
 # Глобальные помощники (helpers)
@@ -25,6 +25,7 @@ Laravel содержит множество глобальных «вспомо�
 - [Arr::crossJoin](#method-array-crossjoin)
 - [Arr::divide](#method-array-divide)
 - [Arr::dot](#method-array-dot)
+- [Arr::every](#method-array-every)
 - [Arr::except](#method-array-except)
 - [Arr::exists](#method-array-exists)
 - [Arr::first](#method-array-first)
@@ -58,6 +59,7 @@ Laravel содержит множество глобальных «вспомо�
 - [Arr::set](#method-array-set)
 - [Arr::shuffle](#method-array-shuffle)
 - [Arr::sole](#method-array-sole)
+- [Arr::some](#method-array-some)
 - [Arr::sort](#method-array-sort)
 - [Arr::sortDesc](#method-array-sort-desc)
 - [Arr::sortRecursive](#method-array-sort-recursive)
@@ -131,6 +133,7 @@ Laravel содержит множество глобальных «вспомо�
 - [route](#method-route)
 - [secure_asset](#method-secure-asset)
 - [secure_url](#method-secure-url)
+- [to_action](#method-to-action)
 - [to_route](#method-to-route)
 - [uri](#method-uri)
 - [url](#method-url)
@@ -359,6 +362,25 @@ $array = ['products' => ['desk' => ['price' => 100]]];
 $flattened = Arr::dot($array);
 
 // ['products.desk.price' => 100]
+```
+
+<a name="method-array-every"></a>
+#### `Arr::every()`
+
+Метод `Arr::ever` гарантирует, что все значения в массиве проходят заданный тест истинности:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = [1, 2, 3];
+
+Arr::every($array, fn ($i) => $i > 0);
+
+// true
+
+Arr::every($array, fn ($i) => $i > 2);
+
+// false
 ```
 
 <a name="method-array-except"></a>
@@ -1028,6 +1050,21 @@ $array = ['Desk', 'Table', 'Chair'];
 $value = Arr::sole($array, fn (string $value) => $value === 'Desk');
 
 // 'Desk'
+```
+
+<a name="method-array-some"></a>
+#### `Arr::some()`
+
+Метод `Arr::some` гарантирует, что хотя бы одно из значений в массиве проходит заданный тест истинности:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = [1, 2, 3];
+
+Arr::some($array, fn ($i) => $i > 2);
+
+// true
 ```
 
 <a name="method-array-sort"></a>
@@ -2061,6 +2098,29 @@ $url = secure_asset('img/photo.jpg');
 $url = secure_url('user/profile');
 
 $url = secure_url('user/profile', [1]);
+```
+
+
+<a name="method-to-action"></a>
+#### `to_action()`
+
+Функция `to_action` генерирует [ответ HTTP перенаправления](/docs/{{version}}/responses#redirects) для заданного действия контроллера:
+
+```php
+use App\Http\Controllers\UserController;
+
+return to_action([UserController::class, 'show'], ['user' => 1]);
+```
+
+При необходимости вы можете передать код статуса HTTP, который следует назначить перенаправлению, и любые дополнительные заголовки ответа в качестве третьего и четвертого аргументов метода `to_action`:
+
+```php
+return to_action(
+    [UserController::class, 'show'],
+    ['user' => 1],
+    302,
+    ['X-Framework' => 'Laravel']
+);
 ```
 
 <a name="method-to-route"></a>
@@ -3267,6 +3327,19 @@ $user = Pipeline::send($user)
 
 ```php
 $user = Pipeline::send($user)
+    ->through([
+        GenerateProfilePhoto::class,
+        ActivateSubscription::class,
+        SendWelcomeEmail::class,
+    ])
+    ->thenReturn();
+```
+
+Метод `withinTransactions` может быть вызван в конвейере для автоматического вызова каждого шага конвейера в транзакции базы данных:
+
+```php
+$user = Pipeline::send($user)
+    ->withinTransactions()
     ->through([
         GenerateProfilePhoto::class,
         ActivateSubscription::class,
