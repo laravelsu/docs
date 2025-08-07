@@ -1,5 +1,5 @@
 ---
-git: 118eb1970420602073990b081b18bef59582c8b3
+git: b1a0e4a0c045dd73734b6a638a83f6dabdedc449
 ---
 
 # Тестирование · Тесты HTTP
@@ -247,6 +247,12 @@ class ExampleTest extends TestCase
 
 ```php
 $this->actingAs($user, 'web')
+```
+
+Если вы хотите убедиться, что запрос не аутентифицирован, вы можете использовать метод `actingAsGuest`:
+
+```php
+$this->actingAsGuest()
 ```
 
 <a name="debugging-responses"></a>
