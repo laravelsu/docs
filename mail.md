@@ -1,5 +1,5 @@
 ---
-git: 0b3e9aed130423081fe36b63e63b0c274adbcc5c
+git: 5f01fbcdb444f11dfbbaa031e3be6ce4cf3188a6
 ---
 
 # Отправка электронной почты
@@ -1262,6 +1262,9 @@ test('orders can be shipped', function () {
     // Утверждение, что почтовое сообщение не было отправлено...
     Mail::assertNotSent(AnotherMailable::class);
 
+    // Утверждение, что почтовое сообщение было отправлено дважды...
+    Mail::assertSentTimes(OrderShipped::class, 2);
+
     // Утверждение, что всего было отправлено 3 почтовых сообщения...
     Mail::assertSentCount(3);
 });
@@ -1301,6 +1304,9 @@ class ExampleTest extends TestCase
 
         // Утверждение, что другое письмо не было отправлено...
         Mail::assertNotSent(AnotherMailable::class);
+
+        // Утверждение, что почтовое сообщение было отправлено дважды...
+        Mail::assertSentTimes(OrderShipped::class, 2);
 
         // Утверждение, что всего было отправлено 3 письма...
         Mail::assertSentCount(3);
