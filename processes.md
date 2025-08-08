@@ -203,7 +203,7 @@ Laravel также позволяет назначать строковые кл
 $result = Process::pipe(function (Pipe $pipe) {
     $pipe->as('first')->command('cat example.txt');
     $pipe->as('second')->command('grep -i "laravel"');
-}, function (function (string $type, string $output, string $key) {
+}, function (string $type, string $output, string $key) {
     // ...
 });
 ```
