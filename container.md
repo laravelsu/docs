@@ -1,5 +1,5 @@
 ---
-git: 9589deca38d84d979570b9c77a1dc866c540b2c7
+git: a113cd69f75ea0ab6d7425bdf336a1134cd83cf2
 ---
 
 # Контейнер служб (service container)
@@ -254,6 +254,45 @@ use App\Contracts\EventPusher;
 public function __construct(
     protected EventPusher $pusher,
 ) {}
+```
+
+<a name="bind-attributes"></a>
+#### Атрибуты связывания
+
+Laravel также предоставляет атрибут `Bind` для дополнительного удобства. Вы можете применить этот атрибут к любому интерфейсу, чтобы указать Laravel, какая реализация должна автоматически внедряться при запросе этого интерфейса. При использовании атрибута `Bind` нет необходимости в дополнительной регистрации сервисов в сервис-провайдерах вашего приложения.
+
+Кроме того, в интерфейс можно поместить несколько атрибутов `Bind`, чтобы настроить другую реализацию, которая должна быть внедрена для заданного набора сред:
+
+```php
+<?php
+
+namespace App\Contracts;
+
+use App\Services\FakeEventPusher;
+use App\Services\RedisEventPusher;
+use Illuminate\Container\Attributes\Bind;
+
+#[Bind(RedisEventPusher::class)]
+#[Bind(FakeEventPusher::class, environments: ['local', 'testing'])]
+interface EventPusher
+{
+    // ...
+}
+```
+
+Кроме того, атрибуты `Singleton` и `Scoped` могут применяться для указания того, следует ли разрешать привязки контейнера один раз или один раз за жизненный цикл запроса/задания:
+
+```php
+use App\Services\RedisEventPusher;
+use Illuminate\Container\Attributes\Bind;
+use Illuminate\Container\Attributes\Singleton;
+
+#[Bind(RedisEventPusher::class)]
+#[Singleton]
+interface EventPusher
+{
+    // ...
+}
 ```
 
 <a name="contextual-binding"></a>
