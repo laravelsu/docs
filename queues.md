@@ -1,5 +1,5 @@
 ---
-git: e6614cccb4af772862d5d666e7b7ad9878790765
+git: 7af3c41df42294ab469d698189975fa087a3c21a
 ---
 
 # Очереди
@@ -63,7 +63,7 @@ php artisan migrate
 
 **Кластер Redis**
 
-Если ваше соединение с очередью Redis использует кластер Redis, то имена ваших очередей должны содержать [ключевой хеш-тег](https://redis.io/docs/reference/cluster-spec/#hash-tags). Это необходимо для того, чтобы все ключи Redis для указанной очереди были поставлены в один и тот же хеш-слот:
+Если ваше соединение с очередью Redis использует [кластер Redis](https://redis.io/docs/latest/operate/rs/databases/durability-ha/clustering), то имена ваших очередей должны содержать [ключевой хеш-тег](https://redis.io/docs/latest/develop/using-commands/keyspace/#hashtags). Это необходимо для того, чтобы все ключи Redis для указанной очереди были поставлены в один и тот же хеш-слот:
 
 ```php
 'redis' => [
@@ -219,6 +219,34 @@ public function __construct(
 ) {}
 ```
 
+Для удобства, если вы хотите сериализовать все модели без связей, вы можете применить атрибут `WithoutRelations` ко всему классу вместо того, чтобы применять атрибут к каждой модели:
+
+```php
+<?php
+
+namespace App\Jobs;
+
+use App\Models\DistributionPlatform;
+use App\Models\Podcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\WithoutRelations;
+
+#[WithoutRelations]
+class ProcessPodcast implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(
+        public Podcast $podcast,
+        public DistributionPlatform $platform,
+    ) {}
+}
+```
+
 Если задание получает коллекцию или массив моделей Eloquent вместо одной модели, отношения между моделями в этой коллекции не будут восстановлены при десериализации и выполнении задания. Это необходимо для предотвращения чрезмерного использования ресурсов в заданиях, связанных с большим количеством моделей.
 
 <a name="unique-jobs"></a>
@@ -248,7 +276,8 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
 ```php
 <?php
 
-use App\Models\Product;
+namespace App\Jobs;
+
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 
@@ -257,7 +286,7 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
     /**
      * Экземпляр продукта.
      *
-     * @var \App\Product
+     * @var \App\Models\Product
      */
     public $product;
 
@@ -291,7 +320,6 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
 ```php
 <?php
 
-use App\Models\Product;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 
