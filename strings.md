@@ -1,5 +1,5 @@
 ---
-git: 37b513606d6566439920facd4603b6b251dea105
+git: 84bd53af8e3f11d494d66b1b2f0adf7abb7c507f
 ---
 
 # Строки
@@ -873,6 +873,20 @@ $isUuid = Str::isUuid('a0a2a2d2-0b87-4a18-83f2-2529882be2de');
 // true
 
 $isUuid = Str::isUuid('laravel');
+
+// false
+```
+
+Вы также можете проверить, соответствует ли заданный UUID спецификации UUID по версии (1, 3, 4, 5, 6, 7 или 8):
+
+```php
+use Illuminate\Support\Str;
+
+$isUuid = Str::isUuid('a0a2a2d2-0b87-4a18-83f2-2529882be2de', version: 4);
+
+// true
+
+$isUuid = Str::isUuid('a0a2a2d2-0b87-4a18-83f2-2529882be2de', version: 1);
 
 // false
 ```
@@ -2636,6 +2650,20 @@ $result = Str::of('5ace9ab9-e9cf-4ec6-a19d-5881212a452c')->isUuid();
 // true
 
 $result = Str::of('Taylor')->isUuid();
+
+// false
+```
+
+Вы также можете проверить, соответствует ли заданный UUID спецификации UUID по версии (1, 3, 4, 5, 6, 7 или 8):
+
+```php
+use Illuminate\Support\Str;
+
+$isUuid = Str::of('a0a2a2d2-0b87-4a18-83f2-2529882be2de')->isUuid(version: 4);
+
+// true
+
+$isUuid = Str::of('a0a2a2d2-0b87-4a18-83f2-2529882be2de')->isUuid(version: 1);
 
 // false
 ```
