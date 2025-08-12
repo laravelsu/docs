@@ -1,5 +1,5 @@
 ---
-git: fe846c64bc236ed39fbcd7da705602add79132f4
+git: bab1b28a63e72f9e51ad89995ef546058bc01bdc
 ---
 
 # База данных · Миграции
@@ -644,6 +644,14 @@ $table->double('amount');
 
 ```php
 $table->enum('difficulty', ['easy', 'hard']);
+```
+
+Конечно, вы можете использовать метод `Enum::cases()` вместо ручного определения массива допустимых значений:
+
+```php
+use App\Enums\Difficulty;
+
+$table->enum('difficulty', Difficulty::cases());
 ```
 
 <a name="column-method-float"></a>
