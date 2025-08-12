@@ -1,5 +1,5 @@
 ---
-git: a3d14a367e6dd4c268b21630f14a0d553c2c5df6
+git: 9ef634f458c5ed0fbb01be1d30f92daac311b007
 ---
 
 # Глобальные помощники (helpers)
@@ -3189,6 +3189,9 @@ Route::post('/orders', function (Request $request) {
 defer(fn () => Metrics::reportOrder($order))->always();
 ```
 
+> [!WARNING]
+> Если у вас установлено расширение PHP **swoole**, функция `defer` Laravel может конфликтовать с глобальной функцией `defer` Swoole, что приводит к ошибкам веб-сервера. Убедитесь, что вы вызываете вспомогательную функцию `defer` Laravel, явно указав её пространство имён: `use function Illuminate\Support\defer;`
+
 <a name="cancelling-deferred-functions"></a>
 #### Отмена отложенных функций
 
@@ -3335,15 +3338,15 @@ $user = Pipeline::send($user)
     ->thenReturn();
 ```
 
-Метод `withinTransactions` может быть вызван в конвейере для автоматического вызова каждого шага конвейера в транзакции базы данных:
+Метод `withinTransaction` может быть вызван в конвейере для автоматического включения всех этапов конвейера в одну транзакцию базы данных:
 
 ```php
 $user = Pipeline::send($user)
-    ->withinTransactions()
+    ->withinTransaction()
     ->through([
-        GenerateProfilePhoto::class,
-        ActivateSubscription::class,
-        SendWelcomeEmail::class,
+        ProcessOrder::class,
+        TransferFunds::class,
+        UpdateInventory::class,
     ])
     ->thenReturn();
 ```
