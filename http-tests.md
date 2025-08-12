@@ -1,5 +1,5 @@
 ---
-git: b1a0e4a0c045dd73734b6a638a83f6dabdedc449
+git: 57ded95707f9e7901576e4949b847c688565fb3f
 ---
 
 # Тестирование · Тесты HTTP
@@ -246,13 +246,13 @@ class ExampleTest extends TestCase
 Вы также можете указать, какой гейт должен использоваться для аутентификации конкретного пользователя, передав имя гейта в качестве второго аргумента методу `actingAs`.  Гейт, предоставленный методу actingAs, также станет гейтом по умолчанию на протяжении всего теста::
 
 ```php
-$this->actingAs($user, 'web')
+$this->actingAs($user, 'web');
 ```
 
 Если вы хотите убедиться, что запрос не аутентифицирован, вы можете использовать метод `actingAsGuest`:
 
 ```php
-$this->actingAsGuest()
+$this->actingAsGuest();
 ```
 
 <a name="debugging-responses"></a>
