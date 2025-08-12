@@ -1,5 +1,5 @@
 ---
-git: e0108313cd6f3f456f49349cd3625442d7a2401b
+git: 5f01fbcdb444f11dfbbaa031e3be6ce4cf3188a6
 ---
 
 # Уведомления
@@ -1631,6 +1631,9 @@ test('orders can be shipped', function () {
         [$user], AnotherNotification::class
     );
 
+    // Утверждаем, что уведомление было отправлено дважды...
+    Notification::assertSentTimes(WeeklyReminder::class, 2);
+
     // Утверждаем, что было отправлено заданное количество уведомлений...
     Notification::assertCount(3);
 });
@@ -1665,6 +1668,9 @@ class ExampleTest extends TestCase
         Notification::assertNotSentTo(
             [$user], AnotherNotification::class
         );
+
+        // Утверждаем, что уведомление было отправлено дважды...
+        Notification::assertSentTimes(WeeklyReminder::class, 2);
 
         // Утверждаем, что было отправлено заданное количество уведомлений...
         Notification::assertCount(3);
