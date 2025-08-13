@@ -1,5 +1,5 @@
 ---
-git: 57ded95707f9e7901576e4949b847c688565fb3f
+git: 2dc867e406e5a429556de850435213ae44d9d6c4
 ---
 
 # Тестирование · Тесты HTTP
@@ -266,11 +266,11 @@ $this->actingAsGuest();
 test('basic test', function () {
     $response = $this->get('/');
 
+    $response->dump();
+
     $response->dumpHeaders();
 
     $response->dumpSession();
-
-    $response->dump();
 });
 ```
 
@@ -290,11 +290,11 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
+        $response->dump();
+
         $response->dumpHeaders();
 
         $response->dumpSession();
-
-        $response->dump();
     }
 }
 ```
