@@ -1,5 +1,5 @@
 ---
-git: f233f7f923f484872d218e75fc9904d6e7c60f3b
+git: 673f762b3c8497770e526fd83dec342e870a641e
 ---
 
 # Eloquent · Отношения
@@ -2147,7 +2147,7 @@ use App\Models\Book;
 
 $books = Book::all();
 
-if ($someCondition) {
+if ($condition) {
     $books->load('author', 'publisher');
 }
 ```
