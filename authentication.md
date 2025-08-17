@@ -1,5 +1,5 @@
 ---
-git: 3fd8aadbd661f00d4afa1d0340882951b722297e
+git: 4789f379dcc9313fa9e5a0a8583d619978ce4825
 ---
 
 # Аутентификация
@@ -410,7 +410,7 @@ Route::get('/profile', function () {
 <a name="a-note-on-fastcgi"></a>
 #### Примечание о FastCGI
 
-Если вы используете PHP FastCGI и Apache для своего приложения Laravel, то аутентификация HTTP Basic может работать некорректно. Чтобы исправить эти проблемы, в файл `.htaccess` вашего приложения можно добавить следующие строки:
+Если вы используете [PHP FastCGI](https://www.php.net/manual/en/install.fpm.php) и Apache для своего приложения Laravel, то аутентификация HTTP Basic может работать некорректно. Чтобы исправить эти проблемы, в файл `.htaccess` вашего приложения можно добавить следующие строки:
 
 ```apache
 RewriteCond %{HTTP:Authorization} ^(.+)$
