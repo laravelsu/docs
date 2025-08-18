@@ -1,5 +1,5 @@
 ---
-git: 2d68f340f3adc35a707e1bd6861c6a27423a9df6
+git: 48dac93d05157a308077054c40315a6cbb65888b
 ---
 
 # Очереди
@@ -2265,7 +2265,7 @@ class ProcessPodcast implements ShouldQueue
 
 </div>
 
-Если последняя попытка завершится неудачей из-за исключения, возникшего во время выполнения задания, это исключение будет передано методу failed задания. Однако, если задание завершится неудачей из-за достижения максимального количества попыток, `$exception` будет экземпляром `Illuminate\Queue\MaxAttemptsExceededException`. Аналогично, если задание завершится неудачей из-за превышения заданного тайм-аута, `$exception` будет экземпляром `Illuminate\Queue\TimeoutExceededException`.
+Если последняя попытка завершится неудачей из-за исключения, возникшего во время выполнения задания, это исключение будет передано методу `failed` задания. Однако, если задание завершится неудачей из-за достижения максимального количества попыток, `$exception` будет экземпляром `Illuminate\Queue\MaxAttemptsExceededException`. Аналогично, если задание завершится неудачей из-за превышения заданного тайм-аута, `$exception` будет экземпляром `Illuminate\Queue\TimeoutExceededException`.
 
 <a name="retrying-failed-jobs"></a>
 ### Повторная попытка выполнения неудачных заданий
@@ -2485,7 +2485,6 @@ public function boot(): void
 <?php
 
 use App\Jobs\AnotherJob;
-use App\Jobs\FinalJob;
 use App\Jobs\ShipOrder;
 use Illuminate\Support\Facades\Queue;
 
@@ -2523,7 +2522,6 @@ test('orders can be shipped', function () {
 namespace Tests\Feature;
 
 use App\Jobs\AnotherJob;
-use App\Jobs\FinalJob;
 use App\Jobs\ShipOrder;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
