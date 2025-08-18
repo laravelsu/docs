@@ -1,5 +1,5 @@
 ---
-git: a6d36e8d9e83a855cabea40713021d6b246c974c
+git: d34d8574ae36efb6a35233bffb16898d2fb979bb
 ---
 
 # Eloquent · Коллекции
@@ -314,7 +314,13 @@ class User extends Model
      */
     public function newCollection(array $models = []): Collection
     {
-        return new UserCollection($models);
+        $collection = new UserCollection($models);
+
+        if (Model::isAutomaticallyEagerLoadingRelationships()) {
+            $collection->withRelationshipAutoloading();
+        }
+
+        return $collection;
     }
 }
 ```
