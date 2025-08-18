@@ -1,5 +1,5 @@
 ---
-git: e5aa7c9f90c7995f29da99e09dc663394ce81e2f
+git: 2a5fabc2102887fb0e8a473dca1b93fdf6caaa0d
 ---
 
 # Процессы
@@ -116,6 +116,9 @@ $result = Process::forever()
 ```php
 Process::forever()->tty()->run('vim');
 ```
+
+> [!WARNING]
+> Режим TTY не поддерживается в Windows.
 
 <a name="process-output"></a>
 ### Вывод процесса
