@@ -1,5 +1,5 @@
 ---
-git: e6652f21e123688f6abf128b85a7f96dd7eceeb4
+git: 6a66f11d99d483b413c3fa388c24ef92cbd1da8c
 ---
 
 # События (Events)
@@ -800,6 +800,19 @@ Event::defer(function () {
 ```
 
 Все события, инициированные в замыкании, будут отправлены после его выполнения. Это гарантирует, что прослушиватели событий будут иметь доступ ко всем связанным записям, созданным во время отложенного выполнения. Если в замыкании возникнет исключение, отложенные события не будут отправлены.
+
+Чтобы отложить только определенные события, передайте массив событий в качестве второго аргумента метода `defer`:
+
+```php
+use App\Models\User;
+use Illuminate\Support\Facades\Event;
+
+Event::defer(function () {
+    $user = User::create(['name' => 'Victoria Otwell']);
+
+    $user->posts()->create(['title' => 'My first post!']);
+}, ['eloquent.created: '.User::class]);
+```
 
 <a name="event-subscribers"></a>
 ## Подписчики событий
