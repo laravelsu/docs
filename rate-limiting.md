@@ -1,5 +1,5 @@
 ---
-git: 6a0eec994bc3e9dfd4a6d2d81abc3a5261b7e79d
+git: 1c9e33de94232e5dfc3d70b8eb6ee60814c8ae9a
 ---
 
 # Ограничение скорости
@@ -20,7 +20,7 @@ Laravel включает простую в использовании абстр
 ```php
 'default' => env('CACHE_STORE', 'database'),
 
-'limiter' => 'redis',
+'limiter' => 'redis', // [tl! add]
 ```
 
 <a name="basic-usage"></a>
@@ -42,7 +42,7 @@ $executed = RateLimiter::attempt(
 );
 
 if (! $executed) {
-  return 'Отправлено слишком много сообщений!';
+    return 'Отправлено слишком много сообщений!';
 }
 ```
 
