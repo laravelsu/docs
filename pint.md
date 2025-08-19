@@ -1,5 +1,5 @@
 ---
-git: eeb53dbeba2919b404499e59f923450360919509
+git: a9dea14794cf8fd8919a5be88ba4220d3dbeb652
 ---
 
 # Laravel Pint
@@ -33,6 +33,12 @@ composer require laravel/pint --dev
 
 ```shell
 ./vendor/bin/pint --parallel
+```
+
+Параллельный режим также позволяет указать максимальное количество запускаемых процессов с помощью параметра `--max-processes`. Если этот параметр не указан, Pint будет использовать все доступные ядра вашего компьютера:
+
+```shell
+./vendor/bin/pint --parallel --max-processes=4
 ```
 
 Вы также можете запустить Pint для определенных файлов или каталогов:
