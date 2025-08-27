@@ -1,5 +1,5 @@
 ---
-git: 9ef634f458c5ed0fbb01be1d30f92daac311b007
+git: b346ab0f732f7be0b377dae3d624778318a2f2d9
 ---
 
 # Глобальные помощники (helpers)
@@ -52,6 +52,7 @@ Laravel содержит множество глобальных «вспомо�
 - [Arr::prepend](#method-array-prepend)
 - [Arr::prependKeysWith](#method-array-prependkeyswith)
 - [Arr::pull](#method-array-pull)
+- [Arr::push](#method-array-push)
 - [Arr::query](#method-array-query)
 - [Arr::random](#method-array-random)
 - [Arr::reject](#method-array-reject)
@@ -925,6 +926,21 @@ $name = Arr::pull($array, 'name');
 use Illuminate\Support\Arr;
 
 $value = Arr::pull($array, $key, $default);
+```
+
+<a name="method-array-push"></a>
+#### `Arr::push()`
+
+Метод `Arr::push` помещает элемент в массив, используя «точечную» нотацию. Если массив по указанному ключу не существует, он будет создан:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = [];
+
+Arr::push($array, 'office.furniture', 'Desk');
+
+// $array: ['office' => ['furniture' => 'Desk']]
 ```
 
 <a name="method-array-query"></a>
