@@ -187,7 +187,7 @@ foreach ($posts as $post) {
     class Post extends Model
     {
         /**
-         * Get the comments for the blog post.
+         * Получить комментарии к сообщению в блоге.
          */
         public function comments(): HasMany
         {
@@ -290,7 +290,7 @@ Eloquent определяет имя внешнего ключа по умолч
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class)->withDefault(function ($user, $post) {
+        return $this->belongsTo(User::class)->withDefault(function (User $user, Post $post) {
             $user->name = 'Guest Author';
         });
     }
@@ -453,10 +453,10 @@ public function currentPricing(): HasOne
 Или, если соответствующие отношения уже определены для всех моделей, участвующих в отношении, вы можете легко определить отношение "один-через-отношение", вызвав метод `through` и указав имена этих отношений. Например, если у модели `Mechanic` есть отношение `cars`, а у модели `Car` есть отношение `owner`, вы можете определить отношение "один-через-отношение", соединяющее механика и владельца, следующим образом:
 
 ```php
-// String based syntax...
+// Строковый синтаксис...
 return $this->through('cars')->has('owner');
 
-// Dynamic syntax...
+// Динамический синтаксис...
 return $this->throughCars()->hasOwner();
 ```
 
@@ -486,10 +486,10 @@ return $this->throughCars()->hasOwner();
 Или, как обсуждалось ранее, если соответствующие отношения уже определены для всех моделей, участвующих в отношении, вы можете легко определить отношение "один-через-отношение", вызвав метод `through` и указав имена этих отношений. Этот подход предоставляет преимущество повторного использования соглашений по ключам, уже определенных в существующих отношениях:
 
 ```php
-// String based syntax...
+// Строковый синтаксис...
 return $this->through('cars')->has('owner');
 
-// Dynamic syntax...
+// Динамический синтаксис...
 return $this->throughCars()->hasOwner();
 ```
 
@@ -537,10 +537,10 @@ return $this->throughCars()->hasOwner();
 Или, если соответствующие отношения уже определены для всех моделей, участвующих в отношении, вы можете легко определить отношение «многие-через-отношение», вызвав метод `through` и указав имена этих отношений. Например, если у модели `Project` есть отношение `environments`, а у модели `Environment` есть отношение `deployments`, вы можете определить отношение «многие-через-отношение», соединяющее проект и деплойменты, следующим образом:
 
 ```php
-// String based syntax...
+// Строковый синтаксис...
 return $this->through('environments')->has('deployments');
 
-// Dynamic syntax...
+// Динамический синтаксис...
 return $this->throughEnvironments()->hasDeployments();
 ```
 
@@ -569,10 +569,10 @@ return $this->throughEnvironments()->hasDeployments();
 Или, как было обсуждено ранее, если соответствующие отношения уже определены для всех моделей, участвующих в отношении, вы можете легко определить отношение «многие-через-отношение», вызвав метод `through` и указав имена этих отношений. Этот подход предоставляет преимущество повторного использования соглашений по ключам, уже определенных в существующих отношениях:
 
 ```php
-// String based syntax...
+// Строковый синтаксис...
 return $this->through('environments')->has('deployments');
 
-// Dynamic syntax...
+// Динамический синтаксис...
 return $this->throughEnvironments()->hasDeployments();
 ```
 
@@ -1093,7 +1093,7 @@ foreach ($posts as $post) {
     class Post extends Model
     {
         /**
-         * Get all of the post's comments.
+         * Получить все комментарии к посту.
          */
         public function comments(): MorphMany
         {
@@ -1118,7 +1118,7 @@ $posts = Post::with([
 
 ```php
 /**
- * Get the user's most recent image.
+ * Получить самое последнее изображение пользователя.
  */
 public function latestImage(): MorphOne
 {
@@ -1130,7 +1130,7 @@ public function latestImage(): MorphOne
 
 ```php
 /**
- * Get the user's oldest image.
+ * Получить самое старое изображение пользователя.
  */
 public function oldestImage(): MorphOne
 {
@@ -1946,7 +1946,7 @@ select * from authors where id in (1, 2, 3, 4, 5, ...)
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Bootstrap any application services.
+ * Загрузка любых сервисов приложения.
  */
 public function boot(): void
 {
@@ -1962,7 +1962,7 @@ public function boot(): void
 Model::handleLazyLoadingViolationUsing(function (Model $model, string $relation) {
     $class = $model::class;
 
-    info("Attempted to lazy load [{$relation}] on model [{$class}].");
+    info("Попытка отложенной загрузки [{$relation}] на модели [{$class}].");
 });
 ```
 
@@ -1977,7 +1977,7 @@ Eloquent содержит удобные методы для добавлени�
     use App\Models\Comment;
     use App\Models\Post;
 
-    $comment = new Comment(['message' => 'A new comment.']);
+    $comment = new Comment(['message' => 'Новый комментарий.']);
 
     $post = Post::find(1);
 
@@ -1990,8 +1990,8 @@ Eloquent содержит удобные методы для добавлени�
     $post = Post::find(1);
 
     $post->comments()->saveMany([
-        new Comment(['message' => 'A new comment.']),
-        new Comment(['message' => 'Another new comment.']),
+        new Comment(['message' => 'Новый комментарий.']),
+        new Comment(['message' => 'Еще один новый комментарий.']),
     ]);
 
 Методы `save` и `saveMany` не будут добавлять новые модели ни в какие отношения, хранимые в памяти, прежде загруженные в родительскую модель. Если вы планируете получить доступ к отношениям после использования методов `save` или `saveMany`, то вы можете использовать метод `refresh` для перезагрузки модели и ее отношений:
@@ -2010,8 +2010,8 @@ Eloquent содержит удобные методы для добавлени�
 
     $post = Post::find(1);
 
-    $post->comments[0]->message = 'Message';
-    $post->comments[0]->author->name = 'Author Name';
+    $post->comments[0]->message = 'Сообщение';
+    $post->comments[0]->author->name = 'Имя автора';
 
     $post->push();
 
@@ -2029,7 +2029,7 @@ Eloquent содержит удобные методы для добавлени�
     $post = Post::find(1);
 
     $comment = $post->comments()->create([
-        'message' => 'A new comment.',
+        'message' => 'Новый комментарий.',
     ]);
 
 Вы можете использовать метод `createMany` для создания нескольких связанных моделей:
@@ -2037,8 +2037,8 @@ Eloquent содержит удобные методы для добавлени�
     $post = Post::find(1);
 
     $post->comments()->createMany([
-        ['message' => 'A new comment.'],
-        ['message' => 'Another new comment.'],
+        ['message' => 'Новый комментарий.'],
+        ['message' => 'Еще один новый комментарий.'],
     ]);
 
 Методы `createQuietly` и `createManyQuietly` могут быть использованы для создания модели(ей) без отправки каких-либо событий:
@@ -2046,12 +2046,12 @@ Eloquent содержит удобные методы для добавлени�
     $user = User::find(1);
 
     $user->posts()->createQuietly([
-        'title' => 'Post title.',
+        'title' => 'Название поста.',
     ]);
 
     $user->posts()->createManyQuietly([
-        ['title' => 'First post.'],
-        ['title' => 'Second post.'],
+        ['title' => 'Первый пост.'],
+        ['title' => 'Второй пост.'],
     ]);
 
 Вы также можете использовать методы `findOrNew`, `firstOrNew`, `firstOrCreate`, и `updateOrCreate` для [создания и обновления моделей отношений](/docs/{{version}}/eloquent#upserts).
@@ -2098,10 +2098,10 @@ Eloquent также содержит методы, которые делают �
 
 Иногда может потребоваться удалить роль пользователя. Чтобы удалить запись отношения «многие-ко-многим», используйте метод `detach`. Метод `detach` удалит соответствующую запись из промежуточной таблицы; однако обе модели останутся в базе данных:
 
-    // Отсоединяем одну роль от пользователя ...
+    // Отсоединяем одну роль от пользователя...
     $user->roles()->detach($roleId);
 
-    // Отсоединяем от пользователя все роли ...
+    // Отсоединяем от пользователя все роли...
     $user->roles()->detach();
 
 Для удобства `attach` и `detach` также принимают в качестве входных данных массивы идентификаторов:
