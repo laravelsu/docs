@@ -727,7 +727,7 @@ Laravel содержит множество глобальных «вспомо�
 
     $random = Arr::random($array);
 
-    // 4 - (retrieved randomly)
+    // 4 - (получено случайным образом)
 
 Вы также можете указать количество элементов для возврата в качестве необязательного второго аргумента. Обратите внимание, что при указании этого аргумента, будет возвращен массив, даже если требуется только один элемент:
 
@@ -735,7 +735,7 @@ Laravel содержит множество глобальных «вспомо�
 
     $items = Arr::random($array, 2);
 
-    // [2, 5] - (retrieved randomly)
+    // [2, 5] - (получено случайным образом)
 
 <a name="method-array-reject"></a>
 #### `Arr::reject()`
@@ -774,7 +774,7 @@ Laravel содержит множество глобальных «вспомо�
 
     $array = Arr::shuffle([1, 2, 3, 4, 5]);
 
-    // [3, 2, 5, 1, 4] - (generated randomly)
+    // [3, 2, 5, 1, 4] - (генерируется случайным образом)
 
 <a name="method-array-sort"></a>
 #### `Arr::sort()`
@@ -1456,7 +1456,7 @@ $result = Number::pairs(25, 10, offset: 0);
     use Illuminate\Support\Number;
 
     /**
-     * Bootstrap any application services.
+     * Загрузка любых сервисов приложения.
      */
     public function boot(): void
     {
@@ -1815,7 +1815,9 @@ return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
 
 Функция `csrf_field` генерирует HTML «скрытого» поля ввода, содержащее значение токена CSRF. Например, используя [синтаксис Blade](/docs/{{version}}/blade):
 
-    {{ csrf_field() }}
+```blade
+{{ csrf_field() }}
+```
 
 <a name="method-csrf-token"></a>
 #### `csrf_token()`
@@ -1939,11 +1941,11 @@ return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
 
 Функция `info` запишет информацию в [журнал](/docs/{{version}}/logging):
 
-    info('Some helpful information!');
+    info('Немного полезной информации!');
 
 Также функции может быть передан массив контекстных данных:
 
-    info('User login attempt failed.', ['id' => $user->id]);
+    info('Попытка входа пользователя не удалась.', ['id' => $user->id]);
 
 <a name="method-literal"></a>
 #### `literal()`
@@ -1963,24 +1965,26 @@ return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
 
 Функцию `logger` можно использовать для записи сообщения уровня `debug` в [журнал](/docs/{{version}}/logging):
 
-    logger('Debug message');
+    logger('Отладочное сообщение');
 
 Также функции может быть передан массив контекстных данных:
 
-    logger('User has logged in.', ['id' => $user->id]);
+    logger('Пользователь вошел в систему.', ['id' => $user->id]);
 
 Если функции не передано значение, то будет возвращен экземпляр [регистратора](/docs/{{version}}/errors#logging):
 
-    logger()->error('You are not allowed here.');
+    logger()->error('Вам сюда не разрешено.');
 
 <a name="method-method-field"></a>
 #### `method_field()`
 
 Функция `method_field` генерирует HTML «скрытого» поле ввода, содержащее поддельное значение HTTP-метода формы. Например, используя [синтаксис Blade](/docs/{{version}}/blade):
 
-    <form method="POST">
-        {{ method_field('DELETE') }}
-    </form>
+```blade
+<form method="POST">
+    {{ method_field('DELETE') }}
+</form>
+```
 
 <a name="method-now"></a>
 #### `now()`
@@ -2019,8 +2023,8 @@ return to_route('users.show', ['user' => 1], 302, ['X-Framework' => 'Laravel']);
     }
 
     random(); // 123
-    random(); // 123 (cached result)
-    random(); // 123 (cached result)
+    random(); // 123 (кэшированный результат)
+    random(); // 123 (кэшированный результат)
 
 Когда функция `once` выполняется из экземпляра объекта, кэшированный результат будет уникальным для этого экземпляра объекта:
 
@@ -2038,12 +2042,12 @@ class NumberService
 $service = new NumberService;
 
 $service->all();
-$service->all(); // (cached result)
+$service->all(); // (кэшированный результат)
 
 $secondService = new NumberService;
 
 $secondService->all();
-$secondService->all(); // (cached result)
+$secondService->all(); // (кэшированный результат)
 ```
 
 <a name="method-optional"></a>
@@ -2088,7 +2092,7 @@ $secondService->all(); // (cached result)
 
 Функция `report` также принимает строку в качестве аргумента. Когда в функцию передается строка, она создает исключение с переданной строкой в качестве сообщения:
 
-    report('Something went wrong.');
+    report('Что-то пошло не так.');
 
 <a name="method-report-if"></a>
 #### `report_if()`
@@ -2097,7 +2101,7 @@ $secondService->all(); // (cached result)
 
     report_if($shouldReport, $e);
 
-    report_if($shouldReport, 'Something went wrong.');
+    report_if($shouldReport, 'Что-то пошло не так.');
 
 <a name="method-report-unless"></a>
 #### `report_unless()`
@@ -2106,7 +2110,7 @@ $secondService->all(); // (cached result)
 
     report_unless($reportingDisabled, $e);
 
-    report_unless($reportingDisabled, 'Something went wrong.');
+    report_unless($reportingDisabled, 'Что-то пошло не так.');
 
 <a name="method-request"></a>
 #### `request()`
@@ -2168,7 +2172,7 @@ $secondService->all(); // (cached result)
 Функция `retry` пытается выполнить переданную функцию, пока не будет достигнут указанный лимит попыток. Если функция не выбросит исключение, то будет возвращено её значение. Если функция выбросит исключение, то будет автоматически повторена. Если максимальное количество попыток превышено, будет выброшено исключение
 
     return retry(5, function () {
-        // Attempt 5 times while resting 100ms between attempts...
+        // Попытка 5 раз с паузой 100 мс между попытками...
     }, 100);
 
 Если вы хотите вручную вычислить количество миллисекунд, которое должно пройти между попытками, вы можете передать функцию в качестве третьего аргумента функции `retry`:
@@ -2184,7 +2188,7 @@ $secondService->all(); // (cached result)
 Для удобства вы можете передать функции `retry` в качестве первого аргумента массив. Этот массив будет использоваться для определения интервала в миллисекундах между последующими попытками:
 
     return retry([100, 200], function () {
-        // Sleep for 100ms on first retry, 200ms on second retry...
+        // Сон на 100 мс при первой попытке, 200 мс при второй попытке...
     });
 
 Чтобы повторить попытку только при определенных условиях, вы можете передать функцию, определяющее это условие, в качестве четвертого аргумента функции `retry`:
@@ -2248,7 +2252,7 @@ $secondService->all(); // (cached result)
     throw_if(
         ! Auth::user()->isAdmin(),
         AuthorizationException::class,
-        'You are not allowed to access this page.'
+        'Вам не разрешен доступ к этой странице.'
     );
 
 <a name="method-throw-unless"></a>
@@ -2261,7 +2265,7 @@ $secondService->all(); // (cached result)
     throw_unless(
         Auth::user()->isAdmin(),
         AuthorizationException::class,
-        'You are not allowed to access this page.'
+        'Вам не разрешен доступ к этой странице.'
     );
 
 <a name="method-today"></a>
@@ -2293,9 +2297,9 @@ $secondService->all(); // (cached result)
 
 В качестве третьего параметра могут быть указанны значение по умолчанию или замыкание. Это значение будет возвращено, если переданное значение пустое:
 
-    $result = transform(null, $callback, 'The value is blank');
+    $result = transform(null, $callback, 'Значение пустое');
 
-    // The value is blank
+    // Значение пустое
 
 <a name="method-validator"></a>
 #### `validator()`
@@ -2438,7 +2442,7 @@ use Illuminate\Support\Facades\Route;
 use function Illuminate\Support\defer;
 
 Route::post('/orders', function (Request $request) {
-    // Create order...
+    // Создать заказ...
 
     defer(fn () => Metrics::reportOrder($order));
 
@@ -2482,7 +2486,7 @@ protected $middleware = [
 При написании тестов может быть полезно отключить отложенные функции. Вы можете вызвать `withoutDefer` в своем тесте, чтобы указать Laravel немедленно вызвать все отложенные функции:
 
 ```php tab=Pest
-test('without defer', function () {
+test('без отсрочки', function () {
     $this->withoutDefer();
 
     // ...
@@ -2671,7 +2675,7 @@ $user = Pipeline::send($user)
 Обычно тестирование этого кода займет как минимум одну секунду. К счастью, класс `Sleep` позволяет нам "подделывать" задержку, чтобы наш тестовый набор оставался быстрым:
 
 ```php tab=Pest
-it('waits until ready', function () {
+it('ждет, пока будет готов', function () {
     Sleep::fake();
 
     // ...
@@ -2692,7 +2696,7 @@ public function test_it_waits_until_ready()
 Как только класс `Sleep` был подделан, можно делать утверждения относительно ожидаемых "пауз". Для иллюстрации давайте представим, что мы тестируем код, который приостанавливает выполнение три раза, при этом каждая задержка увеличивается на одну секунду. Используя метод `assertSequence`, мы можем проверить, что наш код "спал" нужное количество времени, сохраняя при этом скорость выполнения теста:
 
 ```php tab=Pest
-it('checks if ready three times', function () {
+it('проверяет готовность три раза', function () {
     Sleep::fake();
 
     // ...
@@ -2749,7 +2753,7 @@ $this->freezeTime();
 Sleep::fake();
 
 Sleep::whenFakingSleep(function (Duration $duration) {
-    // Progress time when faking sleep...
+    // Время выполнения при имитации сна...
     $this->travel($duration->totalMilliseconds)->milliseconds();
 });
 ```
@@ -2763,7 +2767,7 @@ $start = now();
 
 Sleep::for(1)->second();
 
-$start->diffForHumans(); // 1 second ago
+$start->diffForHumans(); // 1 секунду назад
 ```
 
 Класс `Sleep` используется внутри Laravel при приостановке выполнения. Например, помощник [retry](#method-retry) использует класс `Sleep` при задержке, что обеспечивает лучшую тестируемость при использовании данного помощника.
