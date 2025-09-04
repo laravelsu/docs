@@ -133,7 +133,7 @@ composer require aws/aws-sdk-php
 
 ```php
 /**
- * Get the message headers.
+ * Получение заголовков сообщения.
  */
 public function headers(): Headers
 {
@@ -263,13 +263,13 @@ php artisan make:mail OrderShipped
     use Illuminate\Mail\Mailables\Envelope;
 
     /**
-     * Get the message envelope.
+     * Получаем конверт с сообщением.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
             from: new Address('jeffrey@example.com', 'Jeffrey Way'),
-            subject: 'Order Shipped',
+            subject: 'Заказ отправлен',
         );
     }
 
@@ -303,7 +303,7 @@ php artisan make:mail OrderShipped
 В методе `content` класса для отправки электронной почты вы можете определить метод `view`, то есть, какой шаблон должен использоваться при отображении содержимого электронного письма. Поскольку каждое электронное письмо обычно использует [шаблон Blade](/docs/{{version}}/blade) для отображения своего содержания, у вас есть вся мощь и удобство шаблонизатора Blade при создании HTML-содержимого письма:
 
     /**
-     * Get the message content definition.
+     * Получение определения содержимого сообщения.
      */
     public function content(): Content
     {
@@ -321,7 +321,7 @@ php artisan make:mail OrderShipped
 Если вы хотите указать версию письма для plain-text (обычный текст), вы можете указать его шаблон при определении `Content`. Как и параметр `view`, параметр `text` должен содержать имя шаблона, который будет использоваться для отображения содержимого в текстовом формате. Вы можете определить как версию в HTML, так и версию в plain-text для вашего сообщения:
 
     /**
-     * Get the message content definition.
+     * Получение определения содержимого сообщения.
      */
     public function content(): Content
     {
@@ -427,9 +427,11 @@ php artisan make:mail OrderShipped
 
 После того как данные были переданы методу `with`, они автоматически станут доступны в вашем шаблоне, поэтому вы можете получить к ним доступ так же, как и к любым другим данным в ваших шаблонах Blade:
 
-    <div>
-        Price: {{ $orderPrice }}
-    </div>
+```blade
+<div>
+    Цена: {{ $orderPrice }}
+</div>
+```
 
 <a name="attachments"></a>
 ### Вложения
@@ -439,7 +441,7 @@ php artisan make:mail OrderShipped
     use Illuminate\Mail\Mailables\Attachment;
 
     /**
-     * Get the attachments for the message.
+     * Получение вложения к сообщению.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
@@ -453,7 +455,7 @@ php artisan make:mail OrderShipped
 При прикреплении файлов к сообщению вы также можете указать отображаемое имя и/или MIME-тип, используя методы `as` и `withMime`:
 
     /**
-     * Get the attachments for the message.
+     * Получение вложения к сообщению.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
@@ -472,7 +474,7 @@ php artisan make:mail OrderShipped
 Если вы сохранили файл на одном из [дисков файлового хранилища](/docs/{{version}}/filesystem), то вы можете прикрепить его к электронному письму с помощью метода `fromStorage`:
 
     /**
-     * Get the attachments for the message.
+     * Получение вложения к сообщению.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
@@ -486,7 +488,7 @@ php artisan make:mail OrderShipped
 Конечно, вы также можете указать имя и MIME-тип вложения:
 
     /**
-     * Get the attachments for the message.
+     * Получение вложения к сообщению.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
@@ -502,7 +504,7 @@ php artisan make:mail OrderShipped
 Метод `fromStorageDisk` используется, если вам нужно указать диск хранения, отличный от вашего диска по умолчанию:
 
     /**
-     * Get the attachments for the message.
+     * Получение вложения к сообщению.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
@@ -521,7 +523,7 @@ php artisan make:mail OrderShipped
 Метод `fromData` используется для присоединения сырой строки байтов в качестве вложения. Например, вы можете использовать этот метод, если вы сгенерировали PDF-файл в памяти и хотите прикрепить его к электронному письму, не записывая его на диск. Метод `fromData` принимает замыкание, которое разрешает сырые байты данных, а также имя, которое следует присвоить вложению:
 
     /**
-     * Get the attachments for the message.
+     * Получение вложения к сообщению.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
@@ -538,9 +540,9 @@ php artisan make:mail OrderShipped
 
 Встраивание изображений в ваши электронные письма, как правило, обременительно; однако Laravel предлагает удобный способ прикреплять изображения к вашим письмам. Чтобы встроить изображение, используйте метод `embed` для переменной `$message` в вашем шаблоне электронной почты. Laravel автоматически делает переменную `$message` доступной для всех ваших шаблонов электронной почты, поэтому вам не нужно беспокоиться о ее передаче вручную:
 
-```html
+```blade
 <body>
-    Here is an image:
+    Вот изображение:
 
     <img src="{{ $message->embed($pathToImage) }}">
 </body>
@@ -554,9 +556,9 @@ php artisan make:mail OrderShipped
 
 Если у вас уже есть строка необработанных данных изображения, которую вы хотите встроить в шаблон электронной почты, то вы можете вызвать метод `embedData` для переменной `$message`. При вызове метода `embedData` вам необходимо указать имя файла, которое должно быть присвоено встраиваемому изображению:
 
-```html
+```blade
 <body>
-    Here is an image from raw data:
+    Вот изображение из необработанных данных:
 
     <img src="{{ $message->embedData($data, 'example-image.jpg') }}">
 </body>
@@ -580,7 +582,7 @@ php artisan make:mail OrderShipped
     class Photo extends Model implements Attachable
     {
         /**
-         * Get the attachable representation of the model.
+         * Получаем присоединяемое представление модели.
          */
         public function toMailAttachment(): Attachment
         {
@@ -591,7 +593,7 @@ php artisan make:mail OrderShipped
 После того как вы определите свой объект, который можно прикреплять, вы можете вернуть экземпляр этого объекта из метода `attachments`, когда создаете сообщение электронной почты:
 
     /**
-     * Get the attachments for the message.
+     * Получение вложения к сообщению.
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
@@ -710,7 +712,7 @@ php artisan make:mail OrderShipped --markdown=mail.orders.shipped
     use Illuminate\Mail\Mailables\Content;
 
     /**
-     * Get the message content definition.
+     * Получите определение содержимого сообщения.
      */
     public function content(): Content
     {
@@ -729,15 +731,15 @@ php artisan make:mail OrderShipped --markdown=mail.orders.shipped
 
 ```blade
 <x-mail::message>
-# Order Shipped
+# Заказ отправлен
 
-Your order has been shipped!
+Ваш заказ отправлен!
 
 <x-mail::button :url="$url">
-View Order
+Посмотреть заказ
 </x-mail::button>
 
-Thanks,<br>
+Спасибо,<br>
 {{ config('app.name') }}
 </x-mail::message>
 ```
@@ -750,9 +752,9 @@ Thanks,<br>
 
 Компонент кнопки отображает ссылку на кнопку по центру. Компонент принимает два аргумента: `url` и необязательный `color`. Поддерживаемые цвета: `primary`, `success`, и `error`. Вы можете добавить к сообщению столько компонентов кнопки, сколько захотите:
 
-```html
+```blade
 <x-mail::button :url="$url" color="success">
-View Order
+Посмотреть заказ
 </x-mail::button>
 ```
 
@@ -763,7 +765,7 @@ View Order
 
 ```blade
 <x-mail::panel>
-This is the panel content.
+Это содержимое панели.
 </x-mail::panel>
 ```
 
@@ -937,7 +939,7 @@ php artisan vendor:publish --tag=laravel-mail
         use Queueable, SerializesModels;
 
         /**
-         * Create a new message instance.
+         * Создаем новый экземпляр сообщения.
          */
         public function __construct()
         {
@@ -1094,7 +1096,7 @@ public function test_mailable_content(): void
 use App\Mail\OrderShipped;
 use Illuminate\Support\Facades\Mail;
 
-test('orders can be shipped', function () {
+test('заказы могут быть отправлены', function () {
     Mail::fake();
 
     // Выполните доставку заказа...
@@ -1244,7 +1246,7 @@ class ExampleTest extends TestCase
     use Illuminate\Support\Facades\Mail;
 
     /**
-     * Bootstrap any application services.
+     * Загрузка любых сервисов приложения.
      */
     public function boot(): void
     {
@@ -1264,7 +1266,7 @@ Laravel отправляет два события при отправке по�
     class LogMessage
     {
         /**
-         * Handle the given event.
+         * Обработка данного события.
          */
         public function handle(MessageSending $event): void
         {
@@ -1326,7 +1328,7 @@ Laravel включает в себя разнообразные транспор
     use Illuminate\Support\Facades\Mail;
 
     /**
-     * Bootstrap any application services.
+     * Загрузка любых сервисов приложения.
      */
     public function boot(): void
     {
@@ -1364,7 +1366,7 @@ composer require symfony/brevo-mailer symfony/http-client
     use Symfony\Component\Mailer\Transport\Dsn;
 
     /**
-     * Bootstrap any application services.
+     * Загрузка любых сервисов приложения.
      */
     public function boot(): void
     {
