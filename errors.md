@@ -116,7 +116,7 @@ git: 99902600577a01d3ba99d4961158ec6ce9e92f7d
 Теперь, когда функция `report` вызывается с тем же экземпляром исключения, будет сообщено только первое вызов:
 
 ```php
-$original = new RuntimeException('Whoops!');
+$original = new RuntimeException('Упс!');
 
 report($original); // сообщено
 
@@ -208,7 +208,7 @@ class PodcastProcessingException extends Exception implements ShouldntReport
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Record not found.'
+                    'message' => 'Запись не найдена.'
                 ], 404);
             }
         });
@@ -243,7 +243,7 @@ class PodcastProcessingException extends Exception implements ShouldntReport
         $exceptions->respond(function (Response $response) {
             if ($response->getStatusCode() === 419) {
                 return back()->with([
-                    'message' => 'The page expired, please try again.',
+                    'message' => 'Срок действия страницы истек, попробуйте еще раз.',
                 ]);
             }
 
