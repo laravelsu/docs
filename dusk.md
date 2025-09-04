@@ -297,7 +297,7 @@ use Laravel\Dusk\Browser;
 
 uses(DatabaseMigrations::class);
 
-test('basic example', function () {
+test('базовый пример', function () {
     $user = User::factory()->create([
         'email' => 'taylor@laravel.com',
     ]);
@@ -327,7 +327,7 @@ class ExampleTest extends DuskTestCase
     use DatabaseMigrations;
 
     /**
-     * A basic browser test example.
+     * Базовый пример теста браузера.
      */
     public function test_basic_example(): void
     {
@@ -1098,7 +1098,7 @@ Dusk содержит различные методы для взаимодей�
 
     $browser->waitUsing(10, 1, function () use ($something) {
         return $something->isReady();
-    }, "Something wasn't ready in time.");
+    }, "Что-то не было готово вовремя.");
 
 <a name="scrolling-an-element-into-view"></a>
 ### Прокрутка элемента в область видимости пользователя
@@ -1763,7 +1763,7 @@ test('vue', function () {
 
 ```php tab=PHPUnit
 /**
- * A basic Vue test example.
+ * Базовый пример теста Vue.
  */
 public function test_vue(): void
 {
@@ -2015,7 +2015,7 @@ use Tests\Browser\Components\DatePicker;
 
 uses(DatabaseMigrations::class);
 
-test('basic example', function () {
+test('базовый пример', function () {
     $this->browse(function (Browser $browser) {
         $browser->visit('/')
             ->within(new DatePicker, function (Browser $browser) {
@@ -2039,7 +2039,7 @@ use Tests\DuskTestCase;
 class ExampleTest extends DuskTestCase
 {
     /**
-     * A basic component test example.
+     * Базовый пример тестирования компонента.
      */
     public function test_basic_example(): void
     {
