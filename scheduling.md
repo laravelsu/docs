@@ -41,7 +41,7 @@ use Illuminate\Console\Scheduling\Schedule;
 ->withSchedule(function (Schedule $schedule) {
     $schedule->call(new DeleteRecentUsers)->daily();
 })
-```php
+```
 
 Если вы хотите просмотреть список ваших запланированных задач и их последующего запуска, то вы можете использовать команду `schedule:list` Artisan:
 
