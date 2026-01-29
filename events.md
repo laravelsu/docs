@@ -1,5 +1,5 @@
 ---
-git: 6a66f11d99d483b413c3fa388c24ef92cbd1da8c
+git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
 ---
 
 # События (Events)
@@ -166,7 +166,7 @@ public function boot(): void
 ```php
 Event::listen(queueable(function (PodcastProcessed $event) {
     // ...
-})->onConnection('redis')->onQueue('podcasts')->delay(now()->addSeconds(10)));
+})->onConnection('redis')->onQueue('podcasts')->delay(now()->plus(seconds: 10)));
 ```
 
 Если вы хотите обрабатывать сбои анонимного слушателя в очереди, то вы можете передать замыкание методу `catch` при определении слушателя `queueable`. Это замыкание получит экземпляр события и экземпляр `Throwable`, вызвавший сбой слушателя:
@@ -407,7 +407,7 @@ class SendShipmentNotification implements ShouldQueue
      */
     public function handle(OrderShipped $event): void
     {
-        if (true) {
+        if ($condition) {
             $this->release(30);
         }
     }
@@ -536,7 +536,7 @@ class SendShipmentNotification implements ShouldQueue
 
 Если один из ваших слушателей в очереди обнаруживает ошибку, вы, вероятно, не хотите, чтобы он продолжал повторять попытки бесконечно. Таким образом, Laravel предлагает различные способы указать, сколько раз и как долго может выполняться попытка прослушивания.
 
-Вы можете определить свойство `$tries` в своем классе слушателя, чтобы указать, сколько раз можно попытаться выполнить слушатель, прежде чем он будет считаться неудачным:
+Вы можете определить свойство или метод `tries` в своем классе слушателя, чтобы указать, сколько раз можно попытаться выполнить слушатель, прежде чем он будет считаться неудачным:
 
 ```php
 <?php
@@ -570,7 +570,7 @@ use DateTime;
  */
 public function retryUntil(): DateTime
 {
-    return now()->addMinutes(5);
+    return now()->plus(minutes: 5);
 }
 ```
 
