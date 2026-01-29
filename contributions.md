@@ -1,5 +1,5 @@
 ---
-git: 6c865175de270fe5ebb8e33d4b13fdb24064b67b
+git: 44a24d3a9941c2c2309d4bb7ccb4c33d44310cae
 ---
 
 # Рекомендации по участию
@@ -21,6 +21,7 @@ git: 6c865175de270fe5ebb8e33d4b13fdb24064b67b
 
 - [Приложение Laravel](https://github.com/laravel/laravel)
 - [Логотипы Laravel](https://github.com/laravel/art)
+- [Пакет Laravel Boost](https://github.com/laravel/boost)
 - [Документация Laravel](https://github.com/laravel/docs)
 - [Пакет Laravel Dusk](https://github.com/laravel/dusk)
 - [Пакет Laravel Cashier Stripe](https://github.com/laravel/cashier)
@@ -31,7 +32,6 @@ git: 6c865175de270fe5ebb8e33d4b13fdb24064b67b
 - [Фреймворк Laravel](https://github.com/laravel/framework)
 - [Пакет Laravel Homestead](https://github.com/laravel/homestead) ([Скрипты для сборки](https://github.com/laravel/settler))
 - [Пакет Laravel Horizon](https://github.com/laravel/horizon)
-- [Пакет Laravel Livewire Starter Kit](https://github.com/laravel/livewire-starter-kit)
 - [Пакет Laravel Passport](https://github.com/laravel/passport)
 - [Пакет Laravel Pennant](https://github.com/laravel/pennant)
 - [Пакет Laravel Pint](https://github.com/laravel/pint)
@@ -42,6 +42,8 @@ git: 6c865175de270fe5ebb8e33d4b13fdb24064b67b
 - [Пакет Laravel Scout](https://github.com/laravel/scout)
 - [Пакет Laravel Socialite](https://github.com/laravel/socialite)
 - [Пакет Laravel Telescope](https://github.com/laravel/telescope)
+- [Пакет Laravel Livewire Starter Kit](https://github.com/laravel/livewire-starter-kit)
+- [Пакет Laravel React Starter Kit](https://github.com/laravel/react-starter-kit)
 - [Пакет Laravel Vue Starter Kit](https://github.com/laravel/vue-starter-kit)
 
 <!-- </div> -->
@@ -124,7 +126,7 @@ public function bind($abstract, $concrete = null, $shared = false)
  */
 public function handle(AudioProcessor $processor): void
 {
-    //
+    // ...
 }
 ```
 
