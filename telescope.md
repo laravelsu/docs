@@ -1,5 +1,5 @@
 ---
-git: 7d1df16ae866f18f4f1422750dbeccf59f46a0d4
+git: 2d059d1368c5d382c7b76b6d20faf92680b1fbfc
 ---
 
 # Пакет Laravel Telescope
@@ -221,6 +221,7 @@ public function register(): void
 Telescope позволяет искать записи по «метке». Часто метки представляют собой имена классов модели Eloquent или идентификаторы аутентифицированных пользователей, которые Telescope автоматически добавляет к записям. По желанию можно прикрепить к записям свои собственные метки. Для этого вы можете использовать метод `Telescope::tag`. Метод `tag` принимает замыкание, которое должно возвращать массив меток. Метки, возвращаемые замыканием, будут объединены с любыми метками, которые Telescope автоматически прикрепит к записи. Как правило, вызов метода `tag` осуществляется в методе `register` вашего класса `App\Providers\TelescopeServiceProvider`:
 
 ```php
+use Laravel\Telescope\EntryType;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 
@@ -232,7 +233,7 @@ public function register(): void
     $this->hideSensitiveRequestDetails();
 
     Telescope::tag(function (IncomingEntry $entry) {
-        return $entry->type === 'request'
+        return $entry->type === EntryType::REQUEST
                     ? ['status:'.$entry->content['response_status']]
                     : [];
     });
