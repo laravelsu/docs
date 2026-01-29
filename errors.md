@@ -1,5 +1,5 @@
 ---
-git: 33c3fe19a0a465de53989b27501e2b947287fd85
+git: 004621832e0cdac25323b01fab168de55c94d95c
 ---
 
 # Обработка ошибок (Exception)
@@ -29,7 +29,7 @@ git: 33c3fe19a0a465de53989b27501e2b947287fd85
 Если вам нужно сообщать о различных типах исключений разными способами, вы можете использовать метод исключений `report` в файле `bootstrap/app.php` вашего приложения, чтобы зарегистрировать замыкание, которое должно выполняться, когда необходимо сообщить об исключении определенного типа. Laravel определит, о каком типе исключения сообщает замыкание, исследуя подсказку типа замыкания:
 
 ```php
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->report(function (InvalidOrderException $e) {
         // ...
     });
@@ -39,7 +39,7 @@ git: 33c3fe19a0a465de53989b27501e2b947287fd85
 Когда вы регистрируете собственные замыкания для создания отчетов об исключениях, используя метод `report`, Laravel по-прежнему регистрирует исключение, используя конфигурацию логирования по умолчанию для приложения. Если вы хотите остановить распространение исключения в стек журналов по умолчанию, вы можете использовать метод `stop` при определении замыкания отчета или вернуть `false` из замыкания:
 
 ```php
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->report(function (InvalidOrderException $e) {
         // ...
     })->stop();
@@ -59,7 +59,7 @@ git: 33c3fe19a0a465de53989b27501e2b947287fd85
 Если доступно, Laravel автоматически добавляет идентификатор текущего пользователя в каждое сообщение журнала исключения в качестве контекстных данных. Вы можете определить свои собственные глобальные контекстные данные, используя метод исключения `context` в файле `bootstrap/app.php` вашего приложения. Эта информация будет включена в каждое сообщение журнала исключения, записанное вашим приложением:
 
 ```php
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->context(fn () => [
         'foo' => 'bar',
     ]);
@@ -120,7 +120,7 @@ public function isValid(string $value): bool
 Если вы хотите, чтобы об одном экземпляре исключения сообщалось только один раз, вы можете вызвать метод исключения `dontReportDuplicates` в файле `bootstrap/app.php` вашего приложения:
 
 ```php
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->dontReportDuplicates();
 })
 ```
@@ -155,7 +155,7 @@ report($caught); // проигнорировано
 use PDOException;
 use Psr\Log\LogLevel;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->level(PDOException::class, LogLevel::CRITICAL);
 })
 ```
@@ -168,7 +168,7 @@ use Psr\Log\LogLevel;
 ```php
 use App\Exceptions\InvalidOrderException;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->dontReport([
         InvalidOrderException::class,
     ]);
@@ -197,7 +197,7 @@ class PodcastProcessingException extends Exception implements ShouldntReport
 use App\Exceptions\InvalidOrderException;
 use Throwable;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->dontReportWhen(function (Throwable $e) {
         return $e instanceof PodcastProcessingException &&
                $e->reason() === 'Subscription expired';
@@ -210,7 +210,7 @@ use Throwable;
 ```php
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->stopIgnoring(HttpException::class);
 })
 ```
@@ -226,7 +226,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Exceptions\InvalidOrderException;
 use Illuminate\Http\Request;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->render(function (InvalidOrderException $e, Request $request) {
         return response()->view('errors.invalid-order', status: 500);
     });
@@ -239,7 +239,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->render(function (NotFoundHttpException $e, Request $request) {
         if ($request->is('api/*')) {
             return response()->json([
@@ -259,7 +259,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Http\Request;
 use Throwable;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
         if ($request->is('admin/*')) {
             return true;
@@ -278,7 +278,7 @@ use Throwable;
 ```php
 use Symfony\Component\HttpFoundation\Response;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->respond(function (Response $response) {
         if ($response->getStatusCode() === 419) {
             return back()->with([
@@ -375,7 +375,7 @@ public function report(): bool
 use Illuminate\Support\Lottery;
 use Throwable;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->throttle(function (Throwable $e) {
         return Lottery::odds(1, 1000);
     });
@@ -389,7 +389,7 @@ use App\Exceptions\ApiMonitoringException;
 use Illuminate\Support\Lottery;
 use Throwable;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->throttle(function (Throwable $e) {
         if ($e instanceof ApiMonitoringException) {
             return Lottery::odds(1, 1000);
@@ -405,7 +405,7 @@ use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Cache\RateLimiting\Limit;
 use Throwable;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->throttle(function (Throwable $e) {
         if ($e instanceof BroadcastException) {
             return Limit::perMinute(300);
@@ -421,7 +421,7 @@ use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Cache\RateLimiting\Limit;
 use Throwable;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->throttle(function (Throwable $e) {
         if ($e instanceof BroadcastException) {
             return Limit::perMinute(300)->by($e->getMessage());
@@ -439,7 +439,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Lottery;
 use Throwable;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions $exceptions): void {
     $exceptions->throttle(function (Throwable $e) {
         return match (true) {
             $e instanceof BroadcastException => Limit::perMinute(300),
