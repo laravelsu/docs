@@ -1,5 +1,5 @@
 ---
-git: 690f920c064a205e7d2bc5c57034c0ca896700ae
+git: e1a7b2ee320e7c3b54847080311ea4fba7d40fd0
 ---
 
 # Фасады (Facades)
@@ -254,7 +254,7 @@ use App\Models\Podcast;
 use Facades\App\Contracts\Publisher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 test('podcast can be published', function () {
     $podcast = Podcast::factory()->create();
