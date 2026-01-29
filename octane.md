@@ -1,5 +1,5 @@
 ---
-git: e239db7579b2ba3de3dd777fbbf5156dc865ce93
+git: 371592f092a65d24ce3be61bc6aac974b42be5a5
 ---
 
 # Laravel Octane
@@ -236,6 +236,23 @@ php artisan octane:start
 ```
 
 По умолчанию Octane запускает сервер на порту 8000, поэтому вы можете получить доступ к своему приложению в веб-браузере через `http://localhost:8000`.
+
+<a name="keeping-octane-running-in-production"></a>
+#### Поддержа запуска Octane в производственной среде
+
+Если вы разворачиваете приложение Octane в производственной (production) среде, вам следует использовать монитор процессов, такой как Supervisor, чтобы убедиться, что сервер Octane продолжает работать. Пример файла конфигурации Supervisor для Octane может выглядеть следующим образом:
+
+```ini
+[program:octane]
+process_name=%(program_name)s_%(process_num)02d
+command=php /home/forge/example.com/artisan octane:start --server=frankenphp --host=127.0.0.1 --port=8000
+autostart=true
+autorestart=true
+user=forge
+redirect_stderr=true
+stdout_logfile=/home/forge/example.com/storage/logs/octane.log
+stopwaitsecs=3600
+```
 
 <a name="serving-your-application-via-https"></a>
 ### Запуск приложения с HTTPS
