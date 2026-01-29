@@ -1,5 +1,5 @@
 ---
-git: 4789f379dcc9313fa9e5a0a8583d619978ce4825
+git: 004621832e0cdac25323b01fab168de55c94d95c
 ---
 
 # Посредники (middleware)
@@ -116,7 +116,7 @@ class AfterMiddleware
 ```php
 use App\Http\Middleware\EnsureTokenIsValid;
 
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
      $middleware->append(EnsureTokenIsValid::class);
 })
 ```
@@ -129,7 +129,7 @@ use App\Http\Middleware\EnsureTokenIsValid;
 Если вы хотите управлять глобальным стеком посредников Laravel вручную, вы можете предоставить глобальный стек посредников Laravel по умолчанию для метода `use`. Затем вы можете при необходимости настроить стек посредников по умолчанию:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->use([
         \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class,
         // \Illuminate\Http\Middleware\TrustHosts::class,
@@ -206,7 +206,7 @@ Route::withoutMiddleware([EnsureTokenIsValid::class])->group(function () {
 use App\Http\Middleware\First;
 use App\Http\Middleware\Second;
 
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->appendToGroup('group-name', [
         First::class,
         Second::class,
@@ -255,7 +255,7 @@ Laravel включает в себя предопределенные групп
 use App\Http\Middleware\EnsureTokenIsValid;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->web(append: [
         EnsureUserIsSubscribed::class,
     ]);
@@ -291,7 +291,7 @@ $middleware->web(remove: [
 Если вы хотите вручную управлять всеми посредниками в группах посредников Laravel по умолчанию `web` и `api`, вы можете полностью переопределить эти группы. В приведенном ниже примере будут определены группы посредников `web` и `api` с их посредниками по умолчанию, что позволит вам настроить их по мере необходимости:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->group('web', [
         \Illuminate\Cookie\Middleware\EncryptCookies::class,
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
@@ -321,7 +321,7 @@ $middleware->web(remove: [
 ```php
 use App\Http\Middleware\EnsureUserIsSubscribed;
 
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->alias([
         'subscribed' => EnsureUserIsSubscribed::class
     ]);
@@ -359,7 +359,7 @@ Route::get('/profile', function () {
 В редких случаях вам может потребоваться, чтобы ваши посредники выполнялись в определенном порядке, но вы не можете контролировать их порядок, когда они назначены маршруту. В этом случае вы можете указать приоритет посредников, используя метод `priority` в файле `bootstrap/app.php` вашего приложения:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->priority([
         \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
         \Illuminate\Cookie\Middleware\EncryptCookies::class,
