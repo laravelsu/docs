@@ -1,5 +1,5 @@
 ---
-git: 2a5fabc2102887fb0e8a473dca1b93fdf6caaa0d
+git: a4c80eb568be016344d03e8421302cbc365c58aa
 ---
 
 # Процессы
@@ -27,11 +27,12 @@ return $result->output();
 ```php
 $result = Process::run('ls -la');
 
+$result->command();
 $result->successful();
 $result->failed();
-$result->exitCode();
 $result->output();
 $result->errorOutput();
+$result->exitCode();
 ```
 
 <a name="throwing-exceptions"></a>
