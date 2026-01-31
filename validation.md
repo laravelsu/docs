@@ -1,5 +1,5 @@
 ---
-git: 1364f60243db023c48572f38106e28afb37586b1
+git: d4f5f383462a62d4c86b4122fa89fea6756cf604
 ---
 
 # Валидация
@@ -1030,6 +1030,7 @@ Validator::make($request->all(), [
 
 - [Between](#rule-between)
 - [Dimensions](#rule-dimensions)
+- [Encoding](#rule-encoding)
 - [Extensions](#rule-extensions)
 - [File](#rule-file)
 - [Image](#rule-image)
@@ -1525,6 +1526,24 @@ $request->validate([
 
 > [!WARNING]
 > Валидаторы `dns` и `spoof` требуют расширения `intl` PHP.
+
+<a name="rule-encoding"></a>
+#### encoding:*encoding_type*
+
+Проверяемое поле должно соответствовать указанной кодировке символов. Это правило использует PHP функцию `mb_check_encoding` для проверки кодировки заданного файла или строкового значения. Для удобства правило `encoding` можно создать с помощью конструктора правил Laravel для файлов:
+
+```php
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\File;
+
+Validator::validate($input, [
+    'attachment' => [
+        'required',
+        File::types(['csv'])
+            ->encoding('utf-8'),
+    ],
+]);
+```
 
 <a name="rule-ends-with"></a>
 #### ends_with:_foo_,_bar_,...
@@ -2498,7 +2517,7 @@ $validator = Validator::make($request->all(), [
 <a name="error-message-indexes-and-positions"></a>
 ### Индексы и позиции в сообщениях об ошибках
 
-При валидации массивов может возникнуть необходимость в сообщении об ошибке, отображаемом вашим приложением, ссылаться на индекс или позицию определенного элемента, который не прошел проверку. Для этого можно использовать заполнители `:index` (начинается с 0) и `:position` (начинается с 1) в вашем пользовательском сообщении об ошибке:
+При валидации массивов может возникнуть необходимость в сообщении об ошибке, отображаемом вашим приложением, ссылаться на индекс или позицию определенного элемента, который не прошел проверку. Для этого можно использовать заполнители `:index` (начинается с 0), `:position` (начинается с 1) или `:ordinal-position` (начинается с `1st`) в вашем пользовательском сообщении об ошибке:
 
 ```php
 use Illuminate\Support\Facades\Validator;
