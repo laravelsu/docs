@@ -1,5 +1,5 @@
 ---
-git: 5f01fbcdb444f11dfbbaa031e3be6ce4cf3188a6
+git: da854c600882815be7adc27bb3cbc5f878039791
 ---
 
 # Отправка электронной почты
@@ -19,7 +19,7 @@ git: 5f01fbcdb444f11dfbbaa031e3be6ce4cf3188a6
 <a name="driver-prerequisites"></a>
 ### Требования к драйверу и транспорту
 
-Драйверы на основе API, такие, как Mailgun, Postmark, Resend и MailerSend часто проще в использовании и быстрее, чем отправка почты через SMTP-серверы. По возможности мы рекомендуем использовать один из этих драйверов.
+Драйверы на основе API, такие, как Mailgun, Postmark и Resend часто проще в использовании и быстрее, чем отправка почты через SMTP-серверы. По возможности мы рекомендуем использовать один из этих драйверов.
 
 <a name="mailgun-driver"></a>
 #### Драйвер Mailgun
@@ -82,7 +82,7 @@ composer require symfony/postmark-mailer symfony/http-client
 
 ```php
 'postmark' => [
-    'token' => env('POSTMARK_TOKEN'),
+    'key' => env('POSTMARK_API_KEY'),
 ],
 ```
 
@@ -113,7 +113,7 @@ composer require resend/resend-php
 
 ```php
 'resend' => [
-    'key' => env('RESEND_KEY'),
+    'key' => env('RESEND_API_KEY'),
 ],
 ```
 
@@ -179,35 +179,6 @@ public function headers(): Headers
 ],
 ```
 
-<a name="mailersend-driver"></a>
-#### Драйвер MailerSend
-
-[MailerSend](https://www.mailersend.com/), сервис для отправки транзакционных электронных писем и SMS-сообщений, поддерживает свой собственный драйвер для Laravel, основанный на их API. Пакет, содержащий этот драйвер, можно установить с помощью менеджера пакетов Composer:
-
-```shell
-composer require mailersend/laravel-driver
-```
-
-После установки пакета добавьте переменную окружения `MAILERSEND_API_KEY` в файл `.env` вашего приложения. Кроме того, переменная окружения `MAIL_MAILER` должна быть определена как `mailersend`:
-
-```ini
-MAIL_MAILER=mailersend
-MAIL_FROM_ADDRESS=app@yourdomain.com
-MAIL_FROM_NAME="Имя приложения"
-
-MAILERSEND_API_KEY=ваш-ключ-api
-```
-
-Наконец, добавьте MailerSend в массив `mailers` в файле конфигурации вашего приложения `config/mail.php`:
-
-```php
-'mailersend' => [
-    'transport' => 'mailersend',
-],
-```
-
-Для получения дополнительной информации о MailerSend, включая инструкции по использованию хостинга шаблонов, обратитесь к [документации по драйверу MailerSend](https://github.com/mailersend/mailersend-laravel-driver#usage).
-
 <a name="failover-configuration"></a>
 ### Конфигурация аварийного переключения
 
@@ -231,10 +202,10 @@ MAILERSEND_API_KEY=ваш-ключ-api
 ],
 ```
 
-После того как ваш почтовый агент аварийного переключения был определен, вы должны установить его как почтовую программу по умолчанию, используемую вашим приложением, указав ее имя как значение конфигурационного ключа `default` в файле конфигурации вашего приложения `mail`:
+После настройки почтового клиента, использующего транспорт `failover`, вам потребуется установить этот почтовый клиент в качестве клиента по умолчанию в файле `.env` вашего приложения, чтобы использовать функциональность отказоустойчивости.
 
-```php
-'default' => env('MAIL_MAILER', 'failover'),
+```ini
+MAIL_MAILER=failover
 ```
 
 <a name="round-robin-configuration"></a>
@@ -977,7 +948,7 @@ Mail::to($request->user())
 Mail::to($request->user())
     ->cc($moreUsers)
     ->bcc($evenMoreUsers)
-    ->later(now()->addMinutes(10), new OrderShipped($order));
+    ->later(now()->plus(minutes: 10), new OrderShipped($order));
 ```
 
 <a name="pushing-to-specific-queues"></a>
@@ -1323,6 +1294,12 @@ Mail::assertNothingQueued();
 Mail::assertQueuedCount(3);
 ```
 
+Вы также можете проверить общее количество отправленных или поставленных в очередь писем, используя метод `assertOutgoingCount`:
+
+```php
+Mail::assertOutgoingCount(3);
+```
+
 Вы можете передать замыкание в методы `assertSent`, `assertNotSent`, `assertQueued` или `assertNotQueued`, чтобы утверждать, что было отправлено письмо, которое соответствует определенному "тесту истинности". Если хотя бы одно письмо было отправлено и прошло указанный тест, то утверждение будет успешным:
 
 ```php
@@ -1341,6 +1318,7 @@ Mail::assertSent(OrderShipped::class, function (OrderShipped $mail) use ($user) 
            $mail->hasReplyTo('...') &&
            $mail->hasFrom('...') &&
            $mail->hasSubject('...') &&
+           $mail->hasMetadata('order_id', $mail->order->id) &&
            $mail->usesMailer('ses');
 });
 ```
@@ -1416,6 +1394,8 @@ public function boot(): void
     }
 }
 ```
+
+При использовании метода `alwaysTo` все дополнительные адреса "cc" или "bcc" в почтовых сообщениях будут удалены.
 
 <a name="events"></a>
 ## События
