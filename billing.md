@@ -1,5 +1,5 @@
 ---
-git: 3b2df518ad4702fcf8e956abf83ac173a6ce071b
+git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
 ---
 
 
@@ -16,7 +16,7 @@ git: 3b2df518ad4702fcf8e956abf83ac173a6ce071b
 При обновлении до новой версии Cashier важно внимательно ознакомиться с [руководством по обновлению](https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md).
 
 > [!WARNING]
-> Чтобы избежать нарушений, Cashier использует фиксированную версию API Stripe. Cashier 15 использует версию API Stripe `2023-10-16`. Версия API Stripe будет обновляться в минорных релизах для использования новых функций и улучшений Stripe.
+> Чтобы избежать нарушений, Cashier использует фиксированную версию API Stripe. Cashier 16 использует версию API Stripe `2025-06-30.basil`. Версия API Stripe будет обновляться в минорных релизах для использования новых функций и улучшений Stripe.
 
 <a name="installation"></a>
 ## Установка
@@ -546,7 +546,7 @@ public function stripeName(): string|null
 }
 ```
 
-Аналогичным образом, вы можете переопределить методы `stripeEmail`, `stripePhone` и `stripeAddress`. Эти методы будут синхронизировать информацию с соответствующими параметрами клиента при [обновлении объекта клиента Stripe](https://stripe.com/docs/api/customers/update). Если вы хотите получить полный контроль над процессом синхронизации информации о клиенте, вы можете переопределить метод `syncStripeCustomerDetails`.
+Аналогичным образом, вы можете переопределить методы `stripeEmail`, `stripePhone` (максимум 20 символов), `stripeAddress` и `stripePreferredLocales`. Эти методы будут синхронизировать информацию с соответствующими параметрами клиента при [обновлении объекта клиента Stripe](https://stripe.com/docs/api/customers/update). Если вы хотите получить полный контроль над процессом синхронизации информации о клиенте, вы можете переопределить метод `syncStripeCustomerDetails`.
 
 <a name="billing-portal"></a>
 ### Биллинг портал
@@ -1638,7 +1638,7 @@ $user->subscription('default')->cancelNowAndInvoice();
 
 ```php
 $user->subscription('default')->cancelAt(
-    now()->addDays(10)
+    now()->plus(days: 10)
 );
 ```
 
@@ -1692,7 +1692,7 @@ Route::post('/user/subscribe', function (Request $request) {
 use Illuminate\Support\Carbon;
 
 $user->newSubscription('default', 'price_monthly')
-    ->trialUntil(Carbon::now()->addDays(10))
+    ->trialUntil(Carbon::now()->plus(days: 10))
     ->create($paymentMethod);
 ```
 
@@ -1741,7 +1741,7 @@ use App\Models\User;
 
 $user = User::create([
     // ...
-    'trial_ends_at' => now()->addDays(10),
+    'trial_ends_at' => now()->plus(days: 10),
 ]);
 ```
 
@@ -1792,12 +1792,12 @@ $subscription = User::find(1)->subscription('default');
 
 // Завершить пробную версию через 7 дней...
 $subscription->extendTrial(
-    now()->addDays(7)
+    now()->plus(days: 7)
 );
 
 // Добавьте к пробной версии еще 5 дней...
 $subscription->extendTrial(
-    $subscription->trial_ends_at->addDays(5)
+    $subscription->trial_ends_at->plus(days: 5)
 );
 ```
 
@@ -1855,7 +1855,7 @@ php artisan cashier:webhook --disabled
 Поскольку веб-хуки Stripe необходимо обходить [защиту CSRF](/docs/{{version}}/csrf) Laravel, вам следует убедиться, что Laravel не пытается проверить токен CSRF для входящих веб-хуков Stripe. Для этого вам следует исключить `stripe/*` из защиты CSRF в файле `bootstrap/app.php` вашего приложения:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->validateCsrfTokens(except: [
         'stripe/*',
     ]);
