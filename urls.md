@@ -186,7 +186,7 @@ if (! $request->hasValidSignatureWhileIgnoring(['page', 'order'])) {
 }
 ```
 
-Вместо проверки подписанных URL-адресов с помощью экземпляра входящего запроса вы можете назначить маршруту `signed` (`Illuminate\Routing\Middleware\ValidateSignature`) [посредника (middleware)](/docs/{{version}}/middleware). Если входящий запрос не имеет действительной подписи, промежуточное программное обеспечение автоматически вернет HTTP-ответ «403»:
+Вместо проверки подписанных URL-адресов с помощью экземпляра входящего запроса вы можете назначить маршруту [посредника (middleware)](/docs/{{version}}/middleware) `signed` (`Illuminate\Routing\Middleware\ValidateSignature`). Если входящий запрос не имеет действительной подписи, промежуточное программное обеспечение автоматически вернет HTTP-ответ «403»:
 
 ```php
 Route::post('/unsubscribe/{user}', function (Request $request) {
