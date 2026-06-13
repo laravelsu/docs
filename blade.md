@@ -1648,7 +1648,7 @@ Route::get('/tasks', function () {
 @section('title', 'Название страницы')
 
 @section('sidebar')
-    @@parent
+    @parent
 
     <p>Это добавляется к главной боковой панели.</p>
 @endsection
