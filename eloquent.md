@@ -480,7 +480,7 @@ Flight::where('departed', true)
     }, column: 'id');
 ```
 
-Поскольку методы `chunkById` и `lazyById` добавляют свои собственные условия "where" к выполняемому запросу, вам обычно следует [логически группировать](/docs/{{version}}/queries#ological-grouping) свои собственные условия внутри закрытие:
+Поскольку методы `chunkById` и `lazyById` добавляют свои собственные условия "where" к выполняемому запросу, вам обычно следует [логически группировать](/docs/{{version}}/queries#ological-grouping) свои собственные условия внутри замыкания:
 
 ```php
 Flight::where(function ($query) {
