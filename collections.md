@@ -2075,7 +2075,7 @@ $equalOrAboveThree->all();
 ```
 
 > [!NOTE]
-> This method's behavior is modified when interacting with [Eloquent collections](/docs/{{version}}/eloquent-collections#method-partition).
+> Поведение этого метода изменяется при использовании [коллекций Eloquent](/docs/{{version}}/eloquent-collections#method-partition).
 
 <a name="method-percentage"></a>
 #### `percentage()`
