@@ -438,7 +438,7 @@ protected function casts(): array
 }
 ```
 
-Метод `of` может использоваться для указания того, что элементы коллекции должны быть сопоставлены с заданным классом с помощью метода [mapInto] коллекции (/docs/{{version}}/collections#method-mapinto):
+Метод `of` может использоваться для указания того, что элементы коллекции должны быть сопоставлены с заданным классом с помощью метода коллекции [mapInto](/docs/{{version}}/collections#method-mapinto):
 
 ```php
 use App\ValueObjects\Option;
