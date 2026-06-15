@@ -75,7 +75,7 @@ Route::get('/token', function (Request $request) {
 Как правило, вы должны размещать эти виды маршрутов вне группы посредников `web`, которую Laravel применяет ко всем маршрутам в файле `routes/web.php`. Однако вы также можете исключить определенные маршруты, указав их URI методу `validateCsrfTokens` в файле `bootstrap/app.php` вашего приложения:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->validateCsrfTokens(except: [
         'stripe/*',
         'http://example.com/foo/bar',
