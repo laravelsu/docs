@@ -1,5 +1,5 @@
 ---
-git: 88b6f0d99c9f89ca38266d9fa0c3b4ea3df3c85e
+git: ba26bf537650a1d758f14140f6372cebde5b5535
 ---
 
 - ## Пролог
@@ -85,7 +85,6 @@ git: 88b6f0d99c9f89ca38266d9fa0c3b4ea3df3c85e
     - [База данных](/docs/{{version}}/database-testing)
     - [Имитация](/docs/{{version}}/mocking)
 - ## Пакеты
-    - [Breeze](/docs/{{version}}/starter-kits#laravel-breeze)
     - [Cashier (Stripe)](/docs/{{version}}/billing)
     - [Cashier (Paddle)](/docs/{{version}}/cashier-paddle)
     - [Dusk](/docs/{{version}}/dusk)
@@ -94,7 +93,6 @@ git: 88b6f0d99c9f89ca38266d9fa0c3b4ea3df3c85e
     - [Folio](/docs/{{version}}/folio)
     - [Homestead](/docs/{{version}}/homestead)
     - [Horizon](/docs/{{version}}/horizon)
-    - [Jetstream](https://jetstream.laravel.com)
     - [Mix](/docs/{{version}}/mix)
     - [Octane](/docs/{{version}}/octane)
     - [Passport](/docs/{{version}}/passport)
@@ -110,4 +108,4 @@ git: 88b6f0d99c9f89ca38266d9fa0c3b4ea3df3c85e
     - [Socialite](/docs/{{version}}/socialite)
     - [Telescope](/docs/{{version}}/telescope)
     - [Valet](/docs/{{version}}/valet)
-    - [API Документация](https://laravel.com/api/11.x)
+- [API Документация](https://api.laravel.com/docs/12.x)
