@@ -1,5 +1,5 @@
 ---
-git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
+git: ddbe6d1d47f132f1956c983686d894fae4abb00c
 ---
 
 # События (Events)
@@ -493,6 +493,125 @@ class SendShipmentNotification implements ShouldQueue, ShouldBeEncrypted
     // ...
 }
 ```
+
+<a name="unique-event-listeners"></a>
+### Уникальные слушатели событий
+
+> [!WARNING]
+> Для уникальных слушателей требуется драйвер кеша, поддерживающий [блокировки](/docs/{{version}}/cache#atomic-locks). В настоящее время атомарные блокировки поддерживают драйверы кеша `memcached`, `redis`, `dynamodb`, `database`, `file` и `array`.
+
+Иногда вам может понадобиться гарантировать, что в очереди в любой момент времени находится только один экземпляр конкретного слушателя. Для этого реализуйте интерфейс `ShouldBeUnique` в классе слушателя:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\LicenseSaved;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class AcquireProductKey implements ShouldQueue, ShouldBeUnique
+{
+    public function __invoke(LicenseSaved $event): void
+    {
+        // ...
+    }
+}
+```
+
+В приведенном выше примере слушатель `AcquireProductKey` является уникальным. Поэтому слушатель не будет поставлен в очередь, если другой экземпляр этого слушателя уже находится в очереди и еще не завершил обработку. Это гарантирует, что для каждой лицензии будет получен только один ключ продукта, даже если лицензия сохраняется несколько раз подряд.
+
+В некоторых случаях может потребоваться определить конкретный «ключ», который делает слушатель уникальным, или указать время, по истечении которого слушатель перестает оставаться уникальным. Для этого можно определить свойства или методы `uniqueId` и `uniqueFor` в классе слушателя. Методы получают экземпляр события, что позволяет использовать данные события для построения возвращаемого значения:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\LicenseSaved;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class AcquireProductKey implements ShouldQueue, ShouldBeUnique
+{
+    /**
+     * Количество секунд, после которого уникальная блокировка слушателя будет снята.
+     *
+     * @var int
+     */
+    public $uniqueFor = 3600;
+
+    public function __invoke(LicenseSaved $event): void
+    {
+        // ...
+    }
+
+    /**
+     * Получить уникальный ID слушателя.
+     */
+    public function uniqueId(LicenseSaved $event): string
+    {
+        return 'listener:'.$event->license->id;
+    }
+}
+```
+
+В приведенном выше примере слушатель `AcquireProductKey` уникален по ID лицензии. Поэтому любые новые отправки слушателя для той же лицензии будут проигнорированы, пока существующий слушатель не завершит обработку. Это предотвращает получение дублирующихся ключей продукта для одной лицензии. Кроме того, если существующий слушатель не будет обработан в течение одного часа, уникальная блокировка будет снята и другой слушатель с тем же уникальным ключом сможет быть поставлен в очередь.
+
+> [!WARNING]
+> Если ваше приложение отправляет события с нескольких веб-серверов или контейнеров, убедитесь, что все серверы взаимодействуют с одним и тем же центральным сервером кеша, чтобы Laravel мог корректно определить, является ли слушатель уникальным.
+
+<a name="keeping-listeners-unique-until-processing-begins"></a>
+#### Сохранение уникальности слушателей до начала обработки
+
+По умолчанию уникальные слушатели «разблокируются» после завершения обработки слушателя или после исчерпания всех попыток. Однако иногда может понадобиться разблокировать слушатель непосредственно перед его обработкой. Для этого слушатель должен реализовывать контракт `ShouldBeUniqueUntilProcessing` вместо контракта `ShouldBeUnique`:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\LicenseSaved;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class AcquireProductKey implements ShouldQueue, ShouldBeUniqueUntilProcessing
+{
+    // ...
+}
+```
+
+<a name="unique-listener-locks"></a>
+#### Блокировки уникальных слушателей
+
+За кулисами, когда слушатель `ShouldBeUnique` отправляется, Laravel пытается получить [блокировку](/docs/{{version}}/cache#atomic-locks) с ключом `uniqueId`. Если блокировка уже удерживается, слушатель не отправляется. Эта блокировка снимается, когда слушатель завершает обработку или исчерпывает все попытки. По умолчанию Laravel использует драйвер кеша по умолчанию для получения этой блокировки. Однако, если вы хотите использовать другой драйвер для получения блокировки, определите метод `uniqueVia`, возвращающий драйвер кеша, который должен использоваться:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\LicenseSaved;
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Facades\Cache;
+
+class AcquireProductKey implements ShouldQueue, ShouldBeUnique
+{
+    // ...
+
+    /**
+     * Получить драйвер кеша для блокировки уникального слушателя.
+     */
+    public function uniqueVia(LicenseSaved $event): Repository
+    {
+        return Cache::driver('redis');
+    }
+}
+```
+
+> [!NOTE]
+> Если вам нужно только ограничить конкурентную обработку слушателя, используйте middleware задания [WithoutOverlapping](/docs/{{version}}/queues#preventing-job-overlaps).
 
 <a name="handling-failed-jobs"></a>
 ### Обработка невыполненных заданий

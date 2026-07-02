@@ -1,5 +1,5 @@
 ---
-git: 07067a61065341d78c1b463a7595f85ba866d7a4
+git: 4711785bc0c5f3be06ec6cd803e8fd2deb3938a2
 ---
 
 # Консоль Artisan
@@ -265,7 +265,7 @@ use DateInterval;
  */
 public function isolationLockExpiresAt(): DateTimeInterface|DateInterval
 {
-    return now()->addMinutes(5);
+    return now()->plus(minutes: 5);
 }
 ```
 
@@ -350,7 +350,7 @@ php artisan mail:send 1 --queue=default
 Чтобы назначить псевдоним при определении параметра, вы можете указать его перед именем параметра и использовать символ разделителя `|` для отделения псевдонима от полного имени параметра:
 
 ```php
-'mail:send {user} {--Q|queue}'
+'mail:send {user} {--Q|queue=}'
 ```
 
 При вызове команды в терминале, псевдонимы параметров должны иметь префикс с одним дефисом, и символ `=` не должен использоваться при указании значения параметра:

@@ -1,5 +1,5 @@
 ---
-git: 2d68f340f3adc35a707e1bd6861c6a27423a9df6
+git: 22104aa9feffa3f1bd4292d30c17b3e121982c9d
 ---
 
 # Laravel Horizon
@@ -20,7 +20,7 @@ git: 2d68f340f3adc35a707e1bd6861c6a27423a9df6
 ## Установка
 
 > [!WARNING]
-> Laravel Horizon требует, чтобы вы использовали [Redis](https://redis.io) для управления очередью. Следовательно, вы должны убедиться, что соединение с очередью настроено на `redis` в файле конфигурации приложения `config/queue.php`.
+> Laravel Horizon требует, чтобы вы использовали [Redis](https://redis.io) для управления очередью. Следовательно, вы должны убедиться, что соединение с очередью настроено на `redis` в файле конфигурации приложения `config/queue.php`. В настоящее время Horizon несовместим с Redis Cluster.
 
 Вы можете установить Horizon в свой проект с помощью диспетчера пакетов Composer:
 
@@ -222,6 +222,14 @@ protected function gate(): void
 ```php
 'silenced' => [
     App\Jobs\ProcessPodcast::class,
+],
+```
+
+Помимо заглушения отдельных классов заданий, Horizon также поддерживает заглушение заданий на основе [тегов](#tags). Это может быть полезно, если вы хотите скрыть несколько заданий с общим тегом:
+
+```php
+'silenced_tags' => [
+    'notifications'
 ],
 ```
 
@@ -454,6 +462,43 @@ php artisan horizon:supervisor-status supervisor-1
 php artisan horizon:terminate
 ```
 
+<a name="automatically-restarting-horizon"></a>
+#### Автоматический перезапуск Horizon
+
+Во время локальной разработки вы можете запускать команду `horizon:listen`. При использовании команды `horizon:listen` вам не нужно вручную перезапускать Horizon, когда вы хотите перезагрузить обновлённый код. Перед использованием этой возможности убедитесь, что [Node](https://nodejs.org) установлен в вашей локальной среде разработки. Кроме того, установите библиотеку наблюдения за файлами [Chokidar](https://github.com/paulmillr/chokidar) в ваш проект:
+
+```shell
+npm install --save-dev chokidar
+```
+
+После установки Chokidar вы можете запустить Horizon с помощью команды `horizon:listen`:
+
+```shell
+php artisan horizon:listen
+```
+
+При запуске внутри Docker или Vagrant следует использовать опцию `--poll`:
+
+```shell
+php artisan horizon:listen --poll
+```
+
+Вы можете настроить каталоги и файлы, за которыми нужно наблюдать, с помощью опции конфигурации `watch` в файле `config/horizon.php` вашего приложения:
+
+```php
+'watch' => [
+    'app',
+    'bootstrap',
+    'config',
+    'database',
+    'public/**/*.php',
+    'resources/**/*.php',
+    'routes',
+    'composer.lock',
+    '.env',
+],
+```
+
 <a name="deploying-horizon"></a>
 ### Развертывание Horizon (deploy)
 
@@ -635,6 +680,8 @@ public function boot(): void
     'redis:batch' => 120,
 ],
 ```
+
+Установка порога очереди в `0` отключит уведомления о долгом ожидании для этой очереди.
 
 <a name="metrics"></a>
 ## Метрики

@@ -1,5 +1,5 @@
 ---
-git: 673f762b3c8497770e526fd83dec342e870a641e
+git: fc4765aa3811c9d9b4f99a4e628a9ffe8ddccddd
 ---
 
 # Eloquent · Отношения
@@ -907,12 +907,12 @@ return $this->belongsToMany(Role::class)
 <a name="ordering-queries-via-intermediate-table-columns"></a>
 ### Сортировка запросов по столбцам сводной таблицы
 
-Вы можете упорядочить результаты запросов отношений `belongsToMany`, используя метод `orderByPivot`. В следующем примере мы получим все последние значки для пользователя:
+Вы можете упорядочить результаты запросов отношений `belongsToMany`, используя методы `orderByPivot` и `orderByPivotDesc`. В следующем примере мы получим все последние значки для пользователя:
 
 ```php
 return $this->belongsToMany(Badge::class)
     ->where('rank', 'gold')
-    ->orderByPivot('created_at', 'desc');
+    ->orderByPivotDesc('created_at');
 ```
 
 <a name="defining-custom-intermediate-table-models"></a>
@@ -1635,7 +1635,7 @@ $posts = Post::whereRelation('comments', 'is_approved', false)->get();
 
 ```php
 $posts = Post::whereRelation(
-    'comments', 'created_at', '>=', now()->subHour()
+    'comments', 'created_at', '>=', now()->minus(hours: 1)
 )->get();
 ```
 

@@ -1,5 +1,5 @@
 ---
-git: 4b842431d1c68b4bd92200432d7c42c6bab44175
+git: 3d98f9a98cf665674a36b2731b03281b95535711
 ---
 
 # Стартовые комплекты
@@ -7,7 +7,7 @@ git: 4b842431d1c68b4bd92200432d7c42c6bab44175
 <a name="introduction"></a>
 ## Введение
 
-Чтобы помочь вам быстрее начать работу с новым приложением Laravel, мы рады предложить [стартовые наборы приложений](https://laravel.com/starter-kits). Эти стартовые наборы дают вам фору при создании вашего следующего приложения Laravel и включают маршруты, контроллеры и представления, необходимые для регистрации и аутентификации пользователей вашего приложения.
+Чтобы помочь вам быстрее начать работу с новым приложением Laravel, мы рады предложить [стартовые наборы приложений](https://laravel.com/starter-kits). Эти стартовые наборы дают вам фору при создании вашего следующего приложения Laravel и включают маршруты, контроллеры и представления, необходимые для регистрации и аутентификации пользователей вашего приложения. Стартовые наборы используют [Laravel Fortify](/docs/{{version}}/fortify) для аутентификации.
 
 Использование стартовых комплектов необязательно — вы можете создать приложение с нуля, просто установив свежую копию Laravel. В любом случае, мы уверены, что у вас получится что-то замечательное!
 
@@ -48,6 +48,15 @@ Inertia позволяет вам создавать современные од
 
 Стартовый комплект React использует React 19, TypeScript, Tailwind и библиотеку компонентов [shadcn/ui](https://ui.shadcn.com).
 
+<a name="svelte"></a>
+### Svelte
+
+Наш стартовый комплект Svelte предоставляет надежную современную отправную точку для создания приложений Laravel с фронтендом Svelte, использующим [Inertia](https://inertiajs.com).
+
+Inertia позволяет создавать современные одностраничные приложения Svelte с классической серверной маршрутизацией и контроллерами. Это позволяет объединить возможности Svelte на фронтенде с продуктивностью Laravel на бэкенде и быстрой компиляцией Vite.
+
+Стартовый комплект Svelte использует Svelte 5, TypeScript, Tailwind и библиотеку компонентов [shadcn-svelte](https://www.shadcn-svelte.com/).
+
 <a name="vue"></a>
 ### Vue
 
@@ -62,7 +71,7 @@ Inertia позволяет вам создавать современные од
 
 Наш стартовый комплект Livewire представляет собой идеальную отправную точку для создания приложений Laravel с помощью интерфейса [Laravel Livewire](https://livewire.laravel.com).
 
-Livewire — это мощный способ создания динамических, реактивных интерфейсов frontend с использованием только PHP. Он отлично подходит для команд, которые в основном используют шаблоны Blade и ищут более простую альтернативу фреймворкам SPA на основе JavaScript, таким как React и Vue.
+Livewire — это мощный способ создания динамических, реактивных интерфейсов frontend с использованием только PHP. Он отлично подходит для команд, которые в основном используют шаблоны Blade и ищут более простую альтернативу фреймворкам SPA на основе JavaScript, таким как React, Svelte и Vue.
 
 Стартовый комплект Livewire использует Livewire, Tailwind и библиотеку компонентов [Flux UI](https://fluxui.dev).
 
@@ -140,6 +149,72 @@ import AuthLayoutTemplate from '@/layouts/auth/auth-simple-layout'; // [tl! remo
 import AuthLayoutTemplate from '@/layouts/auth/auth-split-layout'; // [tl! add]
 ```
 
+<a name="svelte-customization"></a>
+### Svelte
+
+Наш стартовый комплект Svelte создан с использованием Inertia 2, Svelte 5, Tailwind и [shadcn-svelte](https://www.shadcn-svelte.com/). Как и во всех стартовых комплектах, весь backend- и frontend-код находится внутри вашего приложения, поэтому его можно полностью настраивать.
+
+Большая часть frontend-кода находится в каталоге `resources/js`. Вы можете свободно изменять любой код, чтобы настроить внешний вид и поведение приложения:
+
+```text
+resources/js/
+├── components/    # Повторно используемые компоненты Svelte
+├── layouts/       # Макеты приложения
+├── lib/           # Вспомогательные функции, конфигурация и rune-модули Svelte
+├── pages/         # Компоненты страниц
+└── types/         # Объявления TypeScript
+```
+
+Чтобы опубликовать дополнительные компоненты shadcn-svelte, сначала [найдите компонент, который хотите опубликовать](https://www.shadcn-svelte.com). Затем опубликуйте компонент с помощью `npx`:
+
+```shell
+npx shadcn-svelte@latest add switch
+```
+
+В этом примере команда опубликует компонент Switch в `resources/js/components/ui/switch/switch.svelte`. После публикации компонента вы сможете использовать его на любой странице:
+
+```svelte
+<script lang="ts">
+    import { Switch } from '@/components/ui/switch'
+</script>
+
+<div>
+    <Switch />
+</div>
+```
+
+<a name="svelte-available-layouts"></a>
+#### Доступные макеты Svelte
+
+Стартовый комплект Svelte включает два основных макета: "sidebar" и "header". Макет "sidebar" используется по умолчанию, но вы можете переключиться на "header", изменив импорт в верхней части файла `resources/js/layouts/AppLayout.svelte`:
+
+```js
+import AppLayout from '@/layouts/app/AppSidebarLayout.svelte'; // [tl! remove]
+import AppLayout from '@/layouts/app/AppHeaderLayout.svelte'; // [tl! add]
+```
+
+<a name="svelte-sidebar-variants"></a>
+#### Варианты боковой панели Svelte
+
+Макет боковой панели включает три варианта: "sidebar" по умолчанию, "inset" и "floating". Вы можете выбрать нужный вариант, изменив компонент `resources/js/components/AppSidebar.svelte`:
+
+```text
+<Sidebar collapsible="icon" variant="sidebar"> [tl! remove]
+<Sidebar collapsible="icon" variant="inset"> [tl! add]
+```
+
+<a name="svelte-authentication-page-layout-variants"></a>
+#### Варианты макета страниц аутентификации Svelte
+
+Страницы аутентификации стартового комплекта Svelte, такие как страница входа и регистрации, также предлагают три варианта макета: "simple", "card" и "split".
+
+Чтобы изменить макет аутентификации, измените импорт в верхней части файла `resources/js/layouts/AuthLayout.svelte`:
+
+```js
+import AuthLayout from '@/layouts/auth/AuthSimpleLayout.svelte'; // [tl! remove]
+import AuthLayout from '@/layouts/auth/AuthSplitLayout.svelte'; // [tl! add]
+```
+
 <a name="vue-customization"></a>
 ### Vue
 
@@ -167,7 +242,7 @@ npx shadcn-vue@latest add switch
 
 ```vue
 <script setup lang="ts">
-import { Switch } from '@/Components/ui/switch'
+import { Switch } from '@/components/ui/switch'
 </script>
 
 <template>
@@ -212,37 +287,32 @@ import AuthLayout from '@/layouts/auth/AuthSplitLayout.vue'; // [tl! add]
 <a name="livewire-customization"></a>
 ### Livewire
 
-Наш стартовый комплект Livewire создан с использованием Livewire 3, Tailwind и [Flux UI](https://fluxui.dev/). Как и во всех наших стартовых комплектах, весь код бэкэнда и фронтэнда находится в вашем приложении, что позволяет выполнять полную настройку.
-
-#### Livewire и Volt
+Наш стартовый комплект Livewire создан с использованием Livewire 4, Tailwind и [Flux UI](https://fluxui.dev/). Как и во всех наших стартовых комплектах, весь код бэкэнда и фронтэнда находится в вашем приложении, что позволяет выполнять полную настройку.
 
 Большая часть кода frontend находится в каталоге `resources/views`. Вы можете свободно изменять любой код, чтобы настроить внешний вид и поведение вашего приложения:
 
 ```text
 resources/views
-├── components            # Повторно используемые компоненты Livewire
+├── components            # Повторно используемые компоненты
 ├── flux                  # Индивидуальные компоненты Flux
-├── livewire              # Страницы Livewire
+├── layouts               # Макеты приложения
+├── pages                 # Страницы Livewire
 ├── partials              # Часто используемые представления Blade
 ├── dashboard.blade.php   # Панель управления аутентифицированного пользователя
 ├── welcome.blade.php     # Приветственная страница для гостей
 ```
 
-#### Традиционные компоненты Livewire
-
-Код интерфейса находится в каталоге `resources/views`, а каталог `app/Livewire` содержит соответствующую внутреннюю логику для компонентов Livewire.
-
 <a name="livewire-available-layouts"></a>
 #### Доступные макеты Livewire
 
-Стартовый комплект Livewire включает в себя два различных основных макета на выбор: макет "sidebar" и макет "header". Макет "sidebar" используется по умолчанию, но вы можете переключиться на макет "header", изменив макет, используемый файлом `resources/views/components/layouts/app.blade.php` вашего приложения. Кроме того, вам следует добавить атрибут `container` к основному компоненту Flux:
+Стартовый комплект Livewire включает в себя два различных основных макета на выбор: макет "sidebar" и макет "header". Макет "sidebar" используется по умолчанию, но вы можете переключиться на макет "header", изменив макет, используемый файлом `resources/views/layouts/app.blade.php` вашего приложения. Кроме того, вам следует добавить атрибут `container` к основному компоненту Flux:
 
 ```blade
-<x-layouts.app.header>
+<x-layouts::app.header>
     <flux:main container>
         {{ $slot }}
     </flux:main>
-</x-layouts.app.header>
+</x-layouts::app.header>
 ```
 
 <a name="livewire-authentication-page-layout-variants"></a>
@@ -250,18 +320,99 @@ resources/views
 
 Страницы аутентификации, входящие в стартовый комплект Livewire, такие как страница входа и страница регистрации, также предлагают три различных варианта макета: "simple", "card" и "split".
 
-Чтобы изменить макет аутентификации, измените макет, используемый файлом `resources/views/components/layouts/auth.blade.php` вашего приложения:
+Чтобы изменить макет аутентификации, измените макет, используемый файлом `resources/views/layouts/auth.blade.php` вашего приложения:
 
 ```blade
-<x-layouts.auth.split>
+<x-layouts::auth.split>
     {{ $slot }}
-</x-layouts.auth.split>
+</x-layouts::auth.split>
+```
+
+<a name="authentication"></a>
+## Аутентификация
+
+Все стартовые комплекты используют [Laravel Fortify](/docs/{{version}}/fortify) для обработки аутентификации. Fortify предоставляет маршруты, контроллеры и логику входа, регистрации, сброса пароля, подтверждения email и других возможностей.
+
+Fortify автоматически регистрирует маршруты аутентификации на основе возможностей, включенных в файле конфигурации `config/fortify.php` вашего приложения. Для просмотра всех маршрутов приложения можно использовать Artisan-команду `php artisan route:list`.
+
+<a name="enabling-and-disabling-features"></a>
+### Включение и отключение возможностей
+
+Вы можете управлять включенными возможностями Fortify в файле `config/fortify.php`:
+
+```php
+use Laravel\Fortify\Features;
+
+'features' => [
+    Features::registration(),
+    Features::resetPasswords(),
+    Features::emailVerification(),
+    Features::twoFactorAuthentication([
+        'confirm' => true,
+        'confirmPassword' => true,
+    ]),
+],
+```
+
+Чтобы отключить возможность, закомментируйте или удалите соответствующую запись из массива `features`. Например, удалите `Features::registration()`, чтобы отключить публичную регистрацию.
+
+При использовании стартовых комплектов [React](#react), [Svelte](#svelte) или [Vue](#vue) также удалите ссылки на маршруты отключенной возможности во frontend-коде. Эти комплекты используют Wayfinder для типобезопасной маршрутизации, и ссылки на несуществующие маршруты приведут к ошибке сборки.
+
+<a name="customizing-actions"></a>
+### Настройка создания пользователей и сброса пароля
+
+Когда пользователь регистрируется или сбрасывает пароль, Fortify вызывает классы действий из каталога `app/Actions/Fortify` вашего приложения:
+
+| Файл                          | Описание                              |
+| ----------------------------- | ------------------------------------- |
+| `CreateNewUser.php`           | Проверяет и создает новых пользователей |
+| `ResetUserPassword.php`       | Проверяет и обновляет пароли пользователей |
+| `PasswordValidationRules.php` | Определяет правила проверки пароля    |
+
+Например, чтобы настроить логику регистрации вашего приложения, отредактируйте action `CreateNewUser`:
+
+```php
+public function create(array $input): User
+{
+    Validator::make($input, [
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'email', 'max:255', 'unique:users'],
+        'phone' => ['required', 'string', 'max:20'], // [tl! add]
+        'password' => $this->passwordRules(),
+    ])->validate();
+
+    return User::create([
+        'name' => $input['name'],
+        'email' => $input['email'],
+        'phone' => $input['phone'], // [tl! add]
+        'password' => Hash::make($input['password']),
+    ]);
+}
+```
+
+<a name="two-factor-authentication"></a>
+### Двухфакторная аутентификация
+
+Стартовые комплекты включают встроенную двухфакторную аутентификацию (2FA), позволяющую пользователям защищать учетные записи с помощью любого TOTP-совместимого приложения-аутентификатора. 2FA включается через `Features::twoFactorAuthentication()` в файле `config/fortify.php`.
+
+<a name="rate-limiting"></a>
+### Ограничение частоты запросов
+
+Ограничение частоты запросов помогает защитить endpoints аутентификации от перебора и повторяющихся попыток входа. Настроить его можно в `FortifyServiceProvider`:
+
+```php
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
+
+RateLimiter::for('login', function ($request) {
+    return Limit::perMinute(5)->by($request->email.$request->ip());
+});
 ```
 
 <a name="workos"></a>
 ## Аутентификация WorkOS AuthKit
 
-По умолчанию стартовые наборы React, Vue и Livewire используют встроенную систему аутентификации Laravel для входа, регистрации, сброса пароля, проверки электронной почты и т. д. Кроме того, мы также предлагаем вариант каждого стартового набора на основе [WorkOS AuthKit](https://authkit.com), который предлагает:
+По умолчанию стартовые наборы React, Svelte, Vue и Livewire используют встроенную систему аутентификации Laravel для входа, регистрации, сброса пароля, проверки электронной почты и т. д. Кроме того, мы также предлагаем вариант каждого стартового набора на основе [WorkOS AuthKit](https://authkit.com), который предлагает:
 
 <div class="content-list" markdown="1">
 
@@ -301,7 +452,7 @@ WORKOS_REDIRECT_URL="${APP_URL}/authenticate"
 <a name="inertia-ssr"></a>
 ### Inertia SSR
 
-Стартовые наборы React и Vue совместимы с возможностями [серверного рендеринга](https://inertiajs.com/server-side-rendering) Inertia. Чтобы создать совместимый с Inertia SSR-пакет для вашего приложения, выполните команду `build:ssr`:
+Стартовые наборы React, Svelte и Vue совместимы с возможностями [серверного рендеринга](https://inertiajs.com/server-side-rendering) Inertia. Чтобы создать совместимый с Inertia SSR-пакет для вашего приложения, выполните команду `build:ssr`:
 
 ```shell
 npm run build:ssr

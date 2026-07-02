@@ -1,5 +1,5 @@
 ---
-git: 320e31007b6859f4664e339e2013d0e2409de961
+git: d86fe32c7dd04bf0436cea31e95500360d97153f
 ---
 
 # Eloquent · Ресурсы API (Resource)
@@ -90,6 +90,30 @@ return User::findOrFail($id)->toResource();
 
 При вызове метода `toResource` Laravel попытается найти ресурс, соответствующий имени модели и (необязательно) имеющий суффикс `Resource` в пространстве имен `Http\Resources`, ближайшем к пространству имен модели.
 
+Если класс ресурса не следует этому соглашению об именовании или находится в другом пространстве имен, вы можете указать ресурс по умолчанию для модели с помощью атрибута `UseResource`:
+
+```php
+<?php
+
+namespace App\Models;
+
+use App\Http\Resources\CustomUserResource;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\UseResource;
+
+#[UseResource(CustomUserResource::class)]
+class User extends Model
+{
+    // ...
+}
+```
+
+Кроме того, вы можете указать класс ресурса, передав его в метод `toResource`:
+
+```php
+return User::findOrFail($id)->toResource(CustomUserResource::class);
+```
+
 <a name="resource-collections"></a>
 ### Коллекции ресурса
 
@@ -111,6 +135,30 @@ return User::all()->toResourceCollection();
 ```
 
 При вызове метода `toResourceCollection` Laravel попытается найти коллекцию ресурсов, которая соответствует имени модели и имеет суффикс `Collection` в пространстве имен `Http\Resources`, ближайшем к пространству имен модели.
+
+Если класс коллекции ресурсов не следует этому соглашению об именовании или находится в другом пространстве имен, вы можете указать коллекцию ресурсов по умолчанию для модели с помощью атрибута `UseResourceCollection`:
+
+```php
+<?php
+
+namespace App\Models;
+
+use App\Http\Resources\CustomUserCollection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\UseResourceCollection;
+
+#[UseResourceCollection(CustomUserCollection::class)]
+class User extends Model
+{
+    // ...
+}
+```
+
+Кроме того, вы можете указать класс коллекции ресурсов, передав его в метод `toResourceCollection`:
+
+```php
+return User::all()->toResourceCollection(CustomUserCollection::class);
+```
 
 <a name="custom-resource-collections"></a>
 #### Пользовательские коллекции ресурса
@@ -551,8 +599,8 @@ return User::paginate()->toResourceCollection();
  * Настроика информации о постраничной навигации для ресурса.
  *
  * @param  \Illuminate\Http\Request  $request
- * @param  array $paginated
- * @param  array $default
+ * @param  array  $paginated
+ * @param  array  $default
  * @return array
  */
 public function paginationInformation($request, $paginated, $default)

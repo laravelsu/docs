@@ -1,5 +1,5 @@
 ---
-git: 00b0fdcfbf079fd541e80ca41e99cfc134c217ce
+git: 3029b6544ca6307f6405a4e28c2304d6c2a8941c
 ---
 
 
@@ -281,7 +281,7 @@ Recorders\CacheInteractions::class => [
 <a name="queues-recorder"></a>
 #### Очереди
 
-Регистратор `Queues` отслеживает информацию о очередях вашего приложения для отображения на [карточке очередей](#queues-card).
+Регистратор `Queues` отслеживает информацию об очередях вашего приложения для отображения на [карточке очередей](#queues-card).
 
 Вы можете опционально настраивать [уровень выборки](#sampling) и шаблоны игнорируемых задач.
 
@@ -633,31 +633,24 @@ class TopSellers extends Card
 <a name="custom-card-styling-tailwind"></a>
 #### Tailwind CSS
 
-При использовании Tailwind CSS рекомендуется создать отдельный файл конфигурации Tailwind, чтобы избежать загрузки ненужных CSS или конфликтов с классами Tailwind Pulse:
-
-```js
-export default {
-    darkMode: 'class',
-    important: '#top-sellers',
-    content: [
-        './resources/views/livewire/pulse/top-sellers.blade.php',
-    ],
-    corePlugins: {
-        preflight: false,
-    },
-};
-```
-
-Затем вы можете указать файл конфигурации в точке входа CSS:
+При использовании Tailwind CSS рекомендуется создать отдельную точку входа CSS. Следующий пример исключает базовые стили [Preflight](https://tailwindcss.com/docs/preflight) Tailwind, которые уже включены в Pulse, и ограничивает область действия Tailwind с помощью CSS-селектора, чтобы избежать конфликтов с классами Tailwind Pulse:
 
 ```css
-@config "../../tailwind.top-sellers.config.js";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/theme.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@source "./../../views/livewire/pulse/top-sellers.blade.php";
+
+@theme {
+  /* ... */
+}
+
+#top-sellers {
+  @import "tailwindcss/utilities.css" source(none);
+}
 ```
 
-Вам также нужно будет включить в шаблоне вашей карточки атрибут `id` или `class` , который соответствует селектору, переданному в стратегию выбора [important](https://tailwindcss.com/docs/configuration#selector-strategy) в Tailwind:
+Вам также нужно будет включить в шаблоне вашей карточки атрибут `id` или `class`, который соответствует CSS-селектору в вашей точке входа:
 
 ```blade
 <x-pulse::card id="top-sellers" :cols="$cols" :rows="$rows" class="$class">

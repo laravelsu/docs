@@ -1,5 +1,5 @@
 ---
-git: 2dc867e406e5a429556de850435213ae44d9d6c4
+git: 09475b0c7d41d69841e8bbb2817f05a197d49bae
 ---
 
 # Тестирование · Тесты HTTP
@@ -698,6 +698,22 @@ $response
     );
 ```
 
+Если вы хотите выполнить одинаковые утверждения для каждого элемента JSON-коллекции, вы можете использовать метод `each`:
+
+```php
+$response
+  ->assertJson(fn (AssertableJson $json) =>
+      $json->has(3)
+          ->each(fn (AssertableJson $json) =>
+              $json->whereType('id', 'integer')
+                  ->whereType('name', 'string')
+                  ->whereType('email', 'string')
+                  ->missing('password')
+                  ->etc()
+          )
+  );
+```
+
 <a name="scoping-json-collection-assertions"></a>
 #### Уровень вложенности утверждения относительно коллекций JSON
 
@@ -930,6 +946,51 @@ $view = $this->component(Profile::class, ['name' => 'Taylor']);
 $view->assertSee('Taylor');
 ```
 
+<a name="caching-routes"></a>
+## Кеширование маршрутов
+
+Перед запуском теста Laravel загружает новый экземпляр приложения, включая сбор всех определённых маршрутов. Если в вашем приложении много файлов маршрутов, вы можете добавить трейт `Illuminate\Foundation\Testing\WithCachedRoutes` к вашим тестовым классам. В тестах, использующих этот трейт, маршруты строятся один раз и сохраняются в памяти, то есть процесс сбора маршрутов выполняется только один раз для всех тестов в наборе:
+
+```php tab=Pest
+<?php
+
+use App\Http\Controllers\UserController;
+use Illuminate\Foundation\Testing\WithCachedRoutes;
+
+pest()->use(WithCachedRoutes::class);
+
+test('basic example', function () {
+    $this->get(action([UserController::class, 'index']));
+
+    // ...
+});
+```
+
+```php tab=PHPUnit
+<?php
+
+namespace Tests\Feature;
+
+use App\Http\Controllers\UserController;
+use Illuminate\Foundation\Testing\WithCachedRoutes;
+use Tests\TestCase;
+
+class BasicTest extends TestCase
+{
+    use WithCachedRoutes;
+
+    /**
+     * A basic functional test example.
+     */
+    public function test_basic_example(): void
+    {
+        $response = $this->get(action([UserController::class, 'index']));
+
+        // ...
+    }
+}
+```
+
 <a name="available-assertions"></a>
 ## Доступные утверждения
 
@@ -954,10 +1015,12 @@ $view->assertSee('Taylor');
 - [assertDownload](#assert-download)
 - [assertExactJson](#assert-exact-json)
 - [assertExactJsonStructure](#assert-exact-json-structure)
+- [assertFailedDependency](#assert-failed-dependency)
 - [assertForbidden](#assert-forbidden)
 - [assertFound](#assert-found)
 - [assertGone](#assert-gone)
 - [assertHeader](#assert-header)
+- [assertHeaderContains](#assert-header-contains)
 - [assertHeaderMissing](#assert-header-missing)
 - [assertInternalServerError](#assert-internal-server-error)
 - [assertJson](#assert-json)
@@ -1155,6 +1218,15 @@ $response->assertExactJsonStructure(array $data);
 
 Этот метод является более строгим вариантом [assertJsonStructure](#assert-json-structure). В отличие от `assertJsonStructure`, этот метод завершится ошибкой, если ответ содержит какие-либо ключи, которые явно не включены в ожидаемую структуру JSON.
 
+<a name="assert-failed-dependency"></a>
+#### assertFailedDependency
+
+Утверждает, что ответ имеет HTTP-код состояния `424` — failed dependency:
+
+```php
+$response->assertFailedDependency();
+```
+
 <a name="assert-forbidden"></a>
 #### assertForbidden
 
@@ -1189,6 +1261,15 @@ $response->assertGone();
 
 ```php
 $response->assertHeader($headerName, $value = null);
+```
+
+<a name="assert-header-contains"></a>
+#### assertHeaderContains
+
+Утверждает, что указанный заголовок содержит заданную подстроку:
+
+```php
+$response->assertHeaderContains($headerName, $value);
 ```
 
 <a name="assert-header-missing"></a>
@@ -1479,9 +1560,7 @@ $response->assertNoContent($status = 204);
 
 Утверждает, что ответ был передан потоком:
 
-```php
-$response->assertStreamed();
-```
+    $response->assertStreamed();
 
 <a name="assert-streamed-content"></a>
 #### assertStreamedContent

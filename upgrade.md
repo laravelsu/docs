@@ -1,5 +1,5 @@
 ---
-git: 6bc6cd05d1b1754de15eb73e6160384c7aaa094f
+git: 82e0a981f83fca5366ec2b0e8b306a9819964bb5
 ---
 
 # Руководство по обновлению
@@ -40,14 +40,13 @@ git: 6bc6cd05d1b1754de15eb73e6160384c7aaa094f
 
 <!-- </div> -->
 
-<a name="upgrade-11.0"></a>
-## Обновление с 11.0 версии до 12.x
+<a name="upgrade-12.0"></a>
+## Обновление с 11.x до 12.0
 
-<a name="estimated-upgrade-time-??-minutes"></a>
-#### Приблизительное время обновления: 5 минут
+#### Оценочное время обновления: 5 минут
 
 > [!NOTE]
-> Мы стараемся задокументировать каждое возможное изменение, которое может привести к нарушению совместимости. Поскольку некоторые из этих критических изменений находятся в малоизвестных частях фреймворка, только часть этих изменений может повлиять на ваше приложение. Хотите сэкономить время? Вы можете использовать [Laravel Shift](https://laravelshift.com/) , чтобы автоматизировать процесс обновления вашего приложения.
+> Мы стараемся документировать все возможные breaking changes. Поскольку часть этих изменений находится в редко используемых областях фреймворка, только часть из них может затронуть ваше приложение. Хотите сэкономить время? Вы можете использовать [Laravel Shift](https://laravelshift.com/), чтобы автоматизировать обновление приложения.
 
 <a name="updating-dependencies"></a>
 ### Обновление зависимостей
@@ -72,7 +71,7 @@ git: 6bc6cd05d1b1754de15eb73e6160384c7aaa094f
 
 **Вероятность влияния: низкая**
 
-Поддержка [Carbon 2.x](https://carbon.nesbot.com/docs/) удалена. Laravel 12 требует использования [Carbon 3.x](https://carbon.nesbot.com/docs/#api-carbon-3).
+Поддержка Carbon 2.x удалена. Laravel 12 требует использования [Carbon 3.x](https://carbon.nesbot.com/guide/getting-started/migration.html).
 
 <a name="updating-the-laravel-installer"></a>
 ### Обновление Laravel Installer
@@ -192,11 +191,50 @@ $tables = Schema::getTableListing(schema: 'main', schemaQualified: false);
 
 Команды `db:table` и `db:show` теперь показывают все схемы и для MySQL, MariaDB, SQLite (как это уже делалось в PostgreSQL и SQL Server).
 
-#### Обновлённая сигнатура конструктора `Blueprint`
+<a name="database-constructor-signature-changes"></a>
+#### Изменения сигнатур конструкторов базы данных
 
 **Вероятность влияния: очень низкая**
 
-Теперь конструктор класса `Illuminate\Database\Schema\Blueprint` ожидает первым аргументом объект `Illuminate\Database\Connection`.
+В Laravel 12 нескольким низкоуровневым классам базы данных теперь требуется экземпляр `Illuminate\Database\Connection`, передаваемый через конструктор.
+
+**Эти изменения в основном относятся к сопровождающим пакетов для базы данных — крайне маловероятно, что они повлияют на обычную разработку приложений.**
+
+`Illuminate\Database\Schema\Blueprint`
+
+Конструктор класса `Illuminate\Database\Schema\Blueprint` теперь ожидает экземпляр `Connection` первым аргументом. Это в основном затрагивает приложения или пакеты, которые вручную создают экземпляры `Blueprint`.
+
+`Illuminate\Database\Grammar`
+
+Конструктор класса `Illuminate\Database\Grammar` теперь также требует экземпляр `Connection`. В предыдущих версиях соединение назначалось после создания с помощью метода `setConnection()`. Этот метод удалён в Laravel 12:
+
+```php
+// Laravel <= 11.x
+$grammar = new MySqlGrammar;
+$grammar->setConnection($connection);
+
+// Laravel >= 12.x
+$grammar = new MySqlGrammar($connection);
+````
+
+Кроме того, следующие API были удалены или устарели:
+
+<!-- <div class="content-list" markdown="1"> -->
+
+- Метод `Blueprint::getPrefix()` устарел.
+- Метод `Connection::withTablePrefix()` удалён.
+- Методы `Grammar::getTablePrefix()` и `setTablePrefix()` устарели.
+- Метод `Grammar::setConnection()` удалён.
+
+<!-- </div> -->
+
+При работе с префиксами таблиц теперь следует получать их напрямую из соединения с базой данных:
+
+```php
+$prefix = $connection->getTablePrefix();
+```
+
+Если вы сопровождаете пользовательские драйверы базы данных, schema builders или реализации grammar, проверьте их конструкторы и убедитесь, что передаётся экземпляр `Connection`.
 
 
 <a name="eloquent"></a>
@@ -235,6 +273,16 @@ $request->mergeIfMissing([
 ```
 
 Если раньше вы рассчитывали, что ключ `'user.last_name'` создаст одноуровневый массив — пересмотрите логику.
+
+<a name="routing"></a>
+### Маршрутизация
+
+<a name="route-precedence"></a>
+#### Приоритет маршрутов
+
+**Вероятность влияния: низкая**
+
+Поведение маршрутизации при наличии нескольких маршрутов с одинаковым именем было унифицировано для кешированных и некешированных маршрутов. Это означает, что некешированная маршрутизация теперь сопоставляет первый зарегистрированный маршрут с заданным именем, а не последний.
 
 <a name="storage"></a>
 ### Хранилище

@@ -1,5 +1,5 @@
 ---
-git: 6f02e3f9fae473a1af9591fb46b7d7969a2cc54c
+git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
 ---
 
 # Laravel Cashier (Paddle)
@@ -1104,13 +1104,13 @@ $user->subscription()->pauseNow();
 Используя метод `pauseUntil`, вы можете приостановить подписку до определенного момента времени:
 
 ```php
-$user->subscription()->pauseUntil(now()->addMonth());
+$user->subscription()->pauseUntil(now()->plus(months: 1));
 ```
 
 Или вы можете использовать метод `pauseNowUntil`, чтобы немедленно приостановить подписку до заданного момента времени:
 
 ```php
-$user->subscription()->pauseNowUntil(now()->addMonth());
+$user->subscription()->pauseNowUntil(now()->plus(months: 1));
 ```
 
 Вы можете определить, приостановил ли пользователь свою подписку, но все еще находится в «льготном периоде», используя метод `onPausedGracePeriod`:
@@ -1230,7 +1230,7 @@ $user = User::create([
 ]);
 
 $user->createAsCustomer([
-    'trial_ends_at' => now()->addDays(10)
+    'trial_ends_at' => now()->plus(days: 10)
 ]);
 ```
 
@@ -1278,7 +1278,7 @@ if ($user->onGenericTrial()) {
 Вы можете продлить существующий пробный период подписки, вызвав метод `extendTrial` и указав момент времени, когда пробная версия должна закончиться:
 
 ```php
-$user->subscription()->extendTrial(now()->addDays(5));
+$user->subscription()->extendTrial(now()->plus(days: 5));
 ```
 
 Или вы можете немедленно активировать подписку, завершив ее пробную версию, вызвав метод `activate` подписки:
@@ -1313,7 +1313,7 @@ Paddle может уведомлять ваше приложение о разл
 Поскольку веб-хукам Paddle необходимо обходить [защиту CSRF](/docs/{{version}}/csrf) Laravel, вам следует убедиться, что Laravel не пытается проверить токен CSRF для входящих веб-хуков Paddle. Для этого вам следует исключить `paddle/*` из защиты CSRF в файле `bootstrap/app.php` вашего приложения:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->validateCsrfTokens(except: [
         'paddle/*',
     ]);

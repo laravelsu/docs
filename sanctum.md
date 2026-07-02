@@ -1,5 +1,5 @@
 ---
-git: da16b495754d7c62da49f134c0470f0a165be17d
+git: b3fbcbafe54cfa4ec5dee126240ac81fe91c6682
 ---
 
 # Пакет Laravel Sanctum
@@ -148,7 +148,7 @@ Sanctum также включает в себя два посредника, к�
 use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->alias([
         'abilities' => CheckAbilities::class,
         'ability' => CheckForAnyAbility::class,
@@ -232,7 +232,7 @@ $user->tokens()->where('id', $tokenId)->delete();
 
 ```php
 return $user->createToken(
-    'token-name', ['*'], now()->addWeek()
+    'token-name', ['*'], now()->plus(weeks: 1)
 )->plainTextToken;
 ```
 
@@ -274,7 +274,7 @@ Sanctum также обеспечивает простой метод аутен
 
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->statefulApi();
 })
 ```
@@ -398,7 +398,7 @@ window.Echo = new Echo({
 <a name="issuing-mobile-api-tokens"></a>
 ### Выдача токенов API мобильного приложения
 
-Для начала создайте маршрут, который принимает электронную почту / имя пользователя, пароль и имя устройства, а затем обменивает эти учетные данные на новый токен Sanctum. «Имя устройства», присвоенное этой конечной точке, предназначено для информационных целей и может иметь любое желаемое значение. В общем, значение имени устройства должно быть именем, которое узнает пользователь, например «iPhone 12 Nuno».
+Для начала создайте маршрут, который принимает электронную почту / имя пользователя, пароль и имя устройства, а затем обменивает эти учетные данные на новый токен Sanctum. «Имя устройства», присвоенное этой конечной точке, предназначено для информационных целей и может иметь любое желаемое значение. В общем, значение имени устройства должно быть именем, которое узнает пользователь, например «iPhone 17 Nuno».
 
 Как правило, вы делаете запрос к конечной точке токена с экрана «входа в систему» вашего мобильного приложения. Конечная точка вернет токен API в виде простого текста, который затем может быть сохранен на мобильном устройстве и использован для выполнения дополнительных API-запросов:
 

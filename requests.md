@@ -1,5 +1,5 @@
 ---
-git: 749f980905661156d686084d95ed0d131695f439
+git: a1066b5c981b414a9b869ac4a8d8a7f1b04fa60f
 ---
 
 # HTTP-запросы
@@ -658,7 +658,7 @@ $value = $request->cookie('name');
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Foundation\Http\Middleware\TrimStrings;
 
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->remove([
         ConvertEmptyStringsToNull::class,
         TrimStrings::class,
@@ -669,7 +669,7 @@ use Illuminate\Foundation\Http\Middleware\TrimStrings;
 Если вы хотите отключить обрезку строк и преобразование пустых строк для подмножества запросов к вашему приложению, вы можете использовать методы посредника `trimStrings` и `convertEmptyStringsToNull` в файле `bootstrap/app.php` вашего приложения. Оба метода принимают массив замыканий, который должен возвращать `true` или `false`, чтобы указать, следует ли пропустить нормализацию ввода:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->convertEmptyStringsToNull(except: [
         fn (Request $request) => $request->is('admin/*'),
     ]);
@@ -763,7 +763,7 @@ $path = $request->photo->storeAs('images', 'filename.jpg', 's3');
 Чтобы решить эту проблему, вы можете использовать посредника `Illuminate\Http\Middleware\TrustProxies`, содержащийся в вашем приложении Laravel, что позволяет вам быстро настраивать балансировщики нагрузки или прокси, которым ваше приложение должно доверять. Доверенные прокси-серверы должны быть указаны с помощью метода посредника `trustProxies` в файле `bootstrap/app.php` вашего приложения:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->trustProxies(at: [
         '192.168.1.1',
         '10.0.0.0/8',
@@ -774,7 +774,7 @@ $path = $request->photo->storeAs('images', 'filename.jpg', 's3');
 Помимо настройки доверенных прокси-серверов, вы также можете настроить заголовки прокси-серверов, которым следует доверять:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->trustProxies(headers: Request::HEADER_X_FORWARDED_FOR |
         Request::HEADER_X_FORWARDED_HOST |
         Request::HEADER_X_FORWARDED_PORT |
@@ -793,7 +793,7 @@ $path = $request->photo->storeAs('images', 'filename.jpg', 's3');
 Если вы используете Amazon AWS или другой поставщик «облачных» балансировщиков нагрузки, то вы можете не знать IP-адреса своих фактических балансировщиков. В этом случае вы можете использовать `*`, чтобы доверять всем прокси:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->trustProxies(at: '*');
 })
 ```
@@ -805,26 +805,26 @@ $path = $request->photo->storeAs('images', 'filename.jpg', 's3');
 
 Как правило, вам следует настроить свой веб-сервер (Nginx или Apache), так, чтобы он обслуживал запросы, соответствующие только указанному имени хоста. Однако, если у вас нет возможности напрямую настроить свой веб-сервер и вам нужно указать Laravel, чтобы он отвечал только на определенные имена хостов, вы можете сделать это, задействовав посредник `Illuminate\Http\Middleware\TrustHosts` для вашего приложения.
 
-Чтобы включить посредника `TrustHosts`, вам следует вызвать метод посредника `trustHosts` в файле `bootstrap/app.php` вашего приложения. Используя аргумент `at` этого метода, вы можете указать имена хостов, на которые ваше приложение должно реагировать. Входящие запросы с другими заголовками `Host` будут отклонены:
+Чтобы включить посредника `TrustHosts`, вам следует вызвать метод посредника `trustHosts` в файле `bootstrap/app.php` вашего приложения. Используя аргумент `at` этого метода, вы можете указать имена хостов, на которые ваше приложение должно реагировать. Строка имени хоста рассматривается как регулярное выражение. Входящие запросы с другими заголовками `Host` будут отклонены:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
-    $middleware->trustHosts(at: ['laravel.test']);
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->trustHosts(at: ['^laravel\.test$']);
 })
 ```
 
 По умолчанию запросы, поступающие из поддоменов URL-адреса приложения, также автоматически считаются доверенными. Если вы хотите отключить это поведение, вы можете использовать аргумент `subdomains`:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
-    $middleware->trustHosts(at: ['laravel.test'], subdomains: false);
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->trustHosts(at: ['^laravel\.test$'], subdomains: false);
 })
 ```
 
 Если вам нужен доступ к файлам конфигурации или базе данных вашего приложения, чтобы определить доверенные хосты, вы можете предоставить замыкание аргументу `at`:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->trustHosts(at: fn () => config('app.trusted_hosts'));
 })
 ```

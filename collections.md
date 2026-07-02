@@ -1,5 +1,5 @@
 ---
-git: 2a0504f3579486c15577b685ba9dcca3a13e088b
+git: 98894596e909b8475e6d27221229c23769b46277
 ---
 
 # Коллекции
@@ -98,7 +98,6 @@ $translated = $collection->toLocale('es');
 - [combine](#method-combine)
 - [concat](#method-concat)
 - [contains](#method-contains)
-- [containsOneItem](#method-containsoneitem)
 - [containsStrict](#method-containsstrict)
 - [count](#method-count)
 - [countBy](#method-countBy)
@@ -133,6 +132,8 @@ $translated = $collection->toLocale('es');
 - [groupBy](#method-groupby)
 - [has](#method-has)
 - [hasAny](#method-hasany)
+- [hasMany](#method-hasmany)
+- [hasSole](#method-hassole)
 - [implode](#method-implode)
 - [intersect](#method-intersect)
 - [intersectUsing](#method-intersectusing)
@@ -211,6 +212,7 @@ $translated = $collection->toLocale('es');
 - [times](#method-times)
 - [toArray](#method-toarray)
 - [toJson](#method-tojson)
+- [toPrettyJson](#method-to-pretty-json)
 - [transform](#method-transform)
 - [undot](#method-undot)
 - [union](#method-union)
@@ -543,29 +545,6 @@ $collection->contains('product', 'Bookcase');
 Метод `contains` использует «гибкое» сравнение при проверке значений элементов, то есть строка с целочисленным значением будет считаться равной целому числу того же значения. Используйте метод [containsStrict](#method-containsstrict) для фильтрации с использованием «жесткого» сравнения.
 
 Противоположным для метода `contains`, является метод [doesntContain](#method-doesntcontain).
-
-<a name="method-containsoneitem"></a>
-#### `containsOneItem()`
-
-Метод `containsOneItem` определяет, содержит ли коллекция только один элемент:
-
-```php
-collect([])->containsOneItem();
-
-// false
-
-collect(['1'])->containsOneItem();
-
-// true
-
-collect(['1', '2'])->containsOneItem();
-
-// false
-
-collect([1, 2, 3])->containsOneItem(fn (int $item) => $item === 2);
-
-// true
-```
 
 <a name="method-containsstrict"></a>
 #### `containsStrict()`
@@ -1198,17 +1177,19 @@ $flipped->all();
 
 Метод `forget` удаляет элемент из коллекции по его ключу:
 
-    $collection = collect(['name' => 'Taylor', 'framework' => 'Laravel']);
+```php
+$collection = collect(['name' => 'Taylor', 'framework' => 'Laravel']);
 
-    // Забыть один ключ...
-    $collection->forget('name');
+// Забыть один ключ...
+$collection->forget('name');
 
-    // ['framework' => 'Laravel']
+// ['framework' => 'Laravel']
 
-    // Забыть несколько ключей...
-    $collection->forget(['name', 'framework']);
+// Забыть несколько ключей...
+$collection->forget(['name', 'framework']);
 
-    // []
+// []
+```
 
 > [!WARNING]
 > В отличие от большинства других методов коллекции, `forget` модифицирует коллекцию.
@@ -1405,6 +1386,51 @@ $collection->hasAny(['product', 'price']);
 $collection->hasAny(['name', 'price']);
 
 // false
+```
+
+<a name="method-hasmany"></a>
+#### `hasMany()`
+
+Метод `hasMany` определяет, содержит ли коллекция несколько элементов:
+
+```php
+collect([])->hasMany();
+
+// false
+
+collect(['1'])->hasMany();
+
+// false
+
+collect([1, 2, 3])->hasMany();
+
+// true
+
+collect([
+    ['age' => 2],
+    ['age' => 3],
+])->hasMany(fn ($item) => $item['age'] === 2)
+
+// false
+```
+
+<a name="method-hassole"></a>
+#### `hasSole()`
+
+Метод `hasSole` определяет, содержит ли коллекция ровно один элемент, при необходимости соответствующий заданным критериям:
+
+```php
+collect([])->hasSole();
+
+// false
+
+collect(['1'])->hasSole();
+
+// true
+
+collect([1, 2, 3])->hasSole(fn (int $item) => $item === 2);
+
+// true
 ```
 
 <a name="method-implode"></a>
@@ -3306,6 +3332,17 @@ $collection->toJson();
 // '{"name":"Desk", "price":200}'
 ```
 
+<a name="method-to-pretty-json"></a>
+#### `toPrettyJson()`
+
+Метод `toPrettyJson` преобразует коллекцию в форматированную JSON-строку с использованием опции `JSON_PRETTY_PRINT`:
+
+```php
+$collection = collect(['name' => 'Desk', 'price' => 200]);
+
+$collection->toPrettyJson();
+```
+
 <a name="method-transform"></a>
 #### `transform()`
 
@@ -3363,7 +3400,7 @@ $person->toArray();
 */
 ```
 
-<a name="method-union"></a><a name="method-union"></a>
+<a name="method-union"></a>
 #### `union()`
 
 Метод `union` добавляет переданный массив в коллекцию. Если переданный массив содержит ключи, которые уже находятся в исходной коллекции, предпочтительнее будут значения исходной коллекции:
@@ -3537,7 +3574,7 @@ $value = $collection->value('price');
 ```php
 $collection = collect([
     10 => ['product' => 'Desk', 'price' => 200],
-    11 => ['product' => 'Desk', 'price' => 200],
+    11 => ['product' => 'Speaker', 'price' => 400],
 ]);
 
 $values = $collection->values();
@@ -3547,7 +3584,7 @@ $values->all();
 /*
     [
         0 => ['product' => 'Desk', 'price' => 200],
-        1 => ['product' => 'Desk', 'price' => 200],
+        1 => ['product' => 'Speaker', 'price' => 400],
     ]
 */
 ```
@@ -3707,25 +3744,25 @@ $filtered->all();
 */
 ```
 
-Метод `where` использует «гибкое» сравнение при проверке значений элементов, что означает, что строка с целым значением будет считаться равной целому числу того же значения. Используйте метод [whereStrict](#method-wherestrict) для фильтрации с использованием «жесткого» сравнения.
+Метод `where` использует «гибкое» сравнение при проверке значений элементов, что означает, что строка с целым значением будет считаться равной целому числу того же значения. Используйте метод [whereStrict](#method-wherestrict) для фильтрации с использованием «жесткого» сравнения или методы [whereNull](#method-wherenull) и [whereNotNull](#method-wherenotnull) для фильтрации значений `null`.
 
 При желании вы можете передать оператор сравнения в качестве второго параметра. Поддерживаемые операторы: '===', '!==', '!=', '==', '=', '<>', '>', '<', '>=', и '<=':
 
 ```php
 $collection = collect([
-    ['name' => 'Jim', 'deleted_at' => '2019-01-01 00:00:00'],
-    ['name' => 'Sally', 'deleted_at' => '2019-01-02 00:00:00'],
-    ['name' => 'Sue', 'deleted_at' => null],
+    ['name' => 'Jim', 'platform' => 'Mac'],
+    ['name' => 'Sally', 'platform' => 'Mac'],
+    ['name' => 'Sue', 'platform' => 'Linux'],
 ]);
 
-$filtered = $collection->where('deleted_at', '!=', null);
+$filtered = $collection->where('platform', '!=', 'Linux');
 
 $filtered->all();
 
 /*
     [
-        ['name' => 'Jim', 'deleted_at' => '2019-01-01 00:00:00'],
-        ['name' => 'Sally', 'deleted_at' => '2019-01-02 00:00:00'],
+        ['name' => 'Jim', 'platform' => 'Mac'],
+        ['name' => 'Sally', 'platform' => 'Mac'],
     ]
 */
 ```
@@ -3884,6 +3921,8 @@ $collection = collect([
     ['name' => 'Desk'],
     ['name' => null],
     ['name' => 'Bookcase'],
+    ['name' => 0],
+    ['name' => ''],
 ]);
 
 $filtered = $collection->whereNotNull('name');
@@ -3894,6 +3933,8 @@ $filtered->all();
     [
         ['name' => 'Desk'],
         ['name' => 'Bookcase'],
+        ['name' => 0],
+        ['name' => ''],
     ]
 */
 ```
@@ -4195,7 +4236,7 @@ LazyCollection::make(function () {
 
 ```php
 $lazyCollection = LazyCollection::times(INF)
-    ->takeUntilTimeout(now()->addMinute());
+    ->takeUntilTimeout(now()->plus(minutes: 1));
 
 $lazyCollection->each(function (int $number) {
     dump($number);
@@ -4274,4 +4315,30 @@ $users->take(5)->all();
 // Первые 5 пользователей пришли из кеша коллекции ...
 // Остальные из базы данных включены в результирующий набор ...
 $users->take(20)->all();
+```
+
+<a name="method-with-heartbeat"></a>
+#### `withHeartbeat()`
+
+Метод `withHeartbeat` позволяет выполнять callback через регулярные интервалы времени, пока перечисляется отложенная коллекция. Это особенно полезно для долгих операций, которым нужны периодические служебные действия, например продление блокировок или отправка обновлений о прогрессе:
+
+```php
+use Carbon\CarbonInterval;
+use Illuminate\Support\Facades\Cache;
+
+$lock = Cache::lock('generate-reports', seconds: 60 * 5);
+
+if ($lock->get()) {
+    try {
+        Report::where('status', 'pending')
+            ->lazy()
+            ->withHeartbeat(
+                CarbonInterval::minutes(4),
+                fn () => $lock->extend(CarbonInterval::minutes(5))
+            )
+            ->each(fn ($report) => $report->process());
+    } finally {
+        $lock->release();
+    }
+}
 ```

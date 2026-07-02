@@ -1,5 +1,5 @@
 ---
-git: b3927f93ba445e6b3040f2697c8611dd5918a655
+git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
 ---
 
 # Генерация URL-адресов
@@ -68,12 +68,6 @@ echo url()->current();
 
 // Получить текущий URL, включая строку запроса...
 echo url()->full();
-
-// Получить полный URL-адрес предыдущего запроса...
-echo url()->previous();
-
-// Получить путь предыдущего запроса...
-echo url()->previousPath();
 ```
 
 К каждому из этих методов также можно получить доступ через [фасад](/docs/{{version}}/facades) `URL`:
@@ -82,6 +76,37 @@ echo url()->previousPath();
 use Illuminate\Support\Facades\URL;
 
 echo URL::current();
+```
+
+<a name="accessing-the-previous-url"></a>
+#### Доступ к предыдущему URL
+
+Иногда полезно знать предыдущий URL, с которого пришёл пользователь. Вы можете получить предыдущий URL с помощью методов `previous` и `previousPath` помощника `url`:
+
+```php
+// Получить полный URL-адрес предыдущего запроса...
+echo url()->previous();
+
+// Получить путь предыдущего запроса...
+echo url()->previousPath();
+```
+
+Или через [сессию](/docs/{{version}}/session) можно получить предыдущий URL как экземпляр [fluent URI](#fluent-uri-objects):
+
+```php
+use Illuminate\Http\Request;
+
+Route::post('/users', function (Request $request) {
+    $previousUri = $request->session()->previousUri();
+
+    // ...
+});
+```
+
+Также через сессию можно получить имя маршрута для ранее посещённого URL:
+
+```php
+$previousRoute = $request->session()->previousRoute();
 ```
 
 <a name="urls-for-named-routes"></a>
@@ -157,7 +182,7 @@ return URL::signedRoute('unsubscribe', ['user' => 1], absolute: false);
 use Illuminate\Support\Facades\URL;
 
 return URL::temporarySignedRoute(
-    'unsubscribe', now()->addMinutes(30), ['user' => 1]
+    'unsubscribe', now()->plus(minutes: 30), ['user' => 1]
 );
 ```
 
@@ -210,7 +235,7 @@ Route::post('/unsubscribe/{user}', function (Request $request) {
 ```php
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
 
-->withExceptions(function (Exceptions $exceptions) {
+->withExceptions(function (Exceptions ): void {
     $exceptions->render(function (InvalidSignatureException $e) {
         return response()->view('errors.link-expired', status: 403);
     });
@@ -253,12 +278,15 @@ $uri = Uri::of('https://example.com/path');
 $uri = Uri::to('/dashboard');
 $uri = Uri::route('users.show', ['user' => 1]);
 $uri = Uri::signedRoute('users.show', ['user' => 1]);
-$uri = Uri::temporarySignedRoute('user.index', now()->addMinutes(5));
+$uri = Uri::temporarySignedRoute('user.index', now()->plus(minutes: 5));
 $uri = Uri::action([UserController::class, 'index']);
 $uri = Uri::action(InvokableController::class);
 
 // Генерируем экземпляр URI из текущего URL-адреса запроса...
 $uri = $request->uri();
+
+// Генерируем экземпляр URI из URL-адреса предыдущего запроса...
+$uri = $request->session()->previousUri();
 ```
 
 Получив экземпляр URI, вы можете свободно его изменять:
@@ -322,7 +350,7 @@ class SetDefaultLocaleForUrls
 Установка значений URL по умолчанию может мешать Laravel обрабатывать неявные привязки модели. Следовательно, необходимо [установить приоритет посреднику](/docs/{{version}}/middleware#sorting-middleware), который задает значения URL по умолчанию, и должен выполняться перед посредником Laravel `SubstituteBindings`. Вы можете сделать это, используя метод промежуточного программного обеспечения `priority` в файле `bootstrap/app.php` вашего приложения:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware ): void {
     $middleware->prependToPriorityList(
         before: \Illuminate\Routing\Middleware\SubstituteBindings::class,
         prepend: \App\Http\Middleware\SetDefaultLocaleForUrls::class,

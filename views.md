@@ -1,5 +1,5 @@
 ---
-git: e5abed8708ebe7e51820e3062629dbec5407607c
+git: 3d98f9a98cf665674a36b2731b03281b95535711
 ---
 
 # HTML-шаблоны
@@ -32,12 +32,12 @@ Route::get('/', function () {
 > [!NOTE]
 > Ищете дополнительную информацию о том, как писать шаблоны Blade? Ознакомьтесь с полной [документацией по Blade](/docs/{{version}}/blade), чтобы начать работу.
 
-<a name="writing-views-in-react-or-vue"></a>
-### Шаблоны React / Vue
+<a name="writing-views-in-react-svelte-or-vue"></a>
+### Шаблоны React / Svelte / Vue
 
-Вместо написания фронтенд-шаблонов на PHP с использованием Blade многие разработчики предпочитают писать свои шаблоны с использованием React или Vue. Laravel делает это легким благодаря [Inertia](https://inertiajs.com/), библиотеке, которая упрощает связь вашего фронтенда на React или Vue с вашим бэкендом Laravel, избегая типичных сложностей, связанных с созданием SPA (Single Page Application).
+Вместо написания фронтенд-шаблонов на PHP с использованием Blade многие разработчики предпочитают писать свои шаблоны с использованием React, Svelte или Vue. Laravel делает это легким благодаря [Inertia](https://inertiajs.com/), библиотеке, которая упрощает связь вашего фронтенда на React, Svelte или Vue с вашим бэкендом Laravel, избегая типичных сложностей, связанных с созданием SPA (Single Page Application).
 
-Наши [стартовые наборы приложений React и Vue] (/docs/{{version}}/starter-kits) дают вам отличную отправную точку для вашего следующего приложения Laravel на базе Inertia.
+Наши [стартовые наборы приложений React, Svelte и Vue](/docs/{{version}}/starter-kits) дают вам отличную отправную точку для вашего следующего приложения Laravel на базе Inertia.
 
 <a name="creating-and-rendering-views"></a>
 ## Создание и отрисовка шаблонов

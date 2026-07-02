@@ -1,5 +1,5 @@
 ---
-git: 3c0bfd38b414133db9065f2415cf264d79c13f7f
+git: 0f6ae40e193b40e833701650b7cf7102f9dcb0bb
 ---
 
 # Eloquent: Фабрики (Factory)
@@ -82,7 +82,22 @@ php artisan make:factory PostFactory
 
 После того как вы определили свои фабрики, вы можете использовать статический метод `factory` предоставляемый вашим моделям с помощью трейта `Illuminate\Database\Eloquent\Factories\HasFactory`, чтобы создать экземпляр фабрики для этой модели.
 
-Метод `factory` трейта `HasFactory` будет использовать соглашения для определения подходящей фабрики для модели. В частности, метод будет искать фабрику в пространстве имен `Database\Factories`, имя класса которой соответствует имени модели и имеет суффикс `Factory`. Если эти соглашения не применимы к вашему конкретному приложению или фабрике, вы можете перезаписать метод `newFactory` вашей модели, чтобы напрямую возвращать экземпляр соответствующей фабрики модели:
+Метод `factory` трейта `HasFactory` будет использовать соглашения для определения подходящей фабрики для модели. В частности, метод будет искать фабрику в пространстве имен `Database\Factories`, имя класса которой соответствует имени модели и имеет суффикс `Factory`.
+
+Если эти соглашения не подходят для вашего конкретного приложения или фабрики, вы можете добавить атрибут `UseFactory` к модели, чтобы вручную указать фабрику модели:
+
+```php
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Database\Factories\Administration\FlightFactory;
+
+#[UseFactory(FlightFactory::class)]
+class Flight extends Model
+{
+    // ...
+}
+```
+
+Кроме того, вы можете переопределить метод `newFactory` в вашей модели, чтобы напрямую возвращать экземпляр соответствующей фабрики модели:
 
 ```php
 use Database\Factories\Administration\FlightFactory;
@@ -306,12 +321,14 @@ $users = User::factory()
     ->create();
 ```
 
-Внутри замыкания последовательности вы можете получить доступ к свойствам `$index` или `$count` экземпляра последовательности, который вводится в замыкание. Свойство `$index` содержит номер текущей итерации, а свойство `$count` - общее количество итераций:
+Внутри замыкания последовательности вы можете получить доступ к свойству `$index` экземпляра последовательности, который вводится в замыкание. Свойство `$index` содержит номер текущей итерации:
 
 ```php
 $users = User::factory()
     ->count(10)
-    ->sequence(fn (Sequence $sequence) => ['name' => 'Name '.$sequence->index])
+    ->state(new Sequence(
+        fn (Sequence $sequence) => ['name' => 'Name '.$sequence->index],
+    ))
     ->create();
 ```
 
@@ -339,7 +356,7 @@ $users = User::factory()
 use App\Models\Post;
 use App\Models\User;
 
-$user = User::factory()
+$users = User::factory()
     ->has(Post::factory()->count(3))
     ->create();
 ```
@@ -540,7 +557,7 @@ $comments = Comment::factory()->count(3)->for(
 use App\Models\Tag;
 use App\Models\Video;
 
-$videos = Video::factory()
+$video = Video::factory()
     ->hasAttached(
         Tag::factory()->count(3),
         ['public' => true]
@@ -551,7 +568,7 @@ $videos = Video::factory()
 Конечно, магический метод `has` также используется для создания полиморфных отношений Many To Many:
 
 ```php
-$videos = Video::factory()
+$video = Video::factory()
     ->hasTags(3, ['public' => true])
     ->create();
 ```

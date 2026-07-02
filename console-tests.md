@@ -1,5 +1,5 @@
 ---
-git: 413b06948ad8aa263a485e8d023bb7e554f3bb4a
+git: e1a7b2ee320e7c3b54847080311ea4fba7d40fd0
 ---
 
 # Тестирование · Тесты консольных команд
@@ -202,7 +202,7 @@ $this->artisan('users:all')
 
 use Illuminate\Foundation\Testing\WithConsoleEvents;
 
-uses(WithConsoleEvents::class);
+pest()->use(WithConsoleEvents::class);
 
 // ...
 ```

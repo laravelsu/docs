@@ -1,5 +1,5 @@
 ---
-git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
+git: 2e4e53cc15124b9d52f68853ef18d3ea8ebfb3ca
 ---
 
 
@@ -13,7 +13,7 @@ git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
 <a name="upgrading-cashier"></a>
 ## Обновление Cashier
 
-При обновлении до новой версии Cashier важно внимательно ознакомиться с [руководством по обновлению](https://github.com/laravel/cashier-stripe/blob/master/UPGRADE.md).
+При обновлении до новой версии Cashier важно внимательно ознакомиться с [руководством по обновлению](https://github.com/laravel/cashier-stripe/blob/16.x/UPGRADE.md).
 
 > [!WARNING]
 > Чтобы избежать нарушений, Cashier использует фиксированную версию API Stripe. Cashier 16 использует версию API Stripe `2025-06-30.basil`. Версия API Stripe будет обновляться в минорных релизах для использования новых функций и улучшений Stripe.
@@ -1458,7 +1458,7 @@ Route::post('/user/subscribe', function (Request $request) {
 });
 ```
 
-Вы также можете запустить "расчетную" подписку через [Stripe Checkout](#checkout заказ):
+Вы также можете запустить "расчетную" подписку через [Stripe Checkout](#checkout):
 
 ```php
 $checkout = Auth::user()

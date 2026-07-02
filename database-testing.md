@@ -1,5 +1,5 @@
 ---
-git: 0dce9eb1e2fa25f7d945cb6073c6ec40609cb0f5
+git: e1a7b2ee320e7c3b54847080311ea4fba7d40fd0
 ---
 
 # Тестирование · База данных
@@ -19,7 +19,7 @@ Laravel предлагает множество полезных инструм�
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 test('basic example', function () {
     $response = $this->get('/');
@@ -96,7 +96,7 @@ use Database\Seeders\OrderStatusSeeder;
 use Database\Seeders\TransactionStatusSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class);
+pest()->use(RefreshDatabase::class);
 
 test('orders can be created', function () {
     // Run the DatabaseSeeder...

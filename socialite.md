@@ -1,5 +1,5 @@
 ---
-git: 96617d0be0510d33cfa46db034b73a2273b22a97
+git: 6d46a8ea3e1538bc5bb3a0b51fbc38fa166526b0
 ---
 
 # Пакет Laravel Socialite
@@ -53,7 +53,7 @@ composer require laravel/socialite
 Для аутентификации пользователей с помощью провайдера OAuth вам понадобятся два маршрута: один для перенаправления пользователя к провайдеру OAuth, а другой для получения обратного вызова от провайдера после аутентификации. Пример ниже демонстрирует реализацию обоих маршрутов:
 
 ```php
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Socialite;
 
 Route::get('/auth/redirect', function () {
     return Socialite::driver('github')->redirect();
@@ -76,7 +76,7 @@ Route::get('/auth/callback', function () {
 ```php
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Socialite;
 
 Route::get('/auth/callback', function () {
     $githubUser = Socialite::driver('github')->user();
@@ -105,7 +105,7 @@ Route::get('/auth/callback', function () {
 Перед перенаправлением пользователя вы можете использовать метод `scopes`, чтобы указать "scopes" (права/области) которые должны быть включены в запрос аутентификации.  Этот метод объединит все ранее указанные права с теми, которые указали вы:
 
 ```php
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Socialite;
 
 return Socialite::driver('github')
     ->scopes(['read:user', 'public_repo'])
@@ -157,7 +157,7 @@ $user = Socialite::driver('slack')->asBotUser()->user();
 Некоторые провайдеры OAuth поддерживают другие необязательные параметры в запросе перенаправления. Чтобы включить в запрос любые необязательные параметры, вызовите метод `with` с ассоциативным массивом:
 
 ```php
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Socialite;
 
 return Socialite::driver('google')
     ->with(['hd' => 'example.com'])
@@ -175,7 +175,7 @@ return Socialite::driver('google')
 Различные свойства и методы этого объекта могут быть доступны в зависимости от версии провайдера OAuth, с которым вы выполняете аутентификацию, OAuth 1.0 или OAuth 2.0:
 
 ```php
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Socialite;
 
 Route::get('/auth/callback', function () {
     $user = Socialite::driver('github')->user();
@@ -204,7 +204,7 @@ Route::get('/auth/callback', function () {
 Если у вас уже есть действительный токен доступа пользователя, то вы можете получить его данные с помощью метода `userFromToken` пакета Socialite:
 
 ```php
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Socialite;
 
 $user = Socialite::driver('github')->userFromToken($token);
 ```
@@ -217,7 +217,70 @@ $user = Socialite::driver('github')->userFromToken($token);
 Метод `stateless` используется для отключения проверки состояния сессии. Это полезно при добавлении социальной аутентификации в API без сохранения состояния, не использующему сеансы на основе файлов cookie::
 
 ```php
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Socialite;
 
 return Socialite::driver('google')->stateless()->user();
+```
+
+<a name="testing"></a>
+## Тестирование
+
+Laravel Socialite предоставляет удобный способ тестировать OAuth-флоу аутентификации без выполнения реальных запросов к OAuth-провайдерам. Метод `fake` позволяет имитировать поведение OAuth-провайдера и определить данные пользователя, которые должны быть возвращены.
+
+<a name="faking-the-redirect"></a>
+#### Имитация перенаправления
+
+Чтобы проверить, что ваше приложение корректно перенаправляет пользователей к OAuth-провайдеру, вы можете вызвать метод `fake` перед выполнением запроса к маршруту перенаправления. В этом случае Socialite вернет перенаправление на фиктивный URL авторизации вместо перенаправления к реальному OAuth-провайдеру:
+
+```php
+use Laravel\Socialite\Socialite;
+
+test('user is redirected to github', function () {
+    Socialite::fake('github');
+
+    $response = $this->get('/auth/github/redirect');
+
+    $response->assertRedirect();
+});
+```
+
+<a name="faking-the-callback"></a>
+#### Имитация обратного вызова
+
+Чтобы протестировать маршрут обратного вызова вашего приложения, вы можете вызвать метод `fake` и передать экземпляр `User`, который должен быть возвращен, когда приложение запросит сведения о пользователе у провайдера. Экземпляр `User` можно создать с помощью метода `map`:
+
+```php
+use Laravel\Socialite\Socialite;
+use Laravel\Socialite\Two\User;
+
+test('user can login with github', function () {
+    Socialite::fake('github', (new User)->map([
+        'id' => 'github-123',
+        'name' => 'Jason Beggs',
+        'email' => 'jason@example.com',
+    ]));
+
+    $response = $this->get('/auth/github/callback');
+
+    $response->assertRedirect('/dashboard');
+
+    $this->assertDatabaseHas('users', [
+        'name' => 'Jason Beggs',
+        'email' => 'jason@example.com',
+        'github_id' => 'github-123',
+    ]);
+});
+```
+
+По умолчанию экземпляр `User` также будет содержать свойство `token`. При необходимости вы можете вручную указать дополнительные свойства экземпляра `User`:
+
+```php
+$fakeUser = (new User)->map([
+    'id' => 'github-123',
+    'name' => 'Jason Beggs',
+    'email' => 'jason@example.com',
+])->setToken('fake-token')
+  ->setRefreshToken('fake-refresh-token')
+  ->setExpiresIn(3600)
+  ->setApprovedScopes(['read', 'write'])
 ```

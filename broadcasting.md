@@ -1,5 +1,5 @@
 ---
-git: 78073cef81065dc91c2927243cbd8763f6f4eccb
+git: ad716d5b2d788abd2e45f76cf0e6962b7ecbe591
 ---
 
 # Трансляция (broadcast) событий
@@ -740,7 +740,15 @@ class ServerCreated implements ShouldBroadcast, ShouldDispatchAfterCommit
 
 Частные каналы требуют, чтобы текущий аутентифицированный пользователь был авторизован и действительно мог прослушивать канал. Это достигается путем отправки HTTP-запроса вашему приложению Laravel с именем канала, что позволит вашему приложению определить, может ли пользователь прослушивать этот канал. При использовании [Laravel Echo](#client-side-installation) HTTP-запрос на авторизацию подписок на частные каналы будет выполнен автоматически.
 
-Когда вещание включено, Laravel автоматически регистрирует маршрут `/broadcasting/auth` для обработки запросов на авторизацию. Маршрут `/broadcasting/auth` автоматически помещается в группу посредников `web`.
+Когда вещание установлено, Laravel пытается автоматически зарегистрировать маршрут `/broadcasting/auth` для обработки запросов на авторизацию. Если Laravel не сможет автоматически зарегистрировать эти маршруты, вы можете зарегистрировать их вручную в файле `/bootstrap/app.php` вашего приложения:
+
+```php
+->withRouting(
+    web: __DIR__.'/../routes/web.php',
+    channels: __DIR__.'/../routes/channels.php',
+    health: '/up',
+)
+```
 
 <a name="defining-authorization-callbacks"></a>
 ### Определение авторизации канала
@@ -1238,6 +1246,45 @@ useEchoPresence("posts", "PostPublished", (e) => {
 </script>
 ```
 
+<a name="react-vue-connection-status"></a>
+#### Статус соединения
+
+Вы можете получить текущий статус WebSocket-соединения с помощью хука `useConnectionStatus`, который предоставляет реактивный статус, автоматически обновляющийся при изменении состояния соединения:
+
+```js tab=React
+import { useConnectionStatus } from "@laravel/echo-react";
+
+function ConnectionIndicator() {
+    const status = useConnectionStatus();
+
+    return <div>Connection: {status}</div>;
+}
+```
+
+```vue tab=Vue
+<script setup lang="ts">
+import { useConnectionStatus } from "@laravel/echo-vue";
+
+const status = useConnectionStatus();
+</script>
+
+<template>
+    <div>Connection: {{ status }}</div>
+</template>
+```
+
+Возможные значения статуса:
+
+<!-- <div class="content-list" markdown="1"> -->
+
+- `connected` - успешное подключение к WebSocket-серверу.
+- `connecting` - выполняется первая попытка подключения.
+- `reconnecting` - выполняется попытка повторного подключения после разрыва.
+- `disconnected` - соединения нет, попытка повторного подключения не выполняется.
+- `failed` - подключение не удалось и повторная попытка не будет выполнена.
+
+<!-- </div> -->
+
 <a name="presence-channels"></a>
 ## Каналы присутствия
 
@@ -1661,3 +1708,22 @@ channel().notification((notification) => {
 ```
 
 В этом примере все уведомления, отправленные экземплярам `App\Models\User` через канал `broadcast`, будут получены в замыкании. Авторизация канала `App.Models.User.{id}` включена в файл `routes/channels.php` вашего приложения.
+
+<a name="stop-listening-for-notifications"></a>
+#### Прекращение прослушивания уведомлений
+
+Если вы хотите прекратить прослушивать уведомления без [выхода из канала](#leaving-a-channel), вы можете использовать метод `stopListeningForNotification`:
+
+```js
+const callback = (notification) => {
+    console.log(notification.type);
+}
+
+// Начать прослушивание...
+Echo.private(`App.Models.User.${userId}`)
+    .notification(callback);
+
+// Прекратить прослушивание (callback должен быть тем же)...
+Echo.private(`App.Models.User.${userId}`)
+    .stopListeningForNotification(callback);
+```

@@ -1,5 +1,5 @@
 ---
-git: a89581b628e5fce26aa0085771e4877c3a650a71
+git: bd48a9138050cb68fba57142853c59192cba5c70
 ---
 
 # Пакет Laravel Fortify

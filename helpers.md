@@ -1,5 +1,5 @@
 ---
-git: b346ab0f732f7be0b377dae3d624778318a2f2d9
+git: 052b4768a6dc522cf07d2839e51be0dc341a478c
 ---
 
 # Глобальные помощники (helpers)
@@ -397,6 +397,33 @@ $array = ['name' => 'Desk', 'price' => 100];
 $filtered = Arr::except($array, ['price']);
 
 // ['name' => 'Desk']
+```
+
+<a name="method-array-except-values"></a>
+#### `Arr::exceptValues()`
+
+Метод `Arr::exceptValues` удаляет указанные значения из массива:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = ['foo', 'bar', 'baz', 'qux'];
+
+$filtered = Arr::exceptValues($array, ['foo', 'baz']);
+
+// ['bar', 'qux']
+```
+
+Вы также можете передать `true` в аргумент `strict`, чтобы использовать строгое сравнение типов при фильтрации:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = [1, '1', 2, '2'];
+
+$filtered = Arr::exceptValues($array, [1, 2], strict: true);
+
+// ['1', '2']
 ```
 
 <a name="method-array-exists"></a>
@@ -798,6 +825,33 @@ $array = ['name' => 'Desk', 'price' => 100, 'orders' => 10];
 $slice = Arr::only($array, ['name', 'price']);
 
 // ['name' => 'Desk', 'price' => 100]
+```
+
+<a name="method-array-only-values"></a>
+#### `Arr::onlyValues()`
+
+Метод `Arr::onlyValues` возвращает только указанные значения из массива:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = ['foo', 'bar', 'baz', 'qux'];
+
+$filtered = Arr::onlyValues($array, ['foo', 'baz']);
+
+// ['foo', 'baz']
+```
+
+Вы также можете передать `true` в аргумент `strict`, чтобы использовать строгое сравнение типов при фильтрации:
+
+```php
+use Illuminate\Support\Arr;
+
+$array = [1, '1', 2, '2'];
+
+$filtered = Arr::onlyValues($array, [1, 2], strict: true);
+
+// [1, 2]
 ```
 
 <a name="method-array-partition"></a>
@@ -2371,7 +2425,7 @@ $value = cache('key', 'default');
 ```php
 cache(['key' => 'value'], 300);
 
-cache(['key' => 'value'], now()->addSeconds(10));
+cache(['key' => 'value'], now()->plus(seconds: 10));
 ```
 
 <a name="method-class-uses-recursive"></a>
@@ -3175,7 +3229,32 @@ use Illuminate\Support\Carbon;
 $now = Carbon::now();
 ```
 
-Подробное описание `Carbon` и его функций можно найти в [официальной документации Carbon](https://carbon.nesbot.com/docs/).
+Laravel также расширяет экземпляры `Carbon` методами `plus` и `minus`, позволяя удобно изменять дату и время экземпляра:
+
+```php
+return now()->plus(minutes: 5);
+return now()->plus(hours: 8);
+return now()->plus(weeks: 4);
+
+return now()->minus(minutes: 5);
+return now()->minus(hours: 8);
+return now()->minus(weeks: 4);
+```
+
+Подробное описание `Carbon` и его функций можно найти в [официальной документации Carbon](https://carbon.nesbot.com/guide/getting-started/introduction.html).
+
+<a name="interval-functions"></a>
+#### Функции интервалов
+
+Laravel также предлагает функции `milliseconds`, `seconds`, `minutes`, `hours`, `days`, `weeks`, `months` и `years`, которые возвращают экземпляры `CarbonInterval`, расширяющие класс PHP [DateInterval](https://www.php.net/manual/ru/class.dateinterval.php). Эти функции можно использовать везде, где Laravel принимает экземпляр `DateInterval`:
+
+```php
+use Illuminate\Support\Facades\Cache;
+
+use function Illuminate\Support\{minutes};
+
+Cache::put('metrics', $metrics, minutes(10));
+```
 
 <a name="deferred-functions"></a>
 ### Отложенные функции
@@ -3406,7 +3485,7 @@ Sleep::for(500)->milliseconds();
 Sleep::for(5000)->microseconds();
 
 // Приостановить выполнение до заданного времени...
-Sleep::until(now()->addMinute());
+Sleep::until(now()->plus(minutes: 1));
 
 // Псевдоним функции PHP "sleep"...
 Sleep::sleep(2);
@@ -3578,7 +3657,7 @@ $uri = Uri::of('https://example.com/path');
 $uri = Uri::to('/dashboard');
 $uri = Uri::route('users.show', ['user' => 1]);
 $uri = Uri::signedRoute('users.show', ['user' => 1]);
-$uri = Uri::temporarySignedRoute('user.index', now()->addMinutes(5));
+$uri = Uri::temporarySignedRoute('user.index', now()->plus(minutes: 5));
 $uri = Uri::action([UserController::class, 'index']);
 $uri = Uri::action(InvokableController::class);
 

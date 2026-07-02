@@ -1,5 +1,5 @@
 ---
-git: 73749bbee2ae338c22d1bf765052fa9b88cd0b73
+git: 7b6cecb362e331aed101d579c1b9add5e7434077
 ---
 
 # Аутентификация
@@ -171,7 +171,7 @@ Route::get('/flights', function () {
 ```php
 use Illuminate\Http\Request;
 
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->redirectGuestsTo('/login');
 
     // Использование замыкания...
@@ -187,7 +187,7 @@ use Illuminate\Http\Request;
 ```php
 use Illuminate\Http\Request;
 
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->redirectUsersTo('/panel');
 
     // Используя замыкание...
@@ -543,7 +543,6 @@ Route::get('/confirm-password', function () {
 ```php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
 
 Route::post('/confirm-password', function (Request $request) {
     if (! Hash::check($request->password, $request->user()->password)) {
@@ -813,3 +812,4 @@ Laravel отправляет различные [события](/docs/{{version
 | `Illuminate\Auth\Events\OtherDeviceLogout`   |
 | `Illuminate\Auth\Events\Lockout`             |
 | `Illuminate\Auth\Events\PasswordReset`       |
+| `Illuminate\Auth\Events\PasswordResetLinkSent` |

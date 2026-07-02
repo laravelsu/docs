@@ -1,5 +1,5 @@
 ---
-git: 340d60f3057e63feca41115a2b9cd7808e83494e
+git: 017c1a65b0dc86546f7965a1bf2bd53f411823ec
 ---
 
 # База данных · Начало работы
@@ -80,19 +80,22 @@ driver://username:password@host:port/database?options
 
 ```php
 'mysql' => [
+    'driver' => 'mysql',
+
     'read' => [
         'host' => [
             '192.168.1.1',
-            '196.168.1.2',
+            '192.168.1.2',
         ],
     ],
     'write' => [
         'host' => [
-            '196.168.1.3',
+            '192.168.1.3',
         ],
     ],
     'sticky' => true,
 
+    'port' => env('DB_PORT', '3306'),
     'database' => env('DB_DATABASE', 'laravel'),
     'username' => env('DB_USERNAME', 'root'),
     'password' => env('DB_PASSWORD', ''),
@@ -104,7 +107,7 @@ driver://username:password@host:port/database?options
     'strict' => true,
     'engine' => null,
     'options' => extension_loaded('pdo_mysql') ? array_filter([
-        PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
     ]) : [],
 ],
 ```
@@ -384,7 +387,7 @@ DB::transaction(function () {
     DB::update('update users set votes = 1');
 
     DB::delete('delete from posts');
-}, 5);
+}, attempts: 5);
 ```
 
 <a name="manually-using-transactions"></a>

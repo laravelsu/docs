@@ -1,5 +1,5 @@
 ---
-git: bab1b28a63e72f9e51ad89995ef546058bc01bdc
+git: 9a8a1a8a54f08601da59a048dcde3db9f6f11baa
 ---
 
 # База данных · Миграции
@@ -120,7 +120,7 @@ public function up(): void
 Иногда миграция может быть предназначена для поддержки функции, которая еще не активна, и вы пока не хотите, чтобы она запускалась. В этом случае вы можете определить метод `shouldRun` в миграции. Если метод `shouldRun` возвращает `false`, миграция будет пропущена:
 
 ```php
-use App\Models\Flights;
+use App\Models\Flight;
 use Laravel\Pennant\Feature;
 
 /**
@@ -128,7 +128,7 @@ use Laravel\Pennant\Feature;
  */
 public function shouldRun(): bool
 {
-    return Feature::active(Flights::class);
+    return Feature::active(Flight::class);
 }
 ```
 
@@ -141,10 +141,16 @@ public function shouldRun(): bool
 php artisan migrate
 ```
 
-Если вы хотите узнать, какие миграции уже выполнены, то вы можете использовать команду `migrate:status` Artisan:
+Если вы хотите узнать, какие миграции уже выполнены, а какие всё ещё ожидают выполнения, то вы можете использовать команду `migrate:status` Artisan:
 
 ```shell
 php artisan migrate:status
+```
+
+Если вы передадите опцию `--step` команде `migrate`, команда выполнит каждую миграцию как отдельный пакет, что позволит позже откатывать отдельные миграции с помощью команды `migrate:rollback`:
+
+```shell
+php artisan migrate --step
 ```
 
 Если вы хотите посмотреть SQL-запросы, которые будут выполнены миграциями, но при этом не запускать их фактически, вы можете добавить флаг `--pretend` к команде `migrate`:
@@ -153,6 +159,7 @@ php artisan migrate:status
 php artisan migrate --pretend
 ```
 
+<a name="isolating-migration-execution"></a>
 #### Изолированное выполнение миграций
 
 Если вы развертываете свое приложение на нескольких серверах и выполняете миграции в рамках процесса развертывания, вероятно, вам не захочется, чтобы два сервера попытались выполнить миграцию базы данных одновременно. Для избежания этого вы можете использовать опцию `isolated` при вызове команды `migrate`.
@@ -536,6 +543,20 @@ Schema::table('users', function (Blueprint $table) {
 - [ipAddress](#column-method-ipAddress)
 - [rememberToken](#column-method-rememberToken)
 - [vector](#column-method-vector)
+
+</div>
+
+<a name="relationship-method-list"></a>
+#### Типы отношений
+
+<div class="collection-method-list" markdown="1">
+
+- [foreignId](#column-method-foreignId)
+- [foreignIdFor](#column-method-foreignIdFor)
+- [foreignUlid](#column-method-foreignUlid)
+- [foreignUuid](#column-method-foreignUuid)
+- [morphs](#column-method-morphs)
+- [nullableMorphs](#column-method-nullableMorphs)
 
 </div>
 
@@ -1137,6 +1158,12 @@ $table->uuid('id');
 $table->vector('embedding', dimensions: 100);
 ```
 
+При использовании PostgreSQL расширение `pgvector` должно быть загружено до создания столбцов `vector`:
+
+```php
+Schema::ensureVectorExtensionExists();
+```
+
 <a name="column-method-year"></a>
 #### `year()`
 
@@ -1172,7 +1199,9 @@ Schema::table('users', function (Blueprint $table) {
 | `->default($value)`                 | Указать значение «по умолчанию» для столбца.                                                                     |
 | `->first()`                         | Поместить столбец «первым» в таблице (MariaDB / MySQL).                                                          |
 | `->from($integer)`                  | Установить начальное значение автоинкрементного поля (MariaDB / MySQL / PostgreSQL).                             |
+| `->instant()`                       | Добавить или изменить столбец с помощью instant-операции (MySQL).                                                |
 | `->invisible()`                     | Сделать столбец "невидимым" для запросов `SELECT *` (MariaDB / MySQL).                                           |
+| `->lock($mode)`                     | Указать режим блокировки для операции со столбцом (MySQL).                                                       |
 | `->nullable($value = true)`         | Позволить (по умолчанию) значения `NULL` для вставки в столбец.                                                  |
 | `->storedAs($expression)`           | Создать сохраненный генерируемый столбец (MariaDB / MySQL / PostgreSQL / SQLite).                                |
 | `->unsigned()`                      | Установить столбцы `INTEGER` как `UNSIGNED` (MariaDB / MySQL).                                                   |
@@ -1225,6 +1254,36 @@ $table->after('password', function (Blueprint $table) {
     $table->string('address_line2');
     $table->string('city');
 });
+```
+
+<a name="instant-column-operations"></a>
+#### Мгновенные операции со столбцами
+
+При использовании MySQL вы можете добавить модификатор `instant` к определению столбца, чтобы указать, что столбец должен быть добавлен или изменён с использованием "instant" алгоритма MySQL. Этот алгоритм позволяет выполнять некоторые изменения схемы без полной перестройки таблицы, делая их почти мгновенными независимо от размера таблицы:
+
+```php
+$table->string('name')->nullable()->instant();
+```
+
+Мгновенное добавление столбцов может только добавлять столбцы в конец таблицы, поэтому модификатор `instant` нельзя сочетать с модификаторами `after` или `first`. Кроме того, алгоритм поддерживает не все типы столбцов и операции. Если запрошенная операция несовместима, MySQL выдаст ошибку.
+
+Обратитесь к [документации MySQL](https://dev.mysql.com/doc/refman/8.0/en/innodb-online-ddl-operations.html), чтобы определить, какие операции совместимы с мгновенными изменениями столбцов.
+
+<a name="ddl-locking"></a>
+#### DDL-блокировки
+
+При использовании MySQL вы можете добавить модификатор `lock` к определениям столбцов, индексов или внешних ключей, чтобы управлять блокировкой таблицы во время операций со схемой. MySQL поддерживает несколько режимов блокировки: `none` разрешает параллельные чтения и записи, `shared` разрешает параллельные чтения, но блокирует записи, `exclusive` блокирует весь параллельный доступ, а `default` позволяет MySQL выбрать наиболее подходящий режим:
+
+```php
+$table->string('name')->lock('none');
+
+$table->index('email')->lock('shared');
+```
+
+Если запрошенный режим блокировки несовместим с операцией, MySQL выдаст ошибку. Модификатор `lock` можно сочетать с модификатором `instant`, чтобы дополнительно оптимизировать изменения схемы:
+
+```php
+$table->string('name')->instant()->lock('none');
 ```
 
 <a name="modifying-columns"></a>
@@ -1349,6 +1408,17 @@ $table->unique('email', 'unique_email');
 | `$table->fullText('body');`                      | Добавляет полнотекстовый индекс (MariaDB / MySQL / PostgreSQL).    |
 | `$table->fullText('body')->language('english');` | Добавляет полнотекстовый индекс для указанного языка (PostgreSQL). |
 | `$table->spatialIndex('location');`              | Добавляет пространственный индекс (кроме SQLite).                  |
+
+<a name="online-index-creation"></a>
+#### Создание индексов онлайн
+
+По умолчанию создание индекса на большой таблице может заблокировать таблицу и остановить чтение или запись на время построения индекса. При использовании PostgreSQL или SQL Server вы можете добавить метод `online` к определению индекса, чтобы создать индекс без блокировки таблицы, позволяя приложению продолжать читать и записывать данные во время создания индекса:
+
+```php
+$table->string('email')->unique()->online();
+```
+
+При использовании PostgreSQL это добавляет опцию `CONCURRENTLY` к выражению создания индекса. При использовании SQL Server это добавляет опцию `WITH (online = on)`.
 
 <a name="renaming-indexes"></a>
 ### Переименование индексов

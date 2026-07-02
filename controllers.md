@@ -1,5 +1,5 @@
 ---
-git: 462c210d1d8b5e34d4a3035c65148f76112ca1d4
+git: e734e1383adc684b2fca86014915b96b9c16c3d3
 ---
 
 # Контроллеры
@@ -116,7 +116,7 @@ namespace App\Http\Controllers;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
-class UserController extends Controller implements HasMiddleware
+class UserController implements HasMiddleware
 {
     /**
      * Получить посредников, которые должны быть назначены контроллеру.

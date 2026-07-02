@@ -1,5 +1,5 @@
 ---
-git: ce83812cef16f8ead6a91da2af2eae7815791b08
+git: 3d98f9a98cf665674a36b2731b03281b95535711
 ---
 
 # Примечания к релизу
@@ -55,7 +55,7 @@ Laravel и другие его собственные пакеты следую�
 <a name="laravel-12"></a>
 ## Laravel 12
 
-Laravel 12 продолжает улучшения, внесённые в Laravel 11.x, обновляя зависимости и представляя новые стартовые комплекты для React, Vue и Livewire. Теперь доступна возможность использования [WorkOS AuthKit](https://authkit.com) для аутентификации пользователей. Вариант стартового комплекта с WorkOS предоставляет поддержку социальной аутентификации, Passkeys и единого входа (SSO).
+Laravel 12 продолжает улучшения, внесённые в Laravel 11.x, обновляя зависимости и представляя новые стартовые комплекты для React, Svelte, Vue и Livewire. Теперь доступна возможность использования [WorkOS AuthKit](https://authkit.com) для аутентификации пользователей. Вариант стартового комплекта с WorkOS предоставляет поддержку социальной аутентификации, Passkeys и единого входа (SSO).
 
 <a name="minimal-breaking-changes"></a>
 ### Минимальные критические изменения
@@ -67,9 +67,9 @@ Laravel 12 продолжает улучшения, внесённые в Larave
 <a name="new-application-starter-kits"></a>
 ### Новые стартовые комплекты приложений
 
-Laravel 12 представляет новые [стартовые комплекты](/docs/{{version}}/starter-kits) для React, Vue и Livewire. 
+Laravel 12 представляет новые [стартовые комплекты](/docs/{{version}}/starter-kits) для React, Svelte, Vue и Livewire.
 
-- Стартовые комплекты React и Vue используют Inertia 2, TypeScript, [shadcn/ui](https://ui.shadcn.com) и Tailwind.  
+- Стартовые комплекты React, Svelte и Vue используют Inertia 2, TypeScript, [shadcn/ui](https://ui.shadcn.com) и Tailwind.
 - Стартовые комплекты Livewire используют библиотеку компонентов [Flux UI](https://fluxui.dev) на основе Tailwind и Laravel Volt.
 
 Все эти стартовые комплекты включают встроенную систему аутентификации Laravel, предоставляя функции входа, регистрации, сброса пароля, верификации email и многое другое. 

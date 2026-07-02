@@ -1,5 +1,5 @@
 ---
-git: 469f6b3f65fa9f5e6d0bc57b8f0bbdf39397bebf
+git: 167612f0b62492a6a6b1b009870e2253c95b871d
 ---
 
 # Eloquent · Сериализация
@@ -211,6 +211,12 @@ return $user->append('is_admin')->toArray();
 return $user->mergeAppends(['is_admin', 'status'])->toArray();
 
 return $user->setAppends(['is_admin'])->toArray();
+```
+
+Аналогично, если вы хотите удалить из модели все добавленные свойства, вы можете использовать метод `withoutAppends`:
+
+```php
+return $user->withoutAppends()->toArray();
 ```
 
 <a name="date-serialization"></a>

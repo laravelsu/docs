@@ -1,5 +1,5 @@
 ---
-git: 6cd5437b91adb17447046a0da5f7688ac8d092b5
+git: 3d98f9a98cf665674a36b2731b03281b95535711
 ---
 
 # Шаблонизатор Blade
@@ -546,6 +546,12 @@ class AppServiceProvider extends ServiceProvider
 @includeFirst(['custom.admin', 'admin'], ['status' => 'complete'])
 ```
 
+Если вы хотите подключить шаблон без наследования переменных родительского шаблона, вы можете использовать директиву `@includeIsolated`. Подключённый шаблон будет иметь доступ только к переменным, которые вы явно передали:
+
+```blade
+@includeIsolated('view.name', ['user' => $user])
+```
+
 > [!WARNING]
 > Вам следует избегать использования в ваших шаблонах Blade констант `__DIR__` и `__FILE__`, поскольку они будут ссылаться на расположение кешированного, скомпилированного шаблона.
 
@@ -591,6 +597,20 @@ class AppServiceProvider extends ServiceProvider
     <script>
         // Ваш JavaScript...
     </script>
+@endPushOnce
+```
+
+Если вы добавляете дублирующийся контент из двух разных шаблонов Blade, укажите уникальный идентификатор вторым аргументом директивы `@pushOnce`, чтобы содержимое было выведено только один раз:
+
+```blade
+<!-- pie-chart.blade.php -->
+@pushOnce('scripts', 'chart.js')
+    <script src="/chart.js"></script>
+@endPushOnce
+
+<!-- line-chart.blade.php -->
+@pushOnce('scripts', 'chart.js')
+    <script src="/chart.js"></script>
 @endPushOnce
 ```
 
@@ -673,14 +693,6 @@ php artisan make:component Forms/Input
 ```
 
 Приведенная выше команда создаст компонент `Input` в каталоге `app/View/Components/Forms`, а шаблон будет помещен в каталог `resources/views/components/forms`.
-
-Если вы хотите создать анонимный компонент (компонент только с шаблоном в Blade без класса), вы можете использовать флаг `--view` при вызове команды `make:component`:
-
-```shell
-php artisan make:component forms.input --view
-```
-
-Вышеприведенная команда создаст файл Blade по пути `resources/views/components/forms/input.blade.php`, который может быть отображен как компонент с помощью `<x-forms.input />`.
 
 <a name="manually-registering-package-components"></a>
 #### Самостоятельная регистрация компонентов пакета
@@ -1169,6 +1181,7 @@ class Alert extends Component
 
 - `data`
 - `render`
+- `resolve`
 - `resolveView`
 - `shouldRender`
 - `view`
@@ -1406,6 +1419,14 @@ Blade автоматически обнаружит класс, связанны
 ```blade
 <x-inputs.button/>
 ```
+
+Чтобы создать анонимный компонент через Artisan, вы можете использовать флаг `--view` при вызове команды `make:component`:
+
+```shell
+php artisan make:component forms.input --view
+```
+
+Эта команда создаст Blade-файл `resources/views/components/forms/input.blade.php`, который можно отрисовать как компонент через `<x-forms.input />`.
 
 <a name="anonymous-index-components"></a>
 ### Анонимные Index Компоненты
@@ -1792,6 +1813,16 @@ Blade позволяет вам добавлять содержимое к им�
 @prepend('scripts')
     Это будет первое...
 @endprepend
+```
+
+Директива `@hasstack` может использоваться для определения, пуст ли стек:
+
+```blade
+@hasstack('list')
+    <ul>
+        @stack('list')
+    </ul>
+@endif
 ```
 
 <a name="service-injection"></a>

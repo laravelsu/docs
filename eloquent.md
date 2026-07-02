@@ -1,5 +1,5 @@
 ---
-git: 65c933d176e63dd052717dff43677ed135bb6f45
+git: 7d0053c07191d6490638e2607fb9e54dd494b96a
 ---
 
 # Eloquent · Начало работы
@@ -193,10 +193,10 @@ class Article extends Model
 
 $article = Article::create(['title' => 'Traveling to Europe']);
 
-$article->id; // "8f8e8478-9035-4d23-b9a7-62f4d2612ce5"
+$article->id; // "018f2b5c-6a7f-7b12-9d6f-2f8a4e0c9c11"
 ```
 
-По умолчанию трейт `HasUuids` генерирует ["упорядоченные" UUID](/docs/{{version}}/strings#method-str-ordered-uuid) для ваших моделей. Эти UUID более эффективны для индексированного хранения в базе данных, поскольку их можно лексикографически сортировать.
+По умолчанию трейт `HasUuids` генерирует идентификаторы [UUIDv7](/docs/{{version}}/strings#method-str-uuid7) для ваших моделей. Эти UUID более эффективны для индексированного хранения в базе данных, поскольку их можно лексикографически сортировать.
 
 Вы можете переопределить процесс генерации UUID для определенной модели, определив метод `newUniqueId` в модели. Кроме того, вы можете указать, какие столбцы должны получать UUID, определив метод `uniqueIds` в модели:
 
@@ -290,8 +290,19 @@ class Flight extends Model
 
 class Flight extends Model
 {
-    const CREATED_AT = 'creation_date';
-    const UPDATED_AT = 'updated_date';
+    /**
+     * Имя столбца "created at".
+     *
+     * @var string|null
+     */
+    public const CREATED_AT = 'creation_date';
+
+    /**
+     * Имя столбца "updated at".
+     *
+     * @var string|null
+     */
+    public const UPDATED_AT = 'updated_date';
 }
 ```
 
@@ -759,6 +770,18 @@ $flight = Flight::updateOrCreate(
 );
 ```
 
+При использовании методов вроде `firstOrCreate` или `updateOrCreate` вы можете не знать, была ли создана новая модель или обновлена существующая. Свойство `wasRecentlyCreated` указывает, была ли модель создана во время её текущего жизненного цикла:
+
+```php
+$flight = Flight::updateOrCreate(
+    // ...
+);
+
+if ($flight->wasRecentlyCreated) {
+    // Была вставлена новая запись рейса...
+}
+```
+
 <a name="mass-updates"></a>
 #### Массовые обновления
 
@@ -1185,7 +1208,7 @@ class Flight extends Model
      */
     public function prunable(): Builder
     {
-        return static::where('created_at', '<=', now()->subMonth());
+        return static::where('created_at', '<=', now()->minus(months: 1));
     }
 }
 ```
@@ -1258,7 +1281,7 @@ class Flight extends Model
      */
     public function prunable(): Builder
     {
-        return static::where('created_at', '<=', now()->subMonth());
+        return static::where('created_at', '<=', now()->minus(months: 1));
     }
 }
 ```
@@ -1340,7 +1363,7 @@ class AncientScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->where('created_at', '<', now()->subYears(2000));
+        $builder->where('created_at', '<', now()->minus(years: 2000));
     }
 }
 ```
@@ -1417,7 +1440,7 @@ class User extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('ancient', function (Builder $builder) {
-            $builder->where('created_at', '<', now()->subYears(2000));
+            $builder->where('created_at', '<', now()->minus(years: 2000));
         });
     }
 }
@@ -1447,6 +1470,11 @@ User::withoutGlobalScopes()->get();
 // Игнорировать некоторые глобальные диапазоны...
 User::withoutGlobalScopes([
     FirstScope::class, SecondScope::class
+])->get();
+
+// Удалить все глобальные диапазоны, кроме указанных...
+User::withoutGlobalScopesExcept([
+    SecondScope::class,
 ])->get();
 ```
 

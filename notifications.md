@@ -1,5 +1,5 @@
 ---
-git: 5f01fbcdb444f11dfbbaa031e3be6ce4cf3188a6
+git: 772dfe24ff1c3322b9724a36e71124a3b9287417
 ---
 
 # Уведомления
@@ -133,7 +133,7 @@ $user->notify(new InvoicePaid($invoice));
 Если вы хотите отложить доставку уведомления, то вы можете вызвать метод `delay` экземпляра уведомления:
 
 ```php
-$delay = now()->addMinutes(10);
+$delay = now()->plus(minutes: 10);
 
 $user->notify((new InvoicePaid($invoice))->delay($delay));
 ```
@@ -142,8 +142,8 @@ $user->notify((new InvoicePaid($invoice))->delay($delay));
 
 ```php
 $user->notify((new InvoicePaid($invoice))->delay([
-    'mail' => now()->addMinutes(5),
-    'sms' => now()->addMinutes(10),
+    'mail' => now()->plus(minutes: 5),
+    'sms' => now()->plus(minutes: 10),
 ]));
 ```
 
@@ -158,8 +158,8 @@ $user->notify((new InvoicePaid($invoice))->delay([
 public function withDelay(object $notifiable): array
 {
     return [
-        'mail' => now()->addMinutes(5),
-        'sms' => now()->addMinutes(10),
+        'mail' => now()->plus(minutes: 5),
+        'sms' => now()->plus(minutes: 10),
         // Задержки для других каналов
     ];
 }
@@ -231,6 +231,94 @@ public function viaQueues(): array
     ];
 }
 ```
+
+<a name="customizing-queued-notification-job-properties"></a>
+#### Настройка свойств задания уведомления в очереди
+
+Вы можете настроить поведение базового задания в очереди, определив свойства в классе уведомления. Эти свойства будут унаследованы заданием в очереди, которое отправляет уведомление:
+
+```php
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
+
+class InvoicePaid extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Количество попыток выполнения уведомления.
+     *
+     * @var int
+     */
+    public $tries = 5;
+
+    /**
+     * Количество секунд, в течение которых уведомление может выполняться до истечения времени ожидания.
+     *
+     * @var int
+     */
+    public $timeout = 120;
+
+    /**
+     * Максимальное количество необработанных исключений до завершения с ошибкой.
+     *
+     * @var int
+     */
+    public $maxExceptions = 3;
+
+    // ...
+}
+```
+
+Если вы хотите обеспечить конфиденциальность и целостность данных уведомления в очереди с помощью [шифрования](/docs/{{version}}/encryption), добавьте интерфейс `ShouldBeEncrypted` к классу уведомления:
+
+```php
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeEncrypted;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
+
+class InvoicePaid extends Notification implements ShouldQueue, ShouldBeEncrypted
+{
+    use Queueable;
+
+    // ...
+}
+```
+
+Помимо определения этих свойств непосредственно в классе уведомления, вы также можете определить методы `backoff` и `retryUntil`, чтобы указать стратегию задержки повторных попыток и время окончания повторных попыток для задания уведомления в очереди:
+
+```php
+use DateTime;
+
+/**
+ * Рассчитать количество секунд ожидания перед повторной попыткой отправки уведомления.
+ */
+public function backoff(): int
+{
+    return 3;
+}
+
+/**
+ * Определить время, в которое уведомление должно прекратить выполняться.
+ */
+public function retryUntil(): DateTime
+{
+    return now()->plus(minutes: 5);
+}
+```
+
+> [!NOTE]
+> Дополнительную информацию об этих свойствах и методах заданий можно найти в документации по [заданиям в очереди](/docs/{{version}}/queues#max-job-attempts-and-timeout).
 
 <a name="queued-notification-middleware"></a>
 #### Посредник для уведомлений в очереди
@@ -310,6 +398,21 @@ class InvoicePaid extends Notification implements ShouldQueue
 public function shouldSend(object $notifiable, string $channel): bool
 {
     return $this->invoice->isPaid();
+}
+```
+
+<a name="after-sending-notifications"></a>
+#### После отправки уведомлений
+
+Если вы хотите выполнить код после отправки уведомления, вы можете определить метод `afterSending` в классе уведомления. Этот метод получит уведомляемую сущность, имя канала и ответ от канала:
+
+```php
+/**
+ * Обработать уведомление после его отправки.
+ */
+public function afterSending(object $notifiable, string $channel, mixed $response): void
+{
+    // ...
 }
 ```
 
@@ -1855,4 +1958,3 @@ class InvoicePaid extends Notification
     }
 }
 ```
-

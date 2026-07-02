@@ -1,5 +1,5 @@
 ---
-git: c74eeb16593f20ac46d14f210225749e27351c0d
+git: 5ed6df43dc618427bebcb1454f2d0107fc2a5ed6
 ---
 
 # Сборка ресурсов (Vite)
@@ -46,7 +46,7 @@ npm install
 <a name="configuring-vite"></a>
 ### Настройка Vite
 
-Vite настраивается с помощью файла `vite.config.js` в корне вашего проекта. Вы можете настраивать этот файл по своему усмотрению, а также устанавливать любые другие плагины, необходимые для вашего приложения, такие как `@vitejs/plugin-vue` или `@vitejs/plugin-react`.
+Vite настраивается с помощью файла `vite.config.js` в корне вашего проекта. Вы можете настраивать этот файл по своему усмотрению, а также устанавливать любые другие плагины, необходимые для вашего приложения, такие как `@vitejs/plugin-react`, `@sveltejs/vite-plugin-svelte` или `@vitejs/plugin-vue`.
 
 Плагин Laravel Vite требует указания точек входа для вашего приложения. Это могут быть файлы JavaScript или CSS, включая предварительно обработанные языки, такие как TypeScript, JSX, TSX и Sass.
 
@@ -345,10 +345,41 @@ export default defineConfig({
 > [!NOTE]
 > Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, React и Vite. Эти стартовые наборы предлагают самый быстрый способ начать работу с Laravel, React и Vite.
 
+<a name="svelte"></a>
+### Svelte
+
+Если вы хотите собрать свой фронтенд, используя фреймворк [Svelte](https://svelte.dev/), вам также необходимо установить плагин `@sveltejs/vite-plugin-svelte`:
+
+```shell
+npm install --save-dev @sveltejs/vite-plugin-svelte
+```
+
+Затем вы можете включить плагин в ваш файл конфигурации `vite.config.js`.
+
+```js
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import laravel from 'laravel-vite-plugin';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [
+    laravel({
+      input: ['resources/js/app.ts'],
+      ssr: 'resources/js/ssr.ts',
+      refresh: true,
+    }),
+    svelte(),
+  ],
+});
+```
+
+> [!NOTE]
+> Стартовые наборы Laravel ([starter kits](/docs/{{version}}/starter-kits)) уже включают правильную конфигурацию Laravel, Svelte и Vite. Эти стартовые наборы предлагают самый быстрый способ начать работу с Laravel, Svelte и Vite.
+
 <a name="inertia"></a>
 ### Inertia
 
-Плагин Laravel Vite предоставляет удобную функцию `resolvePageComponent`, которая поможет вам определить ваши компоненты страниц Inertia. Ниже приведен пример использования помощника с Vue 3; однако, вы также можете использовать эту функцию в других фреймворках, таких как React:
+Плагин Laravel Vite предоставляет удобную функцию `resolvePageComponent`, которая поможет вам определить ваши компоненты страниц Inertia. Ниже приведен пример использования помощника с Vue 3; однако, вы также можете использовать эту функцию в других фреймворках, таких как React или Svelte:
 
 ```js
 import { createApp, h } from 'vue';

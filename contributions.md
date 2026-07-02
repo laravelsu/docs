@@ -1,5 +1,5 @@
 ---
-git: 44a24d3a9941c2c2309d4bb7ccb4c33d44310cae
+git: 725e353d0f3baab19297eeb429c450f6e4ed7cf2
 ---
 
 # Рекомендации по участию
@@ -30,7 +30,6 @@ git: 44a24d3a9941c2c2309d4bb7ccb4c33d44310cae
 - [Пакет Laravel Envoy](https://github.com/laravel/envoy)
 - [Пакет Laravel Folio](https://github.com/laravel/folio)
 - [Фреймворк Laravel](https://github.com/laravel/framework)
-- [Пакет Laravel Homestead](https://github.com/laravel/homestead) ([Скрипты для сборки](https://github.com/laravel/settler))
 - [Пакет Laravel Horizon](https://github.com/laravel/horizon)
 - [Пакет Laravel Passport](https://github.com/laravel/passport)
 - [Пакет Laravel Pennant](https://github.com/laravel/pennant)
@@ -44,6 +43,7 @@ git: 44a24d3a9941c2c2309d4bb7ccb4c33d44310cae
 - [Пакет Laravel Telescope](https://github.com/laravel/telescope)
 - [Пакет Laravel Livewire Starter Kit](https://github.com/laravel/livewire-starter-kit)
 - [Пакет Laravel React Starter Kit](https://github.com/laravel/react-starter-kit)
+- [Пакет Laravel Svelte Starter Kit](https://github.com/laravel/svelte-starter-kit)
 - [Пакет Laravel Vue Starter Kit](https://github.com/laravel/vue-starter-kit)
 
 <!-- </div> -->
@@ -85,6 +85,17 @@ git: 44a24d3a9941c2c2309d4bb7ccb4c33d44310cae
 ## Скомпилированные ресурсы исходников
 
 Если вы отправляете изменение, которое повлияет на скомпилированные файлы, например, касательно файлов в `resources/css` или` resources/js` репозитория `laravel/laravel`, то не включайте в коммит эти скомпилированные файлы. Из-за большого размера они не могут быть реально рассмотрены сопровождающим. Это может быть использовано как способ внедрения вредоносного кода в Laravel. Чтобы предотвратить это, все скомпилированные файлы будут сгенерированы и включены в коммит сопровождающими Laravel.
+
+<a name="ai-generated-contributions"></a>
+## Вклады, сгенерированные ИИ
+
+Мы ценим каждый Pull Request, отправленный в Laravel. Однако вклады, которые в основном сгенерированы ИИ без вдумчивой человеческой проверки и осмысления, неприемлемы.
+
+Если вы решили использовать инструменты ИИ для помощи в подготовке вклада, получившийся код **должен** быть вами тщательно проверен, протестирован и понят перед отправкой.
+
+**Массовое открытие issues или Pull Request, полностью сгенерированных ИИ, не допускается.** Такие Pull Request будут закрыты без рассмотрения, а пользователь, отправивший их, может быть заблокирован в репозитории.
+
+Мы рекомендуем участникам познакомиться с существующей кодовой базой, взаимодействовать с сообществом и отправлять Pull Request, которые отражают их собственное понимание и внимательное рассмотрение решаемой проблемы.
 
 <a name="security-vulnerabilities"></a>
 ## Уязвимости безопасности

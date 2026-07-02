@@ -1,5 +1,5 @@
 ---
-git: b3c1a5ceea69156c002bab55039e48e28aaae0ad
+git: d4377acd2d4d63ccb74f81f9da2cfb4144be2ff4
 ---
 
 # HTTP-ответы
@@ -79,13 +79,21 @@ return response($content)
     ]);
 ```
 
+Вы можете удалить определенные заголовки из исходящего ответа с помощью метода `withoutHeader`:
+
+```php
+return response($content)->withoutHeader('X-Debug');
+
+return response($content)->withoutHeader(['X-Debug', 'X-Powered-By']);
+```
+
 <a name="cache-control-middleware"></a>
 #### Посредник управления кешем
 
 Laravel содержит посредник `cache.headers`, используемый для быстрой установки заголовка `Cache-Control` для группы маршрутов. Директивы должны быть предоставлены с использованием эквивалента "snake case" соответствующей директивы управления кешем и должны быть разделены точкой с запятой. Если в списке директив указан `etag`, то MD5-хеш содержимого ответа будет автоматически установлен как идентификатор ETag:
 
 ```php
-Route::middleware('cache.headers:public;max_age=2628000;etag')->group(function () {
+Route::middleware('cache.headers:public;max_age=30;s_maxage=300;stale_while_revalidate=600;etag')->group(function () {
     Route::get('/privacy', function () {
         // ...
     });
@@ -155,12 +163,15 @@ Cookie::expire('name');
 По умолчанию, благодаря middleware `Illuminate\Cookie\Middleware\EncryptCookies` все файлы Cookies, генерируемые Laravel, зашифрованы и подписаны, поэтому клиент не может их изменить или прочитать. Если вы хотите отключить шифрование для подмножества куки, созданных вашим приложением, вы можете использовать метод `encryptCookies` в файле `bootstrap/app.php` вашего приложения:
 
 ```php
-->withMiddleware(function (Middleware $middleware) {
+->withMiddleware(function (Middleware $middleware): void {
     $middleware->encryptCookies(except: [
         'cookie_name',
     ]);
 })
 ```
+
+> [!NOTE]
+> В целом шифрование cookie не следует отключать, поскольку это может раскрыть данные cookie клиентской стороне и сделать их уязвимыми к изменению.
 
 <a name="redirects"></a>
 ## Перенаправления
@@ -381,7 +392,7 @@ Route::post('/chat', function () {
 <a name="consuming-streamed-responses"></a>
 ### Использование потоковых ответов
 
-Потоковые ответы могут быть получены с помощью пакета `stream` npm Laravel, который предоставляет удобный API для взаимодействия с потоками ответов и событий Laravel. Для начала установите пакет `@laravel/stream-react` или `@laravel/stream-vue`:
+Потоковые ответы могут быть получены с помощью пакета `stream` npm Laravel, который предоставляет удобный API для взаимодействия с потоками ответов и событий Laravel. Для начала установите пакет `@laravel/stream-react`, `@laravel/stream-vue` или `@laravel/stream-svelte`:
 
 ```shell tab=React
 npm install @laravel/stream-react
@@ -389,6 +400,10 @@ npm install @laravel/stream-react
 
 ```shell tab=Vue
 npm install @laravel/stream-vue
+```
+
+```shell tab=Svelte
+npm install @laravel/stream-svelte
 ```
 
 Затем `useStream` может быть использован для обработки потока событий. После предоставления URL-адреса вашего потока перехватчик автоматически обновит `data` с помощью объединенного ответа по мере возврата содержимого из вашего приложения Laravel:
@@ -434,6 +449,31 @@ const sendMessage = () => {
         <button @click="sendMessage">Send Message</button>
     </div>
 </template>
+```
+
+```svelte tab=Svelte
+<script>
+import { useStream } from "@laravel/stream-svelte";
+
+const stream = useStream("chat");
+
+const sendMessage = () => {
+    stream.send({
+        message: `Current timestamp: ${Date.now()}`,
+    });
+};
+</script>
+
+<div>
+    <div>{$stream.data}</div>
+    {#if $stream.isFetching}
+        <div>Connecting...</div>
+    {/if}
+    {#if $stream.isStreaming}
+        <div>Generating...</div>
+    {/if}
+    <button onclick={sendMessage}>Send Message</button>
+</div>
 ```
 
 При отправке данных обратно в поток через `send`, активное соединение с потоком отменяется перед отправкой новых данных. Все запросы отправляются как запросы JSON `POST`.
@@ -482,6 +522,26 @@ const { data } = useStream("chat", {
 </template>
 ```
 
+```svelte tab=Svelte
+<script>
+import { useStream } from "@laravel/stream-svelte";
+
+const stream = useStream("chat", {
+    id: undefined,
+    initialInput: undefined,
+    headers: undefined,
+    csrfToken: undefined,
+    onResponse: (response) => {},
+    onData: (data) => {},
+    onCancel: () => {},
+    onFinish: () => {},
+    onError: (error) => {},
+});
+</script>
+
+<div>{$stream.data}</div>
+```
+
 `onResponse` срабатывает после успешного первоначального ответа от потока, и необработанный [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) передается в обратный вызов. `onData` вызывается при получении каждого фрагмента — текущий фрагмент передается в обратный вызов. `onFinish` вызывается, когда поток завершен и когда во время цикла выборки/чтения возникает ошибка.
 
 По умолчанию запрос к потоку при инициализации не делается. Вы можете передать начальную полезную нагрузку потоку, используя опцию `initialInput`:
@@ -514,6 +574,20 @@ const { data } = useStream("chat", {
 </template>
 ```
 
+```svelte tab=Svelte
+<script>
+import { useStream } from "@laravel/stream-svelte";
+
+const stream = useStream("chat", {
+    initialInput: {
+        message: "Introduce yourself.",
+    },
+});
+</script>
+
+<div>{$stream.data}</div>
+```
+
 Чтобы отменить поток вручную, вы можете использовать метод `cancel`, возвращаемый из хука:
 
 ```tsx tab=React
@@ -542,6 +616,19 @@ const { data, cancel } = useStream("chat");
         <button @click="cancel">Cancel</button>
     </div>
 </template>
+```
+
+```svelte tab=Svelte
+<script>
+import { useStream } from "@laravel/stream-svelte";
+
+const stream = useStream("chat");
+</script>
+
+<div>
+    <div>{$stream.data}</div>
+    <button onclick={() => stream.cancel()}>Cancel</button>
+</div>
 ```
 
 Каждый раз, когда используется хук `useStream`, генерируется случайный `id` для идентификации потока. Он отправляется обратно на сервер с каждым запросом в заголовке `X-STREAM-ID`. При потреблении одного и того же потока из нескольких компонентов вы можете читать и писать в поток, предоставляя свой собственный `id`:
@@ -605,6 +692,39 @@ const { isFetching, isStreaming } = useStream("chat", { id: props.id });
 </template>
 ```
 
+```svelte tab=Svelte
+<!-- App.svelte -->
+<script>
+import { useStream } from "@laravel/stream-svelte";
+import StreamStatus from "./StreamStatus.svelte";
+
+const stream = useStream("chat");
+</script>
+
+<div>
+    <div>{$stream.data}</div>
+    <StreamStatus id={stream.id} />
+</div>
+
+<!-- StreamStatus.svelte -->
+<script>
+import { useStream } from "@laravel/stream-svelte";
+
+let { id } = $props();
+
+const stream = useStream("chat", { id });
+</script>
+
+<div>
+    {#if $stream.isFetching}
+        <div>Connecting...</div>
+    {/if}
+    {#if $stream.isStreaming}
+        <div>Generating...</div>
+    {/if}
+</div>
+```
+
 <a name="streamed-json-responses"></a>
 ### Потоковые ответы JSON
 
@@ -619,7 +739,7 @@ Route::get('/users.json', function () {
 });
 ```
 
-Хук `useJsonStream` идентичен хуку [useStream](#sumption-streamed-responses), за исключением того, что он попытается проанализировать данные как JSON после завершения потоковой передачи:
+Хук `useJsonStream` идентичен хуку [useStream](#consuming-streamed-responses), за исключением того, что он попытается проанализировать данные как JSON после завершения потоковой передачи:
 
 ```tsx tab=React
 import { useJsonStream } from "@laravel/stream-react";
@@ -682,6 +802,31 @@ const loadUsers = () => {
 </template>
 ```
 
+```svelte tab=Svelte
+<script>
+import { useJsonStream } from "@laravel/stream-svelte";
+
+const stream = useJsonStream("users");
+
+const loadUsers = () => {
+    stream.send({
+        query: "taylor",
+    });
+};
+</script>
+
+<div>
+    <ul>
+        {#if $stream.data?.users}
+            {#each $stream.data.users as user (user.id)}
+                <li>{user.id}: {user.name}</li>
+            {/each}
+        {/if}
+    </ul>
+    <button onclick={loadUsers}>Load Users</button>
+</div>
+```
+
 <a name="event-streams"></a>
 ### Потоки событий (SSE)
 
@@ -713,7 +858,7 @@ yield new StreamedEvent(
 <a name="consuming-event-streams"></a>
 #### Использование потоков событий
 
-Потоки событий можно использовать с помощью пакета Laravel `stream` npm, который предоставляет удобный API для взаимодействия с потоками событий Laravel. Для начала установите пакет `@laravel/stream-react` или `@laravel/stream-vue`:
+Потоки событий можно использовать с помощью пакета Laravel `stream` npm, который предоставляет удобный API для взаимодействия с потоками событий Laravel. Для начала установите пакет `@laravel/stream-react`, `@laravel/stream-vue` или `@laravel/stream-svelte`:
 
 ```shell tab=React
 npm install @laravel/stream-react
@@ -721,6 +866,10 @@ npm install @laravel/stream-react
 
 ```shell tab=Vue
 npm install @laravel/stream-vue
+```
+
+```shell tab=Svelte
+npm install @laravel/stream-svelte
 ```
 
 Затем для использования потока событий можно использовать `useEventStream`. После предоставления URL-адреса вашего потока перехватчик автоматически обновит `message` с помощью объединенного ответа по мере того, как сообщения будут возвращаться из вашего приложения Laravel:
@@ -743,6 +892,16 @@ const { message } = useEventStream("/chat");
 <template>
   <div>{{ message }}</div>
 </template>
+```
+
+```svelte tab=Svelte
+<script>
+import { useEventStream } from "@laravel/stream-svelte";
+
+const eventStream = useEventStream("/chat");
+</script>
+
+<div>{$eventStream.message}</div>
 ```
 
 Второй аргумент, заданный параметру `useEventStream`, - это объект параметров, который вы можете использовать для настройки поведения при использовании потока. Значения по умолчанию для этого объекта приведены ниже:
@@ -786,6 +945,28 @@ const { message } = useEventStream("/chat", {
   },
   endSignal: "</stream>",
   glue: " ",
+});
+</script>
+```
+
+```svelte tab=Svelte
+<script>
+import { useEventStream } from "@laravel/stream-svelte";
+
+const eventStream = useEventStream("/chat", {
+    eventName: "update",
+    onMessage: (event) => {
+        //
+    },
+    onError: (error) => {
+        //
+    },
+    onComplete: () => {
+        //
+    },
+    endSignal: "</stream>",
+    glue: " ",
+    replace: false,
 });
 </script>
 ```

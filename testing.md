@@ -1,5 +1,5 @@
 ---
-git: 96617d0be0510d33cfa46db034b73a2273b22a97
+git: 00bab18760b65fa1d5176f1667ce9d7f3ebc1a2c
 ---
 
 # Тестирование · Начало работы
@@ -216,4 +216,35 @@ php artisan test --coverage --min=80.3
 
 ```shell
 php artisan test --profile
+```
+
+<a name="configuration-caching"></a>
+## Кеширование конфигурации
+
+При запуске тестов Laravel загружает приложение для каждого отдельного тестового метода. Без кешированного файла конфигурации каждый файл конфигурации вашего приложения должен загружаться в начале теста. Чтобы собрать конфигурацию один раз и повторно использовать её для всех тестов в рамках одного запуска, вы можете использовать трейт `Illuminate\Foundation\Testing\WithCachedConfig`:
+
+```php tab=Pest
+<?php
+
+use Illuminate\Foundation\Testing\WithCachedConfig;
+
+pest()->use(WithCachedConfig::class);
+
+// ...
+```
+
+```php tab=PHPUnit
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\WithCachedConfig;
+use Tests\TestCase;
+
+class ConfigTest extends TestCase
+{
+    use WithCachedConfig;
+
+    // ...
+}
 ```

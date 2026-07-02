@@ -1,5 +1,5 @@
 ---
-git: 0eb4790ca3428256c648bcb6efd923ad02a81a0e
+git: 21748912671c7cf141bdab3b285891bbb5f7d980
 ---
 
 # HTTP-клиент
@@ -271,10 +271,10 @@ $response = Http::retry([100, 200])->post(/* ... */);
 При необходимости вы можете передать третий аргумент методу `retry`. Третий аргумент должен быть callable-функцией, которая определяет, следует ли на самом деле попытаться повторить попытку. Например, вы можете захотеть повторить запрос только в том случае, если начальный запрос обнаруживает исключение `ConnectionException`:
 
 ```php
-use Exception;
 use Illuminate\Http\Client\PendingRequest;
+use Throwable;
 
-$response = Http::retry(3, 100, function (Exception $exception, PendingRequest $request) {
+$response = Http::retry(3, 100, function (Throwable $exception, PendingRequest $request) {
     return $exception instanceof ConnectionException;
 })->post(/* ... */);
 ```
@@ -282,11 +282,11 @@ $response = Http::retry(3, 100, function (Exception $exception, PendingRequest $
 Если попытка запроса завершится неудачей, вы можете захотеть внести изменение в запрос перед новой попыткой. Это можно сделать, изменив аргумент запроса, предоставленный вашему вызываемому объекту метода `retry`. Например, вы можете попробовать запрос с новым токеном авторизации, если первая попытка завершилась ошибкой аутентификации:
 
 ```php
-use Exception;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
+use Throwable;
 
-$response = Http::withToken($this->getToken())->retry(2, 0, function (Exception $exception, PendingRequest $request) {
+$response = Http::withToken($this->getToken())->retry(2, 0, function (Throwable $exception, PendingRequest $request) {
     if (! $exception instanceof RequestException || $exception->response->status() !== 401) {
         return false;
     }
@@ -484,7 +484,10 @@ public function boot(): void
 
 Иногда вы можете захотеть выполнить несколько HTTP-запросов одновременно. Другими словами, вы хотите, чтобы несколько запросов отправлялись одновременно вместо того, чтобы отправлять их последовательно. Это может привести к значительному повышению производительности при взаимодействии с медленными HTTP API.
 
-Вы можете сделать это с помощью метода `pool`. Метод `pool` принимает функцию с аргументом `Illuminate\Http\Client\Pool`, при помощи которого вы можете добавлять запросы в пул запросов для отправки:
+<a name="request-pooling"></a>
+### Пул запросов
+
+Вы можете сделать это с помощью метода `pool`. Метод `pool` принимает замыкание с аргументом `Illuminate\Http\Client\Pool`, при помощи которого вы можете легко добавлять запросы в пул запросов для отправки:
 
 ```php
 use Illuminate\Http\Client\Pool;
@@ -516,6 +519,14 @@ $responses = Http::pool(fn (Pool $pool) => [
 return $responses['first']->ok();
 ```
 
+Максимальную параллельность request pool можно контролировать, передав аргумент `concurrency` в метод `pool`. Это значение определяет максимальное количество HTTP-запросов, которые могут одновременно находиться в процессе выполнения при обработке request pool:
+
+```php
+$responses = Http::pool(fn (Pool $pool) => [
+    // ...
+], concurrency: 5);
+```
+
 <a name="customizing-concurrent-requests"></a>
 #### Customizing Concurrent Requests
 
@@ -534,6 +545,98 @@ $responses = Http::pool(fn (Pool $pool) => [
     $pool->withHeaders($headers)->get('http://laravel.test/test'),
     $pool->withHeaders($headers)->get('http://laravel.test/test'),
 ]);
+```
+
+<a name="request-batching"></a>
+### Пакетная отправка запросов
+
+Еще один способ работы с параллельными запросами в Laravel - использовать метод `batch`. Как и метод `pool`, он принимает замыкание с экземпляром `Illuminate\Http\Client\Batch`, позволяя легко добавлять запросы в пул для отправки, но также позволяет определять completion callbacks:
+
+```php
+use Illuminate\Http\Client\Batch;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
+
+$responses = Http::batch(fn (Batch $batch) => [
+    $batch->get('http://localhost/first'),
+    $batch->get('http://localhost/second'),
+    $batch->get('http://localhost/third'),
+])->before(function (Batch $batch) {
+    // The batch has been created but no requests have been initialized...
+})->progress(function (Batch $batch, int|string $key, Response $response) {
+    // An individual request has completed successfully...
+})->then(function (Batch $batch, array $results) {
+    // All requests completed successfully...
+})->catch(function (Batch $batch, int|string $key, Response|RequestException|ConnectionException $response) {
+    // Batch request failure detected...
+})->finally(function (Batch $batch, array $results) {
+    // The batch has finished executing...
+})->send();
+```
+
+Как и с методом `pool`, вы можете использовать метод `as`, чтобы задавать имена запросам:
+
+```php
+$responses = Http::batch(fn (Batch $batch) => [
+    $batch->as('first')->get('http://localhost/first'),
+    $batch->as('second')->get('http://localhost/second'),
+    $batch->as('third')->get('http://localhost/third'),
+])->send();
+```
+
+После запуска `batch` вызовом метода `send` в него нельзя добавлять новые запросы. Попытка сделать это приведет к исключению `Illuminate\Http\Client\BatchInProgressException`.
+
+Максимальную параллельность request batch можно контролировать через метод `concurrency`. Это значение определяет максимальное количество HTTP-запросов, которые могут одновременно находиться в процессе выполнения при обработке request batch:
+
+```php
+$responses = Http::batch(fn (Batch $batch) => [
+    // ...
+])->concurrency(5)->send();
+```
+
+<a name="inspecting-batches"></a>
+#### Инспектирование batch-запросов
+
+Экземпляр `Illuminate\Http\Client\Batch`, который передается в completion callbacks batch-запроса, содержит различные свойства и методы, помогающие работать с конкретным batch-запросом и инспектировать его:
+
+```php
+// The number of requests assigned to the batch...
+$batch->totalRequests;
+
+// The number of requests that have not been processed yet...
+$batch->pendingRequests;
+
+// The number of requests that have failed...
+$batch->failedRequests;
+
+// The number of requests that have been processed thus far...
+$batch->processedRequests();
+
+// Indicates if the batch has finished executing...
+$batch->finished();
+
+// Indicates if the batch has request failures...
+$batch->hasFailures();
+```
+
+<a name="deferring-batches"></a>
+#### Отложенные batch-запросы
+
+Когда вызывается метод `defer`, batch-запрос не выполняется немедленно. Вместо этого Laravel выполнит batch после отправки HTTP-ответа текущего запроса приложения пользователю, сохраняя приложение быстрым и отзывчивым:
+
+```php
+use Illuminate\Http\Client\Batch;
+use Illuminate\Support\Facades\Http;
+
+$responses = Http::batch(fn (Batch $batch) => [
+    $batch->get('http://localhost/first'),
+    $batch->get('http://localhost/second'),
+    $batch->get('http://localhost/third'),
+])->then(function (Batch $batch, array $results) {
+    // All requests completed successfully...
+})->defer();
 ```
 
 <a name="macros"></a>
@@ -802,6 +905,24 @@ Http::fake([
 
 // An "ok" response is returned...
 Http::get('https://github.com/laravel/framework');
+
+// An exception is thrown...
+Http::get('https://laravel.com');
+```
+
+Иногда нужно запретить большинство случайных запросов, но при этом разрешить выполнение отдельных запросов. Для этого передайте массив URL-шаблонов в метод `allowStrayRequests`. Любой запрос, соответствующий одному из заданных шаблонов, будет разрешен, а все остальные запросы продолжат выбрасывать исключение:
+
+```php
+use Illuminate\Support\Facades\Http;
+
+Http::preventStrayRequests();
+
+Http::allowStrayRequests([
+    'http://127.0.0.1:5000/*',
+]);
+
+// This request is executed...
+Http::get('http://127.0.0.1:5000/generate');
 
 // An exception is thrown...
 Http::get('https://laravel.com');

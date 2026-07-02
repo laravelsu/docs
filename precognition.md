@@ -1,5 +1,5 @@
 ---
-git: 6a0eec994bc3e9dfd4a6d2d81abc3a5261b7e79d
+git: 006cab15d6e83a137fc9ec0bdaa4abe3dc8b75bf
 ---
 
 # Precognition
@@ -7,9 +7,12 @@ git: 6a0eec994bc3e9dfd4a6d2d81abc3a5261b7e79d
 <a name="introduction"></a>
 ## Введение
 
-Laravel Precognition позволяет предвидеть результат будущего HTTP-запроса. Одним из основных случаев использования Precognition является возможность обеспечить "живую" валидацию для вашего фронтенда на JavaScript. Precognition особенно хорошо работает с [стартовыми наборами](/docs/{{version}}/starter-kits) Laravel, основанными на Inertia.
+Laravel Precognition позволяет предвидеть результат будущего HTTP-запроса. Одним из основных случаев использования Precognition является возможность обеспечить "живую" валидацию для вашего фронтенда на JavaScript.
 
 Когда Laravel получает "предвиденный запрос", он выполнит всю промежуточную обработку маршрута и разрешит зависимости контроллера маршрута, включая валидацию [запросов формы](/docs/{{version}}/validation#form-request-validation) - но он фактически не выполнит метод контроллера маршрута.
+
+> [!NOTE]
+> Начиная с Inertia 2.3, поддержка Precognition встроена. Дополнительную информацию см. в [документации Inertia Forms](https://inertiajs.com/docs/v2/the-basics/forms). Более ранние версии Inertia требуют Precognition 0.x.
 
 <a name="live-validation"></a>
 ## Живая валидация
@@ -178,38 +181,6 @@ const submit = () => form.submit()
 </button>
 ```
 
-<a name="using-vue-and-inertia"></a>
-### Использование Vue и Inertia
-
-> [!NOTE]
-> Если вы хотите быстро начать разработку вашего приложения Laravel с использованием Vue и Inertia, рассмотрите возможность использования одного из наших [стартовых наборов](/docs/{{version}}/starter-kits). Стартовые наборы Laravel предоставляют основу для аутентификации на стороне сервера и на стороне клиента для вашего нового приложения Laravel.
-
-Перед использованием Precognition с Vue и Inertia, убедитесь, что вы ознакомились с нашей общей документацией по [использованию Precognition с Vue](#using-vue). При использовании Vue с Inertia вам потребуется установить совместимую с Inertia библиотеку Precognition с помощью NPM:
-
-```shell
-npm install laravel-precognition-vue-inertia
-```
-
-После установки функция `useForm` от Precognition будет возвращать помощник [формы](https://inertiajs.com/forms#form-helper) Inertia, дополненный функциями валидации,  о которых говорилось выше.
-
-Метод `submit` помощника формы был оптимизирован, и теперь не требуется указывать метод HTTP или URL. Вместо этого вы можете передать [параметры посещения](https://inertiajs.com/manual-visits) Inertia в качестве единственного аргумента. Кроме того, метод `submit` не возвращает Promise, как в приведенном выше примере с Vue. Вместо этого вы можете предоставить любой из поддерживаемых Inertia [обратных вызовов событий](https://inertiajs.com/manual-visits#event-callbacks) в параметрах посещения, переданных методу `submit`:
-
-```vue
-<script setup>
-import { useForm } from 'laravel-precognition-vue-inertia';
-
-const form = useForm('post', '/users', {
-    name: '',
-    email: '',
-});
-
-const submit = () => form.submit({
-    preserveScroll: true,
-    onSuccess: () => form.reset(),
-});
-</script>
-```
-
 <a name="using-react"></a>
 ### Использование React
 
@@ -367,40 +338,6 @@ const submit = (e) => {
 <button disabled={form.processing}>
     Submit
 </button>
-```
-
-<a name="using-react-and-inertia"></a>
-### Использование React и Inertia
-
-> [!NOTE]
-> Если вы хотите быстро начать разработку вашего приложения Laravel с использованием React и Inertia, рассмотрите возможность использования одного из наших [стартовых наборов](/docs/{{version}}/starter-kits). Стартовые наборы Laravel предоставляют основу для аутентификации на стороне сервера и на стороне клиента для вашего нового приложения Laravel.
-
-Перед использованием Precognition с React и Inertia убедитесь, что вы ознакомились с нашей общей документацией по [использованию Precognition с React](#using-react). При использовании React с Inertia вам потребуется установить совместимую с Inertia библиотеку Precognition с помощью NPM:
-
-```shell
-npm install laravel-precognition-react-inertia
-```
-
-После установки Precognition функция `useForm` будет возвращать помощника формы Inertia, дополненного функциями валидации, описанными выше.
-
-Метод `submit` помощника формы был оптимизирован, и теперь не требуется указывать метод HTTP или URL. Вместо этого вы можете передать параметры [посещения](https://inertiajs.com/manual-visits) Inertia в качестве единственного аргумента. Кроме того, метод `submit` не возвращает Promise, как в приведенном выше примере с React. Вместо этого вы можете предоставить любой из поддерживаемых Inertia [обратных вызывов событий](https://inertiajs.com/manual-visits#event-callbacks) в параметрах посещения, переданных методу `submit`:
-
-```js
-import { useForm } from 'laravel-precognition-react-inertia';
-
-const form = useForm('post', '/users', {
-    name: '',
-    email: '',
-});
-
-const submit = (e) => {
-    e.preventDefault();
-
-    form.submit({
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
-    });
-};
 ```
 
 <a name="using-alpine"></a>
@@ -607,8 +544,21 @@ window.axios.defaults.headers.common['Authorization'] = authToken;
 client.use(window.axios)
 ```
 
-> [!WARNING]
-> Библиотеки Precognition, адаптированные под Inertia, будут использовать настроенный экземпляр Axios только для запросов валидации. Отправка форм всегда будет осуществляться через Inertia.
+<a name="validating-arrays"></a>
+## Валидация массивов
+
+Вы можете использовать wildcard-символы для валидации полей внутри массивов или вложенных объектов. Каждый `*` соответствует одному сегменту пути:
+
+```js
+// Валидировать email для всех пользователей в массиве...
+form.validate('users.*.email');
+
+// Валидировать все поля в объекте profile...
+form.validate('profile.*');
+
+// Валидировать все поля для всех пользователей...
+form.validate('users.*.*');
+```
 
 <a name="customizing-validation-rules"></a>
 ## Настройка правил валидации

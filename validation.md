@@ -1,5 +1,5 @@
 ---
-git: d4f5f383462a62d4c86b4122fa89fea6756cf604
+git: 9c7ce6d6d8787325ce4b24ce7788e231f800caa2
 ---
 
 # Валидация
@@ -1864,7 +1864,9 @@ Validator::make($input, [
 Проверяемый файл должен соответствовать одному из указанных MIME-типов:
 
 ```php
-'video' => 'mimetypes:video/avi,video/mpeg,video/quicktime'
+'video' => 'mimetypes:video/avi,video/mpeg,video/quicktime',
+
+'media' => 'mimetypes:image/*,video/*',
 ```
 
 Чтобы определить MIME-тип загруженного файла, содержимое файла будет прочитано, и фреймворк попытается угадать MIME-тип, который может отличаться от типа, предоставленного клиентом.

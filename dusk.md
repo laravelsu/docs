@@ -1,11 +1,14 @@
 ---
-git: 50a8281a3ccf0589d5d61db53efafe26daa877ba
+git: 969aa3220dd71ec00ee5bf2b59a00be9288c7f5b
 ---
 
 # Laravel Dusk
 
 <a name="introduction"></a>
 ## Введение
+
+> [!WARNING]
+> [Pest 4](https://pestphp.com/) теперь включает автоматизированное браузерное тестирование, которое предлагает значительные улучшения производительности и удобства использования по сравнению с Laravel Dusk. Для новых проектов мы рекомендуем использовать Pest для браузерного тестирования.
 
 [Laravel Dusk](https://github.com/laravel/dusk) предоставляет выразительный и простой в использовании API для автоматизации и тестирования браузера. По умолчанию Dusk не требует установки JDK или Selenium на ваш локальный компьютер. Вместо этого Dusk использует автономную установку [ChromeDriver](https://sites.google.com/chromium.org/driver). По желанию вы можете использовать любой другой драйвер, совместимый с Selenium.
 
@@ -117,7 +120,7 @@ php artisan dusk:make LoginTest
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 
-uses(DatabaseMigrations::class);
+pest()->use(DatabaseMigrations::class);
 
 //
 ```
@@ -153,7 +156,7 @@ class ExampleTest extends DuskTestCase
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
 
-uses(DatabaseTruncation::class);
+pest()->use(DatabaseTruncation::class);
 
 //
 ```
@@ -311,7 +314,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 
-uses(DatabaseMigrations::class);
+pest()->use(DatabaseMigrations::class);
 
 test('basic example', function () {
     $user = User::factory()->create([
@@ -2414,7 +2417,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\Browser\Components\DatePicker;
 
-uses(DatabaseMigrations::class);
+pest()->use(DatabaseMigrations::class);
 
 test('basic example', function () {
     $this->browse(function (Browser $browser) {
@@ -2539,7 +2542,7 @@ jobs:
       DB_PASSWORD: root
       MAIL_MAILER: log
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Prepare The Environment
         run: cp .env.example .env
       - name: Create Database

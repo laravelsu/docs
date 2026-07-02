@@ -1,5 +1,5 @@
 ---
-git: 48dac93d05157a308077054c40315a6cbb65888b
+git: 00b62b1b29bf1e2b7d39734efd5355e095ade837
 ---
 
 # Очереди
@@ -535,6 +535,26 @@ public function middleware(): array
 > [!NOTE]
 > Если вы используете Redis, то вы можете использовать посредника `Illuminate\Queue\Middleware\RateLimitedWithRedis`, который лучше настроен для Redis и более эффективен, чем базовый посредник с ограничением частоты.
 
+<a name="rate-limiting-with-redis"></a>
+#### Ограничение частоты с Redis
+
+Если вы используете Redis, вы можете использовать middleware `Illuminate\Queue\Middleware\RateLimitedWithRedis`, который лучше настроен для Redis и эффективнее базового rate limiting middleware:
+
+```php
+use Illuminate\Queue\Middleware\RateLimitedWithRedis;
+
+public function middleware(): array
+{
+    return [new RateLimitedWithRedis('backups')];
+}
+```
+
+Метод `connection` можно использовать, чтобы указать, какое Redis-соединение должно использовать middleware:
+
+```php
+return [(new RateLimitedWithRedis('backups'))->connection('limiter')];
+```
+
 <a name="preventing-job-overlaps"></a>
 ### Предотвращение дублирования задания
 
@@ -662,7 +682,7 @@ public function middleware(): array
  */
 public function retryUntil(): DateTime
 {
-    return now()->addMinutes(30);
+    return now()->plus(minutes: 30);
 }
 ```
 
@@ -757,6 +777,26 @@ public function middleware(): array
 
 > [!NOTE]
 > Если вы используете Redis в качестве драйвера кеша вашего приложения, то вы можете использовать класс `Illuminate\Queue\Middleware\ThrottlesExceptionsWithRedis`. Этот класс более эффективен при управлении ограничениями исключений с помощью Redis.
+
+<a name="throttling-exceptions-with-redis"></a>
+#### Ограничение исключений с Redis
+
+Если вы используете Redis, вы можете использовать middleware `Illuminate\Queue\Middleware\ThrottlesExceptionsWithRedis`, который лучше настроен для Redis и эффективнее базового exception throttling middleware:
+
+```php
+use Illuminate\Queue\Middleware\ThrottlesExceptionsWithRedis;
+
+public function middleware(): array
+{
+    return [new ThrottlesExceptionsWithRedis(10, 10 * 60)];
+}
+```
+
+Метод `connection` можно использовать, чтобы указать, какое Redis-соединение должно использовать middleware:
+
+```php
+return [(new ThrottlesExceptionsWithRedis(10, 10 * 60))->connection('limiter')];
+```
 
 <a name="skipping-jobs"></a>
 ### Пропуск заданий
@@ -865,7 +905,7 @@ class PodcastController extends Controller
         // ...
 
         ProcessPodcast::dispatch($podcast)
-            ->delay(now()->addMinutes(10));
+            ->delay(now()->plus(minutes: 10));
 
         return redirect('/podcasts');
     }
@@ -880,28 +920,6 @@ ProcessPodcast::dispatch($podcast)->withoutDelay();
 
 > [!WARNING]
 > У сервиса очередей Amazon SQS максимальное время задержки составляет 15 минут.
-
-<a name="dispatching-after-the-response-is-sent-to-browser"></a>
-#### Отправка задания после отправки ответа в браузер
-
-В качестве альтернативы, метод `dispatchAfterResponse` задерживает отправку задания до тех пор, пока HTTP-ответ не будет отправлен в браузер пользователя, если ваш веб-сервер использует [FastCGI](https://www.php.net/manual/en/install.fpm.php). Это по прежнему позволит пользователю получить ответ от приложения, даже если задание в очереди все еще выполняется. Обычно это следует использовать только для заданий, которые занимают около секунды, например, для отправки электронного письма. Поскольку они обрабатываются в рамках текущего HTTP-запроса, отправляемые таким образом задания не требуют запуска обработчика очереди для их обработки:
-
-```php
-use App\Jobs\SendNotification;
-
-SendNotification::dispatchAfterResponse();
-```
-
-Вы также можете отправить замыкание и связать метод `afterResponse` с помощником [dispatch](/docs/{{version}}/helpers#method-dispatch), чтобы выполнить функцию после того, как HTTP-ответ был отправлен в браузер:
-
-```php
-use App\Mail\WelcomeMessage;
-use Illuminate\Support\Facades\Mail;
-
-dispatch(function () {
-    Mail::to('taylor@example.com')->send(new WelcomeMessage);
-})->afterResponse();
-```
 
 <a name="synchronous-dispatching"></a>
 ### Синхронная отправка
@@ -934,6 +952,23 @@ class PodcastController extends Controller
         return redirect('/podcasts');
     }
 }
+```
+
+<a name="deferred-dispatching"></a>
+#### Отложенная отправка
+
+Используя отложенную синхронную отправку, вы можете отправить задание для обработки в текущем процессе, но уже после отправки HTTP-ответа пользователю. Это позволяет обрабатывать «очередные» задания синхронно, не замедляя пользовательский опыт. Чтобы отложить выполнение синхронного задания, отправьте его в соединение `deferred`:
+
+```php
+RecordDelivery::dispatch($order)->onConnection('deferred');
+```
+
+Соединение `deferred` также используется как очередь [failover](#queue-failover) по умолчанию.
+
+Аналогично, соединение `background` обрабатывает задания после отправки HTTP-ответа пользователю; однако задание выполняется в отдельном запущенном PHP-процессе, позволяя PHP-FPM / application worker принимать следующий входящий HTTP-запрос:
+
+```php
+RecordDelivery::dispatch($order)->onConnection('background');
 ```
 
 <a name="jobs-and-database-transactions"></a>
@@ -1266,7 +1301,7 @@ use DateTime;
  */
 public function retryUntil(): DateTime
 {
-    return now()->addMinutes(10);
+    return now()->plus(minutes: 10);
 }
 ```
 
@@ -1377,6 +1412,124 @@ public $failOnTimeout = true;
 > [!NOTE]
 > По умолчанию при истечении времени выполнения задания оно тратит одну попытку и возвращается в очередь (если разрешены повторные попытки). Однако, если настроить задание на сбой по тайм-ауту, оно не будет повторно выполнено, независимо от количества попыток.
 
+<a name="sqs-fifo-and-fair-queues"></a>
+### SQS FIFO и fair queues
+
+Laravel поддерживает очереди [Amazon SQS FIFO (First-In-First-Out)](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fifo-queues.html), позволяя обрабатывать задания точно в порядке их отправки и обеспечивать обработку ровно один раз благодаря дедупликации сообщений.
+
+FIFO-очередям требуется message group ID, чтобы определить, какие задания можно обрабатывать параллельно. Задания с одинаковым group ID обрабатываются последовательно, а сообщения с разными group ID могут выполняться конкурентно.
+
+Laravel предоставляет fluent-метод `onGroup` для указания message group ID при отправке заданий:
+
+```php
+ProcessOrder::dispatch($order)
+    ->onGroup("customer-{$order->customer_id}");
+```
+
+SQS FIFO поддерживает дедупликацию сообщений. Чтобы предоставить собственный deduplication ID, реализуйте метод `deduplicationId` в классе задания:
+
+```php
+public function deduplicationId(): string
+{
+    return "renewal-{$this->subscription->id}";
+}
+```
+
+<a name="fifo-listeners-mail-and-notifications"></a>
+#### FIFO listeners, mail и notifications
+
+При использовании FIFO-очередей для queued listeners, mail и notifications также нужно определить message groups. Либо можно отправлять queued-экземпляры этих объектов в не FIFO-очередь.
+
+Чтобы определить message group для [queued event listener](/docs/{{version}}/events#queued-event-listeners), определите метод `messageGroup` в listener. При необходимости можно также определить метод `deduplicationId`:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+class SendShipmentNotification
+{
+    // ...
+
+    /**
+     * Get the job's message group.
+     */
+    public function messageGroup(): string
+    {
+        return 'shipments';
+    }
+
+    /**
+     * Get the job's deduplication ID.
+     */
+    public function deduplicationId(): string
+    {
+        return "shipment-notification-{$this->shipment->id}";
+    }
+}
+```
+
+При отправке [mail message](/docs/{{version}}/mail), которое будет поставлено в FIFO-очередь, вызовите метод `onGroup` и, при необходимости, метод `withDeduplicator` при отправке сообщения:
+
+```php
+use App\Mail\InvoicePaid;
+use Illuminate\Support\Facades\Mail;
+
+$invoicePaid = (new InvoicePaid($invoice))
+    ->onGroup('invoices')
+    ->withDeduplicator(fn () => 'invoices-'.$invoice->id);
+
+Mail::to($request->user())->send($invoicePaid);
+```
+
+При отправке [notification](/docs/{{version}}/notifications), которое будет поставлено в FIFO-очередь, вызовите метод `onGroup` и, при необходимости, метод `withDeduplicator` при отправке уведомления:
+
+```php
+use App\Notifications\InvoicePaid;
+
+$invoicePaid = (new InvoicePaid($invoice))
+    ->onGroup('invoices')
+    ->withDeduplicator(fn () => 'invoices-'.$invoice->id);
+
+$user->notify($invoicePaid);
+```
+
+<a name="queue-failover"></a>
+### Failover очередей
+
+Драйвер очереди `failover` обеспечивает автоматическое переключение при ошибке добавления задания в очередь. Если основное соединение очереди из конфигурации `failover` по какой-либо причине недоступно, Laravel автоматически попробует отправить задание в следующее настроенное соединение.
+
+Чтобы настроить failover-соединение, укажите драйвер `failover` и массив соединений, которые нужно пробовать по порядку:
+
+```php
+'failover' => [
+    'driver' => 'failover',
+    'connections' => [
+        'redis',
+        'database',
+        'sync',
+    ],
+],
+```
+
+После настройки установите failover-соединение как соединение очереди по умолчанию в `.env`:
+
+```ini
+QUEUE_CONNECTION=failover
+```
+
+Затем запустите как минимум один worker для каждого соединения из failover-списка:
+
+```bash
+php artisan queue:work redis
+php artisan queue:work database
+```
+
+> [!NOTE]
+> Для соединений `sync`, `background` и `deferred` worker запускать не нужно, поскольку эти драйверы обрабатывают задания в текущем PHP-процессе.
+
+Когда операция с соединением очереди завершается ошибкой и активируется failover, Laravel отправляет событие `Illuminate\Queue\Events\QueueFailedOver`, которое можно использовать для логирования или отчетности.
+
 <a name="error-handling"></a>
 ### Обработка ошибок
 
@@ -1404,7 +1557,7 @@ public function handle(): void
 ```php
 $this->release(10);
 
-$this->release(now()->addSeconds(10));
+$this->release(now()->plus(seconds: 10));
 ```
 
 <a name="manually-failing-a-job"></a>
@@ -1470,10 +1623,10 @@ class SyncChatHistory implements ShouldQueue
      */
     public function handle(): void
     {
-        $user->authorize('sync-chat-history');
+        $this->user->authorize('sync-chat-history');
 
         $response = Http::throw()->get(
-            "https://chat.laravel.test/?user={$user->uuid}"
+            "https://chat.laravel.test/?user={$this->user->uuid}"
         );
 
         // ...
@@ -1790,6 +1943,16 @@ $batch = Bus::batch([
 })->allowFailures()->dispatch();
 ```
 
+Вы также можете передать замыкание в метод `allowFailures`; оно будет выполнено при каждом сбое задания:
+
+```php
+$batch = Bus::batch([
+    // ...
+])->allowFailures(function (Batch $batch, $exception) {
+    // Handle individual job failures...
+})->dispatch();
+```
+
 <a name="retrying-failed-batch-jobs"></a>
 #### Повторная попытка выполнения неудачных пакетных заданий
 
@@ -1923,6 +2086,27 @@ dispatch(function () use ($podcast) {
 
 > [!WARNING]
 > Поскольку функции-замыкания в`catch` сериализуются и выполняются очередью Laravel позднее, вам не следует использовать `$this` в обратных вызовах `catch`.
+
+<a name="pausing-and-resuming-queue-workers"></a>
+### Приостановка и возобновление queue workers
+
+Иногда нужно временно запретить queue worker обрабатывать новые задания, не останавливая сам worker полностью. Например, вы можете захотеть приостановить обработку заданий на время обслуживания системы. Laravel предоставляет Artisan-команды `queue:pause` и `queue:continue` для приостановки и возобновления queue workers.
+
+Чтобы приостановить конкретную очередь, передайте имя queue connection и имя очереди:
+
+```shell
+php artisan queue:pause database:default
+```
+
+В этом примере `database` - имя queue connection, а `default` - имя очереди. После приостановки очереди workers, обрабатывающие задания из этой очереди, продолжат выполнять текущее задание, но не будут брать новые задания, пока очередь не будет возобновлена.
+
+Чтобы возобновить обработку заданий в приостановленной очереди, используйте команду `queue:continue`:
+
+```shell
+php artisan queue:continue database:default
+```
+
+После возобновления очереди workers сразу начнут обрабатывать новые задания из этой очереди. Обратите внимание, что приостановка очереди не останавливает сам процесс worker; она только запрещает worker обрабатывать новые задания из указанной очереди.
 
 <a name="running-the-queue-worker"></a>
 ## Запуск обработчика очереди
@@ -2060,6 +2244,43 @@ php artisan queue:restart
 
 > [!NOTE]
 > Очередь использует [кеш](/docs/{{version}}/cache) для хранения сигналов перезапуска, поэтому перед использованием этой функции необходимо убедиться, что драйвер кеша правильно настроен для приложения.
+
+<a name="worker-restart-and-pause-signals"></a>
+#### Сигналы перезапуска и приостановки workers
+
+По умолчанию queue workers проверяют cache driver на наличие сигналов перезапуска и приостановки на каждой итерации задания. Эта проверка необходима для реакции на команды `queue:restart` и `queue:pause`, но она добавляет небольшие накладные расходы.
+
+Если вам нужно оптимизировать производительность и эти interrupt-функции не требуются, вы можете глобально отключить такую проверку, вызвав метод `withoutInterruptionPolling` фасада `Queue`. Обычно это следует делать в методе `boot` вашего `AppServiceProvider`:
+
+```php
+use Illuminate\Support\Facades\Queue;
+
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Queue::withoutInterruptionPolling();
+}
+```
+
+Либо можно отключить polling перезапуска или приостановки отдельно, установив статические свойства `$restartable` или `$pausable` класса `Illuminate\Queue\Worker`:
+
+```php
+use Illuminate\Queue\Worker;
+
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Worker::$restartable = false;
+    Worker::$pausable = false;
+}
+```
+
+> [!WARNING]
+> Когда interruption polling отключен, workers не будут реагировать на команды `queue:restart` или `queue:pause` в зависимости от того, какие функции отключены.
 
 <a name="job-expirations-and-timeouts"></a>
 ### Истечение срока и тайм-ауты задания
@@ -2313,6 +2534,12 @@ php artisan queue:forget 91401d2c-0784-4f43-824c-34f94a33c24d
 
 ```shell
 php artisan queue:flush
+```
+
+Команда `queue:flush` удаляет все записи failed jobs из очереди, независимо от того, насколько давно задание завершилось ошибкой. Вы можете использовать опцию `--hours`, чтобы удалить только задания, которые завершились ошибкой указанное количество часов назад или раньше:
+
+```shell
+php artisan queue:flush --hours=48
 ```
 
 <a name="ignoring-missing-models"></a>
@@ -2709,6 +2936,30 @@ Bus::fake();
 Bus::assertBatched(function (PendingBatch $batch) {
     return $batch->name == 'import-csv' &&
         $batch->jobs->count() === 10;
+});
+```
+
+Метод `hasJobs` можно использовать на pending batch, чтобы проверить, что batch содержит ожидаемые задания. Метод принимает массив экземпляров заданий, имен классов или замыканий:
+
+```php
+Bus::assertBatched(function (PendingBatch $batch) {
+    return $batch->hasJobs([
+        new ProcessCsvRow(row: 1),
+        new ProcessCsvRow(row: 2),
+        new ProcessCsvRow(row: 3),
+    ]);
+});
+```
+
+При использовании замыканий они получат экземпляр задания. Ожидаемый тип задания будет выведен из type hint замыкания:
+
+```php
+Bus::assertBatched(function (PendingBatch $batch) {
+    return $batch->hasJobs([
+        fn (ProcessCsvRow $job) => $job->row === 1,
+        fn (ProcessCsvRow $job) => $job->row === 2,
+        fn (ProcessCsvRow $job) => $job->row === 3,
+    ]);
 });
 ```
 
