@@ -1,5 +1,5 @@
 ---
-git: 25faf886745a6ca2cf3fdfc02d33e991390d8a23
+git: 0a4a8f425eccb65b5776c9600f28b95963979747
 ---
 
 # Laravel Sail
@@ -16,12 +16,7 @@ Laravel Sail поддерживается в macOS, Linux и Windows (через
 <a name="installation"></a>
 ## Установка и настройка
 
-Laravel Sail автоматически устанавливается со всеми новыми приложениями Laravel, поэтому вы можете сразу же начать его использовать.
-
-<a name="installing-sail-into-existing-applications"></a>
-### Установка Sail в существующее приложение
-
-Если вы хотите использовать Sail в уже существующем приложении Laravel, вы можете просто установить Sail с помощью диспетчера пакетов Composer:
+Вы можете установить Sail с помощью диспетчера пакетов Composer:
 
 ```shell
 composer require laravel/sail --dev
@@ -199,7 +194,7 @@ sail yarn
 <a name="mongodb"></a>
 ### MongoDB
 
-Если вы решили установить службу [MongoDB](https://www.mongodb.com/) при установке Sail, файл `compose.yaml` вашего приложения содержит запись для [MongoDB Atlas Local](https:/ /www.mongodb.com/docs/atlas/cli/current/atlas-cli-local-cloud/), который предоставляет базе данных документов MongoDB такие функции Atlas, как [индексированный поиск] (https://www.mongodb.com/docs/atlas/atlas-search/). Этот контейнер использует [том Docker](https://docs.docker.com/storage/volumes/), поэтому данные, хранящиеся в вашей базе данных, сохраняются даже при остановке и перезапуске ваших контейнеров.
+Если вы решили установить службу [MongoDB](https://www.mongodb.com/) при установке Sail, файл `compose.yaml` вашего приложения содержит запись для [MongoDB Atlas Local](https://www.mongodb.com/docs/atlas/cli/current/atlas-cli-local-cloud/), который предоставляет документной базе данных MongoDB такие функции Atlas, как [индексированный поиск](https://www.mongodb.com/docs/atlas/atlas-search/). Этот контейнер использует [том Docker](https://docs.docker.com/storage/volumes/), поэтому данные, хранящиеся в вашей базе данных, сохраняются даже при остановке и перезапуске ваших контейнеров.
 
 После запуска контейнеров вы можете подключиться к экземпляру MongoDB в своем приложении, установив для переменной среды `MONGODB_URI` в файле `.env` вашего приложения значение `mongodb://mongodb:27017`. По умолчанию аутентификация отключена, но вы можете установить переменные среды `MONGODB_USERNAME` и `MONGODB_PASSWORD`, чтобы включить аутентификацию перед запуском контейнера `mongodb`. Затем добавьте учетные данные в строку подключения:
 
@@ -404,10 +399,24 @@ sail build --no-cache
 sail up
 ```
 
+<a name="sail-php-extensions"></a>
+### Дополнительные расширения PHP
+
+Образы среды выполнения Sail включают распространенный набор расширений PHP. Если вашему приложению требуются дополнительные расширения, вы можете установить их при сборке образа, добавив аргумент сборки `PHP_EXTENSIONS` со значениями, разделенными пробелами, в сервис `laravel.test` файла `compose.yaml` вашего приложения:
+
+```yaml
+build:
+    args:
+        WWWGROUP: '${WWWGROUP}'
+        PHP_EXTENSIONS: 'gmp imagick'
+```
+
+После обновления файла `compose.yaml` вашего приложения следует пересобрать образы контейнеров.
+
 <a name="sail-node-versions"></a>
 ## Версии Node
 
-Sail по умолчанию устанавливает Node 22. Чтобы изменить версию Node, установленную при создании образов, вы можете обновить `build.args` в файле `compose.yaml` в определении сервиса `laravel.test` вашего приложения:
+Sail по умолчанию устанавливает Node 24. Чтобы изменить версию Node, установленную при создании образов, вы можете обновить `build.args` в файле `compose.yaml` в определении сервиса `laravel.test` вашего приложения:
 
 ```yaml
 build:

@@ -1,5 +1,5 @@
 ---
-git: 4711785bc0c5f3be06ec6cd803e8fd2deb3938a2
+git: 8152449340ebbed088ea7fd5e41d0b38ad055f2a
 ---
 
 # Консоль Artisan
@@ -102,7 +102,7 @@ php artisan make:command SendEmails
 <a name="command-structure"></a>
 ### Структура команды
 
-После создания команды следует заполнить свойства класса `$signature` и `$description`. Эти свойства будут отображаться на экране при использовании команды `list`. Свойство `$signature` также позволяет [определять вводимые данные](#defining-input-expectations). Метод `handle` будет вызываться при выполнении команды. Вы можете разместить логику команды в этом методе.
+После создания команды следует определить сигнатуру и описание команды с помощью атрибутов `Signature` и `Description`. Атрибут `Signature` также позволяет [определять вводимые данные](#defining-input-expectations). Метод `handle` будет вызываться при выполнении команды. Вы можете разместить логику команды в этом методе.
 
 Давайте рассмотрим пример команды. Обратите внимание, что мы можем запросить любые необходимые зависимости в методе `handle` команды. [Контейнер служб](/docs/{{version}}/container) Laravel автоматически внедрит все зависимости, типы которых объявлены в этом методе:
 
@@ -113,24 +113,14 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Support\DripEmailer;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
+#[Signature('mail:send {user}')]
+#[Description('Отправка маркетингового электронного письма пользователю')]
 class SendEmails extends Command
 {
-    /**
-     * Имя и сигнатура консольной команды.
-     *
-     * @var string
-     */
-    protected $signature = 'mail:send {user}';
-
-    /**
-     * Описание консольной команды.
-     *
-     * @var string
-     */
-    protected $description = 'Отправка маркетингового электронного письма пользователю';
-
     /**
      * Выполнить консольную команду.
      */

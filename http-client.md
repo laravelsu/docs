@@ -1,5 +1,5 @@
 ---
-git: 21748912671c7cf141bdab3b285891bbb5f7d980
+git: 84c5f7f9698007e125e86ddc0140865e8f0a7188
 ---
 
 # HTTP-клиент
@@ -73,7 +73,7 @@ HTTP-клиент также позволяет вам формировать UR
 Http::withUrlParameters([
     'endpoint' => 'https://laravel.com',
     'page' => 'docs',
-    'version' => '12.x',
+    'version' => '13.x',
     'topic' => 'validation',
 ])->get('{+endpoint}/{page}/{version}/{topic}');
 ```
@@ -358,6 +358,12 @@ $response->throwIfStatus(403);
 
 // Выбросить исключение, если только ответ не содержит определенного кода состояния...
 $response->throwUnlessStatus(200);
+
+// Выбросить исключение, если произошла серверная ошибка (status >500)...
+$response->throwIfServerError();
+
+// Выбросить исключение, если произошла клиентская ошибка (status >400 and <500)...
+$response->throwIfClientError();
 
 return $response['user']['id'];
 ```

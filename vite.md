@@ -1,5 +1,5 @@
 ---
-git: 5ed6df43dc618427bebcb1454f2d0107fc2a5ed6
+git: cf92ea52b02f807aaa574c0a4caddf43b012301b
 ---
 
 # Сборка ресурсов (Vite)
@@ -445,6 +445,127 @@ composer run dev
 
 CSS вашего приложения может быть размещен в файле `resources/css/app.css`.
 
+<a name="working-with-fonts"></a>
+## Работа со шрифтами
+
+Плагин Laravel Vite может обслуживать оптимизированные, локально размещенные шрифты для вашего приложения. Когда шрифты настроены, плагин разрешает запрошенные файлы шрифтов, публикует их как ресурсы Vite, генерирует CSS шрифтов и записывает манифест шрифтов, который может использоваться Blade-директивой [`@fonts`](/docs/{{version}}/blade#fonts).
+
+Чтобы настроить шрифты, импортируйте одну или несколько вспомогательных функций провайдеров из `laravel-vite-plugin/fonts` и добавьте их в опцию `fonts` плагина Laravel:
+
+```js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import { google } from 'laravel-vite-plugin/fonts';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: 'resources/js/app.js',
+            fonts: [
+                google('Inter', {
+                    alias: 'sans',
+                    weights: [400, 500, 600, 700],
+                    styles: ['normal', 'italic'],
+                    subsets: ['latin'],
+                    display: 'swap',
+                    preload: [
+                        { weight: 400 },
+                        { weight: 700 },
+                    ],
+                    fallbacks: ['system-ui', 'sans-serif'],
+                }),
+            ],
+        }),
+    ],
+});
+```
+
+В этом примере шрифт `Inter` будет доступен через псевдоним `sans`. Плагин сгенерирует CSS-переменную `--font-sans` и служебный класс `.font-sans`, применяющий сгенерированный стек шрифтов.
+
+<a name="font-providers"></a>
+### Провайдеры шрифтов
+
+Плагин Laravel Vite включает вспомогательные функции провайдеров для Google Fonts, Bunny Fonts, Fontsource и локальных шрифтов:
+
+```js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import { bunny, fontsource, google, local } from 'laravel-vite-plugin/fonts';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: 'resources/js/app.js',
+            fonts: [
+                google('Inter', { alias: 'sans' }),
+                bunny('Figtree', { alias: 'body' }),
+                fontsource('JetBrains Mono', { alias: 'mono' }),
+                local('Brand Sans', {
+                    alias: 'brand',
+                    src: 'resources/fonts/brand-sans',
+                }),
+            ],
+        }),
+    ],
+});
+```
+
+Провайдер `fontsource` читает шрифты из установленного пакета Fontsource. По умолчанию имя пакета определяется из семейства шрифтов, например `@fontsource/jetbrains-mono`. Если ваше приложение использует другое имя пакета, вы можете указать его с помощью опции `package`.
+
+<a name="local-fonts"></a>
+### Локальные шрифты
+
+При использовании локальных шрифтов опция `src` может указывать на один файл шрифта, каталог или glob-шаблон. Плагин обнаружит поддерживаемые файлы шрифтов и определит их weight и style по именам файлов:
+
+```js
+local('Brand Sans', {
+    alias: 'brand',
+    src: 'resources/fonts/brand-sans/*.woff2',
+})
+```
+
+Если вам нужен полный контроль над доступными вариантами, вы можете явно определить их с помощью опции `variants`:
+
+```js
+local('Brand Sans', {
+    alias: 'brand',
+    variants: [
+        { src: 'resources/fonts/BrandSans-Regular.woff2', weight: 400 },
+        { src: 'resources/fonts/BrandSans-Italic.woff2', weight: 400, style: 'italic' },
+        { src: ['resources/fonts/BrandSans-Bold.woff2', 'resources/fonts/BrandSans-Bold.ttf'], weight: 700 },
+    ],
+})
+```
+
+<a name="font-options"></a>
+### Опции шрифтов
+
+В зависимости от провайдера определения шрифтов могут принимать несколько опций, позволяющих настраивать сгенерированный CSS шрифтов:
+
+<div class="content-list" markdown="1">
+
+- `alias` определяет имя, используемое Blade-директивой `@fonts`, и по умолчанию равно slug семейства шрифтов.
+- `variable` определяет сгенерированную CSS-переменную и по умолчанию равно `--font-{alias}`.
+- `weights` определяет насыщенности удаленного или Fontsource-шрифта, которые должны быть разрешены, и по умолчанию равно `[400]`.
+- `styles` определяет стили удаленного или Fontsource-шрифта, которые должны быть разрешены, и по умолчанию равно `['normal']`.
+- `subsets` определяет подмножества удаленного или Fontsource-шрифта, которые должны быть разрешены, и по умолчанию равно `['latin']`.
+- `display` определяет значение `font-display` и по умолчанию равно `swap`.
+- `preload` управляет тем, какие варианты шрифта WOFF2 должны быть предварительно загружены. Эта опция может быть `true`, `false` или массивом селекторов `{ weight, style }`.
+- `fallbacks` определяет дополнительные резервные шрифты, которые должны быть добавлены к сгенерированному стеку шрифтов.
+- `optimizedFallbacks` пытается сгенерировать резервные объявления `@font-face` с корректировкой метрик с помощью необязательного пакета `fontaine` и по умолчанию равно `true`.
+
+</div>
+
+Оптимизированные резервные шрифты требуют пакет `fontaine`, который не установлен по умолчанию. Если вы хотите, чтобы Laravel генерировал резервные объявления `@font-face` с корректировкой метрик, установите `fontaine` как зависимость разработки:
+
+```shell
+npm install --save-dev fontaine
+```
+
+Если `fontaine` не установлен или не может прочитать файл шрифта, Laravel пропустит оптимизированный резервный шрифт для этого шрифта и продолжит использовать шрифты, настроенные через опцию `fallbacks`.
+
+Локальные шрифты разрешаются из опций `src` или `variants`, описанных выше, вместо использования `weights`, `styles` и `subsets`.
+
 <a name="working-with-blade-and-routes"></a>
 ## Работа с Blade и маршрутами
 
@@ -453,13 +574,15 @@ CSS вашего приложения может быть размещен в ф
 
 При ссылке на ресурсы в вашем JavaScript или CSS, Vite автоматически обрабатывает и версионирует их. Кроме того, при построении приложений на основе Blade, Vite также может обрабатывать и версионировать статические ресурсы, на которые вы ссылаетесь исключительно в шаблонах Blade.
 
-Однако для этого необходимо осведомить Vite о ваших ресурсах, импортировав статические ресурсы в точку входа вашего приложения. Например, если вы хотите обработать и версионировать все изображения, хранящиеся в `resources/images`, и все шрифты, хранящиеся в `resources/fonts`, вам следует добавить следующее в точку входа вашего приложения `resources/js/app.js`:
+Однако для этого нужно сообщить Vite о ваших ресурсах, указав их в опции `assets` плагина. Эта опция предназначена для статических файлов, на которые вы хотите ссылаться напрямую через `Vite::asset`. Если вы хотите, чтобы Laravel генерировал CSS шрифтов и ссылки предварительной загрузки, используйте вместо этого [опцию `fonts`](#working-with-fonts).
+
+Например, если вы хотите обработать и версионировать все изображения, хранящиеся в `resources/images`, и все шрифты, хранящиеся в `resources/fonts`, добавьте следующее в конфигурацию Vite:
 
 ```js
-import.meta.glob([
-  '../images/**',
-  '../fonts/**',
-]);
+laravel({
+    input: 'resources/js/app.js',
+    assets: ['resources/images/**', 'resources/fonts/**'],
+})
 ```
 
 Теперь эти ресурсы будут обрабатываться Vite при запуске `npm run build`. Затем вы можете ссылаться на эти ресурсы в шаблонах Blade, используя метод `Vite::asset`, который вернет пронумерованный URL для указанного ресурса:
@@ -467,6 +590,9 @@ import.meta.glob([
 ```blade
 <img src="{{ Vite::asset('resources/images/logo.png') }}">
 ```
+
+> [!NOTE]
+> До версии 3 плагина Laravel Vite статические ресурсы нужно было импортировать в точку входа приложения с помощью `import.meta.glob`. Опция `assets` была добавлена из-за изменений в Vite 8.
 
 <a name="blade-refreshing-on-save"></a>
 ### Обновление при сохранении

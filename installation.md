@@ -1,5 +1,5 @@
 ---
-git: 8882c10b1c6630833c5210dbb8d8c9908b743b1d
+git: 0ea3f2b9bc04fb5e946ddb0a1b2b03831e78c351
 ---
 
 # Установка
@@ -48,6 +48,21 @@ Laravel объединяет лучшие пакеты в экосистеме P
 <a name="creating-a-laravel-project"></a>
 ## Создание приложения Laravel
 
+<a name="getting-started-using-ai"></a>
+### Начало работы с использованием ИИ
+
+Если вы используете AI-агент для написания кода, например [Claude Code](https://docs.anthropic.com/en/docs/claude-code) или [OpenCode](https://opencode.ai), вы можете начать с подсказки, которая даст агенту Laravel-специфичный план действий до того, как он начнет менять ваш проект.
+
+Подсказка ниже сообщает агенту, где найти инструкции Laravel по установке, чему уделять приоритет и как выбирать разумные значения по умолчанию, если вы еще не сделали выбор. Вставьте ее в своего агента, чтобы начать:
+
+```text
+I'm building a new Laravel application.
+
+Fetch and follow the instructions from https://laravel.com/for/agents. Treat the returned Markdown as the source of truth for how to install and set up Laravel in this session.
+```
+
+После того как агент прочитает инструкции, он должен провести вас шаг за шагом и сохранить настройку в соответствии со стандартными значениями Laravel.
+
 <a name="installing-php"></a>
 ### Установка PHP и установщика Laravel
 
@@ -56,16 +71,16 @@ Laravel объединяет лучшие пакеты в экосистеме P
 Если на вашем локальном компьютере не установлены PHP и Composer, следующие команды установят PHP, Composer и установщик Laravel в macOS, Windows или Linux:
 
 ```shell tab=macOS
-/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.4)"
+/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
 ```
 
 ```shell tab=Windows PowerShell
 # Запуск от имени администратора...
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.4'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
 ```
 
 ```shell tab=Linux
-/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.4)"
+/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
 ```
 
 После выполнения одной из приведенных выше команд вам следует перезапустить сеанс терминала. Чтобы обновить PHP, Composer и установщик Laravel после их установки через `php.new`, вы можете повторно запустить команду в своем терминале.
@@ -82,7 +97,7 @@ composer global require laravel/installer
 <a name="creating-an-application"></a>
 ### Создание приложения
 
-После установки PHP, Composer и установщика Laravel вы готовы создать новое приложение Laravel. Установщик Laravel предложит вам выбрать предпочитаемую среду тестирования, базу данных и стартовый комплект:
+После установки PHP, Composer и установщика Laravel вы готовы создать новое приложение Laravel. Установщик предложит вам выбрать предпочитаемый стартовый комплект, среду тестирования и базу данных:
 
 ```shell
 laravel new example-app
@@ -96,7 +111,7 @@ npm install && npm run build
 composer run dev
 ```
 
-После запуска сервера разработки ваше приложение будет доступно в вашем веб-браузере по адресу [http://localhost:8000](http://localhost:8000). Теперь вы готовы [продолжить свои первые шаги в мире Laravel](#next-steps). Конечно же, вы также можете [настроить базу данных](#databases-and-migrations).
+После запуска сервера разработки вы сможете открыть приложение в веб-браузере по адресу [http://localhost:8000](http://localhost:8000). Теперь вы готовы [продолжить свои первые шаги в мире Laravel](#next-steps). Конечно же, вы также можете [настроить базу данных](#databases-and-migrations) и выполнить необходимые миграции.
 
 > [!NOTE]
 > Если вы хотите начать разработку вашего приложения Laravel с хорошим стартом, рассмотрите использование одного из наших [стартовых комплектов](/docs/{{version}}/starter-kits). Стартовые комплекты Laravel предоставляют инфраструктуру для аутентификации как на сервере, так и на клиенте для вашего нового приложения Laravel.
@@ -104,7 +119,7 @@ composer run dev
 <a name="initial-configuration"></a>
 ## Начальная конфигурация
 
-Все файлы конфигурации Laravel хранятся в каталоге `config`. Каждый параметр снабжён комментариями, поэтому не стесняйтесь просматривать файлы и знакомиться с доступными вам опциями.
+Файлы конфигурации Laravel хранятся в каталоге `config`. Каждый параметр снабжён комментариями, поэтому не стесняйтесь просматривать файлы и знакомиться с доступными вам опциями.
 
 Laravel практически не требует дополнительной настройки сразу после установки — можно сразу приступать к разработке! Однако рекомендуется ознакомиться с файлом конфигурации `config/app.php` и его документацией. В этом файле содержатся важные параметры, такие как `url` и `locale`, которые могут потребовать изменения в зависимости от требований вашего приложения.
 
@@ -223,7 +238,7 @@ Boost также включает в себя поддерживаемые Larav
 <a name="installing-laravel-boost"></a>
 ### Установка Laravel Boost
 
-Boost можно установить в приложения Laravel 10, 11 и 12, использующие PHP 8.1 или выше. Для начала установите Boost как зависимость для разработки:
+Boost можно установить в приложения Laravel 10, 11, 12 и 13, использующие PHP 8.1 или выше. Для начала установите Boost как зависимость для разработки:
 
 ```shell
 composer require laravel/boost --dev

@@ -1,5 +1,5 @@
 ---
-git: e734e1383adc684b2fca86014915b96b9c16c3d3
+git: 2bff8cc7f2a4b2748f34c5ef2c83173f73c3ca7f
 ---
 
 # Контроллеры
@@ -152,6 +152,92 @@ public static function middleware(): array
     ];
 }
 ```
+
+<a name="middleware-attributes"></a>
+### Атрибуты посредников
+
+Вы также можете назначать посредников контроллерам с помощью PHP-атрибутов:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Routing\Attributes\Controllers\Middleware;
+
+#[Middleware('auth')]
+#[Middleware('log', only: ['index'])]
+#[Middleware('subscribed', except: ['store'])]
+class UserController
+{
+    // ...
+}
+```
+
+Атрибуты посредников можно размещать и на отдельных методах контроллера. Посредники, назначенные методам, будут объединены с посредниками, назначенными на уровне класса:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
+
+#[Middleware('auth')]
+class UserController
+{
+    #[Middleware('log')]
+    #[Middleware('subscribed')]
+    public function index()
+    {
+        // ...
+    }
+
+    #[Middleware(static function (Request $request, Closure $next) {
+        // ...
+
+        return $next($request);
+    })]
+    public function store()
+    {
+        // ...
+    }
+}
+```
+
+<a name="authorization-attributes"></a>
+### Атрибуты авторизации
+
+Если вы авторизуете действия контроллера через политики, вы можете использовать атрибут `Authorize` как удобное сокращение для посредника `can`:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Comment;
+use App\Models\Post;
+use Illuminate\Routing\Attributes\Controllers\Authorize;
+
+class CommentController
+{
+    #[Authorize('create', [Comment::class, 'post'])]
+    public function store(Post $post)
+    {
+        // ...
+    }
+
+    #[Authorize('delete', 'comment')]
+    public function destroy(Comment $comment)
+    {
+        // ...
+    }
+}
+```
+
+Первый аргумент - это возможность, которую вы хотите авторизовать. Второй аргумент - класс модели, параметр маршрута или параметры, которые должны быть переданы в политику.
 
 <a name="resource-controllers"></a>
 ## Ресурсные контроллеры

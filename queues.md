@@ -1,5 +1,5 @@
 ---
-git: 00b62b1b29bf1e2b7d39734efd5355e095ade837
+git: f3703da6c13a41336515e7875070b25747546b5e
 ---
 
 # Очереди
@@ -97,6 +97,35 @@ php artisan migrate
 
 > [!WARNING]
 > Установка для `block_for` значения `0` заставит обработчиков очереди блокироваться на неопределенный срок, пока задание не станет доступным. Это также предотвратит обработку таких сигналов, как `SIGTERM`, до тех пор, пока не будет обработано следующее задание.
+
+<a name="sqs-overflow-storage"></a>
+#### SQS overflow storage
+
+Amazon SQS ограничивает максимальный размер payload сообщения в очереди. Если вам нужно dispatch jobs с payload, который может превысить этот лимит, Laravel можно настроить так, чтобы слишком большие SQS payloads сохранялись в cache store, а через SQS отправлялся указатель на них. Чтобы включить эту возможность, добавьте массив `overflow` в конфигурацию SQS queue connection:
+
+```php
+'sqs' => [
+    'driver' => 'sqs',
+    'key' => env('AWS_ACCESS_KEY_ID'),
+    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    'prefix' => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
+    'queue' => env('SQS_QUEUE', 'default'),
+    'suffix' => env('SQS_SUFFIX'),
+    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    'after_commit' => false,
+    'overflow' => [
+        'enabled' => env('SQS_OVERFLOW_ENABLED', false),
+        'store' => env('SQS_OVERFLOW_STORE'),
+        'always' => false,
+        'delete_after_processing' => true,
+        'flush_on_clear' => env('SQS_OVERFLOW_FLUSH_ON_CLEAR', false),
+    ],
+],
+```
+
+Когда overflow storage включен, Laravel будет сохранять payloads размером не менее 1 MB в настроенном cache store. Если опция `always` равна `true`, каждый SQS payload будет сохраняться в cache store независимо от размера. Поскольку queued jobs должны будут получать свои payloads из cache store при обработке, выбирайте store, который сможет хранить payloads до момента обработки workers. По умолчанию сохраненные payloads удаляются после успешной обработки jobs и удаления из SQS.
+
+Если опция `flush_on_clear` равна `true`, настроенный overflow cache store будет очищен, когда команда `queue:clear` очищает SQS queue. Так как очистка cache store может удалить все элементы из этого store, при включении этой опции для SQS overflow storage следует настроить отдельный cache store.
 
 <a name="other-driver-prerequisites"></a>
 #### Дополнительные зависимости драйверов
@@ -207,6 +236,12 @@ public function __construct(
 }
 ```
 
+Если нужно удалить только определенные отношения, сохранив остальные, можно использовать метод `withoutRelation`:
+
+```php
+$this->podcast = $podcast->withoutRelation('comments');
+```
+
 Если вы используете [свойства конструктора PHP](https://www.php.net/manual/en/language.oop5.decon.php#language.oop5.decon.constructor.promotion) и хотите указать, что модель Eloquent не должна сериализовать свои отношения, вы можете использовать атрибут `withoutRelations`:
 
 ```php
@@ -273,7 +308,7 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
 
 В приведенном выше примере задание `UpdateSearchIndex` уникально. Таким образом, задание не будет отправлено, если другой экземпляр задания уже находится в очереди и еще не завершил обработку.
 
-В некоторых случаях вам может потребоваться определить конкретный «ключ», делающий задание уникальным, или вы можете указать тайм-аут, по истечении которого задание больше не считается уникальным. Для этого вы можете определить свойства или методы `uniqueId` и `uniqueFor` в своем классе задания:
+В некоторых случаях вам может потребоваться определить конкретный «ключ», делающий задание уникальным, или указать тайм-аут, по истечении которого задание больше не считается уникальным. Для этого используйте атрибут `UniqueFor` и определите метод `uniqueId` в классе задания:
 
 ```php
 <?php
@@ -282,7 +317,9 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Queue\Attributes\UniqueFor;
 
+#[UniqueFor(3600)]
 class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
 {
     /**
@@ -291,13 +328,6 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
      * @var \App\Models\Product
      */
     public $product;
-
-    /**
-     * Количество секунд, по истечении которых уникальная блокировка задания будет снята.
-     *
-     * @var int
-     */
-    public $uniqueFor = 3600;
 
     /**
      * Получить уникальный идентификатор задания.
@@ -356,6 +386,76 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
 
 > [!NOTE]
 > Если вам нужно ограничить только параллельную обработку задания, используйте вместо этого посредник [WithoutOverlapping](#preventing-job-overlaps).
+
+<a name="debounced-jobs"></a>
+### Debounced jobs
+
+Иногда нужно гарантировать, что при многократном dispatch одного и того же job за короткий промежуток времени фактически выполнится только последний dispatch. Для этого добавьте к job атрибут `DebounceFor`:
+
+```php
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\DebounceFor;
+
+#[DebounceFor(30)]
+class UpdateSearchIndex implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Создать новый экземпляр задания.
+     */
+    public function __construct(public int $productId)
+    {
+    }
+
+    /**
+     * Получить debounce ID для задания.
+     */
+    public function debounceId(): string
+    {
+        return (string) $this->productId;
+    }
+}
+```
+
+В примере выше повторный dispatch `UpdateSearchIndex` для того же продукта в течение `30` секунд будет debounced так, что выполнится только последний dispatch.
+
+Если нужно ограничить максимальное время, на которое часто повторно отправляемый job может откладываться, передайте аргумент `maxWait` в атрибут `DebounceFor`:
+
+```php
+#[DebounceFor(30, maxWait: 120)]
+class UpdateSearchIndex implements ShouldQueue
+{
+    use Queueable;
+
+    // ...
+}
+```
+
+Cache store, используемый для debounce tracking, можно настроить, определив метод `debounceVia` в job:
+
+```php
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Facades\Cache;
+
+public function debounceVia(): Repository
+{
+    return Cache::driver('redis');
+}
+```
+
+Если debounced job заменяется более новым dispatch, Laravel dispatch событие `Illuminate\Queue\Events\JobDebounced` и удалит замененный job из очереди.
+
+> [!WARNING]
+> Debounced jobs и unique jobs взаимоисключающие. Job, использующий атрибут `DebounceFor`, не должен реализовывать `ShouldBeUnique`.
+
+> [!WARNING]
+> Если ваше приложение dispatch debounced jobs с нескольких web servers или containers, убедитесь, что все серверы используют один и тот же центральный cache server.
 
 <a name="encrypted-jobs"></a>
 ### Шифрование заданий
@@ -502,7 +602,7 @@ public function middleware(): array
 }
 ```
 
-Возвращение задания с ограниченной частотой обратно в очередь все равно увеличит общее количество «попыток» (`attempts`) задания. Возможно, вы захотите соответствующим образом настроить свойства `tries` и `maxExceptions` в своем классе задания. Или вы можете использовать метод [retryUntil](#time-based-attempts), чтобы определить время, по истечению которого попыток выполнения задания больше не будет.
+Возвращение задания с ограниченной частотой обратно в очередь все равно увеличит общее количество «попыток» (`attempts`) задания. Возможно, вы захотите соответствующим образом настроить атрибуты `Tries` и `MaxExceptions` в своем классе задания. Или вы можете использовать метод [retryUntil](#time-based-attempts), чтобы определить время, по истечению которого попыток выполнения задания больше не будет.
 
 Используя метод `releaseAfter`, вы также можете указать количество секунд, которое должно пройти до повторной попытки выполнения завершенного задания:
 
@@ -576,7 +676,7 @@ public function middleware(): array
 }
 ```
 
-Возвращение перекрывающегося задания в очередь по-прежнему увеличит общее количество попыток выполнения задания. Вы можете соответствующим образом настроить свойства `tries` и `maxExceptions` в классе задания. Например, если оставить свойство `tries` равным 1 по умолчанию, это предотвратит повторные попытки выполнения перекрывающегося задания в будущем.
+Возвращение перекрывающегося задания в очередь по-прежнему увеличит общее количество попыток выполнения задания. Вы можете соответствующим образом настроить атрибуты `Tries` и `MaxExceptions` в классе задания. Например, если оставить `Tries` равным 1 по умолчанию, это предотвратит повторные попытки выполнения перекрывающегося задания в будущем.
 
 Любые перекрывающиеся задания одного и того же типа будут возвращены в очередь. Можно также указать время в секундах, которое должно пройти до повторной попытки возвращенного задания:
 
@@ -592,7 +692,7 @@ public function middleware(): array
 }
 ```
 
-Если вы хотите немедленно удалить все перекрывающиеся задания, чтобы они не повторялись, вы можете использовать метод `dоntRelease`:
+Если вы хотите немедленно удалить все перекрывающиеся задания, чтобы они не повторялись, вы можете использовать метод `dontRelease`:
 
 ```php
 /**
@@ -701,6 +801,28 @@ use Illuminate\Queue\Middleware\ThrottlesExceptions;
 public function middleware(): array
 {
     return [(new ThrottlesExceptions(10, 5 * 60))->backoff(5)];
+}
+```
+
+Метод `backoff` также принимает closure, который получает выброшенное exception, позволяя определять задержку динамически:
+
+```php
+use App\Exceptions\RateLimitedException;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
+use Throwable;
+
+/**
+ * Получить middleware, через которое должно пройти задание.
+ *
+ * @return array<int, object>
+ */
+public function middleware(): array
+{
+    return [(new ThrottlesExceptions(10, 5 * 60))->backoff(
+        fn (Throwable $throwable) => $throwable instanceof RateLimitedException
+            ? $throwable->retryAfterMinutes()
+            : 5
+    )];
 }
 ```
 
@@ -971,6 +1093,58 @@ RecordDelivery::dispatch($order)->onConnection('deferred');
 RecordDelivery::dispatch($order)->onConnection('background');
 ```
 
+<a name="bulk-dispatching"></a>
+### Bulk dispatching
+
+Если нужно dispatch сразу много независимых jobs и вам не нужны [batch](#job-batching) tracking или callbacks, используйте метод `bulk` facade `Bus`. Laravel сгруппирует jobs по настроенным queue connection и queue name и отправит каждую группу в соответствующую queue bulk-операцией:
+
+```php
+use App\Jobs\ProcessUser;
+use Illuminate\Support\Facades\Bus;
+
+Bus::bulk(
+    $users->map(fn ($user) => new ProcessUser($user))
+);
+```
+
+<a name="preparing-jobs-before-dispatch"></a>
+### Подготовка jobs перед dispatch
+
+Если job должен подготовить или проверить свое состояние перед тем, как попасть в queue, он может реализовать interface `Illuminate\Contracts\Queue\PreparesForDispatch`. Laravel вызовет метод `prepareForDispatch` у job перед dispatch. Если этот метод возвращает `false`, job не будет отправлен:
+
+```php
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Contracts\Queue\PreparesForDispatch;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Cache;
+
+class SyncPodcasts implements PreparesForDispatch, ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Создать новый экземпляр задания.
+     */
+    public function __construct(
+        public array $podcastIds,
+    ) {}
+
+    /**
+     * Подготовить job перед dispatch.
+     */
+    public function prepareForDispatch(): bool
+    {
+        return collect($this->podcastIds)
+            ->reject(fn (int $id) => Cache::has("podcast-syncing:{$id}"))
+            ->isNotEmpty();
+    }
+}
+```
+
 <a name="jobs-and-database-transactions"></a>
 ### Задания и транзакции базы данных
 
@@ -1223,6 +1397,49 @@ class ProcessPodcast implements ShouldQueue
 }
 ```
 
+<a name="queue-routing"></a>
+#### Queue routing
+
+Метод `route` facade `Queue` позволяет задать connection и queue по умолчанию для конкретных job classes. Это полезно, когда вы хотите гарантировать, что определенные jobs всегда используют конкретные queues без необходимости указывать connection или queue на самом job.
+
+Помимо конкретных job classes, в метод `route` можно передать interface, trait или parent class. В этом случае любой job, который реализует interface, использует trait или наследует parent class, будет автоматически использовать настроенные connection и queue.
+
+Обычно метод `route` вызывают в методе `boot` service provider:
+
+```php
+use App\Concerns\RequiresVideo;
+use App\Jobs\ProcessPodcast;
+use App\Jobs\ProcessVideo;
+use Illuminate\Support\Facades\Queue;
+
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Queue::route(ProcessPodcast::class, connection: 'redis', queue: 'podcasts');
+    Queue::route(RequiresVideo::class, queue: 'video');
+}
+```
+
+Если указать connection без queue, job будет отправлен в queue по умолчанию:
+
+```php
+Queue::route(ProcessPodcast::class, connection: 'redis');
+```
+
+Также можно route сразу несколько job classes, передав массив в метод `route`:
+
+```php
+Queue::route([
+    ProcessPodcast::class => ['podcasts', 'redis'], // Queue and connection
+    ProcessVideo::class => 'videos', // Queue only (uses default connection)
+]);
+```
+
+> [!NOTE]
+> Queue routing все еще может быть переопределен самим job для конкретного dispatch.
+
 <a name="max-job-attempts-and-timeout"></a>
 ### Указание максимального количества попыток задания / значений тайм-аута
 
@@ -1258,21 +1475,19 @@ php artisan queue:work --tries=3
 
 Если задание превышает максимальное количество попыток, то оно будет считаться «неудачным». Для получения дополнительной информации об обработке невыполненных заданий обратитесь к [документации по разбору неудачных заданий](#dealing-with-failed-jobs). Если указано `--tries=0` в команде `queue:work`, задание будет повторяться бесконечно.
 
-Вы можете применить более детальный подход, указав максимальное количество попыток выполнения задания для самого класса задания. Если для задания указано максимальное количество попыток, оно будет иметь приоритет над значением `--tries`, указанным в командной строке:
+Вы можете применить более детальный подход, указав максимальное количество попыток выполнения задания для самого класса задания с помощью атрибута `Tries`. Если для задания указано максимальное количество попыток, оно будет иметь приоритет над значением `--tries`, указанным в командной строке:
 
 ```php
 <?php
 
 namespace App\Jobs;
 
+use Illuminate\Queue\Attributes\Tries;
+
+#[Tries(5)]
 class ProcessPodcast implements ShouldQueue
 {
-    /**
-     * Количество попыток выполнения задания.
-     *
-     * @var int
-     */
-    public $tries = 5;
+    // ...
 }
 ```
 
@@ -1308,12 +1523,12 @@ public function retryUntil(): DateTime
 Если определены оба метода `retryUntil` и `tries`, Laravel отдает приоритет методу `retryUntil`.
 
 > [!NOTE]
-> Вы также можете определить свойство `$tries` или метод `retryUntil` в ваших [слушателях событий в очереди](/docs/{{version}}/events#queued-event-listeners) и [уведомлениях в очереди](/docs/{{version}}/notifications#queueing-notifications).
+> Вы также можете определить атрибут `Tries` или метод `retryUntil` в ваших [слушателях событий в очереди](/docs/{{version}}/events#queued-event-listeners) и [уведомлениях в очереди](/docs/{{version}}/notifications#queueing-notifications).
 
 <a name="max-exceptions"></a>
 #### Максимальное количество исключений
 
-Иногда вы можете указать, что задание может быть выполнено много раз, но должно завершиться ошибкой, если повторные попытки инициированы заданным количеством необработанных исключений (в отличие от отправки напрямую методом `release`). Для этого вы можете определить свойство `maxExceptions` в своем классе задания:
+Иногда вы можете указать, что задание может быть выполнено много раз, но должно завершиться ошибкой, если повторные попытки инициированы заданным количеством необработанных исключений (в отличие от отправки напрямую методом `release`). Для этого используйте атрибуты `Tries` и `MaxExceptions` в классе задания:
 
 ```php
 <?php
@@ -1322,25 +1537,15 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\MaxExceptions;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Support\Facades\Redis;
 
+#[Tries(25)]
+#[MaxExceptions(3)]
 class ProcessPodcast implements ShouldQueue
 {
     use Queueable;
-
-    /**
-     * Количество попыток выполнения задания.
-     *
-     * @var int
-     */
-    public $tries = 25;
-
-    /**
-     * Максимальное количество разрешенных необработанных исключений.
-     *
-     * @var int
-     */
-    public $maxExceptions = 3;
 
     /**
      * Выполнить задание.
@@ -1359,6 +1564,35 @@ class ProcessPodcast implements ShouldQueue
 
 В этом примере задание высвобождается на десять секунд, если приложение не может получить блокировку Redis, и будет продолжать повторяться до 25 раз. Однако задание завершится ошибкой, если оно вызовет три необработанных исключения.
 
+<a name="stopping-retries-by-exception"></a>
+#### Остановка retry по exception
+
+Иногда exception означает, что queued job должен сразу завершиться ошибкой, а не возвращаться для следующей попытки. Типы exceptions, которые должны останавливать retries, можно настроить с помощью метода `dontRetry` в файле `bootstrap/app.php` вашего приложения:
+
+```php
+use App\Exceptions\InvalidPodcastSourceException;
+use Illuminate\Foundation\Configuration\Exceptions;
+
+->withExceptions(function (Exceptions $exceptions): void {
+    $exceptions->dontRetry([
+        InvalidPodcastSourceException::class,
+    ]);
+})
+```
+
+Если нужен больший контроль над тем, когда retries должны остановиться, передайте closure в метод `dontRetryWhen`. Когда closure возвращает `true`, job будет помечен как failed и не будет retry:
+
+```php
+use App\Exceptions\PodcastProcessingException;
+use Illuminate\Foundation\Configuration\Exceptions;
+
+->withExceptions(function (Exceptions $exceptions): void {
+    $exceptions->dontRetryWhen(function (PodcastProcessingException $e) {
+        return $e->reason() === 'Subscription expired';
+    });
+})
+```
+
 <a name="timeout"></a>
 #### Таймаут
 
@@ -1372,21 +1606,19 @@ php artisan queue:work --timeout=30
 
 Если задание превышает максимальное количество попыток из-за постоянного тайм-аута, оно будет помечено как «неудачное».
 
-Вы также можете определить таймаут в самом классе задания. В этом случае это значение будет иметь приоритет над любым таймаутом, указанным в командной строке:
+Вы также можете определить максимальное количество секунд выполнения задания с помощью атрибута `Timeout` в классе задания. В этом случае это значение будет иметь приоритет над любым таймаутом, указанным в командной строке:
 
 ```php
 <?php
 
 namespace App\Jobs;
 
+use Illuminate\Queue\Attributes\Timeout;
+
+#[Timeout(120)]
 class ProcessPodcast implements ShouldQueue
 {
-    /**
-     * Количество секунд, в течение которых задание может выполняться до истечения тайм-аута.
-     *
-     * @var int
-     */
-    public $timeout = 120;
+    // ...
 }
 ```
 
@@ -1398,35 +1630,40 @@ class ProcessPodcast implements ShouldQueue
 <a name="failing-on-timeout"></a>
 #### Неудача заданий по таймауту
 
-Если вы хотите указать, что задание должно быть помечено как [failed](#dealing-with-failed-jobs) по истечении времени, вы можете определить свойство `$failOnTimeout` для класса задания:
+Если вы хотите указать, что задание должно быть помечено как [failed](#dealing-with-failed-jobs) по истечении времени, используйте атрибут `FailOnTimeout` в классе задания:
 
 ```php
-/**
- * Indicate if the job should be marked as failed on timeout.
- *
- * @var bool
- */
-public $failOnTimeout = true;
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Queue\Attributes\FailOnTimeout;
+
+#[FailOnTimeout]
+class ProcessPodcast implements ShouldQueue
+{
+    // ...
+}
 ```
 
 > [!NOTE]
 > По умолчанию при истечении времени выполнения задания оно тратит одну попытку и возвращается в очередь (если разрешены повторные попытки). Однако, если настроить задание на сбой по тайм-ауту, оно не будет повторно выполнено, независимо от количества попыток.
 
 <a name="sqs-fifo-and-fair-queues"></a>
-### SQS FIFO и fair queues
+### SQS FIFO и справедливые очереди
 
-Laravel поддерживает очереди [Amazon SQS FIFO (First-In-First-Out)](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fifo-queues.html), позволяя обрабатывать задания точно в порядке их отправки и обеспечивать обработку ровно один раз благодаря дедупликации сообщений.
+Laravel поддерживает [Amazon SQS FIFO (First-In-First-Out)](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fifo-queues.html) и [справедливые](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fair-queues.html) очереди. FIFO-очереди позволяют обрабатывать задания точно в порядке их отправки и обеспечивать обработку ровно один раз благодаря дедупликации сообщений.
 
-FIFO-очередям требуется message group ID, чтобы определить, какие задания можно обрабатывать параллельно. Задания с одинаковым group ID обрабатываются последовательно, а сообщения с разными group ID могут выполняться конкурентно.
+FIFO-очередям требуется ID группы сообщений, чтобы определить, какие задания можно обрабатывать параллельно. Задания с одинаковым ID группы обрабатываются последовательно, а сообщения с разными ID групп могут выполняться конкурентно.
 
-Laravel предоставляет fluent-метод `onGroup` для указания message group ID при отправке заданий:
+Laravel предоставляет fluent-метод `onGroup` для указания ID группы сообщений при отправке заданий:
 
 ```php
 ProcessOrder::dispatch($order)
     ->onGroup("customer-{$order->customer_id}");
 ```
 
-SQS FIFO поддерживает дедупликацию сообщений. Чтобы предоставить собственный deduplication ID, реализуйте метод `deduplicationId` в классе задания:
+SQS FIFO поддерживает дедупликацию сообщений. Чтобы предоставить собственный ID дедупликации, реализуйте метод `deduplicationId` в классе задания:
 
 ```php
 public function deduplicationId(): string
@@ -1435,12 +1672,43 @@ public function deduplicationId(): string
 }
 ```
 
+<a name="fair-queues"></a>
+#### Справедливые очереди
+
+Если вы используете стандартную очередь SQS, установка группы сообщений включает справедливую обработку очереди. Другими словами, после назначения групп SQS будет использовать их, чтобы поддерживать справедливую доставку между арендаторами / рабочими нагрузками. Дополнительная конфигурация Laravel не требуется.
+
+Вместо вызова `onGroup` при отправке можно определить метод `messageGroup` непосредственно в задании:
+
+```php
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+
+class ProcessOrder implements ShouldQueue
+{
+    use Queueable;
+
+    // ...
+
+    /**
+     * Получить группу сообщений задания.
+     */
+    public function messageGroup(): string
+    {
+        return "customer-{$this->order->customer_id}";
+    }
+}
+```
+
 <a name="fifo-listeners-mail-and-notifications"></a>
-#### FIFO listeners, mail и notifications
+#### FIFO-слушатели, почтовые сообщения и уведомления
 
-При использовании FIFO-очередей для queued listeners, mail и notifications также нужно определить message groups. Либо можно отправлять queued-экземпляры этих объектов в не FIFO-очередь.
+При использовании FIFO-очередей для слушателей, почтовых сообщений и уведомлений в очереди также нужно определить группы сообщений. Либо можно отправлять очередные экземпляры этих объектов в не FIFO-очередь.
 
-Чтобы определить message group для [queued event listener](/docs/{{version}}/events#queued-event-listeners), определите метод `messageGroup` в listener. При необходимости можно также определить метод `deduplicationId`:
+Чтобы определить группу сообщений для [слушателя событий в очереди](/docs/{{version}}/events#queued-event-listeners), определите метод `messageGroup` в слушателе. При необходимости можно также определить метод `deduplicationId`:
 
 ```php
 <?php
@@ -1452,7 +1720,7 @@ class SendShipmentNotification
     // ...
 
     /**
-     * Get the job's message group.
+     * Получить группу сообщений задания.
      */
     public function messageGroup(): string
     {
@@ -1602,14 +1870,14 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\Middleware\FailOnException;
 use Illuminate\Support\Facades\Http;
 
+#[Tries(3)]
 class SyncChatHistory implements ShouldQueue
 {
     use Queueable;
-
-    public $tries = 3;
 
     /**
      * Create a new job instance.
@@ -2282,6 +2550,64 @@ public function boot(): void
 > [!WARNING]
 > Когда interruption polling отключен, workers не будут реагировать на команды `queue:restart` или `queue:pause` в зависимости от того, какие функции отключены.
 
+<a name="reacting-to-worker-signals"></a>
+### Реакция на worker signals
+
+Когда queue worker получает termination signal вроде `SIGQUIT`, `SIGTERM` или `SIGINT` во время обработки job, worker завершит текущий job перед выходом. Однако самому job может потребоваться отреагировать на signal до остановки процесса вашим server или container orchestrator. Например, long-running import job может прекратить получать новые записи и сохранить текущий progress.
+
+Чтобы реагировать на worker signals внутри job, реализуйте interface `Illuminate\Contracts\Queue\Interruptible` и определите метод `interrupted` в job. Номер signal, полученный worker, будет передан в метод `interrupted`:
+
+```php
+<?php
+
+namespace App\Jobs;
+
+use App\Models\Import;
+use Illuminate\Contracts\Queue\Interruptible;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+
+class ImportProducts implements ShouldQueue, Interruptible
+{
+    use Queueable;
+
+    protected bool $shouldStop = false;
+
+    /**
+     * Создать новый экземпляр задания.
+     */
+    public function __construct(
+        public Import $import,
+    ) {}
+
+    /**
+     * Выполнить задание.
+     */
+    public function handle(): void
+    {
+        foreach ($this->import->pendingRows() as $row) {
+            if ($this->shouldStop) {
+                break;
+            }
+
+            // Import the product row...
+        }
+
+        $this->import->saveProgress();
+    }
+
+    /**
+     * Обработать signal, полученный queue worker.
+     */
+    public function interrupted(int $signal): void
+    {
+        $this->shouldStop = true;
+    }
+}
+```
+
+Метод `interrupted` вызывается только тогда, когда worker получает process signal во время выполнения job. Он не заменяет [timeouts](#worker-timeouts) или метод [`failed`](#cleaning-up-after-failed-jobs) job.
+
 <a name="job-expirations-and-timeouts"></a>
 ### Истечение срока и тайм-ауты задания
 
@@ -2379,7 +2705,7 @@ php artisan make:queue-failed-table
 php artisan migrate
 ```
 
-При запуске [обработчика очереди](#running-the-queue-worker) вы можете указать максимальное количество попыток выполнения задания, используя переключатель `--tries` команды `queue:work`. Если вы не укажете значение для параметра `--tries`, задания будут выполняться только один раз или столько раз, сколько указано в свойстве класса задания `$tries`:
+При запуске [обработчика очереди](#running-the-queue-worker) вы можете указать максимальное количество попыток выполнения задания, используя переключатель `--tries` команды `queue:work`. Если вы не укажете значение для параметра `--tries`, задания будут выполняться только один раз или столько раз, сколько указано в атрибуте `Tries` класса задания:
 
 ```shell
 php artisan queue:work redis --tries=3
@@ -2391,15 +2717,20 @@ php artisan queue:work redis --tries=3
 php artisan queue:work redis --tries=3 --backoff=3
 ```
 
-Если вы хотите настроить, сколько секунд Laravel должен ждать перед повторной попыткой выполнения каждого из заданий, для которого возникло исключение, вы можете сделать это, определив свойство `$backoff` в своем классе задания:
+Если вы хотите настроить, сколько секунд Laravel должен ждать перед повторной попыткой выполнения каждого из заданий, для которого возникло исключение, используйте атрибут `Backoff` в классе задания:
 
 ```php
-/**
- * Количество секунд ожидания перед повторной попыткой выполнения задания.
- *
- * @var int
- */
-public $backoff = 3;
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Queue\Attributes\Backoff;
+
+#[Backoff(3)]
+class ProcessPodcast implements ShouldQueue
+{
+    // ...
+}
 ```
 
 Если вам требуется более сложная логика для определения времени отсрочки выполнения задания, вы можете определить метод `backoff` для своего класса задания:
@@ -2414,17 +2745,19 @@ public function backoff(): int
 }
 ```
 
-Вы можете легко настроить «экспоненциальную» отсрочку, возвращая массив значений отсрочки из метода `backoff`. В этом примере задержка повторной попытки выполнения будет составлять 1 секунду для первой попытки, 5 секунд для второй попытки и 10 секунд для третьей попытки, и 10 секунд для каждой последующей повторной попытки, если осталось еще попыток:
+Вы можете легко настроить «экспоненциальную» отсрочку, определив массив значений backoff. В этом примере задержка retry будет составлять 1 секунду для первой попытки, 5 секунд для второй попытки и 10 секунд для третьей попытки, и 10 секунд для каждой последующей retry, если остались попытки:
 
 ```php
-/**
-* Рассчитать количество секунд ожидания перед повторной попыткой выполнения задания.
-*
-* @return array<int, int>
-*/
-public function backoff(): array
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Queue\Attributes\Backoff;
+
+#[Backoff([1, 5, 10])]
+class ProcessPodcast implements ShouldQueue
 {
-    return [1, 5, 10];
+    // ...
 }
 ```
 
@@ -2547,15 +2880,20 @@ php artisan queue:flush --hours=48
 
 При внедрении модели Eloquent в задание, модель автоматически сериализуется перед помещением в очередь и повторно извлекается из базы данных при обработке задания. Однако, если модель была удалена в то время, когда задание ожидало обработки, ваше задание может завершиться ошибкой с `ModelNotFoundException`.
 
-Для удобства вы можете выбрать автоматическое удаление заданий с отсутствующими моделями, установив для свойства задания `$deleteWhenMissingModels` значение `true`. Когда для этого свойства установлено значение `true`, Laravel отбрасывает задание, не вызывая исключения:
+Для удобства вы можете выбрать автоматическое удаление заданий с отсутствующими моделями с помощью атрибута `DeleteWhenMissingModels` в классе задания. Когда этот атрибут присутствует, Laravel отбрасывает задание, не вызывая исключения:
 
 ```php
-/**
- * Удалить задание, если модели больше не существуют.
- *
- * @var bool
- */
-public $deleteWhenMissingModels = true;
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
+
+#[DeleteWhenMissingModels]
+class ProcessPodcast implements ShouldQueue
+{
+    // ...
+}
 ```
 
 <a name="pruning-failed-jobs"></a>
@@ -2693,7 +3031,7 @@ public function boot(): void
     Event::listen(function (QueueBusy $event) {
         Notification::route('mail', 'dev@example.com')
             ->notify(new QueueHasLongWaitTime(
-                $event->connection,
+                $event->connectionName,
                 $event->queue,
                 $event->size
             ));
@@ -2725,6 +3063,9 @@ test('orders can be shipped', function () {
 
     // Assert a job was pushed to a given queue...
     Queue::assertPushedOn('queue-name', ShipOrder::class);
+
+    // Assert a job was pushed exactly once...
+    Queue::assertPushedOnce(ShipOrder::class);
 
     // Assert a job was pushed twice...
     Queue::assertPushed(ShipOrder::class, 2);
@@ -2766,6 +3107,9 @@ class ExampleTest extends TestCase
 
         // Assert a job was pushed to a given queue...
         Queue::assertPushedOn('queue-name', ShipOrder::class);
+
+        // Assert a job was pushed exactly once...
+        Queue::assertPushedOnce(ShipOrder::class);
 
         // Assert a job was pushed twice...
         Queue::assertPushed(ShipOrder::class, 2);
@@ -3067,5 +3411,18 @@ Queue::looping(function () {
     while (DB::transactionLevel() > 0) {
         DB::rollBack();
     }
+});
+```
+
+Laravel также dispatch событие `Illuminate\Queue\Events\WorkerIdle`, когда queue worker не может получить job из queue:
+
+```php
+use Illuminate\Queue\Events\WorkerIdle;
+use Illuminate\Support\Facades\Event;
+
+Event::listen(function (WorkerIdle $event) {
+    // $event->connectionName
+    // $event->queue
+    // $event->workerOptions
 });
 ```

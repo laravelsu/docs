@@ -1,5 +1,5 @@
 ---
-git: 09475b0c7d41d69841e8bbb2817f05a197d49bae
+git: 2de07ea1f93f5f7954df4f85d59d4f0148b87853
 ---
 
 # Тестирование · Тесты HTTP
@@ -588,6 +588,25 @@ class ExampleTest extends TestCase
 $response->assertJsonPath('team.owner.name', fn (string $name) => strlen($name) >= 3);
 ```
 
+Если вам нужно проверить несколько JSON-путей сразу, вы можете использовать метод `assertJsonPaths`. Ожидаемое значение для каждого пути также может быть замыканием:
+
+```php
+$response->assertJsonPaths([
+    'team.owner.name' => 'Darian',
+    'team.owner.email' => fn (string $email) => str($email)->is('*@laravel.com'),
+    'team.members.0.name' => 'Sally',
+]);
+```
+
+Вы можете использовать метод `assertJsonMissingPaths`, чтобы проверить, что несколько JSON-путей отсутствуют в ответе:
+
+```php
+$response->assertJsonMissingPaths([
+    'team.owner.password',
+    'team.members.0.api_token',
+]);
+```
+
 <a name="fluent-json-testing"></a>
 ### Последовательное тестирование JSON
 
@@ -1032,7 +1051,9 @@ class BasicTest extends TestCase
 - [assertJsonMissingExact](#assert-json-missing-exact)
 - [assertJsonMissingValidationErrors](#assert-json-missing-validation-errors)
 - [assertJsonPath](#assert-json-path)
+- [assertJsonPaths](#assert-json-paths)
 - [assertJsonMissingPath](#assert-json-missing-path)
+- [assertJsonMissingPaths](#assert-json-missing-paths)
 - [assertJsonStructure](#assert-json-structure)
 - [assertJsonValidationErrors](#assert-json-validation-errors)
 - [assertJsonValidationErrorFor](#assert-json-validation-error-for)
@@ -1069,6 +1090,7 @@ class BasicTest extends TestCase
 - [assertSessionHasNoErrors](#assert-session-has-no-errors)
 - [assertSessionDoesntHaveErrors](#assert-session-doesnt-have-errors)
 - [assertSessionMissing](#assert-session-missing)
+- [assertSessionMissingInput](#assert-session-missing-input)
 - [assertStatus](#assert-status)
 - [assertSuccessful](#assert-successful)
 - [assertTooManyRequests](#assert-too-many-requests)
@@ -1402,6 +1424,24 @@ $response->assertJsonPath($path, $expectedValue);
 $response->assertJsonPath('user.name', 'Steve Schoger');
 ```
 
+<a name="assert-json-paths"></a>
+#### assertJsonPaths
+
+Утверждает, что ответ содержит указанные данные по заданным путям:
+
+```php
+$response->assertJsonPaths(array $paths);
+```
+
+Например, вы можете одновременно проверить несколько значений в ответе:
+
+```php
+$response->assertJsonPaths([
+    'user.name' => 'Steve Schoger',
+    'user.email' => fn (string $email) => str($email)->endsWith('@laravel.com'),
+]);
+```
+
 <a name="assert-json-missing-path"></a>
 #### assertJsonMissingPath
 
@@ -1425,6 +1465,24 @@ $response->assertJsonMissingPath($path);
 
 ```php
 $response->assertJsonMissingPath('user.email');
+```
+
+<a name="assert-json-missing-paths"></a>
+#### assertJsonMissingPaths
+
+Утверждает, что ответ не содержит указанные пути:
+
+```php
+$response->assertJsonMissingPaths($paths);
+```
+
+Например, вы можете утверждать, что в ответе отсутствует несколько путей:
+
+```php
+$response->assertJsonMissingPaths([
+    'user.email',
+    'user.password',
+]);
 ```
 
 <a name="assert-json-structure"></a>
@@ -1854,6 +1912,15 @@ $response->assertSessionDoesntHaveErrors($keys = [], $format = null, $errorBag =
 
 ```php
 $response->assertSessionMissing($key);
+```
+
+<a name="assert-session-missing-input"></a>
+#### assertSessionMissingInput
+
+Утверждает, что в сессии отсутствует указанный ключ входных данных в массиве сохраненных во флеше входных данных:
+
+```php
+$response->assertSessionMissingInput($key);
 ```
 
 <a name="assert-status"></a>

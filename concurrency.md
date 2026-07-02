@@ -1,5 +1,5 @@
 ---
-git: a15a6384c2e4a74f448bca9ef9cece49bc168547
+git: 5f2819af590361b436498883e9ef98f73fb2c5b0
 ---
 
 # Параллелизм
@@ -49,6 +49,49 @@ $results = Concurrency::driver('fork')->run(...);
 
 ```shell
 php artisan config:publish concurrency
+```
+
+<a name="named-results"></a>
+### Именованные результаты
+
+Если вы хотите обращаться к результатам параллельных задач по имени, а не по позиции, вы можете передать ассоциативный массив замыканий. Каждый результат будет возвращен с тем же ключом, что и соответствующее замыкание:
+
+```php
+use Illuminate\Support\Facades\Concurrency;
+use Illuminate\Support\Facades\DB;
+
+$results = Concurrency::run([
+    'users' => fn () => DB::table('users')->count(),
+    'orders' => fn () => DB::table('orders')->count(),
+]);
+
+$userCount = $results['users'];
+$orderCount = $results['orders'];
+```
+
+<a name="task-timeouts"></a>
+### Тайм-ауты задач
+
+При использовании драйвера `process` (по умолчанию) вы можете указать максимальное количество секунд, в течение которых параллельной задаче разрешено выполняться до принудительного завершения, передав тайм-аут методу `run`:
+
+```php
+use Illuminate\Support\Facades\Concurrency;
+use Illuminate\Support\Facades\DB;
+
+[$userCount, $orderCount] = Concurrency::run([
+    fn () => DB::table('users')->count(),
+    fn () => DB::table('orders')->count(),
+], timeout: 30);
+```
+
+Вы также можете передать экземпляр `CarbonInterval`, если предпочитаете более выразительное определение тайм-аута:
+
+```php
+use Illuminate\Support\Facades\Concurrency;
+
+use function Illuminate\Support\seconds;
+
+Concurrency::run([...], timeout: seconds(30));
 ```
 
 <a name="deferring-concurrent-tasks"></a>

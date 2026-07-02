@@ -1,5 +1,5 @@
 ---
-git: 9a8a1a8a54f08601da59a048dcde3db9f6f11baa
+git: a17ef3b3bc461745fd774505cf94e6dc1a92e9fd
 ---
 
 # База данных · Миграции
@@ -527,12 +527,13 @@ Schema::table('users', function (Blueprint $table) {
 - [foreignIdFor](#column-method-foreignIdFor)
 - [foreignUlid](#column-method-foreignUlid)
 - [foreignUuid](#column-method-foreignUuid)
+- [foreignUuidFor](#column-method-foreignUuidFor)
 - [morphs](#column-method-morphs)
 - [nullableMorphs](#column-method-nullableMorphs)
 
 </div>
 
-<a name="spacifics-method-list"></a>
+<a name="specifics-method-list"></a>
 #### Специальные типы
 
 <div class="collection-method-list" markdown="1">
@@ -555,6 +556,7 @@ Schema::table('users', function (Blueprint $table) {
 - [foreignIdFor](#column-method-foreignIdFor)
 - [foreignUlid](#column-method-foreignUlid)
 - [foreignUuid](#column-method-foreignUuid)
+- [foreignUuidFor](#column-method-foreignUuidFor)
 - [morphs](#column-method-morphs)
 - [nullableMorphs](#column-method-nullableMorphs)
 
@@ -720,6 +722,15 @@ $table->foreignUlid('user_id');
 $table->foreignUuid('user_id');
 ```
 
+<a name="column-method-foreignUuidFor"></a>
+#### `foreignUuidFor()`
+
+Метод `foreignUuidFor` добавляет для заданного класса модели столбец `{column}_id`, эквивалентный UUID:
+
+```php
+$table->foreignUuidFor(User::class);
+```
+
 <a name="column-method-geography"></a>
 #### `geography()`
 
@@ -864,9 +875,9 @@ $table->mediumText('data')->charset('binary'); // MEDIUMBLOB
 <a name="column-method-morphs"></a>
 #### `morphs()`
 
-Метод `morphs` - это удобный метод, который добавляет эквивалент столбца `{column}_id` и столбца `{column}_type` с типом данных `VARCHAR`. Тип данных столбца `{column}_id` будет `UNSIGNED BIGINT`, `CHAR(36)` или `CHAR(26)`, в зависимости от типа ключа модели.
+Метод `morphs` - это удобный метод, который добавляет столбец `{column}_type` с типом данных `VARCHAR` и эквивалент столбца `{column}_id`. Тип данных столбца `{column}_id` будет `UNSIGNED BIGINT`, `CHAR(36)` или `CHAR(26)`, в зависимости от типа ключа модели.
 
-Этот метод предназначен для использования при определении столбцов, необходимых для полиморфного [отношения Eloquent](/docs/{{version}}/eloquent-relationships). В следующем примере будут созданы столбцы `taggable_id` и `taggable_type`:
+Этот метод предназначен для использования при определении столбцов, необходимых для полиморфного [отношения Eloquent](/docs/{{version}}/eloquent-relationships). В следующем примере будут созданы столбцы `taggable_type` и `taggable_id`:
 
 ```php
 $table->morphs('taggable');
@@ -1112,9 +1123,9 @@ $table->unsignedTinyInteger('votes');
 <a name="column-method-ulidMorphs"></a>
 #### Метод `ulidMorphs()`
 
-Метод `ulidMorphs` - это удобный метод, который добавляет эквивалент столбца `{column}_id` типа `CHAR(26)` и столбца `{column}_type` типа `VARCHAR`.
+Метод `ulidMorphs` - это удобный метод, который добавляет столбец `{column}_type` типа `VARCHAR` и эквивалент столбца `{column}_id` типа `CHAR(26)`.
 
-Этот метод предназначен для использования при определении столбцов, необходимых для полиморфных [Eloquent отношений](/docs/{{version}}/eloquent-relationships), которые используют ULID идентификаторы. В следующем примере будут созданы столбцы `taggable_id` и `taggable_type`:
+Этот метод предназначен для использования при определении столбцов, необходимых для полиморфных [Eloquent отношений](/docs/{{version}}/eloquent-relationships), которые используют ULID идентификаторы. В следующем примере будут созданы столбцы `taggable_type` и `taggable_id`:
 
 ```php
 $table->ulidMorphs('taggable');
@@ -1123,9 +1134,9 @@ $table->ulidMorphs('taggable');
 <a name="column-method-uuidMorphs"></a>
 #### `uuidMorphs()`
 
-Метод `uuidMorphs` – это удобный метод, который добавляет эквивалент столбца `CHAR(36)` (`{column}_id`) и эквивалент столбца `VARCHAR` (`{column}_type`).
+Метод `uuidMorphs` - это удобный метод, который добавляет столбец `{column}_type` типа `VARCHAR` и эквивалент столбца `{column}_id` типа `CHAR(36)`.
 
-Этот метод предназначен для использования при определении столбцов, необходимых для полиморфного [отношения Eloquent](/docs/{{version}}/eloquent-relationships), использующего идентификаторы UUID. В следующем примере будут созданы столбцы `taggable_id` и `taggable_type`:
+Этот метод предназначен для использования при определении столбцов, необходимых для полиморфного [отношения Eloquent](/docs/{{version}}/eloquent-relationships), использующего идентификаторы UUID. В следующем примере будут созданы столбцы `taggable_type` и `taggable_id`:
 
 ```php
 $table->uuidMorphs('taggable');
@@ -1352,7 +1363,7 @@ Laravel содержит несколько удобных методов, св�
 
 | Команда                            | Описание                                           |
 | ---------------------------------- | -------------------------------------------------- |
-| `$table->dropMorphs('morphable');` | Удалить столбцы `morphable_id` и `morphable_type`. |
+| `$table->dropMorphs('morphable');` | Удалить столбцы `morphable_type` и `morphable_id`. |
 | `$table->dropRememberToken();`     | Удалить столбец `remember_token`.                  |
 | `$table->dropSoftDeletes();`       | Удалить столбец `deleted_at`.                      |
 | `$table->dropSoftDeletesTz();`     | Псевдоним `dropSoftDeletes()`.                     |
@@ -1554,10 +1565,11 @@ Schema::withoutForeignKeyConstraints(function () {
 
 | Класс                                            | Описание                                           |
 | ------------------------------------------------ | -------------------------------------------------- |
+| `Illuminate\Database\Events\DatabaseRefreshed`   | Команда `migrate:refresh` завершена.               |
 | `Illuminate\Database\Events\MigrationsStarted`   | Вот-вот будет выполнен пакет миграций.             |
-| `Illuminate\Database\Events\MigrationsEnded`     | Завершено выполнение пакета миграций.              |
+| `Illuminate\Database\Events\MigrationsEnded`     | Пакет миграций завершен.                           |
 | `Illuminate\Database\Events\MigrationStarted`    | Одна миграция вот-вот будет выполнена.             |
-| `Illuminate\Database\Events\MigrationEnded`      | Выполнение одной миграции завершено.               |
+| `Illuminate\Database\Events\MigrationEnded`      | Одна миграция завершена.                           |
 | `Illuminate\Database\Events\NoPendingMigrations` | Команда миграции не обнаружила ожидающих миграций. |
-| `Illuminate\Database\Events\SchemaDumped`        | Завершена выгрузка схемы базы данных.              |
+| `Illuminate\Database\Events\SchemaDumped`        | Выгрузка схемы базы данных завершена.              |
 | `Illuminate\Database\Events\SchemaLoaded`        | Загружена существующая выгрузка схемы базы данных. |

@@ -1,5 +1,5 @@
 ---
-git: 6a0eec994bc3e9dfd4a6d2d81abc3a5261b7e79d
+git: ebecfbd7f4f6d33335da82a90f50bd1dcea3161e
 ---
 
 # MongoDB
@@ -87,9 +87,11 @@ composer require mongodb/laravel-mongodb
 
 - [Используя Eloquent](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/eloquent-models/), модели можно хранить в коллекциях MongoDB. В дополнение к стандартным функциям Eloquent пакет Laravel MongoDB предоставляет дополнительные функции, такие как встроенные связи. Пакет также обеспечивает прямой доступ к драйверу MongoDB, который можно использовать для выполнения таких операций, как необработанные запросы и конвейеры агрегации.
 - [Написание сложных запросов](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/query-builder/) с помощью построителя запросов.
-- `mongodb` [драйвер кэша](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/cache/) оптимизирован для использования функций MongoDB, таких как индексы TTL, для автоматической очистки кэша с истекшим сроком действия. записи.
+- [Поиск по схожести / векторный поиск](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/fundamentals/vector-search/) с использованием векторных embeddings и метода Eloquent `vectorSearch`.
+- [Драйвер кэша `mongodb`](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/cache/) оптимизирован для использования возможностей MongoDB, таких как TTL-индексы, чтобы автоматически очищать записи кеша с истекшим сроком действия.
 - [Отправка и обработка заданий в очереди](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/queues/) с помощью драйвера очереди `mongodb`.
 - [Хранение файлов в GridFS](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/filesystems/), через [адаптер GridFS для Flysystem](https://flysystem.thephpleague.com/docs/adapter/gridfs/).
-— Большинство сторонних пакетов, использующих подключение к базе данных или Eloquent, можно использовать с MongoDB.
+- [Полнотекстовый поиск](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/scout/) с использованием движка Scout `mongodb`.
+- Большинство сторонних пакетов, использующих подключение к базе данных или Eloquent, можно использовать с MongoDB.
 
 Чтобы продолжить изучение использования MongoDB и Laravel, обратитесь к [краткому руководству по началу работы с MongoDB](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/quick-start/).

@@ -1,5 +1,5 @@
 ---
-git: a4c80eb568be016344d03e8421302cbc365c58aa
+git: 7b3107424823967e647cf4cd2ea8c9ba5be54839
 ---
 
 # Процессы
@@ -76,6 +76,14 @@ $result = Process::input('Hello World')->run('cat');
 
 ```php
 $result = Process::timeout(120)->run('bash import.sh');
+```
+
+Методы `timeout` и `idleTimeout` также принимают экземпляры `CarbonInterval`:
+
+```php
+use function Illuminate\Support\minutes;
+
+$result = Process::timeout(minutes(2))->run('bash import.sh');
 ```
 
 Или, если вы хотите полностью отключить таймаут процесса, вы можете вызвать метод  `forever`:

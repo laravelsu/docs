@@ -1,5 +1,5 @@
 ---
-git: 969aa3220dd71ec00ee5bf2b59a00be9288c7f5b
+git: 878cafa2bf8bfe3b1224a4fdf1096ab864982785
 ---
 
 # Laravel Dusk
@@ -948,6 +948,13 @@ $browser->clickAndHold()
 $browser->controlClick();
 
 $browser->controlClick('.selector');
+```
+
+Методы `clickWhenVisible` и `clickWhenEnabled` можно использовать, чтобы дождаться готовности элемента перед однократным нажатием на него:
+
+```php
+$browser->clickWhenVisible('@save-button');
+$browser->clickWhenEnabled('@submit-button');
 ```
 
 <a name="mouseover"></a>

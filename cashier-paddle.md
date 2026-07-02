@@ -1,5 +1,5 @@
 ---
-git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
+git: 3bbb792708a02c05ac74173acc69fcef865c5dcd
 ---
 
 # Laravel Cashier (Paddle)
@@ -1314,7 +1314,7 @@ Paddle может уведомлять ваше приложение о разл
 
 ```php
 ->withMiddleware(function (Middleware $middleware): void {
-    $middleware->validateCsrfTokens(except: [
+    $middleware->preventRequestForgery(except: [
         'paddle/*',
     ]);
 })

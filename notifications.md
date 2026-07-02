@@ -1,5 +1,5 @@
 ---
-git: 772dfe24ff1c3322b9724a36e71124a3b9287417
+git: dc7c8161c3c6c4c2e2d907fca0d585f08fe147f7
 ---
 
 # Уведомления
@@ -233,9 +233,9 @@ public function viaQueues(): array
 ```
 
 <a name="customizing-queued-notification-job-properties"></a>
-#### Настройка свойств задания уведомления в очереди
+#### Настройка атрибутов задания уведомления в очереди
 
-Вы можете настроить поведение базового задания в очереди, определив свойства в классе уведомления. Эти свойства будут унаследованы заданием в очереди, которое отправляет уведомление:
+Вы можете настроить поведение базового задания в очереди, определив атрибуты очереди в классе уведомления. Эти атрибуты будут унаследованы заданием в очереди, которое отправляет уведомление:
 
 ```php
 <?php
@@ -245,31 +245,16 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\Attributes\MaxExceptions;
+use Illuminate\Queue\Attributes\Timeout;
+use Illuminate\Queue\Attributes\Tries;
 
+#[Tries(5)]
+#[Timeout(120)]
+#[MaxExceptions(3)]
 class InvoicePaid extends Notification implements ShouldQueue
 {
     use Queueable;
-
-    /**
-     * Количество попыток выполнения уведомления.
-     *
-     * @var int
-     */
-    public $tries = 5;
-
-    /**
-     * Количество секунд, в течение которых уведомление может выполняться до истечения времени ожидания.
-     *
-     * @var int
-     */
-    public $timeout = 120;
-
-    /**
-     * Максимальное количество необработанных исключений до завершения с ошибкой.
-     *
-     * @var int
-     */
-    public $maxExceptions = 3;
 
     // ...
 }
@@ -295,7 +280,7 @@ class InvoicePaid extends Notification implements ShouldQueue, ShouldBeEncrypted
 }
 ```
 
-Помимо определения этих свойств непосредственно в классе уведомления, вы также можете определить методы `backoff` и `retryUntil`, чтобы указать стратегию задержки повторных попыток и время окончания повторных попыток для задания уведомления в очереди:
+Помимо определения этих атрибутов непосредственно в классе уведомления, вы также можете определить методы `backoff` и `retryUntil`, чтобы указать стратегию задержки повторных попыток и время окончания повторных попыток для задания уведомления в очереди:
 
 ```php
 use DateTime;
@@ -318,7 +303,7 @@ public function retryUntil(): DateTime
 ```
 
 > [!NOTE]
-> Дополнительную информацию об этих свойствах и методах заданий можно найти в документации по [заданиям в очереди](/docs/{{version}}/queues#max-job-attempts-and-timeout).
+> Дополнительную информацию об этих атрибутах и методах заданий можно найти в документации по [заданиям в очереди](/docs/{{version}}/queues#max-job-attempts-and-timeout).
 
 <a name="queued-notification-middleware"></a>
 #### Посредник для уведомлений в очереди
@@ -683,22 +668,6 @@ public function toMail(object $notifiable): MailMessage
 }
 ```
 
-В отличие от прикрепления файлов к почтовым отправлениям, вы не можете прикреплять файл непосредственно с диска файлового хранилища с помощью `attachFromStorage`. Лучше использовать метод `attach` с абсолютным путем к файлу на диске. В качестве альтернативы вы можете вернуть [отправление](/docs/{{version}}/mail#generating-mailables) из метода `toMail`:
-
-```php
-use App\Mail\InvoicePaid as InvoicePaidMailable;
-
-/**
- * Получить содержимое почтового уведомления.
- */
-public function toMail(object $notifiable): Mailable
-{
-    return (new InvoicePaidMailable($this->invoice))
-        ->to($notifiable->email)
-        ->attachFromStorage('/path/to/file');
-}
-```
-
 При необходимости к сообщению можно прикрепить несколько файлов, используя метод `attachMany`:
 
 ```php
@@ -715,6 +684,24 @@ public function toMail(object $notifiable): MailMessage
                 'as' => 'Logo.svg',
                 'mime' => 'image/svg+xml',
             ],
+        ]);
+}
+```
+
+Вы можете использовать метод `attachFromStorageDisk`, чтобы прикрепить файл, существующий на конкретном [диске файловой системы](/docs/{{version}}/filesystem). Этот метод принимает имя диска и путь к файлу на этом диске:
+
+```php
+use App\Mail\InvoicePaid as InvoicePaidMailable;
+
+/**
+ * Получить содержимое почтового уведомления.
+ */
+public function toMail(object $notifiable): Mailable
+{
+    return (new InvoicePaidMailable($this->invoice))
+        ->to($notifiable->email)
+        ->attachFromStorageDisk('s3', '/path/to/file', 'invoice.pdf', [
+            'mime' => 'application/pdf',
         ]);
 }
 ```
@@ -1170,9 +1157,9 @@ Echo.private('App.Models.User.' + userId)
 ```
 
 <a name="using-react-or-vue"></a>
-#### Использование React или Vue
+#### Использование React, Vue или Svelte
 
-Laravel Echo включает хуки React и Vue, которые делают прослушивание уведомлений безболезненным. Чтобы начать, вызовите хук `useEchoNotification`, который используется для прослушивания уведомлений. Хук `useEchoNotification` автоматически покинет каналы, когда потребляющий компонент будет размонтирован:
+Laravel Echo включает хуки React, Vue и Svelte, которые делают прослушивание уведомлений безболезненным. Чтобы начать, вызовите хук `useEchoNotification`, который используется для прослушивания уведомлений. Хук `useEchoNotification` автоматически покинет каналы, когда потребляющий компонент будет размонтирован:
 
 ```js tab=React
 import { useEchoNotification } from "@laravel/echo-react";
@@ -1188,6 +1175,19 @@ useEchoNotification(
 ```vue tab=Vue
 <script setup lang="ts">
 import { useEchoNotification } from "@laravel/echo-vue";
+useEchoNotification(
+    `App.Models.User.${userId}`,
+    (notification) => {
+        console.log(notification.type);
+    },
+);
+</script>
+```
+
+```svelte tab=Svelte
+<script>
+import { useEchoNotification } from "@laravel/echo-svelte";
+
 useEchoNotification(
     `App.Models.User.${userId}`,
     (notification) => {
@@ -1214,6 +1214,20 @@ useEchoNotification(
 ```vue tab=Vue
 <script setup lang="ts">
 import { useEchoNotification } from "@laravel/echo-vue";
+useEchoNotification(
+    `App.Models.User.${userId}`,
+    (notification) => {
+        console.log(notification.type);
+    },
+    'App.Notifications.InvoicePaid',
+);
+</script>
+```
+
+```svelte tab=Svelte
+<script>
+import { useEchoNotification } from "@laravel/echo-svelte";
+
 useEchoNotification(
     `App.Models.User.${userId}`,
     (notification) => {
@@ -1577,7 +1591,7 @@ public function toSlack(object $notifiable): SlackMessage
 ```
 
 <a name="inspecting-slack-blocks"></a>
-#### Просмотр cтруктуры блоков Slack
+#### Просмотр структуры блоков Slack
 
 Если вы хотите быстро проверить структуру блоков, которые вы создали, вы можете использовать метод `dd` в экземпляре `SlackMessage`. Метод `dd` сгенерирует и выведет URL-адрес для [Block Kit Builder Slack](https://app.slack.com/block-kit-builder/), который отображает предварительный просмотр полезной нагрузки и уведомления в вашем браузере. Вы можете передать `true` методу `dd`, чтобы вывести сырую полезную нагрузку:
 

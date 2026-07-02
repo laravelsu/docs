@@ -1,5 +1,5 @@
 ---
-git: 052b4768a6dc522cf07d2839e51be0dc341a478c
+git: 67f17210b4ba48ec6374f64d9568724b02f10b07
 ---
 
 # Глобальные помощники (helpers)
@@ -95,6 +95,7 @@ Laravel содержит множество глобальных «вспомо�
 - [Number::format](#method-number-format)
 - [Number::ordinal](#method-number-ordinal)
 - [Number::pairs](#method-number-pairs)
+- [Number::parse](#method-number-parse)
 - [Number::parseInt](#method-number-parse-int)
 - [Number::parseFloat](#method-number-parse-float)
 - [Number::percentage](#method-number-percentage)
@@ -1800,6 +1801,23 @@ $result = Number::pairs(25, 10, offset: 0);
 // [[0, 10], [10, 20], [20, 25]]
 ```
 
+<a name="method-number-parse"></a>
+#### `Number::parse()` {.collection-method}
+
+Метод `Number::parse` разбирает локализованную числовую строку с помощью PHP `NumberFormatter`:
+
+```php
+use Illuminate\Support\Number;
+
+$result = Number::parse('10,123', locale: 'en');
+
+// 10123.0
+
+$result = Number::parse('10,123', locale: 'fr');
+
+// 10.123
+```
+
 <a name="method-number-parse-int"></a>
 #### `Number::parseInt()`
 
@@ -2930,6 +2948,16 @@ return response()->json(['foo' => 'bar'], 200, $headers);
 return retry(5, function () {
     // Attempt 5 times while resting 100ms between attempts...
 }, 100);
+```
+
+Длительность паузы также может быть экземпляром `CarbonInterval`:
+
+```php
+use function Illuminate\Support\seconds;
+
+return retry(5, function () {
+    // Выполнить 5 попыток с паузой 5 секунд между попытками...
+}, seconds(5));
 ```
 
 Если вы хотите вручную вычислить количество миллисекунд, которое должно пройти между попытками, вы можете передать функцию в качестве третьего аргумента функции `retry`:

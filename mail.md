@@ -1,5 +1,5 @@
 ---
-git: da854c600882815be7adc27bb3cbc5f878039791
+git: c53d56ec116e2aeb65c8d4c14d2f7cf2aef86513
 ---
 
 # Отправка электронной почты
@@ -7,7 +7,7 @@ git: da854c600882815be7adc27bb3cbc5f878039791
 <a name="introduction"></a>
 ## Введение
 
-Отправка электронной почты не должна быть сложной. Laravel предлагает чистый и простой почтовый API на базе популярного компонента [Symfony Mailer](https://symfony.com/doc/current/mailer.html). Laravel и Symfony Mailer обеспечены драйверами для отправки электронной почты через SMTP, Mailgun, Postmark, Amazon SES и `sendmail`, что позволяет быстро начать отправку почты через локальный или облачный сервис по вашему выбору.
+Отправка электронной почты не должна быть сложной. Laravel предлагает чистый и простой почтовый API на базе популярного компонента [Symfony Mailer](https://symfony.com/doc/current/mailer.html). Laravel и Symfony Mailer обеспечены драйверами для отправки электронной почты через SMTP, Cloudflare, Mailgun, Postmark, Resend, Amazon SES и `sendmail`, что позволяет быстро начать отправку почты через локальный или облачный сервис по вашему выбору.
 
 <a name="configuration"></a>
 ### Конфигурирование
@@ -20,6 +20,38 @@ git: da854c600882815be7adc27bb3cbc5f878039791
 ### Требования к драйверу и транспорту
 
 Драйверы на основе API, такие, как Mailgun, Postmark и Resend часто проще в использовании и быстрее, чем отправка почты через SMTP-серверы. По возможности мы рекомендуем использовать один из этих драйверов.
+
+<a name="cloudflare-driver"></a>
+#### Драйвер Cloudflare
+
+Чтобы использовать драйвер Cloudflare, установите HTTP Client Symfony через Composer:
+
+```shell
+composer require symfony/http-client
+```
+
+Далее вам нужно будет внести два изменения в файл конфигурации `config/mail.php` вашего приложения. Сначала установите почтовик по умолчанию на `cloudflare`:
+
+```php
+'default' => env('MAIL_MAILER', 'cloudflare'),
+```
+
+Затем добавьте следующий массив конфигурации в массив `mailers`:
+
+```php
+'cloudflare' => [
+    'transport' => 'cloudflare',
+],
+```
+
+После настройки почтовика по умолчанию добавьте следующие параметры в файл конфигурации `config/services.php`:
+
+```php
+'cloudflare' => [
+    'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+    'key' => env('CLOUDFLARE_KEY'),
+],
+```
 
 <a name="mailgun-driver"></a>
 #### Драйвер Mailgun
@@ -58,7 +90,7 @@ composer require symfony/mailgun-mailer symfony/http-client
 ],
 ```
 
-Если вы не используете [регион Mailgun](https://documentation.mailgun.com/docs/mailgun/api-reference/#mailgun-regions) США, то вы можете определить конечную точку своего региона в конфигурации файла `services`:
+Если вы не используете [регион Mailgun](https://documentation.mailgun.com/docs/mailgun/api-reference/api-overview#mailgun-regions) США, то вы можете определить конечную точку своего региона в конфигурации файла `services`:
 
 ```php
 'mailgun' => [
@@ -965,6 +997,20 @@ Mail::to($request->user())
     ->cc($moreUsers)
     ->bcc($evenMoreUsers)
     ->queue($message);
+```
+
+В качестве альтернативы вы можете указать соединение и очередь с помощью атрибутов `Connection` и `Queue` в классе mailable:
+
+```php
+use Illuminate\Queue\Attributes\Connection;
+use Illuminate\Queue\Attributes\Queue;
+
+#[Connection('sqs')]
+#[Queue('emails')]
+class OrderShipped extends Mailable
+{
+    // ...
+}
 ```
 
 <a name="queueing-by-default"></a>

@@ -1,5 +1,5 @@
 ---
-git: 85d59fb3cd6171c14ab6ba7cbfa536f77fb6c9f2
+git: 2bff8cc7f2a4b2748f34c5ef2c83173f73c3ca7f
 ---
 
 # Авторизация
@@ -679,6 +679,18 @@ use App\Models\Post;
 Route::put('/post/{post}', function (Post $post) {
     // Текущий пользователь может обновить сообщение...
 })->can('update', 'post');
+```
+
+Если вы используете [атрибуты посредников контроллеров](/docs/{{version}}/controllers#middleware-attributes), вы можете применить посредник `can` через атрибут `Authorize`:
+
+```php
+use Illuminate\Routing\Attributes\Controllers\Authorize;
+
+#[Authorize('update', 'post')]
+public function update(Post $post)
+{
+    // Текущий пользователь может обновить пост...
+}
 ```
 
 <a name="middleware-actions-that-dont-require-models"></a>

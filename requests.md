@@ -1,5 +1,5 @@
 ---
-git: a1066b5c981b414a9b869ac4a8d8a7f1b04fa60f
+git: 0c28388c5674293f7fc63549240f30184e150d27
 ---
 
 # HTTP-запросы
@@ -148,9 +148,10 @@ $request->fullUrlWithoutQuery(['type']);
 Вы можете получить "host" входящего запроса с помощью методов `host`, `httpHost`, и `schemeAndHttpHost` :
 
 ```php
-$request->host();
-$request->httpHost();
-$request->schemeAndHttpHost();
+// http://localhost:8000
+$request->host(); // localhost
+$request->httpHost(); // localhost:8000
+$request->schemeAndHttpHost(); // http://localhost:8000
 ```
 
 <a name="retrieving-the-request-method"></a>
@@ -236,6 +237,18 @@ $preferred = $request->prefers(['text/html', 'application/json']);
 ```php
 if ($request->expectsJson()) {
     // ...
+}
+```
+
+Если вам нужно определить, предпочитает ли запрос именно Markdown или принимает Markdown среди других типов содержимого, например при обслуживании AI-агентов или других клиентов, потребляющих Markdown-ответы, вы можете использовать методы `wantsMarkdown` и `acceptsMarkdown`:
+
+```php
+if ($request->wantsMarkdown()) {
+    // Наиболее предпочтительный тип содержимого клиента - text/markdown...
+}
+
+if ($request->acceptsMarkdown()) {
+    // Клиент принимает Markdown-ответы...
 }
 ```
 
@@ -402,6 +415,27 @@ $elapsed = $request->date('elapsed', '!H:i', 'Europe/Madrid');
 ```
 
 Если входное значение присутствует, но имеет недопустимый формат, будет выброшено исключение `InvalidArgumentException`, поэтому рекомендуется проверять ввод перед вызовом метода `date`.
+
+<a name="retrieving-interval-input-values"></a>
+#### Получение входных значений интервала
+
+Входные значения, содержащие длительность, можно получить в виде экземпляров `CarbonInterval` с помощью метода `interval`. Если запрос не содержит входного значения с заданным именем, будет возвращено значение `null`:
+
+```php
+$duration = $request->interval('duration');
+```
+
+Если входное значение является числовым, вы можете передать единицу измерения вторым аргументом. Единица может быть строкой, например `second`, `minute` или `day`, либо экземпляром enum `Carbon\Unit`:
+
+```php
+use Carbon\Unit;
+
+$timeout = $request->interval('timeout', 'second');
+
+$delay = $request->interval('delay', Unit::Minute);
+```
+
+Если входное значение присутствует, но имеет недопустимый формат, будет выброшено исключение `InvalidArgumentException`, поэтому рекомендуется проверять ввод перед вызовом метода `interval`.
 
 <a name="retrieving-enum-input-values"></a>
 #### Получение входных значений перечисления
@@ -785,7 +819,7 @@ $path = $request->photo->storeAs('images', 'filename.jpg', 's3');
 ```
 
 > [!NOTE]
-> Если вы используете AWS Elastic Load Balancing, значение `headers` должно быть `Request::HEADER_X_FORWARDED_AWS_ELB`. Если ваш балансировщик нагрузки использует стандартный заголовок `Forwarded` из [RFC 7239] (https://www.rfc-editor.org/rfc/rfc7239#section-4), значение `headers` должно быть `Request::HEADER_FORWARDED`. Для получения дополнительной информации о константах, которые можно использовать в значении `headers`, ознакомьтесь с документацией Symfony о [доверенных прокси-серверах] (https://symfony.com/doc/current/deployment/proxies.html).
+> Если вы используете AWS Elastic Load Balancing, значение `headers` должно быть `Request::HEADER_X_FORWARDED_AWS_ELB`. Если ваш балансировщик нагрузки использует стандартный заголовок `Forwarded` из [RFC 7239](https://www.rfc-editor.org/rfc/rfc7239#section-4), значение `headers` должно быть `Request::HEADER_FORWARDED`. Для получения дополнительной информации о константах, которые можно использовать в значении `headers`, ознакомьтесь с документацией Symfony о [доверенных прокси-серверах](https://symfony.com/doc/current/deployment/proxies.html).
 
 <a name="trusting-all-proxies"></a>
 #### Доверие ко всем прокси

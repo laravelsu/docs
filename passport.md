@@ -1,5 +1,5 @@
 ---
-git: 82abc86b5b653845880d0856243e0a151fc4b073
+git: cc80e363379f8f0e4308e9e4818dc0c067f5d1d0
 ---
 
 # Laravel Passport
@@ -1171,6 +1171,37 @@ Route::get('/orders', function () {
     // Access token has either "orders:read" or "orders:create" scope...
 })->middleware(['auth:api', CheckTokenForAnyScope::using('orders:read', 'orders:create')]);
 ```
+
+<a name="scope-attributes"></a>
+#### Атрибуты областей
+
+Если ваше приложение использует [атрибуты посредников контроллеров](/docs/{{version}}/controllers#middleware-attributes), вы можете использовать атрибут `Laravel\Passport\Attributes\AuthorizeToken` как удобное сокращение для посредников областей Passport:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Laravel\Passport\Attributes\AuthorizeToken;
+
+#[AuthorizeToken('orders:read')]
+#[AuthorizeToken('orders:create', only: ['store'])]
+class OrderController
+{
+    #[AuthorizeToken(['orders:read', 'orders:create'], anyScope: true)]
+    public function index()
+    {
+        // Access token has either "orders:read" or "orders:create" scope...
+    }
+
+    public function store()
+    {
+        // Access token has both "orders:read" and "orders:create" scopes...
+    }
+}
+```
+
+По умолчанию атрибут `AuthorizeToken` требует наличия всех переданных областей. Если передать `anyScope: true`, запрос будет авторизован, когда токен содержит хотя бы одну из переданных областей.
 
 <a name="checking-scopes-on-a-token-instance"></a>
 #### Проверка областей на экземпляре токена

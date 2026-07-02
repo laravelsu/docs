@@ -1,5 +1,5 @@
 ---
-git: 006cab15d6e83a137fc9ec0bdaa4abe3dc8b75bf
+git: 98c9b5803fef7ccd4fa41f83f0ecce21a6441db6
 ---
 
 # Precognition
@@ -12,7 +12,7 @@ Laravel Precognition позволяет предвидеть результат 
 Когда Laravel получает "предвиденный запрос", он выполнит всю промежуточную обработку маршрута и разрешит зависимости контроллера маршрута, включая валидацию [запросов формы](/docs/{{version}}/validation#form-request-validation) - но он фактически не выполнит метод контроллера маршрута.
 
 > [!NOTE]
-> Начиная с Inertia 2.3, поддержка Precognition встроена. Дополнительную информацию см. в [документации Inertia Forms](https://inertiajs.com/docs/v2/the-basics/forms). Более ранние версии Inertia требуют Precognition 0.x.
+> Начиная с Inertia 2.3, поддержка Precognition встроена. Дополнительную информацию см. в [документации Inertia Forms](https://inertiajs.com/forms). Более ранние версии Inertia требуют Precognition 0.x.
 
 <a name="live-validation"></a>
 ## Живая валидация

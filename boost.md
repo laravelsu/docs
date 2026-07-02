@@ -1,5 +1,5 @@
 ---
-git: f7dd7dc67578e174751fed2ecbb8838e2b05c2b7
+git: e5a60cd792282de178478ca5bb678945e266b00b
 ---
 
 # Laravel Boost
@@ -117,6 +117,12 @@ php artisan boost:update
 }
 ```
 
+По умолчанию команда `boost:update` обновляет только те ресурсы Boost, которые уже опубликованы в вашем приложении. Если вы хотите, чтобы Boost просканировал приложение на наличие недавно установленных пакетов и предложил опубликовать соответствующие guidelines и skills, используйте опцию `--discover`:
+
+```shell
+php artisan boost:update --discover
+```
+
 <a name="mcp-server"></a>
 ## MCP-сервер
 
@@ -124,6 +130,8 @@ Laravel Boost предоставляет MCP-сервер (Model Context Protoco
 
 <a name="available-mcp-tools"></a>
 ### Доступные MCP-инструменты
+
+<div class="overflow-auto">
 
 | Название             | Примечания                                                                                                      |
 | -------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -136,6 +144,8 @@ Laravel Boost предоставляет MCP-сервер (Model Context Protoco
 | Last Error           | Читает последнюю ошибку из логов приложения                                                                     |
 | Read Log Entries     | Читает последние N записей лога                                                                                 |
 | Search Docs          | Выполняет запрос к размещенному Laravel API документации, учитывая установленные пакеты                         |
+
+</div>
 
 <a name="manually-registering-the-mcp-server"></a>
 ### Ручная регистрация MCP-сервера
@@ -170,10 +180,12 @@ AI-рекомендации - это составные instruction-файлы, 
 
 Laravel Boost включает AI-рекомендации для следующих пакетов и фреймворков. Рекомендации `core` дают общие советы по пакету, применимые ко всем версиям.
 
+<div class="overflow-auto">
+
 | Пакет             | Поддерживаемые версии  |
 | ----------------- | ---------------------- |
 | Core & Boost      | core                   |
-| Laravel Framework | core, 10.x, 11.x, 12.x |
+| Laravel Framework | core, 10.x, 11.x, 12.x, 13.x |
 | Livewire          | core, 2.x, 3.x, 4.x    |
 | Flux UI           | core, free, pro        |
 | Folio             | core                   |
@@ -192,6 +204,8 @@ Laravel Boost включает AI-рекомендации для следующ
 | Livewire Volt     | core                   |
 | Wayfinder         | core                   |
 | Enforce Tests     | conditional            |
+
+</div>
 
 > **Note:** Чтобы поддерживать AI-рекомендации в актуальном состоянии, смотрите раздел [Поддержание ресурсов Boost в актуальном состоянии](#keeping-boost-resources-updated).
 
@@ -241,6 +255,8 @@ $result = PackageName::featureTwo($param1, $param2);
 <a name="available-skills"></a>
 ### Доступные skills
 
+<div class="overflow-auto">
+
 | Skill                      | Пакет          |
 | -------------------------- | -------------- |
 | fluxui-development         | Flux UI        |
@@ -255,6 +271,8 @@ $result = PackageName::featureTwo($param1, $param2);
 | tailwindcss-development    | Tailwind CSS   |
 | volt-development           | Volt           |
 | wayfinder-development      | Wayfinder      |
+
+</div>
 
 > **Note:** Чтобы поддерживать skills в актуальном состоянии, смотрите раздел [Поддержание ресурсов Boost в актуальном состоянии](#keeping-boost-resources-updated).
 
@@ -313,11 +331,15 @@ Laravel Boost предоставляет два разных способа да
 
 **Skills** активируются по требованию при работе над конкретными задачами и содержат подробные паттерны для отдельных областей, например компонентов Livewire или тестов Pest. Загрузка skills только при необходимости уменьшает раздувание контекста и повышает качество кода.
 
+<div class="overflow-auto">
+
 | Аспект       | Guidelines                        | Skills                                  |
 | ------------ | --------------------------------- | --------------------------------------- |
 | **Загрузка** | Заранее, всегда присутствуют      | По требованию, когда релевантны         |
 | **Область**  | Широкая, фундаментальная          | Узкая, task-specific                    |
 | **Цель**     | Основные соглашения и практики    | Подробные паттерны реализации           |
+
+</div>
 
 <a name="documentation-api"></a>
 ## API документации
@@ -326,9 +348,11 @@ Laravel Boost включает Documentation API, который дает AI-а�
 
 MCP-инструмент `Search Docs` позволяет агентам запрашивать размещенный Laravel сервис API документации и получать документацию на основе установленных пакетов. AI-рекомендации и skills Boost автоматически инструктируют coding agent использовать этот API.
 
+<div class="overflow-auto">
+
 | Пакет             | Поддерживаемые версии |
 | ----------------- | --------------------- |
-| Laravel Framework | 10.x, 11.x, 12.x      |
+| Laravel Framework | 10.x, 11.x, 12.x, 13.x |
 | Filament          | 2.x, 3.x, 4.x, 5.x    |
 | Flux UI           | 2.x Free, 2.x Pro     |
 | Inertia           | 1.x, 2.x              |
@@ -336,6 +360,8 @@ MCP-инструмент `Search Docs` позволяет агентам зап�
 | Nova              | 4.x, 5.x              |
 | Pest              | 3.x, 4.x              |
 | Tailwind CSS      | 3.x, 4.x              |
+
+</div>
 
 <a name="extending-boost"></a>
 ## Расширение Boost

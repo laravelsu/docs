@@ -1,5 +1,5 @@
 ---
-git: 1c9e33de94232e5dfc3d70b8eb6ee60814c8ae9a
+git: b4ed00f43fa410230130f73acb56ea11c6c4033c
 ---
 
 # Ограничение скорости
@@ -72,6 +72,20 @@ if (RateLimiter::tooManyAttempts('send-message:'.$user->id, $perMinute = 5)) {
 }
 
 RateLimiter::increment('send-message:'.$user->id);
+
+// Отправляем сообщение...
+```
+
+При ограничении частоты запросов для конечной точки, которая может получать много одновременных запросов, вам может потребоваться проверять значение, возвращаемое методом `increment`, вместо использования `tooManyAttempts` и `increment` как отдельных операций. При использовании хранилищ кэша `redis`, `memcached` или `database` это значение увеличивается атомарно, поэтому каждый параллельный запрос получает уникальный счетчик:
+
+```php
+use Illuminate\Support\Facades\RateLimiter;
+
+$perMinute = 5;
+
+if (RateLimiter::increment('send-message:'.$user->id) > $perMinute) {
+    return 'Слишком много попыток!';
+}
 
 // Отправляем сообщение...
 ```

@@ -1,5 +1,5 @@
 ---
-git: 71f7d0b677c2216658b69f201494dfe12ff36c2c
+git: 4a7c3d6f72559106687d731509ebff3ee3d5f977
 ---
 
 # Маршрутизация
@@ -520,9 +520,6 @@ Route::domain('{account}.example.com')->group(function () {
 });
 ```
 
-> [!WARNING]
-> Чтобы обеспечить доступность маршрутов поддоменов, вы должны зарегистрировать маршруты поддоменов перед регистрацией маршрутов корневого домена. Это предотвратит перезапись маршрутами корневого домена маршрутов поддоменов, имеющих одинаковый путь URI.
-
 <a name="route-group-prefixes"></a>
 ### Префиксы URI сгруппированных маршрутов
 
@@ -867,7 +864,7 @@ RateLimiter::for('global', function (Request $request) {
 
 ```php
 RateLimiter::for('uploads', function (Request $request) {
-    return $request->user()->vipCustomer()
+    return $request->user()?->vipCustomer()
         ? Limit::none()
         : Limit::perHour(10);
 });

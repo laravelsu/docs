@@ -1,5 +1,5 @@
 ---
-git: 23e133bd6cf46af11b64558b3a001253c64ce3d6
+git: d8f9e9f3e39b90e411ac71fe54265d5d558e5356
 ---
 
 # Построитель запросов
@@ -878,6 +878,18 @@ $users = DB::table('users')
 ```php
 $users = DB::table('users')
     ->whereNotNull('updated_at')
+    ->get();
+```
+
+**whereNullSafeEquals / orWhereNullSafeEquals**
+
+Методы `whereNullSafeEquals` и `orWhereNullSafeEquals` можно использовать для сравнения значения столбца с заданным значением, считая два значения `NULL` равными:
+
+```php
+$lastLoginIp = $request->input('last_login_ip');
+
+$users = DB::table('users')
+    ->whereNullSafeEquals('last_login_ip', $lastLoginIp)
     ->get();
 ```
 

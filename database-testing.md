@@ -1,5 +1,5 @@
 ---
-git: e1a7b2ee320e7c3b54847080311ea4fba7d40fd0
+git: 16384f6f8f408ec84934623a73e4a469f232e8b0
 ---
 
 # Тестирование · База данных
@@ -153,37 +153,41 @@ class ExampleTest extends TestCase
 }
 ```
 
-В качестве альтернативы, вы можете указать Laravel автоматически заполнять базу данных перед каждым тестом, который использует трейт `RefreshDatabase`. Вы можете добиться этого, определив свойство `$seed` в вашем базовом тестовом классе:
+В качестве альтернативы, вы можете указать Laravel автоматически заполнять базу данных перед каждым тестом, который использует трейт `RefreshDatabase`. Вы можете добиться этого, добавив атрибут `Seed` к вашему базовому тестовому классу:
 
 ```php
 <?php
 
 namespace Tests;
 
+use Illuminate\Foundation\Testing\Attributes\Seed;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
+#[Seed]
 abstract class TestCase extends BaseTestCase
 {
-    /**
-     * Указывает, следует ли запускать наполнитель по умолчанию перед каждым тестом.
-     *
-     * @var bool
-     */
-    protected $seed = true;
 }
 ```
 
-Когда свойство `$seed` имеет значение `true`, тогда класс `Database\Seeders\DatabaseSeeder` будет запускаться перед каждым тестом, который использует трейт `RefreshDatabase`. Однако, вы можете указать конкретный наполнитель, который должен выполняться, определив свойство `$seeder` в вашем тестовом классе:
+Когда присутствует атрибут `Seed`, класс `Database\Seeders\DatabaseSeeder` будет запускаться перед каждым тестом, который использует трейт `RefreshDatabase`. Однако, вы можете указать конкретный наполнитель, который должен выполняться, используя атрибут `Seeder` в вашем тестовом классе:
 
 ```php
-use Database\Seeders\OrderStatusSeeder;
+<?php
 
-/**
- * Запускать указанный наполнитель перед каждым тестом.
- *
- * @var string
- */
-protected $seeder = OrderStatusSeeder::class;
+namespace Tests\Feature;
+
+use Database\Seeders\OrderStatusSeeder;
+use Illuminate\Foundation\Testing\Attributes\Seeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+#[Seeder(OrderStatusSeeder::class)]
+class OrderTest extends TestCase
+{
+    use RefreshDatabase;
+
+    // ...
+}
 ```
 
 <a name="available-assertions"></a>

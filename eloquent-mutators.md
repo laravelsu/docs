@@ -1,5 +1,5 @@
 ---
-git: a8f66f5a719c54ab3444a7f321f2b52285d4eab1
+git: 16384f6f8f408ec84934623a73e4a469f232e8b0
 ---
 
 # Eloquent · Мутаторы и типизация
@@ -345,7 +345,7 @@ $user->options = $options;
 $user->save();
 ```
 
-Чтобы обновить одно поле JSON-атрибута с помощью краткого синтаксиса, вы можете [разрешить масссовое назначение](/docs/{{version}}/eloquent#mass-assignment-json-columns) и использовать оператор `->` при вызове метода `update`:
+Чтобы обновить одно поле JSON-атрибута с помощью краткого синтаксиса, вы можете [разрешить массовое назначение](/docs/{{version}}/eloquent#mass-assignment-json-columns) и использовать оператор `->` при вызове метода `update`:
 
 ```php
 $user = User::find(1);
@@ -579,15 +579,16 @@ protected function serializeDate(DateTimeInterface $date): string
 }
 ```
 
-Чтобы указать формат, который следует использовать при фактическом сохранении дат модели в вашей базе данных, вы должны определить свойство `$dateFormat` вашей модели:
+Чтобы указать формат, который следует использовать при фактическом сохранении дат модели в вашей базе данных, вы должны использовать аргумент `dateFormat` атрибута `Table` вашей модели:
 
 ```php
-/**
- * Формат хранения столбцов даты модели.
- *
- * @var string
- */
-protected $dateFormat = 'U';
+use Illuminate\Database\Eloquent\Attributes\Table;
+
+#[Table(dateFormat: 'U')]
+class Flight extends Model
+{
+    // ...
+}
 ```
 
 <a name="date-casting-and-timezones"></a>

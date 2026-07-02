@@ -1,5 +1,5 @@
 ---
-git: 71eeb73f3a616d2d1f564417500cb06a79ac9dbb
+git: 562054eafedeadd9a85f99865398f2137059eb1a
 ---
 
 # Планирование задач
@@ -403,6 +403,27 @@ Schedule::command('analytics:report')
 
 ```php
 Schedule::command('emails:send')->evenInMaintenanceMode();
+```
+
+<a name="pausing-scheduled-tasks"></a>
+### Приостановка запланированных задач
+
+Вы можете временно приостановить обработку запланированных задач без изменения развернутого кода с помощью Artisan-команды `schedule:pause`:
+
+```shell
+php artisan schedule:pause
+```
+
+Пока планировщик приостановлен, запланированные задачи выполняться не будут. Возобновить обработку запланированных задач можно с помощью команды `schedule:continue`:
+
+```shell
+php artisan schedule:continue
+```
+
+Если задача должна выполняться даже при приостановленном планировщике, отметьте ее методом `evenWhenPaused`:
+
+```php
+Schedule::command('emails:send')->evenWhenPaused();
 ```
 
 <a name="schedule-groups"></a>

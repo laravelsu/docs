@@ -1,5 +1,5 @@
 ---
-git: 725e353d0f3baab19297eeb429c450f6e4ed7cf2
+git: 91f5a833f4abc932d3c27dd8a760fa313f8b9b4c
 ---
 
 # Рекомендации по участию
@@ -75,9 +75,9 @@ git: 725e353d0f3baab19297eeb429c450f6e4ed7cf2
 <a name="which-branch"></a>
 ## Какую ветку выбрать при запросах слияния?
 
-**Все** исправления ошибок должны быть отправлены в последнюю версию, которая поддерживает исправления ошибок (на данный момент `12.x`). Исправления ошибок **никогда** не должны отправляться в ветку `master`, если они не исправляют функции, которые существуют только в предстоящем выпуске.
+**Все** исправления ошибок должны быть отправлены в последнюю версию, которая поддерживает исправления ошибок (на данный момент `13.x`). Исправления ошибок **никогда** не должны отправляться в ветку `master`, если они не исправляют функции, которые существуют только в предстоящем выпуске.
 
-**Минорный** функционал, **полностью обратно совместимый** с текущим релизом, может быть отправлен в последнюю стабильную ветку (в настоящее время `12.x`)..
+**Минорный** функционал, **полностью обратно совместимый** с текущим релизом, может быть отправлен в последнюю стабильную ветку (в настоящее время `13.x`).
 
 **Мажорный** новый функционал или функционал с изменениями, приводящими к нарушению обратной совместимости, должен всегда отправляться в ветку `master`, содержащую предстоящий релиз.
 
@@ -105,7 +105,7 @@ git: 725e353d0f3baab19297eeb429c450f6e4ed7cf2
 <a name="coding-style"></a>
 ## Стиль кодирования
 
-Laravel следует стандарту кодирования [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide) и стандарту автозагрузки [PSR- 4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader).
+Laravel следует стандарту кодирования [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide) и стандарту автозагрузки [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader).
 
 <a name="phpdoc"></a>
 ### PHPDoc
@@ -134,6 +134,8 @@ public function bind($abstract, $concrete = null, $shared = false)
 ```php
 /**
  * Выполнение задания.
+ * [tl! remove]
+ * @return void [tl! remove]
  */
 public function handle(AudioProcessor $processor): void
 {
@@ -146,8 +148,8 @@ public function handle(AudioProcessor $processor): void
 ```php
 /**
  * Получение вложения к сообщению.
- *
- * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+ * [tl! add]
+ * @return array<int, \Illuminate\Mail\Mailables\Attachment> [tl! add]
  */
 public function attachments(): array
 {

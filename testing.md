@@ -1,5 +1,5 @@
 ---
-git: 00bab18760b65fa1d5176f1667ce9d7f3ebc1a2c
+git: a9c4937a1a88ff77a80067845fa5a4c0019393a3
 ---
 
 # Тестирование · Начало работы
@@ -40,6 +40,31 @@ php artisan make:test UserTest
 
 ```shell
 php artisan make:test UserTest --unit
+```
+
+Если у вас есть тестовый класс, который в основном полагается на возможности тестирования Laravel, но конкретному тестовому методу не требуется загруженное приложение, вы можете применить к этому методу атрибут `#[UnitTest]`, чтобы пропустить загрузку приложения только для этого теста.
+
+```php tab=PHPUnit
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\Attributes\UnitTest;
+use Tests\TestCase;
+
+class LocationServiceTest extends TestCase
+{
+    public function test_get_coordinates_resolves_address(): void
+    {
+        // Этот тест использует возможности тестирования Laravel...
+    }
+
+    #[UnitTest]
+    public function test_get_state_returns_state_from_abbreviation(): void
+    {
+        // Этот тест выполняется без загрузки приложения...
+    }
+}
 ```
 
 > [!NOTE]

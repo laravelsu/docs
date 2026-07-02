@@ -1,5 +1,5 @@
 ---
-git: c67cb4425af264f331c194e7c6abc69f9c048c9a
+git: ebca9dbb437fb4bcb5b2ae0a0bd48d75e065e697
 ---
 
 # Развертывание
@@ -16,7 +16,7 @@ git: c67cb4425af264f331c194e7c6abc69f9c048c9a
 
 <!-- <div class="content-list" markdown="1"> -->
 
-- PHP >= 8.2
+- PHP >= 8.3
 - Расширение PHP Ctype
 - Расширение PHP cURL
 - Расширение PHP DOM
@@ -67,7 +67,7 @@ server {
     error_page 404 /index.php;
 
     location ~ ^/index\.php(/|$) {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
         fastcgi_hide_header X-Powered-By;
@@ -88,7 +88,7 @@ server {
 frankenphp php-server -r public/
 ```
 
-Чтобы воспользоваться более мощными функциями, поддерживаемыми FrankenPHP, такими как интеграция [Laravel Octane](/docs/{{version}}/octane), HTTP/3, современное сжатие или возможность упаковывать приложения Laravel как автономные двоичные файлы, обратитесь к [документации Laravel](https://frankenphp.dev/docs/laravel/) FrankenPHP.
+Чтобы воспользоваться более мощными функциями, поддерживаемыми FrankenPHP, такими как интеграция [Laravel Octane](/docs/{{version}}/octane), HTTP/3, современное сжатие или возможность упаковывать приложения Laravel как автономные двоичные файлы, обратитесь к [документации FrankenPHP по Laravel](https://frankenphp.dev/docs/laravel/).
 
 <a name="directory-permissions"></a>
 ### Разрешения для папок

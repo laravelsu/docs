@@ -1,5 +1,5 @@
 ---
-git: 30b2a783b3a586b14af4a3932158c2e6a93f3632
+git: 2793708535657469c3738d966eff207fb18d4106
 ---
 
 - ## Пролог
@@ -114,4 +114,4 @@ git: 30b2a783b3a586b14af4a3932158c2e6a93f3632
     - [Socialite](/docs/{{version}}/socialite)
     - [Telescope](/docs/{{version}}/telescope)
     - [Valet](/docs/{{version}}/valet)
-    - [API Документация](https://api.laravel.com/docs/12.x)
+    - [API Документация](https://api.laravel.com/docs/13.x)

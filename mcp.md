@@ -1,5 +1,5 @@
 ---
-git: c15e8b60b97c7217b53a426e229f7da4bca8f070
+git: e5a60cd792282de178478ca5bb678945e266b00b
 ---
 
 # Laravel MCP
@@ -36,11 +36,25 @@ git: c15e8b60b97c7217b53a426e229f7da4bca8f070
     - [Аннотации resource](#resource-annotations)
     - [Условная регистрация resource](#conditional-resource-registration)
     - [Ответы resource](#resource-responses)
+- [Apps](#apps)
+    - [Создание app resources](#creating-app-resources)
+    - [Рендеринг apps из tools](#rendering-apps-from-tools)
+    - [Видимость tools для app](#app-tool-visibility)
+    - [Конфигурация app](#app-configuration)
+    - [Создание apps с Boost](#building-apps-with-boost)
 - [Metadata](#metadata)
+- [Icons](#icons)
 - [Аутентификация](#authentication)
     - [OAuth 2.1](#oauth)
     - [Sanctum](#sanctum)
 - [Авторизация](#authorization)
+- [MCP-клиент](#client)
+    - [Подключение к серверам](#client-connecting)
+    - [Именованные clients](#named-clients)
+    - [Аутентификация client](#client-authentication)
+    - [Tools](#client-tools)
+    - [Prompts](#client-prompts)
+    - [Resources](#client-resources)
 - [Тестирование серверов](#testing-servers)
     - [MCP Inspector](#mcp-inspector)
     - [Unit-тесты](#unit-tests)
@@ -381,12 +395,16 @@ class CurrentWeatherTool extends Tool
 
 Доступные аннотации:
 
+<div class="overflow-auto">
+
 | Аннотация          | Тип     | Описание                                                                                  |
 | ------------------ | ------- | ----------------------------------------------------------------------------------------- |
 | `#[IsReadOnly]`    | boolean | Tool не изменяет окружение.                                                               |
 | `#[IsDestructive]` | boolean | Tool может выполнять разрушительные изменения.                                            |
 | `#[IsIdempotent]`  | boolean | Повторные вызовы с теми же аргументами не имеют дополнительного эффекта.                  |
 | `#[IsOpenWorld]`   | boolean | Tool может взаимодействовать с внешними сущностями.                                       |
+
+</div>
 
 Значения можно задавать явно:
 
@@ -474,7 +492,7 @@ public function handle(Request $request): array
 {
     return [
         Response::text('Weather Summary: Sunny, 72°F'),
-        Response::text('**Detailed Forecast**\n- Morning: 65°F\n- Afternoon: 78°F\n- Evening: 70°F')
+        Response::text("**Detailed Forecast**\n- Morning: 65°F\n- Afternoon: 78°F\n- Evening: 70°F")
     ];
 }
 ```
@@ -962,11 +980,15 @@ class UserDashboardResource extends Resource
 }
 ```
 
+<div class="overflow-auto">
+
 | Аннотация        | Тип           | Описание                                                                  |
 | ---------------- | ------------- | ------------------------------------------------------------------------- |
 | `#[Audience]`    | Role or array | Целевая аудитория: `Role::User`, `Role::Assistant` или оба варианта.      |
 | `#[Priority]`    | float         | Числовая оценка важности resource от `0.0` до `1.0`.                      |
 | `#[LastModified]`| string        | ISO 8601 timestamp последнего обновления resource.                        |
+
+</div>
 
 <a name="conditional-resource-registration"></a>
 ### Условная регистрация resource
@@ -1003,6 +1025,25 @@ public function handle(Request $request): Response
 }
 ```
 
+<a name="resource-link-responses"></a>
+#### Resource link responses
+
+Чтобы вернуть ссылку на resource, используйте метод `resourceLink`, передав URI и имя. В отличие от embedded resource, resource link возвращает указатель URI, который AI-клиент получает самостоятельно:
+
+```php
+return Response::resourceLink(
+    uri: 'file:///data/report.json',
+    name: 'monthly-report',
+    mimeType: 'application/json',
+);
+```
+
+Также можно передать зарегистрированный класс или экземпляр resource; в этом случае URI, имя, title, description и MIME type будут автоматически взяты из resource:
+
+```php
+return Response::resourceLink(new WeatherForecastResource);
+```
+
 <a name="resource-blob-responses"></a>
 #### Blob responses
 
@@ -1033,6 +1074,159 @@ class WeatherGuidelinesResource extends Resource
 ```php
 return Response::error('Unable to fetch weather data for the specified location.');
 ```
+
+<a name="apps"></a>
+## Apps
+
+Laravel MCP поддерживает [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) - расширение Model Context Protocol, которое позволяет tools отображать интерактивные HTML-приложения внутри sandboxed iframes в поддерживаемых hosts. Это позволяет создавать dashboards, формы, визуализации и другие насыщенные интерфейсы, выходящие за рамки простых текстовых ответов.
+
+MCP app состоит из двух совместно работающих частей:
+
+<div class="content-list" markdown="1">
+
+- **App resource**, который возвращает самодостаточный HTML вашего приложения.
+- **Tool**, связанный с app resource через атрибут `#[RendersApp]`. Когда tool вызывается, host получает и отображает связанный resource.
+
+</div>
+
+<a name="creating-app-resources"></a>
+### Создание app resources
+
+Создать app resource можно с помощью Artisan-команды `make:mcp-app-resource`:
+
+```shell
+php artisan make:mcp-app-resource WeatherDashboardApp
+```
+
+Эта команда создает два файла: PHP-класс в `app/Mcp/Resources` и Blade-view в `resources/views/mcp`. Имя view автоматически выводится из имени класса. Например, `WeatherDashboardApp` соответствует `mcp.weather-dashboard-app`:
+
+```php
+<?php
+
+namespace App\Mcp\Resources;
+
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
+use Laravel\Mcp\Server\Attributes\AppMeta;
+use Laravel\Mcp\Server\Attributes\Description;
+use Laravel\Mcp\Server\AppResource;
+
+#[Description('An interactive weather dashboard.')]
+#[AppMeta]
+class WeatherDashboardApp extends AppResource
+{
+    public function handle(Request $request): Response
+    {
+        return Response::view('mcp.weather-dashboard-app', [
+            'title' => $this->title(),
+        ]);
+    }
+}
+```
+
+`AppResource` расширяет базовый класс `Resource` и автоматически настраивает схему URI `ui://` и MIME type `text/html;profile=mcp-app`, необходимые спецификацией MCP Apps. Как и любой другой resource, его нужно зарегистрировать в массиве `$resources` вашего сервера.
+
+Сгенерированный Blade-view использует компонент `<x-mcp::app>`, который рендерит полный HTML-документ со встроенным client-side MCP SDK, готовым к использованию:
+
+```blade
+<x-mcp::app :title="$title">
+    <x-slot:head>
+        <script type="module">
+        createMcpApp(async (app) => {
+            document.getElementById('run-btn').addEventListener('click', async () => {
+                const result = await app.callServerTool('get-weather-data', {});
+                document.getElementById('output').textContent = result.content[0]?.text ?? '';
+            });
+        });
+        </script>
+    </x-slot:head>
+
+    <div id="app">
+        <button id="run-btn">Refresh</button>
+        <p id="output"></p>
+    </div>
+</x-mcp::app>
+```
+
+Глобальная функция `createMcpApp` предоставляется встроенным SDK и отвечает за подключение iframe к серверу, применение host-темы и доступ к helper-методам вроде `callServerTool`, `sendMessage`, `openLink` и event callbacks. Полное client-side API смотрите в [спецификации MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview).
+
+<a name="rendering-apps-from-tools"></a>
+### Рендеринг apps из tools
+
+Чтобы отобразить app resource, свяжите с ним tool с помощью атрибута `#[RendersApp]`. Когда tool вызывается, Laravel MCP добавляет URI resource в metadata tool, чтобы host мог отрендерить app в sandboxed iframe:
+
+```php
+<?php
+
+namespace App\Mcp\Tools;
+
+use App\Mcp\Resources\WeatherDashboardApp;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
+use Laravel\Mcp\Server\Attributes\RendersApp;
+use Laravel\Mcp\Server\Tool;
+
+#[RendersApp(resource: WeatherDashboardApp::class)]
+class ShowWeatherDashboard extends Tool
+{
+    public function handle(Request $request): Response
+    {
+        return Response::text('Weather dashboard loaded.');
+    }
+}
+```
+
+Laravel MCP автоматически объявляет capability `io.modelcontextprotocol/ui`, когда зарегистрирован любой `AppResource`, поэтому дополнительная конфигурация сервера не требуется.
+
+<a name="app-tool-visibility"></a>
+### Видимость tools для app
+
+Каждый tool с атрибутом `#[RendersApp]` может ограничить, кто имеет право его вызывать, через аргумент `visibility`. Это полезно для приватных, доступных только app tools, которые UI вызывает для загрузки или обновления данных, не показывая эти tools модели:
+
+```php
+use Laravel\Mcp\Server\Attributes\RendersApp;
+use Laravel\Mcp\Server\Ui\Enums\Visibility;
+
+#[RendersApp(resource: WeatherDashboardApp::class, visibility: [Visibility::App])]
+class GetWeatherData extends Tool
+{
+    // ...
+}
+```
+
+Enum `Visibility` содержит два значения: `Model` и `App`; по умолчанию используются оба. Используйте `[Visibility::App]` для backend actions, которые UI вызывает напрямую, или `[Visibility::Model]`, чтобы сделать tool недоступным для UI.
+
+<a name="app-configuration"></a>
+### Конфигурация app
+
+Атрибут `#[AppMeta]` на app resource настраивает Content Security Policy iframe, browser permissions и library scripts, которые должны быть включены в `<head>` view:
+
+```php
+use Laravel\Mcp\Server\Attributes\AppMeta;
+use Laravel\Mcp\Server\Ui\Enums\Library;
+use Laravel\Mcp\Server\Ui\Enums\Permission;
+
+#[AppMeta(
+    connectDomains: ['https://api.weather.com'],
+    permissions: [Permission::Geolocation],
+    libraries: [Library::Tailwind, Library::Alpine],
+)]
+class WeatherDashboardApp extends AppResource
+{
+    // ...
+}
+```
+
+Enum `Library` включает заранее настроенные CDN scripts для популярных front-end libraries, таких как `Library::Tailwind` и `Library::Alpine`, а их CDN origins автоматически добавляются в CSP. Enum `Permission` покрывает browser permissions вроде `Camera`, `Microphone`, `Geolocation` и `ClipboardWrite`.
+
+Для вычисляемой или динамической конфигурации переопределите метод `appMeta` в resource, используя fluent builders `AppMeta`, `Csp` и `Permissions` из namespace `Laravel\Mcp\Server\Ui`.
+
+<a name="building-apps-with-boost"></a>
+### Создание apps с Boost
+
+Laravel MCP включает специальный reference для навыка [Boost](/docs/{{version}}/boost), посвященный созданию MCP Apps. Если у вас установлен [Laravel Boost](/docs/{{version}}/boost), ваш AI coding agent может вызвать навык `mcp-development` и попросить его сгенерировать app resource, Blade-view и связанный tool.
+
+Полный protocol reference, включая полное client-side API и детали schema, смотрите в официальной [документации MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview).
 
 <a name="metadata"></a>
 ## Metadata
@@ -1082,6 +1276,55 @@ class CurrentWeatherTool extends Tool
     ];
 }
 ```
+
+<a name="icons"></a>
+## Icons
+
+MCP-клиенты могут отображать icons для вашего сервера и его primitives. Icons можно объявлять на server, tool, resource или prompt с помощью атрибута `Icon`:
+
+```php
+use Laravel\Mcp\Enums\IconTheme;
+use Laravel\Mcp\Server\Attributes\Icon;
+
+#[Icon('mcp/server.png', mimeType: 'image/png', sizes: ['48x48'])]
+#[Icon('mcp/server-dark.svg', theme: IconTheme::Dark)]
+class WeatherServer extends Server
+{
+    // ...
+}
+```
+
+Атрибут `Icon` можно повторять, поэтому вы можете объявить несколько icons для разных размеров или вариантов светлой и темной темы.
+
+Также icons можно определить программно, переопределив метод `icons`; это удобно, когда icon зависит от условий во время выполнения:
+
+```php
+use Laravel\Mcp\Schema\Icon;
+
+class CurrentWeatherTool extends Tool
+{
+    /**
+     * Get the tool's icons.
+     *
+     * @return array<int, Icon>
+     */
+    public function icons(): array
+    {
+        return [
+            Icon::from('mcp/tool.png', mimeType: 'image/png'),
+        ];
+    }
+}
+```
+
+Icons, заданные через атрибут и метод `icons`, автоматически объединяются. Пути icons разрешаются следующим образом:
+
+<div class="content-list" markdown="1">
+
+- Пути со схемой URI, например `https:` или `data:`, используются как есть.
+- Относительные пути преобразуются в URL с помощью Laravel helper `asset`.
+
+</div>
 
 <a name="authentication"></a>
 ## Аутентификация
@@ -1168,7 +1411,7 @@ Mcp::web('/mcp/demo', WeatherExample::class)
 <a name="authorization"></a>
 ## Авторизация
 
-Текущий authenticated user доступен через `$request->user()`, что позволяет выполнять [authorization checks](/docs/{{version}}/authorization) внутри MCP tools и resources:
+Текущий аутентифицированный пользователь доступен через `$request->user()`, что позволяет выполнять [проверки авторизации](/docs/{{version}}/authorization) внутри MCP-инструментов и ресурсов:
 
 ```php
 use Laravel\Mcp\Request;
@@ -1182,6 +1425,256 @@ public function handle(Request $request): Response
 
     // ...
 }
+```
+
+<a name="client"></a>
+## MCP-клиент
+
+Помимо создания серверов, Laravel MCP включает клиент для подключения к другим MCP-серверам - как официальным, так и сторонним. Клиент позволяет вашему приложению обнаруживать и вызывать инструменты, предоставленные MCP-сервером, что особенно полезно для предоставления вашим [AI-агентам](/docs/{{version}}/ai-sdk#mcp-tools) доступа к возможностям внешних MCP-серверов.
+
+<a name="client-connecting"></a>
+### Подключение к серверам
+
+Подключиться к MCP-серверу, доступному по HTTP, можно методом `Client::web`, передав URL сервера:
+
+```php
+use Laravel\Mcp\Client;
+
+$client = Client::web('https://mcp.example.com');
+```
+
+Чтобы подключиться к локальному MCP-серверу, который запускается командой, используйте метод `Client::local`, передав команду и необходимые arguments:
+
+```php
+use Laravel\Mcp\Client;
+
+$client = Client::local('php', ['artisan', 'mcp:start']);
+```
+
+Client подключается лениво, автоматически устанавливая соединение при первом получении списка tools или вызове tool. Если нужно управлять соединением вручную, используйте методы `connect`, `connected`, `ping` и `disconnect`:
+
+```php
+$client->connect();
+
+$client->ping();
+
+if ($client->connected()) {
+    // ...
+}
+
+$client->disconnect();
+```
+
+Timeout request можно настроить методом `withTimeout`:
+
+```php
+$client = Client::web('https://mcp.example.com')->withTimeout(30);
+```
+
+<a name="named-clients"></a>
+### Именованные clients
+
+Вместо создания client каждый раз, когда он нужен, можно зарегистрировать переиспользуемые именованные clients. Обычно это делают в методе `boot` service provider с помощью facade `Mcp`:
+
+```php
+use Laravel\Mcp\Client;
+use Laravel\Mcp\Facades\Mcp;
+
+Mcp::registerClient('github', fn () => Client::web('https://mcp.example.com'));
+```
+
+После регистрации client можно получить по имени в любом месте приложения:
+
+```php
+use Laravel\Mcp\Facades\Mcp;
+
+$client = Mcp::client('github');
+```
+
+Именованные clients разрешаются один раз за request и автоматически отключаются в конце request lifecycle.
+
+<a name="client-authentication"></a>
+### Аутентификация client
+
+Для подключения к web MCP-серверу, защищенному bearer token, используйте метод `withToken`. Можно передать строку token или closure, который лениво разрешит token:
+
+```php
+use Illuminate\Support\Facades\Auth;
+use Laravel\Mcp\Client;
+
+$client = Client::web('https://mcp.example.com')->withToken($token);
+
+$client = Client::web('https://mcp.example.com')->withToken(
+    fn () => Auth::user()->mcpToken(),
+);
+```
+
+Для серверов, защищенных [OAuth 2.1](#oauth), настройте client с помощью метода `withOAuth`. Это client-side аналог защиты ваших собственных серверов через OAuth:
+
+```php
+use Laravel\Mcp\Client;
+use Laravel\Mcp\Facades\Mcp;
+
+Mcp::registerClient('github', fn () => Client::web('https://mcp.example.com')->withOAuth(
+    clientId: config('services.github_mcp.client_id'),
+    clientSecret: config('services.github_mcp.client_secret'),
+));
+```
+
+> [!NOTE]
+> Аргументы `clientId` и `clientSecret` можно опустить, когда MCP-сервер поддерживает [dynamic client registration](https://datatracker.ietf.org/doc/html/rfc7591); в этом случае client зарегистрирует себя автоматически.
+
+Затем зарегистрируйте OAuth routes для именованного client в файле `routes/ai.php`, используя метод `oAuthRoutesFor`. Переданный closure получает имя client и итоговый `TokenSet` после обмена authorization code на access token:
+
+```php
+use Illuminate\Support\Facades\Auth;
+use Laravel\Mcp\Client\OAuth\TokenSet;
+use Laravel\Mcp\Facades\Mcp;
+
+Mcp::oAuthRoutesFor('github', function (string $client, TokenSet $token) {
+    Auth::user()->update([
+        'github_mcp_token' => $token->accessToken,
+    ]);
+
+    return redirect('/dashboard');
+});
+```
+
+Это зарегистрирует два именованных route: connect route (`mcp.oauth.{client}.connect`), который перенаправляет пользователя на authorization server, и callback route (`mcp.oauth.{client}.callback`), который обменивает authorization code и вызывает ваш handler. Оба route по умолчанию используют middleware group `web`; ее можно переопределить через аргумент `middleware`.
+
+Чтобы начать authorization flow, перенаправьте пользователя на connect route:
+
+```php
+return redirect()->route('mcp.oauth.github.connect');
+```
+
+<a name="client-tools"></a>
+### Tools
+
+Получить tools, предоставленные MCP-сервером, можно методом `tools`, который возвращает collection tools с ключами по имени:
+
+```php
+use Laravel\Mcp\Facades\Mcp;
+
+$tools = Mcp::client('github')->tools();
+
+foreach ($tools as $tool) {
+    $tool->name;
+    $tool->title;
+    $tool->description;
+    $tool->inputSchema;
+}
+```
+
+Client автоматически проходит все страницы доступных tools. Ограничить количество возвращаемых tools можно аргументом `limit`:
+
+```php
+$tools = Mcp::client('github')->tools(limit: 10);
+```
+
+Чтобы вызвать tool, используйте метод `callTool`, передав имя tool и массив arguments. Возвращаемый экземпляр `ToolResult` предоставляет доступ к response tool:
+
+```php
+use Laravel\Mcp\Facades\Mcp;
+
+$result = Mcp::client('github')->callTool('current-weather', [
+    'location' => 'New York',
+]);
+
+$result->text(); // The text content of the response...
+(string) $result; // Equivalent to calling text()...
+$result->isError; // Whether the tool reported an error...
+$result->structuredContent;  // Structured content, if any...
+```
+
+Также tool можно вызвать напрямую из экземпляра, полученного в списке:
+
+```php
+$tools = Mcp::client('github')->tools();
+
+$result = $tools['current-weather']->call([
+    'location' => 'New York',
+]);
+```
+
+Если вы создаете agents с помощью [Laravel AI SDK](/docs/{{version}}/ai-sdk), tools из MCP client можно передавать напрямую agent, позволяя модели вызывать их при ответе на prompt. Подробнее смотрите раздел [MCP Tools](/docs/{{version}}/ai-sdk#mcp-tools) документации AI SDK.
+
+<a name="client-prompts"></a>
+### Prompts
+
+Получить prompts, предоставленные MCP-сервером, можно методом `prompts`, который возвращает collection prompts с ключами по имени:
+
+```php
+use Laravel\Mcp\Facades\Mcp;
+
+$prompts = Mcp::client('github')->prompts();
+
+foreach ($prompts as $prompt) {
+    $prompt->name;
+    $prompt->title;
+    $prompt->description;
+    $prompt->arguments;
+}
+```
+
+Client автоматически проходит все страницы доступных prompts. Ограничить количество возвращаемых prompts можно аргументом `limit`:
+
+```php
+$prompts = Mcp::client('github')->prompts(limit: 10);
+```
+
+Чтобы получить prompt, используйте метод `getPrompt`, передав имя prompt и массив arguments. Возвращаемый экземпляр `PromptResult` предоставляет доступ к сгенерированным messages:
+
+```php
+use Laravel\Mcp\Facades\Mcp;
+
+$result = Mcp::client('github')->getPrompt('describe-weather', [
+    'location' => 'New York',
+]);
+
+$result->text(); // The text content of the messages...
+(string) $result; // Equivalent to calling text()...
+$result->messages; // The raw messages returned by the prompt...
+$result->description; // The prompt description, if any...
+```
+
+<a name="client-resources"></a>
+### Resources
+
+Получить resources, предоставленные MCP-сервером, можно методом `resources`, который возвращает collection resources с ключами по URI:
+
+```php
+use Laravel\Mcp\Facades\Mcp;
+
+$resources = Mcp::client('github')->resources();
+
+foreach ($resources as $resource) {
+    $resource->uri;
+    $resource->name;
+    $resource->title;
+    $resource->description;
+    $resource->mimeType;
+    $resource->size;
+}
+```
+
+Client автоматически проходит все страницы доступных resources. Ограничить количество возвращаемых resources можно аргументом `limit`:
+
+```php
+$resources = Mcp::client('github')->resources(limit: 10);
+```
+
+Чтобы прочитать resource, используйте метод `readResource`, передав URI resource. Возвращаемый экземпляр `ResourceReadResult` предоставляет доступ к content resource:
+
+```php
+use Laravel\Mcp\Facades\Mcp;
+
+$result = Mcp::client('github')->readResource('weather://guidelines');
+
+$result->content(); // The content of the resource, decoding base64 blobs as needed...
+(string) $result; // Equivalent to calling content()...
+$result->mimeType(); // The MIME type of the resource, if any...
+$result->contents; // The raw contents returned by the resource...
 ```
 
 <a name="testing-servers"></a>
@@ -1248,7 +1741,7 @@ $response = WeatherServer::prompt(...);
 $response = WeatherServer::resource(...);
 ```
 
-Чтобы действовать от имени authenticated user, используйте `actingAs` перед вызовом primitive:
+Чтобы действовать от имени аутентифицированного пользователя, используйте `actingAs` перед вызовом primitive:
 
 ```php
 $response = WeatherServer::actingAs($user)->tool(...);

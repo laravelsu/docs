@@ -1,5 +1,5 @@
 ---
-git: 89ec4f0f815fde25dab8da4fca9d4d9f3d9d4ca1
+git: 0d61029ee4473fc32ef843ea6051b2db54647a34
 ---
 
 # Кэширование
@@ -14,7 +14,7 @@ git: 89ec4f0f815fde25dab8da4fca9d4d9f3d9d4ca1
 <a name="configuration"></a>
 ## Конфигурирование
 
-Файл конфигурации кеша вашего приложения находится в `config/cache.php`. В этом файле вы можете указать, какой хранилище кеша вы хотите использовать по умолчанию для всего приложении. Laravel из коробки поддерживает популярные механизмы кеширования, такие как [Memcached](https://memcached.org), [Redis](https://redis.io), [DynamoDB](https://aws.amazon.com/dynamodb) и реляционные базы данных. Кроме того, доступен драйвер кеширования на основе файлов, в то время как драйверы `array` и `null` предоставляют удобные механизмы кеширования для ваших автоматических тестов.
+Файл конфигурации кеша вашего приложения находится в `config/cache.php`. В этом файле вы можете указать, какое хранилище кеша вы хотите использовать по умолчанию во всем приложении. Laravel из коробки поддерживает популярные механизмы кеширования, такие как [Memcached](https://memcached.org), [Redis](https://redis.io), [DynamoDB](https://aws.amazon.com/dynamodb), реляционные базы данных и диски файловой системы. Кроме того, доступен драйвер кеширования на основе файлов, в то время как драйверы `array` и `null` предоставляют удобные механизмы кеширования для ваших автоматических тестов.
 
 Файл конфигурации кэша также содержит множество других параметров, которые вы можете просмотреть. По умолчанию Laravel настроен на использование драйвера кэша `database`, который сохраняет сериализованные кэшированные объекты в базе данных вашего приложения.
 
@@ -72,7 +72,20 @@ php artisan migrate
 
 Перед использованием драйвера кеша Redis, вам нужно будет либо установить расширение PHP PhpRedis через PECL, либо установить пакет `predis/predis` (~ 2.0) через Composer. [Laravel Sail](/docs/{{version}}/sail) уже включает это расширение. Кроме того, на официальных платформах приложений Laravel, таких как [Laravel Cloud](https://cloud.laravel.com) и [Laravel Forge](https://forge.laravel.com), расширение PhpRedis установлено по умолчанию.
 
-Для получения дополнительной информации о настройке Redis обратитесь к его [странице документации Laravel](/docs/{{version}}/redis#configuration).
+Для получения дополнительной информации о настройке Redis обратитесь к [документации Laravel по Redis](/docs/{{version}}/redis#configuration).
+
+<a name="storage"></a>
+#### Хранилище
+
+Драйвер кеша `storage` позволяет хранить кешированные значения на любом настроенном [диске файловой системы](/docs/{{version}}/filesystem) вашего приложения. Это может быть полезно, если вы хотите использовать существующий диск, например S3-диск, как key / value-хранилище кеша:
+
+```php
+'storage' => [
+    'driver' => 'storage',
+    'disk' => env('CACHE_STORAGE_DISK'),
+    'path' => env('CACHE_STORAGE_PATH', 'framework/cache/data'),
+],
+```
 
 <a name="dynamodb"></a>
 #### Предварительная подготовка драйвера на основе DynamoDB
@@ -105,7 +118,7 @@ composer require aws/aws-sdk-php
 <a name="mongodb"></a>
 #### MongoDB
 
-Если вы используете MongoDB, драйвер кэша  `mongodb` предоставляется официальным пакетом `mongodb/laravel-mongodb` и может быть настроен с помощью подключения к базе данных `mongodb`. MongoDB поддерживает индексы TTL, которые можно использовать для автоматической очистки элементов кэша с истекшим сроком действия.
+Если вы используете MongoDB, драйвер кэша `mongodb` предоставляется официальным пакетом `mongodb/laravel-mongodb` и может быть настроен с помощью подключения к базе данных `mongodb`. MongoDB поддерживает индексы TTL, которые можно использовать для автоматической очистки элементов кэша с истекшим сроком действия.
 
 Для получения дополнительной информации о настройке MongoDB обратитесь к [документации по кэшу и блокировкам MongoDB](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/cache/).
 
@@ -210,6 +223,14 @@ $value = Cache::remember('users', $seconds, function () {
 
 Если элемент не существует в кеше, то замыкание, переданное методу `remember`, будет выполнено, и его результат будет помещен в кеш.
 
+Если вам нужно узнать, был ли элемент получен из кеша, а не путем выполнения переданного замыкания, вы можете использовать метод `rememberWithWarmth`. Этот метод возвращает массив, содержащий кешированное значение и булево значение, указывающее, был ли элемент «warm», то есть получен из кеша, а не вычислен замыканием:
+
+```php
+[$value, $warm] = Cache::rememberWithWarmth('users', $seconds, function () {
+    return DB::table('users')->get();
+});
+```
+
 Вы можете использовать метод `rememberForever`, чтобы получить элемент из кеша или сохранить его навсегда, если он не существует:
 
 ```php
@@ -274,6 +295,21 @@ Cache::put('key', 'value', now()->addMinutes(10));
 Cache::add('key', 'value', $seconds);
 ```
 
+<a name="extending-item-lifetime"></a>
+### Продление времени жизни элемента
+
+Метод `touch` позволяет продлить время жизни (TTL) существующего элемента кеша. Метод `touch` вернет `true`, если элемент кеша существует и срок его действия был успешно продлен. Если элемент отсутствует в кеше, метод вернет `false`:
+
+```php
+Cache::touch('key', 3600);
+```
+
+Вы можете передать экземпляр `DateTimeInterface`, `DateInterval` или `Carbon`, чтобы указать точное время истечения срока действия:
+
+```php
+Cache::touch('key', now()->addHours(2));
+```
+
 <a name="storing-items-forever"></a>
 #### Сохранение элементов на постоянной основе
 
@@ -307,6 +343,12 @@ Cache::put('key', 'value', -5);
 
 ```php
 Cache::flush();
+```
+
+Вы можете очистить все атомарные блокировки в кеше с помощью метода `flushLocks`:
+
+```php
+Cache::flushLocks();
 ```
 
 > [!WARNING]
@@ -388,7 +430,7 @@ cache()->remember('users', $seconds, function () {
 ## Теги кеша
 
 > [!WARNING]
-> Теги кеша не поддерживаются при использовании драйверов кеша `file`, `dynamodb` или `database`.
+> Теги кеша не поддерживаются при использовании драйверов кеша `file`, `dynamodb`, `database` или `storage`.
 
 <a name="storing-tagged-cache-items"></a>
 ### Сохранение элементов кеша с тегами
@@ -512,6 +554,26 @@ Cache::restoreLock('processing', $this->owner)->release();
 
 ```php
 Cache::lock('processing')->forceRelease();
+```
+
+<a name="refreshing-locks"></a>
+### Обновление блокировок
+
+Если вам нужно продлить срок действия блокировки, которой вы сейчас владеете, вы можете использовать метод `refresh`. Если количество секунд не передано, будет использована исходная длительность блокировки. Это полезно для долгих операций, когда вы предпочитаете получить короткую блокировку и периодически продлевать ее вместо получения блокировки с очень долгим сроком действия:
+
+```php
+$lock = Cache::lock('generate-reports', 60);
+
+if ($lock->get()) {
+    foreach ($reports as $report) {
+        $report->generate();
+
+        // Продлить блокировку еще на 60 секунд...
+        $lock->refresh();
+    }
+
+    $lock->release();
+}
 ```
 
 <a name="concurrency-limiting"></a>
@@ -701,6 +763,10 @@ class AppServiceProvider extends ServiceProvider
 |----------------------------------------------|
 | `Illuminate\Cache\Events\CacheFlushed`       |
 | `Illuminate\Cache\Events\CacheFlushing`      |
+| `Illuminate\Cache\Events\CacheFlushFailed`   |
+| `Illuminate\Cache\Events\CacheLocksFlushed`  |
+| `Illuminate\Cache\Events\CacheLocksFlushing` |
+| `Illuminate\Cache\Events\CacheLocksFlushFailed` |
 | `Illuminate\Cache\Events\CacheHit`           |
 | `Illuminate\Cache\Events\CacheMissed`        |
 | `Illuminate\Cache\Events\ForgettingKey`      |

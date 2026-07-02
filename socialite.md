@@ -1,5 +1,5 @@
 ---
-git: 6d46a8ea3e1538bc5bb3a0b51fbc38fa166526b0
+git: 0a4a8f425eccb65b5776c9600f28b95963979747
 ---
 
 # Пакет Laravel Socialite
@@ -247,14 +247,14 @@ test('user is redirected to github', function () {
 <a name="faking-the-callback"></a>
 #### Имитация обратного вызова
 
-Чтобы протестировать маршрут обратного вызова вашего приложения, вы можете вызвать метод `fake` и передать экземпляр `User`, который должен быть возвращен, когда приложение запросит сведения о пользователе у провайдера. Экземпляр `User` можно создать с помощью метода `map`:
+Чтобы протестировать маршрут обратного вызова вашего приложения, вы можете вызвать метод `fake` и передать экземпляр `User`, который должен быть возвращен, когда приложение запросит сведения о пользователе у провайдера. Экземпляр `User` можно создать с помощью метода `fake`:
 
 ```php
 use Laravel\Socialite\Socialite;
 use Laravel\Socialite\Two\User;
 
 test('user can login with github', function () {
-    Socialite::fake('github', (new User)->map([
+    Socialite::fake('github', User::fake([
         'id' => 'github-123',
         'name' => 'Jason Beggs',
         'email' => 'jason@example.com',
@@ -272,15 +272,18 @@ test('user can login with github', function () {
 });
 ```
 
-По умолчанию экземпляр `User` также будет содержать свойство `token`. При необходимости вы можете вручную указать дополнительные свойства экземпляра `User`:
+По умолчанию экземпляр `User` будет содержать фиктивные значения OAuth-токенов. При необходимости вы можете переопределить эти значения, передав дополнительные атрибуты методу `fake`:
 
 ```php
-$fakeUser = (new User)->map([
+$fakeUser = User::fake([
     'id' => 'github-123',
     'name' => 'Jason Beggs',
     'email' => 'jason@example.com',
-])->setToken('fake-token')
-  ->setRefreshToken('fake-refresh-token')
-  ->setExpiresIn(3600)
-  ->setApprovedScopes(['read', 'write'])
+    'token' => 'fake-token',
+    'refreshToken' => 'fake-refresh-token',
+    'expiresIn' => 3600,
+    'approvedScopes' => ['read', 'write'],
+]);
 ```
+
+Пользователей OAuth 1 можно имитировать с помощью класса `Laravel\Socialite\One\User`.

@@ -1,5 +1,5 @@
 ---
-git: 861a9116742b8054dc74aa25a7fa167c4e287d96
+git: 0a4a8f425eccb65b5776c9600f28b95963979747
 ---
 
 # Контейнер служб (service container)
@@ -386,13 +386,15 @@ class PhotoController extends Controller
         #[DB('mysql')] protected Connection $connection,
         #[Give(DatabaseRepository::class)] protected UserRepository $users,
         #[Log('daily')] protected LoggerInterface $log,
-        #[RouteParameter('photo')] protected Photo $photo,
+        #[RouteParameter] protected Photo $photo,
         #[Tag('reports')] protected iterable $reports,
     ) {
         // ...
     }
 }
 ```
+
+Атрибут `RouteParameter` разрешит параметр маршрута, соответствующий имени переменной. При необходимости вы можете явно указать имя параметра маршрута: `#[RouteParameter('photo')]`.
 
 Кроме того, Laravel предоставляет атрибут `CurrentUser` для добавления текущего аутентифицированного пользователя в заданный маршрут или класс:
 
@@ -418,6 +420,7 @@ namespace App\Attributes;
 use Attribute;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Container\ContextualAttribute;
+use ReflectionParameter;
 
 #[Attribute(Attribute::TARGET_PARAMETER)]
 class Config implements ContextualAttribute
@@ -434,9 +437,10 @@ class Config implements ContextualAttribute
      *
      * @param  self  $attribute
      * @param  \Illuminate\Contracts\Container\Container  $container
+     * @param  \ReflectionParameter  $parameter
      * @return mixed
      */
-    public static function resolve(self $attribute, Container $container)
+    public static function resolve(self $attribute, Container $container, ReflectionParameter $parameter)
     {
         return $container->make('config')->get($attribute->key, $attribute->default);
     }

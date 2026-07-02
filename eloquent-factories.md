@@ -1,5 +1,5 @@
 ---
-git: 0f6ae40e193b40e833701650b7cf7102f9dcb0bb
+git: 49106591ee64e65cd6abcf47592924e684a84d0d
 ---
 
 # Eloquent: Фабрики (Factory)
@@ -111,20 +111,17 @@ protected static function newFactory()
 }
 ```
 
-Затем определите свойство `model` в соответствующей фабрике:
+Затем используйте атрибут `UseModel` в соответствующей фабрике, чтобы указать модель:
 
 ```php
 use App\Administration\Flight;
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+#[UseModel(Flight::class)]
 class FlightFactory extends Factory
 {
-    /**
-     * Название модели, соответствующей фабрике.
-     *
-     * @var class-string<\Illuminate\Database\Eloquent\Model>
-     */
-    protected $model = Flight::class;
+    // ...
 }
 ```
 
@@ -404,6 +401,18 @@ $user = User::factory()
     ->create();
 ```
 
+Вы также можете передать несколько массивов атрибутов, чтобы создать связанные модели с состоянием для каждой модели. Laravel применит каждый массив по порядку:
+
+```php
+$user = User::factory()
+    ->hasPosts(
+        ['title' => 'First Post'],
+        ['title' => 'Second Post'],
+        ['title' => 'Third Post'],
+    )
+    ->create();
+```
+
 Вы можете преобразовать состояние связанной модели с помощью замыкания, предоставив ему доступ к родительской модели:
 
 ```php
@@ -483,6 +492,20 @@ $user = User::factory()
     ->hasAttached(
         Role::factory()->count(3),
         ['active' => true]
+    )
+    ->create();
+```
+
+Вы также можете передать массив pivot-массивов, чтобы задать уникальные pivot-данные для каждой связанной модели:
+
+```php
+$user = User::factory()
+    ->hasAttached(
+        Role::factory(),
+        [
+            ['active' => true],
+            ['active' => false],
+        ]
     )
     ->create();
 ```

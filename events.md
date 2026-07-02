@@ -1,5 +1,5 @@
 ---
-git: ddbe6d1d47f132f1956c983686d894fae4abb00c
+git: d68e6718245c78790aedb070fd6a627f4e930523
 ---
 
 # События (Events)
@@ -92,6 +92,34 @@ php artisan event:list
 
 Чтобы повысить скорость вашего приложения, вам следует кэшировать манифест всех прослушивателей вашего приложения с помощью Artisan-команд `optimize` или `event:cache`. Обычно эту команду следует запускать как часть [процесса развертывания](/docs/{{version}}/deployment#optimization). Этот манифест будет использоваться платформой для ускорения процесса регистрации событий. Команда `event:clear` может использоваться для уничтожения кэша событий.
 
+<a name="dynamic-event-discovery"></a>
+#### Динамическое обнаружение событий
+
+Чтобы динамически управлять тем, должен ли конкретный слушатель быть обнаружен, вы можете реализовать интерфейс `ShouldBeDiscovered` в классе слушателя и определить метод `shouldBeDiscovered`, возвращающий булево значение. Если метод возвращает `false`, слушатель не будет зарегистрирован во время обнаружения событий:
+
+```php
+use Illuminate\Contracts\Events\ShouldBeDiscovered;
+
+class SendPodcastNotification implements ShouldBeDiscovered
+{
+    /**
+     * Обработать событие.
+     */
+    public function handle(PodcastProcessed $event): void
+    {
+        // ...
+    }
+
+    /**
+     * Определить, должен ли слушатель быть обнаружен.
+     */
+    public static function shouldBeDiscovered(): bool
+    {
+        return app()->environment('production');
+    }
+}
+```
+
 <a name="manually-registering-events"></a>
 ### Ручная регистрация событий
 
@@ -140,7 +168,7 @@ public function boot(): void
 }
 ```
 
-<a name="queuable-anonymous-event-listeners"></a>
+<a name="queueable-anonymous-event-listeners"></a>
 #### Анонимные слушатели событий в очереди
 
 При регистрации слушателей событий на основе замыкания вы можете обернуть замыкание слушателя в функцию `Illuminate\Events\queueable`, чтобы указать Laravel выполнить слушателя с использованием [очереди](/docs/{{version}}/queues):
@@ -288,7 +316,7 @@ class SendShipmentNotification implements ShouldQueue
 <a name="customizing-the-queue-connection-queue-name"></a>
 #### Настройка соединения очереди, имени, и времени задержки
 
-Если вы хотите настроить соединение очереди, имя очереди или время задержки очереди для слушателя событий, то вы можете определить свойства `$connection`, `$queue`, или `$delay` в своем классе слушателя:
+Если вы хотите настроить соединение очереди, имя очереди или время задержки очереди для слушателя событий, вы можете использовать атрибуты `Connection`, `Queue` и `Delay` в классе слушателя:
 
 ```php
 <?php
@@ -297,29 +325,16 @@ namespace App\Listeners;
 
 use App\Events\OrderShipped;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\Connection;
+use Illuminate\Queue\Attributes\Delay;
+use Illuminate\Queue\Attributes\Queue;
 
+#[Connection('sqs')]
+#[Queue('listeners')]
+#[Delay(60)]
 class SendShipmentNotification implements ShouldQueue
 {
-    /**
-     * Имя соединения, на которое должно быть отправлено задание.
-     *
-     * @var string|null
-     */
-    public $connection = 'sqs';
-
-    /**
-     * Имя очереди, в которую должно быть отправлено задание.
-     *
-     * @var string|null
-     */
-    public $queue = 'listeners';
-
-    /**
-     * Время (в секундах) до обработки задания.
-     *
-     * @var int
-     */
-    public $delay = 60;
+    // ...
 }
 ```
 
@@ -655,7 +670,7 @@ class SendShipmentNotification implements ShouldQueue
 
 Если один из ваших слушателей в очереди обнаруживает ошибку, вы, вероятно, не хотите, чтобы он продолжал повторять попытки бесконечно. Таким образом, Laravel предлагает различные способы указать, сколько раз и как долго может выполняться попытка прослушивания.
 
-Вы можете определить свойство или метод `tries` в своем классе слушателя, чтобы указать, сколько раз можно попытаться выполнить слушатель, прежде чем он будет считаться неудачным:
+Вы можете использовать атрибут `Tries` в классе слушателя, чтобы указать, сколько раз можно попытаться выполнить слушатель, прежде чем он будет считаться неудачным:
 
 ```php
 <?php
@@ -664,30 +679,27 @@ namespace App\Listeners;
 
 use App\Events\OrderShipped;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\InteractsWithQueue;
 
+#[Tries(5)]
 class SendShipmentNotification implements ShouldQueue
 {
     use InteractsWithQueue;
 
-    /**
-     * Количество попыток слушателя в очереди.
-     *
-     * @var int
-     */
-    public $tries = 5;
+    // ...
 }
 ```
 
-В качестве альтернативы определению того, сколько раз можно попытаться выполнить слушатель, прежде чем он потерпит неудачу, вы можете определить время, через которое слушатель больше не должен выполняться. Это позволяет попытаться выполнить прослушивание любое количество раз в течение заданного периода времени. Чтобы определить время, через которое больше не следует предпринимать попытки прослушивания, добавьте метод `retryUntil` в свой класс слушателя. Этот метод должен возвращать экземпляр `DateTime`:
+В качестве альтернативы определению того, сколько раз можно попытаться выполнить слушатель, прежде чем он потерпит неудачу, вы можете определить время, после которого слушатель больше не должен выполняться. Это позволяет попытаться выполнить слушатель любое количество раз в течение заданного периода времени. Чтобы определить время, после которого больше не следует предпринимать попытки выполнения слушателя, добавьте метод `retryUntil` в свой класс слушателя. Этот метод должен возвращать экземпляр `DateTimeInterface`:
 
 ```php
-use DateTime;
+use DateTimeInterface;
 
 /**
  * Определить время, через которое слушатель должен отключиться.
  */
-public function retryUntil(): DateTime
+public function retryUntil(): DateTimeInterface
 {
     return now()->plus(minutes: 5);
 }
@@ -698,15 +710,21 @@ public function retryUntil(): DateTime
 <a name="specifying-queued-listener-backoff"></a>
 #### Указание задержки прослушивания в очереди
 
-Если вы хотите настроить, сколько секунд Laravel должен ждать перед повторной попыткой прослушивателя, обнаружившего исключение, вы можете сделать это, определив свойство `$backoff` в своем классе прослушивателя:
+Если вы хотите настроить, сколько секунд Laravel должен ждать перед повторной попыткой слушателя, столкнувшегося с исключением, вы можете использовать атрибут `Backoff` в классе слушателя:
 
 ```php
-/**
- * Количество секунд ожидания перед повторной попыткой прослушивателя в очереди.
- *
- * @var int
- */
-public $backoff = 3;
+<?php
+
+namespace App\Listeners;
+
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\Backoff;
+
+#[Backoff(3)]
+class SendShipmentNotification implements ShouldQueue
+{
+    // ...
+}
 ```
 
 Если вам требуется более сложная логика для определения времени отсрочки прослушивания, вы можете определить метод `backoff` в своем классе прослушивателя:
@@ -738,7 +756,7 @@ public function backoff(OrderShipped $event): array
 <a name="specifying-queued-listener-max-exceptions"></a>
 #### Указание максимального количества исключений для прослушивателя в очереди
 
-Иногда может потребоваться указать, что прослушиватель, находящийся в очереди, может быть запущен много раз, но должен завершиться неудачей, если повторные попытки будут вызваны заданным количеством необработанных исключений (в отличие от непосредственного освобождения методом `release`). Для этого можно определить свойство `$maxExceptions` в классе прослушивателя:
+Иногда может потребоваться указать, что слушатель в очереди может быть запущен много раз, но должен завершиться неудачей, если повторные попытки вызваны заданным количеством необработанных исключений (в отличие от непосредственного освобождения методом `release`). Для этого можно использовать атрибуты `Tries` и `MaxExceptions` в классе слушателя:
 
 ```php
 <?php
@@ -747,25 +765,15 @@ namespace App\Listeners;
 
 use App\Events\OrderShipped;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\MaxExceptions;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\InteractsWithQueue;
 
+#[Tries(25)]
+#[MaxExceptions(3)]
 class SendShipmentNotification implements ShouldQueue
 {
     use InteractsWithQueue;
-
-    /**
-     * The number of times the queued listener may be attempted.
-     *
-     * @var int
-     */
-    public $tries = 25;
-
-    /**
-     * The maximum number of unhandled exceptions to allow before failing.
-     *
-     * @var int
-     */
-    public $maxExceptions = 3;
 
     /**
      * Handle the event.
@@ -782,7 +790,7 @@ class SendShipmentNotification implements ShouldQueue
 <a name="specifying-queued-listener-timeout"></a>
 #### Указание тайм-аута очереди прослушивателя
 
-Зачастую вы примерно знаете, сколько времени займёт выполнение ваших слушателей в очереди. Поэтому Laravel позволяет указать значение тайм-аута. Если слушатель обрабатывается дольше, чем указано в значении тайм-аута, обрабатывающий его обработчик завершится с ошибкой. Вы можете определить максимальное время выполнения слушателя в секундах, определив свойство `$timeout` в классе слушателя:
+Зачастую вы примерно знаете, сколько времени займёт выполнение ваших слушателей в очереди. Поэтому Laravel позволяет указать значение тайм-аута. Если слушатель обрабатывается дольше, чем указано в значении тайм-аута, обрабатывающий его worker завершится с ошибкой. Вы можете определить максимальное время выполнения слушателя в секундах с помощью атрибута `Timeout` в классе слушателя:
 
 ```php
 <?php
@@ -791,19 +799,16 @@ namespace App\Listeners;
 
 use App\Events\OrderShipped;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\Timeout;
 
+#[Timeout(120)]
 class SendShipmentNotification implements ShouldQueue
 {
-    /**
-     * The number of seconds the listener can run before timing out.
-     *
-     * @var int
-     */
-    public $timeout = 120;
+    // ...
 }
 ```
 
-Если вы хотите указать, что прослушиватель должен быть помечен как неудачный по истечении времени ожидания, вы можете определить свойство `$failOnTimeout` в классе прослушивателя:
+Если вы хотите указать, что слушатель должен быть помечен как неудачный по истечении времени ожидания, вы можете использовать атрибут `FailOnTimeout` в классе слушателя:
 
 ```php
 <?php
@@ -812,15 +817,12 @@ namespace App\Listeners;
 
 use App\Events\OrderShipped;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\FailOnTimeout;
 
+#[FailOnTimeout]
 class SendShipmentNotification implements ShouldQueue
 {
-    /**
-     * Indicate if the listener should be marked as failed on timeout.
-     *
-     * @var bool
-     */
-    public $failOnTimeout = true;
+    // ...
 }
 ```
 

@@ -1,5 +1,5 @@
 ---
-git: bee7a0c1569677e5a96c03d1bc5c94ee06bd4070
+git: e5a60cd792282de178478ca5bb678945e266b00b
 ---
 
 # Laravel AI SDK
@@ -18,7 +18,9 @@ git: bee7a0c1569677e5a96c03d1bc5c94ee06bd4070
     - [Broadcasting](#broadcasting)
     - [Очереди](#queueing)
     - [Инструменты](#tools)
+    - [MCP Tools](#mcp-tools)
     - [Инструменты провайдеров](#provider-tools)
+    - [Sub-agents](#sub-agents)
     - [Middleware](#middleware)
     - [Анонимные агенты](#anonymous-agents)
     - [Конфигурация агента](#agent-configuration)
@@ -78,12 +80,16 @@ php artisan migrate
 
 ```ini
 ANTHROPIC_API_KEY=
+AZURE_OPENAI_API_KEY=
 COHERE_API_KEY=
+DEEPSEEK_API_KEY=
 ELEVENLABS_API_KEY=
 GEMINI_API_KEY=
+GROQ_API_KEY=
 MISTRAL_API_KEY=
 OLLAMA_API_KEY=
 OPENAI_API_KEY=
+OPENROUTER_API_KEY=
 JINA_API_KEY=
 VOYAGEAI_API_KEY=
 XAI_API_KEY=
@@ -94,7 +100,7 @@ XAI_API_KEY=
 <a name="custom-base-urls"></a>
 ### Пользовательские базовые URL
 
-По умолчанию Laravel AI SDK подключается напрямую к публичному API endpoint каждого провайдера. Иногда запросы нужно направлять через другой endpoint, например через proxy-сервис для централизованного управления API-ключами, rate limiting или корпоративный gateway.
+По умолчанию Laravel AI SDK подключается напрямую к публичному API-эндпоинту каждого провайдера. Иногда запросы нужно направлять через другой эндпоинт, например через прокси-сервис для централизованного управления API-ключами, ограничения частоты запросов или корпоративный шлюз.
 
 Пользовательские базовые URL настраиваются через параметр `url` в конфигурации провайдера:
 
@@ -103,7 +109,7 @@ XAI_API_KEY=
     'openai' => [
         'driver' => 'openai',
         'key' => env('OPENAI_API_KEY'),
-        'url' => env('OPENAI_BASE_URL'),
+        'url' => env('OPENAI_URL'),
     ],
 
     'anthropic' => [
@@ -114,22 +120,26 @@ XAI_API_KEY=
 ],
 ```
 
-Это полезно при маршрутизации запросов через proxy-сервисы вроде LiteLLM или Azure OpenAI Gateway, а также при использовании альтернативных endpoints. Пользовательские URL поддерживаются для OpenAI, Anthropic, Gemini, Groq, Cohere, DeepSeek, xAI и OpenRouter.
+Это полезно при маршрутизации запросов через прокси-сервисы вроде LiteLLM или Azure OpenAI Gateway, а также при использовании альтернативных эндпоинтов. Пользовательские URL поддерживаются для OpenAI, Anthropic, Gemini, Groq, Cohere, DeepSeek, xAI и OpenRouter.
 
 <a name="provider-support"></a>
 ### Поддержка провайдеров
 
 AI SDK поддерживает разных провайдеров для разных возможностей:
 
+<div class="overflow-auto">
+
 | Возможность | Провайдеры |
 |---|---|
-| Text | OpenAI, Anthropic, Gemini, Azure, Groq, xAI, DeepSeek, Mistral, Ollama |
-| Images | OpenAI, Gemini, xAI |
-| TTS | OpenAI, ElevenLabs |
-| STT | OpenAI, ElevenLabs, Mistral |
-| Embeddings | OpenAI, Gemini, Azure, Cohere, Mistral, Jina, VoyageAI |
-| Reranking | Cohere, Jina |
+| Text | OpenAI, Anthropic, Gemini, Azure, Bedrock, Groq, xAI, DeepSeek, Mistral, Ollama, OpenRouter |
+| Images | OpenAI, Gemini, xAI, Azure, Bedrock, OpenRouter |
+| TTS | OpenAI, ElevenLabs, Gemini |
+| STT | OpenAI, ElevenLabs, Mistral, Gemini |
+| Embeddings | OpenAI, Gemini, Azure, Bedrock, Cohere, Mistral, Jina, VoyageAI, Ollama, OpenRouter |
+| Reranking | Cohere, Jina, VoyageAI |
 | Files | OpenAI, Anthropic, Gemini |
+
+</div>
 
 Enum `Laravel\Ai\Enums\Lab` можно использовать для ссылки на провайдеров в коде вместо строк:
 
@@ -232,7 +242,7 @@ return (string) $response;
 $agent = SalesCoach::make(user: $user);
 ```
 
-Передав дополнительные аргументы в `prompt`, можно переопределить provider, model или HTTP timeout:
+Передав дополнительные аргументы в `prompt`, можно переопределить `provider`, `model` или HTTP timeout:
 
 ```php
 $response = (new SalesCoach)->prompt(
@@ -289,6 +299,8 @@ class SalesCoach implements Agent, Conversational
 }
 ```
 
+При использовании trait `RemembersConversations` не определяйте метод `messages` вручную в классе агента. Если метод `messages` присутствует, он получит приоритет над реализацией trait, и history разговора не будет загружена из базы данных.
+
 Чтобы начать новый разговор для пользователя, вызовите `forUser` перед `prompt`:
 
 ```php
@@ -297,7 +309,31 @@ $response = (new SalesCoach)->forUser($user)->prompt('Hello!');
 $conversationId = $response->conversationId;
 ```
 
-ID разговора возвращается в response и может быть сохранен для дальнейшего использования. Продолжить существующий разговор можно методом `continue`:
+ID разговора возвращается в response и может быть сохранен для дальнейшего использования. Если вы хотите получать все conversations пользователя через Eloquent, добавьте trait `HasConversations` к вашей user model:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Ai\Concerns\HasConversations;
+
+class User extends Authenticatable
+{
+    use HasConversations;
+}
+```
+
+После добавления trait к модели conversations пользователя можно получать и запрашивать через relationship `conversations`:
+
+```php
+$conversations = $user->conversations()
+    ->latest('updated_at')
+    ->paginate(20);
+```
+
+Продолжить существующий разговор можно методом `continue`:
 
 ```php
 $response = (new SalesCoach)
@@ -337,6 +373,84 @@ class SalesCoach implements Agent, HasStructuredOutput
 $response = (new SalesCoach)->prompt('Analyze this sales transcript...');
 
 return $response['score'];
+```
+
+<a name="structured-output-nested-objects"></a>
+#### Nested objects
+
+Чтобы определить nested structured output, используйте метод `object` с closure:
+
+```php
+<?php
+
+namespace App\Ai\Agents;
+
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasStructuredOutput;
+use Laravel\Ai\Promptable;
+
+class SalesCoach implements Agent, HasStructuredOutput
+{
+    use Promptable;
+
+    // ...
+
+    /**
+     * Get the agent's structured output schema definition.
+     */
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'score' => $schema->integer()->required(),
+            'metadata' => $schema->object(fn ($schema) => [
+                'confidence' => $schema->string()->enum(['low', 'medium', 'high'])->required(),
+                'language' => $schema->string()->required(),
+            ])->required(),
+        ];
+    }
+}
+```
+
+<a name="structured-output-arrays-of-objects"></a>
+#### Arrays of objects
+
+Если agent должен вернуть список structured items, объедините методы `array` и `object`:
+
+```php
+public function schema(JsonSchema $schema): array
+{
+    return [
+        'feedback' => $schema->array()
+            ->items(
+                $schema->object(fn ($schema) => [
+                    'comment' => $schema->string()->required(),
+                    'score' => $schema->integer()->required(),
+                ])
+            )
+            ->required(),
+    ];
+}
+```
+
+Если значение может соответствовать одной из нескольких schemas, используйте метод `anyOf`:
+
+```php
+public function schema(JsonSchema $schema): array
+{
+    return [
+        'content' => $schema->anyOf([
+            $schema->object(fn ($schema) => [
+                'type' => $schema->string()->enum(['article'])->required(),
+                'title' => $schema->string()->required(),
+            ]),
+            $schema->object(fn ($schema) => [
+                'type' => $schema->string()->enum(['image'])->required(),
+                'url' => $schema->string()->required(),
+            ]),
+        ])->required(),
+    ];
+}
 ```
 
 <a name="attachments"></a>
@@ -463,7 +577,7 @@ use Laravel\Ai\Responses\AgentResponse;
 use Throwable;
 
 Route::post('/coach', function (Request $request) {
-    return (new SalesCoach)
+    (new SalesCoach)
         ->queue($request->input('transcript'))
         ->then(function (AgentResponse $response) {
             // ...
@@ -586,10 +700,69 @@ SimilaritySearch::usingModel(Document::class, 'embedding')
     ->withDescription('Search the knowledge base for relevant articles.'),
 ```
 
+<a name="mcp-tools"></a>
+### MCP Tools
+
+Если приложение использует [Laravel MCP](/docs/{{version}}/mcp), вы можете предоставить agents tools, опубликованные серверами [Model Context Protocol](https://modelcontextprotocol.io). С помощью [Laravel MCP client](/docs/{{version}}/mcp#client) можно подключиться к remote или local MCP server и передать его tools напрямую agent.
+
+> [!NOTE]
+> MCP tools требуют, чтобы в приложении был установлен package [Laravel MCP](/docs/{{version}}/mcp).
+
+Поскольку метод `tools` MCP client возвращает collection, разверните ее в массив `tools` вашего agent с помощью оператора `...`:
+
+```php
+use App\Ai\Tools\RandomNumberGenerator;
+use Laravel\Mcp\Client;
+
+/**
+ * Get the tools available to the agent.
+ *
+ * @return Tool[]
+ */
+public function tools(): iterable
+{
+    return [
+        ...Client::web('https://mcp.example.com')
+            ->withToken($token)
+            ->tools(),
+
+        new RandomNumberGenerator,
+    ];
+}
+```
+
+AI SDK автоматически оборачивает каждый MCP tool, чтобы agent мог вызывать его как любой другой tool. Также можно использовать [именованный MCP client](/docs/{{version}}/mcp#named-clients):
+
+```php
+use Laravel\Mcp\Facades\Mcp;
+
+public function tools(): iterable
+{
+    return [
+        ...Mcp::client('github')->tools(),
+    ];
+}
+```
+
+Или подключиться к [локальному MCP server](/docs/{{version}}/mcp#client-connecting):
+
+```php
+use Laravel\Mcp\Client;
+
+public function tools(): iterable
+{
+    return [
+        ...Client::local('php', ['artisan', 'mcp:start'])->tools(),
+    ];
+}
+```
+
+Подробнее о создании и аутентификации MCP-клиентов, включая bearer-токены и OAuth, смотрите в [документации MCP-клиента](/docs/{{version}}/mcp#client).
+
 <a name="provider-tools"></a>
 ### Инструменты провайдеров
 
-Provider tools - специальные инструменты, нативно реализованные AI-провайдерами. Они дают возможности вроде web search, URL fetching и file search. В отличие от обычных tools, provider tools выполняются самим провайдером, а не вашим приложением, и возвращаются из метода `tools` агента.
+Инструменты провайдеров - специальные инструменты, нативно реализованные AI-провайдерами. Они дают возможности вроде веб-поиска, получения содержимого URL и поиска по файлам. В отличие от обычных инструментов, инструменты провайдеров выполняются самим провайдером, а не вашим приложением, и возвращаются из метода `tools` агента.
 
 <a name="web-search"></a>
 #### Web Search
@@ -694,6 +867,108 @@ new FileSearch(stores: ['store_id'], where: fn (FileSearchQuery $query) =>
 );
 ```
 
+<a name="sub-agents"></a>
+### Sub-agents
+
+Agents также можно возвращать из метода `tools` другого agent. Когда agent возвращается как tool, parent agent может делегировать sub-agent конкретную задачу и использовать response sub-agent при ответе на исходный prompt. Это удобно, когда general-purpose agent должен иметь доступ к specialized agents со своими instructions, tools, model configuration или provider preferences.
+
+Например, customer support agent может делегировать вопросы о refund eligibility отдельному refunds agent:
+
+```php
+<?php
+
+namespace App\Ai\Agents;
+
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Promptable;
+
+class CustomerSupportAgent implements Agent, HasTools
+{
+    use Promptable;
+
+    /**
+     * Get the instructions that the agent should follow.
+     */
+    public function instructions(): string
+    {
+        return 'You help customers with account, order, and billing questions. Delegate refund policy questions to the refunds specialist.';
+    }
+
+    /**
+     * Get the tools available to the agent.
+     *
+     * @return Tool[]
+     */
+    public function tools(): iterable
+    {
+        return [
+            new RefundsAgent,
+        ];
+    }
+}
+```
+
+Чтобы настроить, как sub-agent будет представлен parent agent, реализуйте interface `CanActAsTool` на sub-agent и определите name и description, видимые как tool:
+
+```php
+<?php
+
+namespace App\Ai\Agents;
+
+use App\Ai\Tools\LookupOrder;
+use Laravel\Ai\Attributes\Provider;
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\CanActAsTool;
+use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Enums\Lab;
+use Laravel\Ai\Promptable;
+
+#[Provider(Lab::Anthropic)]
+class RefundsAgent implements Agent, CanActAsTool, HasTools
+{
+    use Promptable;
+
+    /**
+     * Get the instructions that the agent should follow.
+     */
+    public function instructions(): string
+    {
+        return 'You are a refunds specialist. Use order details and the refund policy to give concise eligibility guidance.';
+    }
+
+    /**
+     * Get the agent's tool name.
+     */
+    public function name(): string
+    {
+        return 'refunds_specialist';
+    }
+
+    /**
+     * Get the agent's tool description.
+     */
+    public function description(): string
+    {
+        return 'Determine whether an order is eligible for a refund and explain the next step.';
+    }
+
+    /**
+     * Get the tools available to the agent.
+     *
+     * @return Tool[]
+     */
+    public function tools(): iterable
+    {
+        return [
+            new LookupOrder,
+        ];
+    }
+}
+```
+
+Если sub-agent не реализует `CanActAsTool`, Laravel использует class basename agent как tool name и generic description, который просит parent agent передать clear, self-contained task description. Каждый вызов sub-agent выполняется изолированно и не получает conversation history parent agent.
+
 <a name="middleware"></a>
 ### Middleware
 
@@ -792,6 +1067,7 @@ $response = agent(
 - `Provider`: AI-провайдер или список провайдеров для failover.
 - `Temperature`: sampling temperature для генерации (от `0.0` до `1.0`).
 - `Timeout`: HTTP timeout в секундах (по умолчанию 60).
+- `TopP`: nucleus sampling probability для генерации (от `0.0` до `1.0`).
 - `UseCheapestModel`: использовать самую дешевую text-модель провайдера.
 - `UseSmartestModel`: использовать самую мощную text-модель провайдера.
 
@@ -802,6 +1078,7 @@ use Laravel\Ai\Attributes\Model;
 use Laravel\Ai\Attributes\Provider;
 use Laravel\Ai\Attributes\Temperature;
 use Laravel\Ai\Attributes\Timeout;
+use Laravel\Ai\Attributes\TopP;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Promptable;
@@ -812,6 +1089,7 @@ use Laravel\Ai\Promptable;
 #[MaxTokens(4096)]
 #[Temperature(0.7)]
 #[Timeout(120)]
+#[TopP(0.9)]
 class SalesCoach implements Agent
 {
     use Promptable;
@@ -839,34 +1117,13 @@ class ComplexReasoner implements Agent
 }
 ```
 
-Вместо атрибутов `Provider`, `Model` и `Timeout` можно определить методы `provider`, `model` и `timeout`, которые вычисляют значения во время выполнения. То же относится к `maxSteps`, `maxTokens` и `temperature`. Если для одной опции определены и метод, и атрибут, метод имеет приоритет:
-
-```php
-class SalesCoach implements Agent
-{
-    use Promptable;
-
-    public function maxSteps(): int
-    {
-        return config('agents.sales_coach.max_steps', 5);
-    }
-
-    public function maxTokens(): int
-    {
-        return $this->user->plan->maxTokens();
-    }
-
-    public function temperature(): float
-    {
-        return Setting::get('sales_coach_temperature', 0.7);
-    }
-}
-```
+> [!NOTE]
+> Underlying model, выбранная `UseCheapestModel` и `UseSmartestModel`, может изменяться между релизами Laravel AI SDK по мере выхода новых моделей у провайдеров. Смена модели может приводить к behavioral changes, deprecated parameters и существенной разнице в стоимости. Если вам нужны стабильная, предсказуемая model и pricing, явно укажите model с помощью атрибута `Model`.
 
 <a name="provider-options"></a>
 ### Опции провайдера
 
-Если агенту нужно передать provider-specific опции, например OpenAI reasoning effort или penalty settings, реализуйте `HasProviderOptions` и метод `providerOptions`:
+Если агенту нужно передать опции конкретного провайдера, например OpenAI reasoning effort или настройки штрафов, реализуйте `HasProviderOptions` и метод `providerOptions`:
 
 ```php
 use Laravel\Ai\Contracts\Agent;
@@ -888,6 +1145,7 @@ class SalesCoach implements Agent, HasProviderOptions
             ],
             Lab::Anthropic => [
                 'thinking' => ['budget_tokens' => 1024],
+                'cache_control' => ['type' => 'ephemeral'],
             ],
             default => [],
         };
@@ -896,6 +1154,8 @@ class SalesCoach implements Agent, HasProviderOptions
 ```
 
 Метод получает текущего провайдера (`Lab` enum или строку), поэтому можно возвращать разные опции для каждого провайдера. Это особенно полезно с [failover](#failover), где каждый fallback-провайдер может иметь свою конфигурацию.
+
+Пример Anthropic выше также включает [prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) через `cache_control`.
 
 <a name="images"></a>
 ## Изображения
@@ -973,6 +1233,14 @@ use Laravel\Ai\Audio;
 $audio = Audio::of('I love coding with Laravel.')->generate();
 
 $rawContent = (string) $audio;
+```
+
+Также можно сгенерировать аудио из строки с помощью метода `toAudio`, доступного через Laravel `Stringable` class:
+
+```php
+use Illuminate\Support\Str;
+
+$audio = Str::of('I love coding with Laravel.')->toAudio();
 ```
 
 Методы `male`, `female` и `voice` задают голос:
@@ -1172,7 +1440,7 @@ $documents = Document::query()
 ],
 ```
 
-При включенном кеше embeddings хранятся 30 дней. Cache key строится из provider, model, dimensions и input content, поэтому одинаковые запросы получают cached results, а разные конфигурации генерируют новые embeddings.
+При включенном кеше embeddings хранятся 30 дней. Ключ кеша строится из провайдера, модели, размерности и входного содержимого, поэтому одинаковые запросы получают кешированные результаты, а разные конфигурации генерируют новые embeddings.
 
 Кеш можно включить для конкретного запроса методом `cache`, даже если глобально он отключен:
 
@@ -1456,6 +1724,7 @@ $store->remove('file_abc123', deleteFile: true);
 
 ```php
 use App\Ai\Agents\SalesCoach;
+use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Image;
 
 $response = (new SalesCoach)->prompt(
@@ -1465,6 +1734,22 @@ $response = (new SalesCoach)->prompt(
 
 $image = Image::of('A donut sitting on the kitchen counter')
     ->generate(provider: [Lab::Gemini, Lab::xAI]);
+```
+
+Failover происходит только когда выброшен `FailoverableException`, например rate limit (`RateLimitedException`), перегруженный или недоступный provider (`ProviderOverloadedException`) или недостаток credits (`InsufficientCreditsException`). Обычные ошибки, например validation или bad request error, не запускают failover.
+
+Когда вы передаете простой список providers, например `[Lab::OpenAI, Lab::Anthropic]`, каждый provider использует свою default model. Чтобы указать конкретную model для каждого provider в failover chain, передайте associative array с ключами по provider, используя `value` enum `Lab` как ключ (enum cases нельзя напрямую использовать как PHP array keys):
+
+```php
+use Laravel\Ai\Enums\Lab;
+
+$response = (new SalesCoach)->prompt(
+    'Analyze this sales transcript...',
+    provider: [
+        Lab::Gemini->value => 'gemini-3-flash-preview',
+        Lab::DeepSeek->value => 'deepseek-v4-pro',
+    ],
+);
 ```
 
 <a name="testing"></a>

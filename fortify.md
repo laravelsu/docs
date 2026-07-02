@@ -1,5 +1,5 @@
 ---
-git: bd48a9138050cb68fba57142853c59192cba5c70
+git: 7e340ef0677b30b22137dcf135f412bbcf41a963
 ---
 
 # Пакет Laravel Fortify
@@ -23,7 +23,7 @@ git: bd48a9138050cb68fba57142853c59192cba5c70
 
 Если вы новичок в Laravel, вам может быть интересно изучить [наши наборы приложений для начинающих](/docs/{{version}}/starter-kits), прежде чем пытаться использовать Laravel Fortify. Наши наборы для начинающих предоставляют каркас аутентификации для вашего приложения, который включает пользовательский интерфейс, созданный с помощью [Tailwind CSS](https://tailwindcss.com). Это позволяет вам изучить и освоиться с функционалом аутентификации Laravel, прежде чем позволить Laravel Fortify реализовать этот функционал для вас.
 
-Laravel Fortify по сути берет маршруты и контроллеры наших стартовых наборов приложений и предлагает их как пакет, не включающий пользовательский интерфейс. Это позволяет вам по-прежнему быстро строить бэкэнд-реализацию слоя аутентификации вашего приложения, не привязываясь к каким-либо конкретным предпочтениям фронтенда.
+Laravel Fortify по сути берет маршруты и контроллеры наших стартовых наборов приложений и предлагает их как пакет, не включающий пользовательский интерфейс. Это позволяет вам по-прежнему быстро строить серверную реализацию слоя аутентификации вашего приложения, не привязываясь к каким-либо конкретным предпочтениям фронтенда.
 
 <a name="when-should-i-use-fortify"></a>
 ### Когда я должен использовать Fortify?
@@ -335,6 +335,170 @@ Fortify позаботится об определении маршрута `/tw
 ### Отключение двухфакторной аутентификации
 
 Чтобы отключить двухфакторную аутентификацию, ваше приложение должно сделать DELETE-запрос к URL `/user/two-factor-authentication`. Помните, что эндпоинтам двухфакторной аутентификации Fortify перед вызовом требуется [подтверждение пароля](#password-confirmation).
+
+<a name="passkeys"></a>
+## Passkeys
+
+Fortify поддерживает passkey-аутентификацию с помощью WebAuthn. Passkeys позволяют пользователям входить без паролей, используя platform authenticators вроде Face ID, Touch ID, Windows Hello или аппаратные security keys.
+
+<a name="enabling-passkeys"></a>
+### Включение passkeys
+
+Для начала убедитесь, что feature `passkeys` включена в конфигурационном файле `fortify` вашего приложения:
+
+```php
+use Laravel\Fortify\Features;
+
+'features' => [
+    // ...
+    Features::passkeys([
+        'confirmPassword' => true,
+    ]),
+],
+```
+
+Опция `confirmPassword` определяет, должен ли Fortify требовать [подтверждение пароля](#password-confirmation) перед регистрацией или удалением passkeys.
+
+Затем убедитесь, что модель `App\Models\User` вашего приложения реализует `Laravel\Fortify\Contracts\PasskeyUser` и использует trait `Laravel\Fortify\PasskeyAuthenticatable`:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\Contracts\PasskeyUser;
+use Laravel\Fortify\PasskeyAuthenticatable;
+
+class User extends Authenticatable implements PasskeyUser
+{
+    use Notifiable, PasskeyAuthenticatable;
+}
+```
+
+Настройки passkeys Fortify можно изменить через массив конфигурации `passkeys` в файле `config/fortify.php` вашего приложения:
+
+```php
+'passkeys' => [
+    'relying_party_id' => parse_url(config('app.url'), PHP_URL_HOST),
+    'allowed_origins' => [config('app.url')],
+    'user_handle_secret' => config('app.key'),
+    'timeout' => 60000,
+],
+```
+
+> [!NOTE]
+> Fortify оборачивает Composer package `laravel/passkeys` и настраивает его за вас. Если вы используете passkeys feature Fortify, настраивайте passkeys через файл `config/fortify.php` вашего приложения. Публиковать configuration file `laravel/passkeys` не нужно, а любые значения, определенные там, будут переопределены Fortify.
+
+`relying_party_id` должен соответствовать domain вашего приложения. Массив `allowed_origins` перечисляет browser origins, которым разрешено завершать passkey registration и authentication. `user_handle_secret` используется для получения opaque user identifiers, чтобы один и тот же пользователь распознавался между passkey registrations. Опция `timeout` управляет тем, как долго операции passkey registration и authentication могут оставаться активными.
+
+Fortify применяет отдельный rate limiter passkeys к routes passkey login, confirmation и registration. При необходимости его можно настроить через опцию конфигурации `fortify.limiters.passkeys` и соответствующее определение `RateLimiter::for(...)`.
+
+<a name="passkeys-javascript-client"></a>
+### JavaScript client
+
+Если вы создаете собственный frontend, включая Blade-приложение со скриптами на стороне браузера, можно использовать официальный пакет [`@laravel/passkeys`](https://www.npmjs.com/package/@laravel/passkeys). Этот пакет выполняет браузерные WebAuthn-церемонии и отправляет запросы на passkey-эндпоинты Fortify.
+
+Установите package через npm:
+
+```shell
+npm install @laravel/passkeys
+```
+
+Затем можно инициировать passkey registration и verification из frontend:
+
+```js
+import { Passkeys } from "@laravel/passkeys";
+
+await Passkeys.register({ name: "MacBook Pro" });
+await Passkeys.verify();
+```
+
+Если приложение использует собственные URI passkey-эндпоинтов, маршруты можно переопределить для конкретного вызова:
+
+```js
+await Passkeys.verify({
+    routes: {
+        options: "/passkeys/confirm/options",
+        submit: "/passkeys/confirm",
+    },
+});
+
+await Passkeys.register({
+    name: "MacBook Pro",
+    routes: {
+        options: "/user/passkeys/options",
+        submit: "/user/passkeys",
+    },
+});
+```
+
+Package также предоставляет helpers для React, Vue и Svelte через `@laravel/passkeys/react`, `@laravel/passkeys/vue` и `@laravel/passkeys/svelte`.
+
+<a name="authenticating-with-passkeys"></a>
+### Аутентификация с passkeys
+
+Чтобы аутентифицировать пользователя с passkey, приложение сначала должно сделать GET-запрос к эндпоинту `/passkeys/login/options`. Этот эндпоинт возвращает параметры WebAuthn challenge, которые frontend должен передать в `navigator.credentials.get(...)`.
+
+После того как browser вернет credential, приложение должно сделать POST-запрос к `/passkeys/login` с credential payload. Также можно включить boolean-поле `remember`.
+
+Если request успешен, Fortify войдет пользователя в configured guard и вернет одно из следующего:
+
+<!-- <div class="content-list" markdown="1"> -->
+
+- Redirect response к intended destination для стандартных requests.
+- HTTP response `200`, содержащий JSON payload с ключом `redirect`, для XHR requests.
+
+<!-- </div> -->
+
+<a name="confirming-password-with-passkeys"></a>
+### Подтверждение пароля с passkeys
+
+Для аутентифицированных сессий Fortify предоставляет passkey-эндпоинты подтверждения, которые удовлетворяют требованию Laravel по подтверждению пароля для текущей сессии.
+
+Чтобы подтвердить действие с passkey, приложение сначала должно сделать GET-запрос к `/passkeys/confirm/options`. Этот эндпоинт возвращает параметры WebAuthn challenge, которые frontend должен передать в `navigator.credentials.get(...)`.
+
+После того как browser вернет credential, приложение должно сделать POST-запрос к `/passkeys/confirm` с credential payload.
+
+Если request успешен, Fortify пометит текущую session как password confirmed и вернет одно из следующего:
+
+<!-- <div class="content-list" markdown="1"> -->
+
+- Redirect response к intended destination для стандартных requests.
+- HTTP response `200`, содержащий JSON payload с ключом `redirect`, для XHR requests.
+
+<!-- </div> -->
+
+<a name="registering-passkeys"></a>
+### Регистрация passkeys
+
+Чтобы зарегистрировать passkey для аутентифицированного пользователя, приложение сначала должно сделать GET-запрос к `/user/passkeys/options`. Этот эндпоинт возвращает параметры создания WebAuthn, которые frontend должен передать в `navigator.credentials.create(...)`.
+
+После того как browser вернет credential, приложение должно сделать POST-запрос к `/user/passkeys` с полем `name` и полем `credential`, содержащим serialized object [`PublicKeyCredential`](https://developer.mozilla.org/en-US/docs/Web/API/PublicKeyCredential), возвращенный `navigator.credentials.create(...)`.
+
+Если request успешен, Fortify вернет одно из следующего:
+
+<!-- <div class="content-list" markdown="1"> -->
+
+- Redirect back response со status `passkey-registered` в session для стандартных requests.
+- HTTP response `200` с JSON payload, содержащим ключ `status`, а также `id` и `name` newly registered passkey.
+
+<!-- </div> -->
+
+<a name="deleting-passkeys"></a>
+### Удаление passkeys
+
+Чтобы удалить passkey, приложение должно сделать DELETE-запрос к `/user/passkeys/{passkey}`.
+
+Если request успешен, Fortify вернет одно из следующего:
+
+<!-- <div class="content-list" markdown="1"> -->
+
+- Redirect back response со status `passkey-deleted` в session для стандартных requests.
+- HTTP response `200` с JSON payload, содержащим ключ `status`, для XHR requests.
+
+<!-- </div> -->
 
 <a name="registration"></a>
 ## Регистрация

@@ -1,5 +1,5 @@
 ---
-git: 88036f5428a996e6abd66fe28d4415c4623b2760
+git: 8d66e681ac2a4a3be38d79939509e5cf68738ff9
 ---
 
 # Prompts (Подсказки)
@@ -1070,6 +1070,100 @@ use function Laravel\Prompts\info;
 info('Пакет успешно установлен.');
 ```
 
+<a name="callouts"></a>
+## Callouts
+
+Функция `callout` отображает сообщение в рамке с label и content. Callouts полезны для важной информации, которая должна выделяться: deployment summaries, error details или status updates:
+
+```php
+use function Laravel\Prompts\callout;
+
+callout(
+    label: 'Environment Configured',
+    content: 'Your application is running in production mode with 4 workers.',
+);
+```
+
+Можно передать `warning` или `error` в аргумент `type`, чтобы изменить visual style callout:
+
+```php
+callout(
+    label: 'Deprecation Notice',
+    content: 'The `--prefer-stable` flag will be removed in v4.0. Use `--stability=stable` instead.',
+    type: 'warning',
+);
+
+callout(
+    label: 'Database Connection Failed',
+    content: 'Could not connect to MySQL on 127.0.0.1:3306.',
+    type: 'error',
+);
+```
+
+Аргумент `info` добавляет footer line к callout, что удобно для metadata вроде IDs или timestamps:
+
+```php
+callout(
+    label: 'Deployment Summary',
+    content: 'Your application was deployed to production.',
+    info: 'deploy-id: d4f8a2c',
+);
+```
+
+<a name="callout-rich-content"></a>
+#### Rich content
+
+Вместо строки можно передать массив строк и elements, чтобы построить rich, structured callouts. Класс `Element` предоставляет factory methods для headings, bulleted lists, numbered lists, key-value lists и links:
+
+```php
+use Laravel\Prompts\Elements\Element;
+
+use function Laravel\Prompts\callout;
+
+callout('Deployment Summary', [
+    'Your application was deployed to production at 2024-03-15 14:32 UTC.',
+    Element::heading('What Changed'),
+    Element::bulletedList([
+        'Migrated 3 pending database migrations',
+        'Cleared and rebuilt route cache',
+        'Restarted 4 queue workers',
+    ]),
+    Element::heading('Next Steps'),
+    Element::numberedList([
+        'Verify the health check endpoint at /up',
+        'Monitor error rates for the next 15 minutes',
+        'Confirm background jobs are processing',
+    ]),
+]);
+```
+
+Также можно использовать `Element::keyValueList` для отображения labeled data:
+
+```php
+callout('Database Connection Failed', [
+    'Could not connect to the database server.',
+    Element::keyValueList([
+        'Host' => '127.0.0.1',
+        'Port' => '3306',
+        'Database' => 'forge',
+        'Status' => 'Connection refused',
+    ]),
+], type: 'error');
+```
+
+Метод `Element::link` создает кликабельную гиперссылку в терминалах, которые поддерживают [OSC 8](https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda). Можно передать только URL или URL с пользовательской меткой:
+
+```php
+callout('Server Health Check', [
+    'Multiple services are reporting degraded performance.',
+    Element::heading('Affected Services'),
+    'Look here: '.Element::link('https://example.com/health', 'Health Dashboard'),
+    Element::link('https://example.com/health'),
+]);
+```
+
+Если label не передан, сам URL будет отображен как link text.
+
 <a name="tables"></a>
 ## Таблицы
 
@@ -1206,6 +1300,36 @@ task(
 );
 ```
 
+<a name="task-sub-label"></a>
+#### Отображение sub-label
+
+Метод `subLabel` отображает приглушенную строку под основной label задачи. Это удобно для ephemeral status, например текущего выполняемого шага. Передайте пустую строку, чтобы очистить sub-label:
+
+```php
+task(
+    label: 'Deploying',
+    callback: function ($logger) {
+        $logger->subLabel('Building assets...');
+        // ...
+        $logger->subLabel('Running migrations...');
+        // ...
+        $logger->subLabel('');
+    }
+);
+```
+
+Также можно передать начальный sub-label через аргумент `subLabel`:
+
+```php
+task(
+    label: 'Deploying',
+    callback: function ($logger) {
+        // ...
+    },
+    subLabel: 'Preparing...'
+);
+```
+
 <a name="task-streaming"></a>
 #### Потоковый текст
 
@@ -1258,6 +1382,23 @@ task(
 );
 ```
 
+<a name="task-keep-summary"></a>
+#### Сохранение summary
+
+По умолчанию output задачи стирается после завершения callback. Если вы хотите оставить status messages на экране после завершения задачи, передайте аргумент `keepSummary`:
+
+```php
+task(
+    label: 'Deploying',
+    callback: function ($logger) {
+        $logger->success('Assets built');
+        // ...
+        $logger->success('Migrations complete');
+    },
+    keepSummary: true,
+);
+```
+
 <a name="stream"></a>
 ## Поток
 
@@ -1291,40 +1432,6 @@ title('Установка зависимостей');
 
 ```php
 title('');
-```
-
-<a name="notifications"></a>
-## Уведомления
-
-Функция `notify` отправляет нативное desktop-уведомление из терминала:
-
-```php
-use function Laravel\Prompts\notify;
-
-notify('Сборка завершена', 'Развернуто на production');
-```
-
-Уведомления поддерживаются на macOS через `osascript` и Linux через `notify-send` с fallback на `kdialog`.
-
-На macOS вы также можете указать `subtitle` и `sound`:
-
-```php
-notify(
-    title: 'Сборка завершена',
-    body: 'Развернуто на production',
-    subtitle: 'staging-server',
-    sound: 'Glass',
-);
-```
-
-На Linux вы можете передать собственную `icon`:
-
-```php
-notify(
-    title: 'Сборка завершена',
-    body: 'Развернуто на production',
-    icon: '/path/to/icon.png',
-);
 ```
 
 <a name="clear"></a>
