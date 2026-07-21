@@ -1,5 +1,5 @@
 ---
-git: 19896d891cc0840c786cd9f43cf39919bcd2e263
+git: 80f8da59178673c670d3813068cbbd563a7864e5
 ---
 
 # База данных · Использование Redis
@@ -224,23 +224,44 @@ Laravel также поддерживает клиентское разделе�
 ],
 ```
 
-Predis 3.4.0 и выше поддерживает встроенную конфигурацию повторных попыток и задержки через класс `Retry`. Настройте её с помощью опции `retry`, используя одну из следующих стратегий: `NoBackoff`, `EqualBackoff` или `ExponentialBackoff`:
+Predis 3.4.0 и выше поддерживает встроенную конфигурацию повторных попыток и задержки через класс `Retry`. Вы можете настроить повторные попытки с помощью опции `max_retries`, а стратегию задержки - с помощью опции `retry`. Опция `retry` должна быть массивом с ключом, соответствующим одному из следующих классов стратегий: `NoBackoff`, `EqualBackoff` или `ExponentialBackoff`:
 
 ```php
-use Predis\Retry;
 use Predis\Retry\Strategy\ExponentialBackoff;
 
 'default' => [
     'url' => env('REDIS_URL'),
     // ...
-    'retry' => new Retry(
-        new ExponentialBackoff(
+    'retry' => [
+        ExponentialBackoff::class => [
             env('REDIS_BACKOFF_BASE', 100),
             env('REDIS_BACKOFF_CAP', 1000),
-            true, // Включает jitter
-        ),
-        env('REDIS_MAX_RETRIES', 3)
-    )
+            true, // Включить jitter...
+        ],
+    ],
+    'max_retries' => env('REDIS_MAX_RETRIES', 3),
+],
+```
+
+При использовании Predis с кластером Redis вы можете определить конфигурацию повторных попыток в опции `parameters` конфигурации кластера:
+
+```php
+use Predis\Retry\Strategy\NoBackoff;
+
+'clusters' => [
+    'default' => [
+        // ...
+    ],
+],
+
+'options' => [
+    'cluster' => env('REDIS_CLUSTER', 'redis'),
+    'parameters' => [
+        'retry' => [
+            NoBackoff::class => [],
+        ],
+        'max_retries' => env('REDIS_MAX_RETRIES', 3),
+    ],
 ],
 ```
 

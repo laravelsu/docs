@@ -1,5 +1,5 @@
 ---
-git: 8152449340ebbed088ea7fd5e41d0b38ad055f2a
+git: 13c877b30631902df5ccab30be80b560cac41382
 ---
 
 # Консоль Artisan
@@ -528,6 +528,28 @@ $queueName = $this->option('queue');
 $options = $this->options();
 ```
 
+Вы можете использовать метод `input`, чтобы получить аргументы и параметры команды как экземпляр `Illuminate\Console\CommandInput`, который предоставляет те же типизированные аксессоры, что доступны в HTTP-запросах и других контейнерах данных:
+
+```php
+use App\Enums\ReportType;
+
+/**
+ * Выполнить консольную команду.
+ */
+public function handle(): void
+{
+    $input = $this->input()->date('from');
+
+    // ...
+}
+```
+
+Метод `input` также можно использовать для получения одного входного значения из аргументов или параметров:
+
+```php
+$queue = $this->input('queue', 'default');
+```
+
 <a name="prompting-for-input"></a>
 ### Запрос для ввода данных
 
@@ -867,6 +889,93 @@ $this->trap([SIGTERM, SIGQUIT], function (int $signal) {
 
     dump($signal); // SIGTERM / SIGQUIT
 });
+```
+
+<a name="the-dev-command"></a>
+## Команда dev
+
+Artisan-команда `dev` запускает все процессы, необходимые для локальной разработки, в одном окне терминала. По умолчанию она параллельно запускает PHP-сервер разработки, обработчик очереди, просмотр логов через [Pail](/docs/{{version}}/logging#tailing-log-messages-using-pail) и сборку ресурсов Vite:
+
+```shell
+php artisan dev
+```
+
+Для управления процессами команда `dev` использует npm-пакет `concurrently`. У каждого процесса есть метка и цветовое выделение в выводе терминала, чтобы вы могли легко различать их. Если какой-либо процесс завершится с ошибкой, все остальные процессы будут автоматически остановлены.
+
+Процессы по умолчанию:
+
+| Название | Команда |
+| --- | --- |
+| `server` | `php artisan serve --host=localhost` |
+| `queue` | `php artisan queue:listen --tries=1 --timeout=0` |
+| `logs` | `php artisan pail --timeout=0` |
+| `vite` | `npm run dev` |
+
+> [!NOTE]
+> Процесс `vite` автоматически определяет ваш менеджер пакетов Node (npm, pnpm, Yarn или Bun) и использует соответствующую команду запуска.
+
+<a name="customizing-dev-processes"></a>
+### Настройка dev-процессов
+
+Вы можете настроить процессы, которые запускает команда `dev`, с помощью класса `DevCommands`, обычно в методе `boot` класса `AppServiceProvider` вашего приложения. Метод `register` принимает строку команды и необязательное имя:
+
+```php
+use Illuminate\Foundation\DevCommands;
+
+/**
+ * Загрузка любых служб приложения.
+ */
+public function boot(): void
+{
+    DevCommands::register('some-command --flag', 'my-process');
+}
+```
+
+При регистрации Artisan-команды вы можете использовать метод `artisan`, который автоматически добавляет к команде префикс `php artisan`:
+
+```php
+DevCommands::artisan('horizon', 'horizon');
+```
+
+Аналогично, метод `node` добавляет к команде команду запуска обнаруженного менеджера пакетов (например, `npm run`), а метод `nodeExec` добавляет команду выполнения менеджера пакетов (например, `npx`):
+
+```php
+DevCommands::node('storybook', 'storybook');
+
+DevCommands::nodeExec('tailwindcss -i resources/css/app.css -o public/css/app.css --watch', 'tailwind');
+```
+
+Если вы зарегистрируете процесс с тем же именем, что и процесс по умолчанию, ваш процесс заменит стандартный. Например, вы можете настроить процесс сервера так, чтобы он использовал другой порт:
+
+```php
+DevCommands::artisan('serve --host=localhost --port=9000', 'server');
+```
+
+Вы также можете настроить цвет метки процесса в терминале. Доступные методы цветов: `blue`, `purple`, `pink`, `orange`, `green` и `yellow`. Вы также можете передать пользовательский hex-цвет в метод `color`:
+
+```php
+DevCommands::register('my-command', 'my-process')->green();
+
+DevCommands::register('my-command', 'my-process')->color('#ff6347');
+```
+
+Чтобы увидеть все зарегистрированные dev-процессы без их запуска, используйте команду `dev:list`:
+
+```shell
+php artisan dev:list
+```
+
+<a name="filtering-dev-processes"></a>
+### Фильтрация dev-процессов
+
+Вы можете указать команде `dev` запускать только определенные процессы, используя метод `only`. Аналогично, вы можете исключить определенные процессы с помощью метода `except`:
+
+```php
+// Запускать только процессы server и vite...
+DevCommands::only('server', 'vite');
+
+// Запускать все процессы, кроме обработчика очереди...
+DevCommands::except('queue');
 ```
 
 <a name="stub-customization"></a>

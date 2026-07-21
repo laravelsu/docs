@@ -1,5 +1,5 @@
 ---
-git: 4a7c3d6f72559106687d731509ebff3ee3d5f977
+git: a656f28557de9c3b98926eebd87bc1e578b0436e
 ---
 
 
@@ -583,130 +583,163 @@ $url = $request->user()->billingPortalUrl(route('billing'));
 <a name="storing-payment-methods"></a>
 ### Добавление способов оплаты
 
-Чтобы создавать подписки или осуществлять "одноразовые" платежи с помощью Stripe, вам необходимо сохранить способ оплаты и получить его идентификатор из Stripe. Подход, используемый для достижения этой цели, отличается в зависимости от того, планируете ли вы использовать способ оплаты подписки или разовых платежей, поэтому ниже мы рассмотрим оба способа.
+Чтобы создавать подписки или выполнять разовые списания через Stripe, ваше приложение должно безопасно собрать платежные данные клиента. Подход зависит от того, планируете ли вы сохранить способ оплаты для будущих подписок или сразу обработать разовый платеж, поэтому ниже мы рассмотрим оба варианта.
 
-<a name="payment-methods-for-subscriptions"></a>
-#### Способы оплаты для подписок
+Stripe [Payment Element](https://stripe.com/docs/payments/payment-element) можно использовать для поддержки нескольких способов оплаты, например карт, Apple Pay, Google Pay и iDEAL.
 
-При сохранении информации о кредитной карте клиента для будущего использования по подписке необходимо использовать API Stripe "Setup Intents" для безопасного сбора информации о способе оплаты клиента. "Setup Intent" указывает Stripe на намерение взимать плату с способа оплаты клиента. Трейт `Billable` Cashier включает метод `createSetupIntent`, позволяющий легко создать новый Setup Intent. Вы должны вызвать этот метод из маршрута или контроллера, который отобразит форму, в которой будут собраны данные о способе оплаты вашего клиента:
+<a name="payment-element-for-subscriptions"></a>
+#### Payment Element для подписок
+
+Сначала создайте Setup Intent и передайте его в представление:
 
 ```php
-return view('update-payment-method', [
+return view('subscribe', [
     'intent' => $user->createSetupIntent()
 ]);
 ```
 
-После того, как вы создали Setup Intent и передали его в представление, вы должны прикрепить его секрет к элементу, который будет собирать информацию о способе оплаты. Например, рассмотрим эту форму "обновить способ оплаты":
+Смонтируйте Payment Element, используя `client_secret` из Setup Intent:
 
 ```html
-<input id="card-holder-name" type="text">
+<div id="payment-element"></div>
+<button id="submit">Subscribe</button>
 
-<!-- Заполнитель элементов Stripe -->
-<div id="card-element"></div>
-
-<button id="card-button" data-secret="{{ $intent->client_secret }}">
-    Обновить способ оплаты
-</button>
-```
-
-Затем можно использовать библиотеку Stripe.js для прикрепления [элемента Stripe](https://stripe.com/docs/stripe-js) к форме и безопасного сбора данных о платеже клиента:
-
-```html
 <script src="https://js.stripe.com/v3/"></script>
-
 <script>
     const stripe = Stripe('stripe-public-key');
 
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
+    const elements = stripe.elements({
+        clientSecret: '{{ $intent->client_secret }}'
+    });
 
-    cardElement.mount('#card-element');
+    const paymentElement = elements.create('payment');
+
+    paymentElement.mount('#payment-element');
+
+    document.getElementById('submit').addEventListener('click', async () => {
+        const { error } = await stripe.confirmSetup({
+            elements,
+            confirmParams: {
+                return_url: '{{ route("subscription.complete") }}',
+            },
+        });
+
+        if (error) {
+            // Отображение «error.message» пользователю...
+        }
+    });
 </script>
 ```
 
-Затем карта может быть верифицирована, и безопасный "идентификатор способа оплаты" может быть получен из Stripe с помощью [метода Stripe `confirmCardSetup`](https://stripe.com/docs/js/setup_intents/confirm_card_setup):
+После того как Stripe перенаправит пользователя на ваш `return_url`, ID `setup_intent` будет доступен как параметр строки запроса. Вы можете использовать это значение, чтобы получить способ оплаты и создать подписку:
 
-```js
-const cardHolderName = document.getElementById('card-holder-name');
-const cardButton = document.getElementById('card-button');
-const clientSecret = cardButton.dataset.secret;
+```php
+use Illuminate\Http\Request;
 
-cardButton.addEventListener('click', async (e) => {
-    const { setupIntent, error } = await stripe.confirmCardSetup(
-        clientSecret, {
-            payment_method: {
-                card: cardElement,
-                billing_details: { name: cardHolderName.value }
-            }
-        }
+Route::get('/subscription/complete', function (Request $request) {
+    $setupIntent = $request->user()->findSetupIntent(
+        $request->setup_intent
     );
 
-    if (error) {
-        // Отображение «error.message» пользователю...
-    } else {
-        // Карта успешно проверена...
-    }
+    $paymentMethod = $setupIntent->payment_method;
+
+    $request->user()
+        ->newSubscription('default', 'price_xxx')
+        ->create($paymentMethod);
+
+    return redirect('/dashboard');
+})->name('subscription.complete');
+```
+
+Если вы используете Payment Element для обновления способа оплаты клиента по умолчанию, а не для создания подписки, вы можете передать идентификатор способа оплаты в метод [`updateDefaultPaymentMethod`](#updating-the-default-payment-method).
+
+<a name="payment-element-for-single-charges"></a>
+#### Payment Element для разовых списаний
+
+Для разовых платежей создайте Payment Intent с помощью метода `pay` Cashier. Обычно следует сохранить ID Payment Intent в соответствующем заказе вашего приложения, чтобы заказ можно было получить после перенаправления клиента обратно из Stripe. Следующий пример предполагает, что в вашем приложении есть модель `Order` со столбцами `user_id`, `amount`, `status` и `stripe_payment_intent_id`:
+
+```php
+use App\Models\Order;
+use Illuminate\Http\Request;
+
+Route::post('/pay', function (Request $request) {
+    $amount = 1000;
+
+    $payment = $request->user()->pay($amount);
+
+    $order = Order::create([
+        'user_id' => $request->user()->id,
+        'amount' => $amount,
+        'status' => 'pending',
+        'stripe_payment_intent_id' => $payment->id,
+    ]);
+
+    return view('checkout', [
+        'clientSecret' => $payment->client_secret,
+        'order' => $order,
+    ]);
 });
 ```
 
-После того, как карта была верифицирована Stripe, вы можете передать полученный идентификатор `setupIntent.payment_method` в ваше приложение Laravel, где он может быть прикреплен к клиенту. Способ оплаты может быть либо [добавлен в качестве нового способа оплаты](#adding-payment-methods), либо [использован для обновления способа оплаты по умолчанию](#updating-the-default-payment-method). Вы также можете немедленно использовать идентификатор способа оплаты для [создания новой подписки](#creating-subscriptions).
-
-> [!NOTE]
-> {tip} Если вы хотите получить дополнительную информацию о Setup Intents и сборе платежных реквизитов клиентов, пожалуйста, [ознакомьтесь с этим обзором, предоставленным Stripe](https://stripe.com/docs/payments/save-and-reuse#php).
-
-<a name="payment-methods-for-single-charges"></a>
-#### Способы оплаты для единовременных платежей
-
-Конечно, при однократном списании средств с платежного метода клиента нам нужно будет использовать идентификатор платежного метода только один раз. Из-за ограничений Stripe вы не можете использовать сохраненный способ оплаты клиента по умолчанию для разовых платежей. Вы должны разрешить клиенту ввести данные о своем способе оплаты, используя библиотеку Stripe.js. Например, рассмотрим следующую форму:
+Затем смонтируйте Payment Element и подтвердите платеж:
 
 ```html
-<input id="card-holder-name" type="text">
+<div id="payment-element"></div>
+<button id="submit">Pay Now</button>
 
-<!-- Заполнитель элементов Stripe -->
-<div id="card-element"></div>
-
-<button id="card-button">
-    Обработка платежа
-</button>
-```
-
-После определения такой формы, библиотека Stripe.js может быть использована для прикрепления [элемента Stripe](https://stripe.com/docs/stripe-js) в форму и надежно собирает платежные реквизиты клиента:
-
-```html
 <script src="https://js.stripe.com/v3/"></script>
-
 <script>
     const stripe = Stripe('stripe-public-key');
 
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
+    const elements = stripe.elements({
+        clientSecret: '{{ $clientSecret }}'
+    });
 
-    cardElement.mount('#card-element');
+    const paymentElement = elements.create('payment');
+
+    paymentElement.mount('#payment-element');
+
+    document.getElementById('submit').addEventListener('click', async () => {
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: '{{ route("payment.complete") }}',
+            },
+        });
+
+        if (error) {
+            // Отображение «error.message» пользователю...
+        }
+    });
 </script>
 ```
 
-Затем карта может быть верифицирована, и безопасный "идентификатор способа оплаты" может быть получен из Stripe с помощью [метода Stripe `createPaymentMethod`](https://stripe.com/docs/stripe-js/reference#stripe-create-payment-method):
+После перенаправления вы можете использовать параметр строки запроса `payment_intent`, чтобы получить соответствующий заказ и Payment Intent. Перед выполнением заказа следует убедиться, что заказ принадлежит аутентифицированному клиенту, а Payment Intent принадлежит аутентифицированному клиенту и успешно выполнен:
 
-```js
-const cardHolderName = document.getElementById('card-holder-name');
-const cardButton = document.getElementById('card-button');
+```php
+use App\Models\Order;
+use Illuminate\Http\Request;
 
-cardButton.addEventListener('click', async (e) => {
-    const { paymentMethod, error } = await stripe.createPaymentMethod(
-        'card', cardElement, {
-            billing_details: { name: cardHolderName.value }
-        }
-    );
+Route::get('/payment/complete', function (Request $request) {
+    $order = Order::where('user_id', $request->user()->id)
+        ->where('stripe_payment_intent_id', $request->payment_intent)
+        ->firstOrFail();
 
-    if (error) {
-        // Отображение «error.message» пользователю...
-    } else {
-        // Карта успешно проверена...
+    $paymentIntent = $request->user()
+        ->stripe()
+        ->paymentIntents
+        ->retrieve($request->payment_intent);
+
+    if ($paymentIntent->customer === $request->user()->stripe_id &&
+        $paymentIntent->status === 'succeeded') {
+        $order->update(['status' => 'paid']);
+
+        // Выполнить заказ...
     }
-});
-```
 
-Если верификация карты прошла успешно, вы можете передать `paymentMethod.id` вашему приложению Laravel и обработать [одноразовую оплату](#simple-charge).
+    return redirect('/dashboard');
+})->name('payment.complete');
+```
 
 <a name="retrieving-payment-methods"></a>
 ### Получение способов оплаты
@@ -1253,7 +1286,7 @@ $user->subscription('default')->noProrate()->updateQuantity(10);
 <a name="quantities-for-subscription-with-multiple-products"></a>
 #### Количество подписок по разным ценам
 
-Если ваша подписка является [многотарифной подпиской](#multiprice-subscriptions), вам следует передать название тарифа, количество которой вы хотите увеличить или уменьшить, в качестве второго аргумента методам increment / decrement:
+Если ваша подписка является [подпиской с несколькими тарифами](#quantities-for-subscription-with-multiple-products), вам следует передать название тарифа, количество которого вы хотите увеличить или уменьшить, в качестве второго аргумента методам increment / decrement:
 
 ```php
 $user->subscription('default')->incrementQuantity(1, 'price_chat');
@@ -1906,13 +1939,13 @@ class StripeEventListener
 <a name="simple-charge"></a>
 ### Разовое списание
 
-Если вы хотите произвести единовременное списание средств с клиента, вы можете использовать метод `charge` для экземпляра модели, подлежащего оплате. Вам нужно будет [указать идентификатор способа оплаты](#payment-methods-for-single-charges) в качестве второго аргумента метода `charge`:
+Если вы хотите произвести единовременное списание средств с клиента, используя идентификатор способа оплаты, вы можете использовать метод `charge` для экземпляра оплачиваемой модели. Если вам нужно собрать платежные данные клиента перед обработкой разового списания, смотрите документацию [Payment Element для разовых списаний](#payment-element-for-single-charges):
 
 ```php
 use Illuminate\Http\Request;
 
 Route::post('/purchase', function (Request $request) {
-    $stripeCharge = $request->user()->charge(
+    $payment = $request->user()->charge(
         100, $request->paymentMethodId
     );
 
@@ -1920,7 +1953,7 @@ Route::post('/purchase', function (Request $request) {
 });
 ```
 
-Метод `charge` принимает массив в качестве своего третьего аргумента, позволяя вам передавать любые параметры, которые вы пожелаете, для базового процесса создания Stripe charge. Более подробную информацию о вариантах, доступных вам при создании платежей, можно найти в [документации Stripe](https://stripe.com/docs/api/charges/create):
+Метод `charge` принимает массив в качестве своего третьего аргумента, позволяя вам передавать любые параметры, которые вы пожелаете, для базового создания Stripe Payment Intent. Более подробную информацию о доступных параметрах при создании Payment Intent можно найти в [документации Stripe](https://stripe.com/docs/api/payment_intents/create):
 
 ```php
 $user->charge(100, $paymentMethod, [
@@ -1933,7 +1966,7 @@ $user->charge(100, $paymentMethod, [
 ```php
 use App\Models\User;
 
-$stripeCharge = (new User)->charge(100, $paymentMethod);
+$payment = (new User)->charge(100, $paymentMethod);
 ```
 
 Метод `charge` выдаст исключение, если списание завершится неудачей. Если списание пройдет успешно, экземпляр `Laravel\Cashier\Payment` будет возвращен из метода:
@@ -2026,9 +2059,9 @@ Route::post('/pay', function (Request $request) {
 > Методы `pay` и `payWith` принимают сумму платежа в наименьшем знаменателе валюты, используемой вашим приложением. Например, если клиенты платят в долларах США, суммы должны быть указаны в центах.
 
 <a name="refunding-charges"></a>
-### Возврат списаниий
+### Возврат списаний
 
-Если вам необходимо возместить стоимость Stripe, вы можете воспользоваться методом `refund`. Этот метод принимает Stripe [идентификатор намерения платежа](#payment-methods-for-single-charges) в качестве своего первого аргумента:
+Если вам нужно вернуть платеж Stripe, вы можете использовать метод `refund`. Этот метод принимает ID Stripe Payment Intent в качестве первого аргумента:
 
 ```php
 $payment = $user->charge(100, $paymentMethodId);

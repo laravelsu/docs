@@ -1,5 +1,5 @@
 ---
-git: 2bff8cc7f2a4b2748f34c5ef2c83173f73c3ca7f
+git: 9c350d3c53b5c4d82e77177d5629cb6e3bda702d
 ---
 
 # Контроллеры
@@ -206,6 +206,34 @@ class UserController
     }
 }
 ```
+
+Чтобы исключить посредника из контроллера или отдельных методов контроллера, используйте атрибут `WithoutMiddleware`. Вы можете использовать аргументы `only` и `except`, чтобы ограничить атрибут уровня класса конкретными методами контроллера:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Middleware\EnsureTokenIsValid;
+use Illuminate\Routing\Attributes\Controllers\WithoutMiddleware;
+
+#[WithoutMiddleware('subscribed', except: ['index'])]
+class UserController
+{
+    #[WithoutMiddleware(EnsureTokenIsValid::class)]
+    public function index()
+    {
+        // ...
+    }
+
+    public function show()
+    {
+        // ...
+    }
+}
+```
+
+Атрибуты `WithoutMiddleware` уровня класса наследуются дочерними контроллерами. Этот атрибут может удалять только посредников маршрутов и не применяется к [глобальным посредникам](/docs/{{version}}/middleware#global-middleware).
 
 <a name="authorization-attributes"></a>
 ### Атрибуты авторизации
@@ -553,7 +581,7 @@ Route::singleton('profile', ProfileController::class);
 Route::singleton('photos.thumbnail', ThumbnailController::class);
 ```
 
-В этом примере ресурс `photos` будет содержать все [стандартные маршруты ресурса](#actions-handled-by-resource-controller), однако ресурс `thumbnail` будет синглтон-ресурсом со следующими маршрутами:
+В этом примере ресурс `photos` будет содержать все [стандартные маршруты ресурса](#actions-handled-by-resource-controllers), однако ресурс `thumbnail` будет синглтон-ресурсом со следующими маршрутами:
 
 | Метод     | URI                                | Действие | Имя маршрута            |
 | --------- | ---------------------------------- | -------- | ----------------------- |

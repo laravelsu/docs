@@ -1,5 +1,5 @@
 ---
-git: e5a60cd792282de178478ca5bb678945e266b00b
+git: 7e0ec215e19fda46743ef7eaca7f83c2916db281
 ---
 
 # Laravel AI SDK
@@ -8,6 +8,7 @@ git: e5a60cd792282de178478ca5bb678945e266b00b
 - [Установка](#installation)
     - [Конфигурирование](#configuration)
     - [Пользовательские базовые URL](#custom-base-urls)
+    - [OpenAI-совместимые провайдеры](#openai-compatible-providers)
     - [Поддержка провайдеров](#provider-support)
 - [Агенты](#agents)
     - [Запросы к агентам](#prompting)
@@ -18,6 +19,7 @@ git: e5a60cd792282de178478ca5bb678945e266b00b
     - [Broadcasting](#broadcasting)
     - [Очереди](#queueing)
     - [Инструменты](#tools)
+    - [Инструменты файлового хранилища](#file-storage-tools)
     - [MCP Tools](#mcp-tools)
     - [Инструменты провайдеров](#provider-tools)
     - [Sub-agents](#sub-agents)
@@ -89,6 +91,8 @@ GROQ_API_KEY=
 MISTRAL_API_KEY=
 OLLAMA_API_KEY=
 OPENAI_API_KEY=
+OPENAI_COMPATIBLE_API_KEY=
+OPENAI_COMPATIBLE_URL=
 OPENROUTER_API_KEY=
 JINA_API_KEY=
 VOYAGEAI_API_KEY=
@@ -122,6 +126,44 @@ XAI_API_KEY=
 
 Это полезно при маршрутизации запросов через прокси-сервисы вроде LiteLLM или Azure OpenAI Gateway, а также при использовании альтернативных эндпоинтов. Пользовательские URL поддерживаются для OpenAI, Anthropic, Gemini, Groq, Cohere, DeepSeek, xAI и OpenRouter.
 
+<a name="openai-compatible-providers"></a>
+### OpenAI-совместимые провайдеры
+
+Если вы используете OpenAI-совместимый API, например LM Studio, vLLM, Together, Fireworks или локальный шлюз, вы можете настроить провайдер `openai-compatible`. Опция `url` обязательна, а опция `key` необязательна и при наличии будет отправляться как bearer token:
+
+```php
+'providers' => [
+    'local' => [
+        'driver' => 'openai-compatible',
+        'url' => env('LOCAL_AI_URL'),
+        'key' => env('LOCAL_AI_API_KEY'),
+    ],
+],
+```
+
+После настройки именованный провайдер можно использовать как любой другой:
+
+```php
+agent()->prompt('What is Laravel?', provider: 'local', model: 'local-model');
+```
+
+Вы также можете настроить модель по умолчанию для текста, чтобы не передавать модель явно:
+
+```php
+'local' => [
+    'driver' => 'openai-compatible',
+    'url' => env('LOCAL_AI_URL'),
+    'key' => env('LOCAL_AI_API_KEY'),
+    'models' => [
+        'text' => [
+            'default' => env('LOCAL_AI_MODEL'),
+        ],
+    ],
+],
+```
+
+OpenAI-совместимые провайдеры поддерживают генерацию текста, потоковую передачу, tools, structured output и вложения изображений. Если вашему эндпоинту требуются дополнительные поля тела запроса, передайте их с помощью [опций провайдера](#provider-options).
+
 <a name="provider-support"></a>
 ### Поддержка провайдеров
 
@@ -131,13 +173,13 @@ AI SDK поддерживает разных провайдеров для ра�
 
 | Возможность | Провайдеры |
 |---|---|
-| Text | OpenAI, Anthropic, Gemini, Azure, Bedrock, Groq, xAI, DeepSeek, Mistral, Ollama, OpenRouter |
+| Text | OpenAI, OpenAI Compatible, Anthropic, Gemini, Azure, Bedrock, Groq, xAI, DeepSeek, Mistral, Ollama, OpenRouter |
 | Images | OpenAI, Gemini, xAI, Azure, Bedrock, OpenRouter |
 | TTS | OpenAI, ElevenLabs, Gemini |
 | STT | OpenAI, ElevenLabs, Mistral, Gemini |
 | Embeddings | OpenAI, Gemini, Azure, Bedrock, Cohere, Mistral, Jina, VoyageAI, Ollama, OpenRouter |
 | Reranking | Cohere, Jina, VoyageAI |
-| Files | OpenAI, Anthropic, Gemini |
+| Files | OpenAI, Anthropic, Gemini, Azure |
 
 </div>
 
@@ -148,6 +190,7 @@ use Laravel\Ai\Enums\Lab;
 
 Lab::Anthropic;
 Lab::OpenAI;
+Lab::OpenAiCompatible;
 Lab::Gemini;
 // ...
 ```
@@ -561,10 +604,38 @@ foreach ($stream as $event) {
 
 ```php
 (new SalesCoach)->broadcastOnQueue(
-    'Analyze this sales transcript...'
+    'Analyze this sales transcript...',
     new Channel('channel-name'),
 );
 ```
+
+<a name="skipping-oversized-events"></a>
+#### Пропуск слишком больших событий
+
+Некоторые broadcasting-платформы ограничивают WebSocket-сообщения примерно 10KB. События stream с большим объемом данных, например крупные результаты tools, могут превысить этот лимит и привести к ошибке broadcasting. Вы можете исключить определенные типы событий из broadcasting с помощью атрибута `WithoutBroadcasting`:
+
+```php
+<?php
+
+namespace App\Ai\Agents;
+
+use Laravel\Ai\Attributes\WithoutBroadcasting;
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Promptable;
+use Laravel\Ai\Streaming\Events\ToolCall;
+use Laravel\Ai\Streaming\Events\ToolResult;
+
+#[WithoutBroadcasting(ToolCall::class, ToolResult::class)]
+class SearchAgent implements Agent, HasTools
+{
+    use Promptable;
+
+    // ...
+}
+```
+
+Исключенные события никогда не транслируются, но по-прежнему записываются в таблицу `agent_conversation_messages`, поэтому ваш фронтенд сможет загрузить полные данные tool после завершения stream. Это работает как для queued broadcasting (`broadcastOnQueue`), так и для синхронного broadcasting (`broadcast` / `broadcastNow`).
 
 <a name="queueing"></a>
 ### Очереди
@@ -700,6 +771,35 @@ SimilaritySearch::usingModel(Document::class, 'embedding')
     ->withDescription('Search the knowledge base for relevant articles.'),
 ```
 
+<a name="file-storage-tools"></a>
+### Инструменты файлового хранилища
+
+Фабрика tools `FileStorage` позволяет предоставить agents доступ к [диску файловой системы](/docs/{{version}}/filesystem) Laravel. Метод `all` возвращает tools, которые позволяют agent просматривать список файлов, читать, инспектировать, генерировать URL, записывать, удалять и копировать файлы на указанном диске:
+
+```php
+use Laravel\Ai\Tools\FileStorage;
+
+public function tools(): iterable
+{
+    return FileStorage::all('local');
+}
+```
+
+Если agent должен иметь возможность только инспектировать файлы, используйте метод `readOnly`:
+
+```php
+return FileStorage::readOnly('local');
+```
+
+Эти методы возвращают `Illuminate\Support\Collection`, что позволяет дополнительно фильтровать tools, предоставляемые agent:
+
+```php
+use Laravel\Ai\Tools\Filesystem\DeleteFile;
+
+return FileStorage::all('s3')
+    ->reject(fn ($tool) => $tool instanceof DeleteFile);
+```
+
 <a name="mcp-tools"></a>
 ### MCP Tools
 
@@ -769,7 +869,7 @@ public function tools(): iterable
 
 Provider tool `WebSearch` позволяет агентам искать в интернете актуальную информацию. Это полезно для вопросов о текущих событиях, свежих данных или темах, которые могли измениться после даты обучения модели.
 
-**Поддерживаемые провайдеры:** Anthropic, OpenAI, Gemini
+**Поддерживаемые провайдеры:** Anthropic, OpenAI, Gemini, OpenRouter
 
 ```php
 use Laravel\Ai\Providers\Tools\WebSearch;
@@ -1592,6 +1692,30 @@ $response = Document::fromPath(
 )->put(provider: Lab::Anthropic);
 ```
 
+Вы можете передать параметры загрузки для конкретного провайдера с помощью метода `withProviderOptions`. Например, можно указать `purpose` файла OpenAI:
+
+```php
+use Laravel\Ai\Files\Document;
+
+$response = Document::fromPath('/home/laravel/knowledge.txt')
+    ->withProviderOptions(['purpose' => 'assistants'])
+    ->put();
+```
+
+Чтобы задать параметры отдельно для каждого провайдера, передайте замыкание, которое получает текущего провайдера:
+
+```php
+use Laravel\Ai\Enums\Lab;
+use Laravel\Ai\Files\Document;
+
+$response = Document::fromPath('/home/laravel/training.jsonl')
+    ->withProviderOptions(fn (Lab|string $provider) => match ($provider) {
+        Lab::OpenAI => ['purpose' => 'fine-tune'],
+        default => [],
+    })
+    ->put();
+```
+
 <a name="using-stored-files-in-conversations"></a>
 ### Использование сохраненных файлов в разговорах
 
@@ -1776,7 +1900,15 @@ SalesCoach::fake(function (AgentPrompt $prompt) {
 });
 ```
 
-> **Note:** Если `Agent::fake()` вызван для агента со structured output, Laravel автоматически сгенерирует fake data, соответствующие схеме вывода.
+При подмене агента, который возвращает structured output, можно передавать массивы в качестве ответов. Агент вернет structured response с переданными данными:
+
+```php
+SalesCoach::fake([
+    ['score' => 87],
+]);
+```
+
+> **Note:** Если `Agent::fake()` вызван для агента со structured output и fake output не был передан явно, Laravel автоматически сгенерирует fake data, соответствующие схеме вывода.
 
 После prompt можно утверждать, какие prompts были получены:
 

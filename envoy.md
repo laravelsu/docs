@@ -1,5 +1,5 @@
 ---
-git: 378b3faeb70edb807ac44a118e97fa616ad57ec8
+git: a656f28557de9c3b98926eebd87bc1e578b0436e
 ---
 
 # Пакет Laravel Envoy

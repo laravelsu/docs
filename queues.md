@@ -1,5 +1,5 @@
 ---
-git: f3703da6c13a41336515e7875070b25747546b5e
+git: 7a5294176d0df3fc64050c667d3809eb66131169
 ---
 
 # Очереди
@@ -920,6 +920,45 @@ public function middleware(): array
 return [(new ThrottlesExceptionsWithRedis(10, 10 * 60))->connection('limiter')];
 ```
 
+<a name="releasing-jobs"></a>
+### Освобождение заданий
+
+Посредник `Release` позволяет вернуть задание обратно в очередь без его выполнения. Метод `Release::when` освободит задание, если переданное условие оценивается как `true`, а метод `Release::unless` освободит задание, если условие оценивается как `false`:
+
+```php
+use Illuminate\Queue\Middleware\Release;
+
+/**
+ * Get the middleware the job should pass through.
+ */
+public function middleware(): array
+{
+    return [
+        Release::when($condition, releaseAfter: 60),
+    ];
+}
+```
+
+Возврат задания обратно в очередь всё равно увеличивает общее количество попыток выполнения задания. Поэтому вам может потребоваться соответствующим образом настроить атрибуты `Tries` и `MaxExceptions` в классе задания.
+
+Вы также можете передать `Closure` методам `when` и `unless` для более сложной условной оценки:
+
+```php
+use Illuminate\Queue\Middleware\Release;
+
+/**
+ * Get the middleware the job should pass through.
+ */
+public function middleware(): array
+{
+    return [
+        Release::when(function (): bool {
+            return ! $this->order->isPaid();
+        }, releaseAfter: 60),
+    ];
+}
+```
+
 <a name="skipping-jobs"></a>
 ### Пропуск заданий
 
@@ -929,8 +968,8 @@ return [(new ThrottlesExceptionsWithRedis(10, 10 * 60))->connection('limiter')];
 use Illuminate\Queue\Middleware\Skip;
 
 /**
-* Get the middleware the job should pass through.
-*/
+ * Get the middleware the job should pass through.
+ */
 public function middleware(): array
 {
     return [
@@ -945,8 +984,8 @@ public function middleware(): array
 use Illuminate\Queue\Middleware\Skip;
 
 /**
-* Get the middleware the job should pass through.
-*/
+ * Get the middleware the job should pass through.
+ */
 public function middleware(): array
 {
     return [
@@ -1625,7 +1664,7 @@ class ProcessPodcast implements ShouldQueue
 Иногда процессы блокировки ввода-вывода, такие, как сокеты или исходящие HTTP-соединения, могут не учитывать указанный вами таймаут. Следовательно, при использовании этих функций вы всегда должны пытаться указать таймаут, используя их API. Например, при использовании [Guzzle](https://docs.guzzlephp.org) вы всегда должны указывать значение таймаута соединения и запроса.
 
 > [!WARNING]
-> Для указания тайм-аутов заданий необходимо установить PHP-расширение [PCNTL](https://www.php.net/manual/en/book.pcntl.php). Кроме того, значение тайм-аута в задании всегда должно быть меньше значения ["retry after"](#job-expiration). В противном случае задание может быть повторено до того, как оно фактически завершится или истечет время ожидания.
+> Для указания тайм-аутов заданий необходимо установить PHP-расширение [PCNTL](https://www.php.net/manual/en/book.pcntl.php). Кроме того, значение тайм-аута в задании всегда должно быть меньше значения ["retry after"](#job-expiration). В противном случае задание может быть повторено до того, как оно фактически завершится или истечет время ожидания. Опция `--timeout` не действует, когда команда `queue:work` вызывается с опцией `--once`.
 
 <a name="failing-on-timeout"></a>
 #### Неудача заданий по таймауту
@@ -2482,7 +2521,7 @@ php artisan queue:work --force
 <a name="resource-considerations"></a>
 #### Соображения относительно ресурсов
 
-Демоны обработчиков очередей не «перезагружают» фреймворк перед обработкой каждого задания. Следовательно, вы должны освобождать все тяжелые ресурсы после завершения каждого задания. Например, если вы выполняете манипуляции с изображениями с помощью [библиотеки GD](https://www.php.net/manual/en/book.image.php), вы должны освободить память с помощью `imagedestroy`, когда вы закончите обработку изображения.
+Демоны обработчиков очередей не «перезагружают» фреймворк перед обработкой каждого задания. Следовательно, вы должны освобождать все тяжелые ресурсы после завершения каждого задания. Например, если вы выполняете [работу с изображениями](/docs/{{version}}/images) с помощью [библиотеки GD](https://www.php.net/manual/en/book.image.php), вы должны освободить память с помощью `imagedestroy`, когда вы закончите обработку изображения.
 
 <a name="queue-priorities"></a>
 ### Приоритеты очереди

@@ -1,5 +1,5 @@
 ---
-git: e5a60cd792282de178478ca5bb678945e266b00b
+git: a656f28557de9c3b98926eebd87bc1e578b0436e
 ---
 
 # Laravel MCP
@@ -910,7 +910,7 @@ class WeatherGuidelinesResource extends Resource
 <a name="resource-request"></a>
 ### Resource request
 
-В отличие от tools и prompts, resources не определяют input schemas или arguments, но могут работать с request object в `handle`:
+В отличие от tools и prompts, resources не могут определять input schemas или arguments. Однако вы по-прежнему можете работать с request object в методе `handle` вашего resource:
 
 ```php
 use Laravel\Mcp\Request;

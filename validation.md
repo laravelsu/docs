@@ -1,5 +1,5 @@
 ---
-git: b77a5a3c179e91f765cd25a1e968c59cbe31efd1
+git: 2f0bdfe3fb3fa77fd5ce5ade846459bfe6f8532f
 ---
 
 # Валидация
@@ -1116,6 +1116,7 @@ Validator::make($request->all(), [
 - [File](#rule-file)
 - [Image](#rule-image)
 - [Max](#rule-max)
+- [Min](#rule-min)
 - [MIME Types](#rule-mimetypes)
 - [MIME Type By File Extension](#rule-mimes)
 - [Size](#rule-size)

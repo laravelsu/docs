@@ -1,5 +1,5 @@
 ---
-git: dc7c8161c3c6c4c2e2d907fca0d585f08fe147f7
+git: 27d3ab4c864685ca8457fc48258c4b844a200844
 ---
 
 # Уведомления
@@ -1806,7 +1806,7 @@ Notification::assertSentTo(
 );
 ```
 
-<a name="on-demand-notifications"></a>
+<a name="testing-on-demand-notifications"></a>
 #### Уведомления по требованию
 
 Если код, который вы тестируете, отправляет [уведомления по требованию](#on-demand-notifications), вы можете проверить, что уведомление по требованию было отправлено с помощью метода `assertSentOnDemand`:

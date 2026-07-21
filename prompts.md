@@ -1,5 +1,5 @@
 ---
-git: 8d66e681ac2a4a3be38d79939509e5cf68738ff9
+git: a656f28557de9c3b98926eebd87bc1e578b0436e
 ---
 
 # Prompts (Подсказки)
@@ -779,7 +779,7 @@ $id = search(
 use function Laravel\Prompts\multisearch;
 
 $ids = multisearch(
-    'Поиск пользователей, которые должны получать почту',
+    'Поиск пользователей, которым нужно отправить письмо',
     fn (string $value) => strlen($value) > 0
         ? User::whereLike('name', "%{$value}%")->pluck('name', 'id')->all()
         : []
@@ -794,7 +794,7 @@ $ids = multisearch(
 $names = collect(['Taylor', 'Abigail']);
 
 $selected = multisearch(
-    label: 'Поиск пользователей, которые должны получать почту',
+    label: 'Поиск пользователей, которым нужно отправить письмо',
     options: fn (string $value) => $names
         ->filter(fn ($name) => Str::contains($name, $value, ignoreCase: true))
         ->values()
@@ -806,7 +806,7 @@ $selected = multisearch(
 
 ```php
 $ids = multisearch(
-    label: 'Поиск пользователей, которые должны получать почту',
+    label: 'Поиск пользователей, которым нужно отправить письмо',
     placeholder: 'Например: Тейлор Отвелл',
     options: fn (string $value) => strlen($value) > 0
         ? User::whereLike('name', "%{$value}%")->pluck('name', 'id')->all()
@@ -819,7 +819,7 @@ $ids = multisearch(
 
 ```php
 $ids = multisearch(
-    label: 'Поиск пользователей, которые должны получать почту',
+    label: 'Поиск пользователей, которым нужно отправить письмо',
     options: fn (string $value) => strlen($value) > 0
         ? User::whereLike('name', "%{$value}%")->pluck('name', 'id')->all()
         : [],

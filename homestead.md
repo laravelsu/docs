@@ -527,7 +527,7 @@ sites:
       php: "7.1"
 ```
 
-[На виртуальной машине Homestead](#connected-via-ssh) вы можете использовать любую из поддерживаемых версий PHP через интерфейс командной строки:
+[На виртуальной машине Homestead](#connecting-via-ssh) вы можете использовать любую из поддерживаемых версий PHP через интерфейс командной строки:
 
 ```shell
 php5.6 artisan list
@@ -611,7 +611,7 @@ MAIL_ENCRYPTION=null
 <a name="configuring-minio"></a>
 ### Настройка Minio
 
-[Minio](https://github.com/minio/minio) - это сервер хранения объектов с открытым исходным кодом и API, совместимый с Amazon S3. Чтобы установить Minio, обновите файл `Homestead.yaml`, указав следующую опцию конфигурации в разделе [features](#install-optional-features):
+[Minio](https://github.com/minio/minio) - это сервер хранения объектов с открытым исходным кодом и API, совместимый с Amazon S3. Чтобы установить Minio, обновите файл `Homestead.yaml`, указав следующую опцию конфигурации в разделе [features](#installing-optional-features):
 
     minio: true
 

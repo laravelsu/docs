@@ -1,5 +1,5 @@
 ---
-git: 2793708535657469c3738d966eff207fb18d4106
+git: 7a5294176d0df3fc64050c667d3809eb66131169
 ---
 
 - ## Пролог
@@ -46,6 +46,7 @@ git: 2793708535657469c3738d966eff207fb18d4106
     - [Файловое хранилище](/docs/{{version}}/filesystem)
     - [Помощники](/docs/{{version}}/helpers)
     - [HTTP Клиент](/docs/{{version}}/http-client)
+    - [Изображения](/docs/{{version}}/images)
     - [Локализация](/docs/{{version}}/localization)
     - [Почта](/docs/{{version}}/mail)
     - [Уведомления](/docs/{{version}}/notifications)

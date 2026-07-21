@@ -1,5 +1,5 @@
 ---
-git: 98894596e909b8475e6d27221229c23769b46277
+git: 8fb05cb0b601ab4935b29eb531ea18073a17cd1f
 ---
 
 # Коллекции
@@ -121,7 +121,7 @@ $translated = $collection->toLocale('es');
 - [filter](#method-filter)
 - [first](#method-first)
 - [firstOrFail](#method-first-or-fail)
-- [firstWhere](#method-firstwhere)
+- [firstWhere](#method-first-where)
 - [flatMap](#method-flatmap)
 - [flatten](#method-flatten)
 - [flip](#method-flip)
@@ -178,6 +178,7 @@ $translated = $collection->toLocale('es');
 - [random](#method-random)
 - [range](#method-range)
 - [reduce](#method-reduce)
+- [reduceInto](#method-reduce-into)
 - [reduceSpread](#method-reduce-spread)
 - [reject](#method-reject)
 - [replace](#method-replace)
@@ -2470,6 +2471,49 @@ $collection->reduce(function (int $carry, int $value, string $key) use ($ratio) 
 // 4264
 ```
 
+<a name="method-reduce-into"></a>
+#### `reduceInto()`
+
+Метод `reduceInto` сокращает коллекцию до одного значения, изменяя переданное начальное значение. В отличие от метода `reduce`, переданное замыкание не должно возвращать накопленное значение:
+
+```php
+class OrderStats
+{
+    public int $total = 0;
+
+    public int $count = 0;
+}
+
+$orders = collect([
+    ['amount' => 100],
+    ['amount' => 250],
+    ['amount' => 50],
+]);
+
+$stats = $orders->reduceInto(new OrderStats, function (OrderStats $stats, array $order) {
+    $stats->total += $order['amount'];
+    $stats->count++;
+});
+
+$stats->total;
+
+// 400
+```
+
+При сокращении в скалярное значение или массив следует принимать его в замыкании по ссылке, чтобы изменения применялись к исходному значению:
+
+```php
+$collection = collect([1, 2, 3, 4, 5]);
+
+$even = $collection->reduceInto([], function (array &$result, int $value) {
+    if ($value % 2 === 0) {
+        $result[] = $value;
+    }
+});
+
+// [2, 4]
+```
+
 <a name="method-reduce-spread"></a>
 #### `reduceSpread()`
 
@@ -4135,7 +4179,7 @@ LazyCollection::make(function () {
 - [filter](#method-filter)
 - [first](#method-first)
 - [firstOrFail](#method-first-or-fail)
-- [firstWhere](#method-firstwhere)
+- [firstWhere](#method-first-where)
 - [flatMap](#method-flatmap)
 - [flatten](#method-flatten)
 - [flip](#method-flip)
@@ -4174,6 +4218,7 @@ LazyCollection::make(function () {
 - [pluck](#method-pluck)
 - [random](#method-random)
 - [reduce](#method-reduce)
+- [reduceInto](#method-reduce-into)
 - [reject](#method-reject)
 - [replace](#method-replace)
 - [replaceRecursive](#method-replacerecursive)

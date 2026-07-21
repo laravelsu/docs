@@ -1,5 +1,5 @@
 ---
-git: 0ea3f2b9bc04fb5e946ddb0a1b2b03831e78c351
+git: 94c3467e621c30e07bc7c9c4d4fd7acfa6b53e87
 ---
 
 # Установка
@@ -97,7 +97,7 @@ composer global require laravel/installer
 <a name="creating-an-application"></a>
 ### Создание приложения
 
-После установки PHP, Composer и установщика Laravel вы готовы создать новое приложение Laravel. Установщик предложит вам выбрать предпочитаемый стартовый комплект, среду тестирования и базу данных:
+После установки PHP, Composer и установщика Laravel вы готовы создать новое приложение Laravel:
 
 ```shell
 laravel new example-app

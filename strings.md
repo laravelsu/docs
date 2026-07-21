@@ -1,5 +1,5 @@
 ---
-git: cc9ecb890601093a8c4b363293e2573ca4839681
+git: b0fbeae094a202c1e70377c6b38b7489d339e97d
 ---
 
 # Строки
@@ -35,6 +35,7 @@ Laravel включает в себя различные функции для р
 - [Str::chopEnd](#method-str-chop-end)
 - [Str::contains](#method-str-contains)
 - [Str::containsAll](#method-str-contains-all)
+- [Str::counted](#method-str-counted)
 - [Str::doesntContain](#method-str-doesnt-contain)
 - [Str::doesntEndWith](#method-str-doesnt-end-with)
 - [Str::doesntStartWith](#method-str-doesnt-start-with)
@@ -136,6 +137,7 @@ Laravel включает в себя различные функции для р
 - [chopEnd](#method-fluent-str-chop-end)
 - [contains](#method-fluent-str-contains)
 - [containsAll](#method-fluent-str-contains-all)
+- [counted](#method-fluent-str-counted)
 - [decrypt](#method-fluent-str-decrypt)
 - [deduplicate](#method-fluent-str-deduplicate)
 - [dirname](#method-fluent-str-dirname)
@@ -1180,6 +1182,24 @@ $password = Str::password();
 $password = Str::password(12);
 
 // 'qwuar>#V|i]N'
+```
+
+<a name="method-str-plural"></a>
+<a name="method-str-counted"></a>
+#### `Str::counted()`
+
+Метод `Str::counted` преобразует строку со словом в единственном числе в форму единственного или множественного числа на основе переданного количества и добавляет перед результатом отформатированное количество:
+
+```php
+use Illuminate\Support\Str;
+
+$label = Str::counted('order', 1);
+
+// 1 order
+
+$label = Str::counted('order', 1000);
+
+// 1,000 orders
 ```
 
 <a name="method-str-plural"></a>
@@ -3053,6 +3073,23 @@ $closure = Str::of('foo')->pipe(function (Stringable $str) {
 });
 
 // 'bar'
+```
+
+<a name="method-fluent-str-counted"></a>
+#### `counted`
+
+Метод `counted` преобразует строку со словом в единственном числе в форму единственного или множественного числа на основе переданного количества и добавляет перед результатом отформатированное количество:
+
+```php
+use Illuminate\Support\Str;
+
+$label = Str::of('order')->counted(1);
+
+// 1 order
+
+$label = Str::of('order')->counted(1000);
+
+// 1,000 orders
 ```
 
 <a name="method-fluent-str-plural"></a>

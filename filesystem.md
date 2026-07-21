@@ -1,5 +1,5 @@
 ---
-git: 1fe1a05a91b05f8b909ccd41c6923d1ed79ff30f
+git: 7a5294176d0df3fc64050c667d3809eb66131169
 ---
 
 # Файловое хранилище
@@ -648,6 +648,24 @@ $path = $request->file('avatar')->storePubliclyAs(
 );
 ```
 
+<a name="image-manipulation"></a>
+### Работа с изображениями
+
+Если перед сохранением вам нужно изменить размер, обрезать или преобразовать загруженное изображение, вы можете использовать [возможности Laravel для работы с изображениями](/docs/{{version}}/images):
+
+```php
+$path = $request->image('avatar')
+    ->cover(400, 400)
+    ->toWebp()
+    ->storePublicly('avatars', 'public');
+```
+
+Вы также можете создать экземпляр изображения из файла, уже сохраненного на одном из дисков файловой системы:
+
+```php
+$image = Storage::disk('public')->image('avatars/photo.jpg');
+```
+
 <a name="local-files-and-visibility"></a>
 #### Локальные файлы и видимость
 
@@ -769,6 +787,9 @@ test('albums can be uploaded', function () {
 
     // Проверка, что данный каталог пуст...
     Storage::disk('photos')->assertDirectoryEmpty('/wallpapers');
+
+    // Проверка, что диск не содержит файлов...
+    Storage::disk('photos')->assertEmpty();
 });
 ```
 
@@ -805,6 +826,9 @@ class ExampleTest extends TestCase
 
         // Проверка, что указанная директория пуста...
         Storage::disk('photos')->assertDirectoryEmpty('/wallpapers');
+
+        // Проверка, что диск не содержит файлов...
+        Storage::disk('photos')->assertEmpty();
     }
 }
 ```
