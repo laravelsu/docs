@@ -1,5 +1,5 @@
 ---
-git: a17ef3b3bc461745fd774505cf94e6dc1a92e9fd
+git: 68f903aca708d7c9070f73127e64468132b1266b
 ---
 
 # База данных · Миграции
@@ -1216,6 +1216,7 @@ Schema::table('users', function (Blueprint $table) {
 | `->nullable($value = true)`         | Позволить (по умолчанию) значения `NULL` для вставки в столбец.                                                  |
 | `->storedAs($expression)`           | Создать сохраненный генерируемый столбец (MariaDB / MySQL / PostgreSQL / SQLite).                                |
 | `->unsigned()`                      | Установить столбцы `INTEGER` как `UNSIGNED` (MariaDB / MySQL).                                                   |
+| `->using($expression)`              | Указать выражение приведения при изменении типа столбца (PostgreSQL).                                            |
 | `->useCurrent()`                    | Установить столбцы `TIMESTAMP` для использования `CURRENT_TIMESTAMP` в качестве значения по умолчанию.           |
 | `->useCurrentOnUpdate()`            | Установить столбцы `TIMESTAMP` для использования `CURRENT_TIMESTAMP` при обновлении записи (MariaDB / MySQL).    |
 | `->virtualAs($expression)`          | Создать виртуальный генерируемый столбец (MariaDB / MySQL / SQLite).                                             |
@@ -1324,6 +1325,17 @@ $table->bigIncrements('id')->primary()->change();
 
 // Удаляем индекс...
 $table->char('postal_code', 10)->unique(false)->change();
+```
+
+<a name="postgresql-column-modifications"></a>
+#### Изменение столбцов PostgreSQL
+
+При изменении типа столбца в PostgreSQL вы можете использовать модификатор `using`, чтобы указать выражение, применяемое для приведения существующих значений:
+
+```php
+Schema::table('users', function (Blueprint $table) {
+    $table->date('birthday')->using('birthday::date')->change();
+});
 ```
 
 <a name="renaming-columns"></a>

@@ -1,5 +1,5 @@
 ---
-git: 4a7c3d6f72559106687d731509ebff3ee3d5f977
+git: 559641a3995aa42dc5f54216f016131d3b47226c
 ---
 
 # Маршрутизация
@@ -608,15 +608,16 @@ Route::get('/posts/{post:slug}', function (Post $post) {
 });
 ```
 
-Если вы хотите, чтобы при извлечении класса связанной модели всегда использовался столбец базы данных, отличный от `id`, то вы можете переопределить метод `getRouteKeyName` модели Eloquent:
+Если вы хотите, чтобы привязка модели всегда использовала столбец базы данных, отличный от `id`, при извлечении заданного класса модели, вы можете применить атрибут `RouteKey` к модели Eloquent:
 
 ```php
-/**
- * Получить ключ маршрута для модели.
- */
-public function getRouteKeyName(): string
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Model;
+
+#[RouteKey('slug')]
+class Post extends Model
 {
-    return 'slug';
+    // ...
 }
 ```
 

@@ -1,5 +1,5 @@
 ---
-git: 7a5294176d0df3fc64050c667d3809eb66131169
+git: 3ebbcbf54a8ed7dcb72610d04e6780737ccb462b
 ---
 
 - ## Пролог
@@ -98,6 +98,7 @@ git: 7a5294176d0df3fc64050c667d3809eb66131169
     - [Envoy](/docs/{{version}}/envoy)
     - [Fortify](/docs/{{version}}/fortify)
     - [Folio](/docs/{{version}}/folio)
+    - [Head](/docs/{{version}}/head)
     - [Homestead](/docs/{{version}}/homestead)
     - [Horizon](/docs/{{version}}/horizon)
     - [Mix](/docs/{{version}}/mix)

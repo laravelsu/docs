@@ -1,5 +1,5 @@
 ---
-git: 0d61029ee4473fc32ef843ea6051b2db54647a34
+git: ce4a1bf093c2c09e3a029090136d6bea88b07d48
 ---
 
 # Кэширование
@@ -70,7 +70,7 @@ php artisan migrate
 <a name="redis"></a>
 #### Предварительная подготовка драйвера на основе Redis
 
-Перед использованием драйвера кеша Redis, вам нужно будет либо установить расширение PHP PhpRedis через PECL, либо установить пакет `predis/predis` (~ 2.0) через Composer. [Laravel Sail](/docs/{{version}}/sail) уже включает это расширение. Кроме того, на официальных платформах приложений Laravel, таких как [Laravel Cloud](https://cloud.laravel.com) и [Laravel Forge](https://forge.laravel.com), расширение PhpRedis установлено по умолчанию.
+Перед использованием драйвера кеша Redis, вам нужно будет либо установить расширение PHP PhpRedis через PECL, либо установить пакет `predis/predis` через Composer. [Laravel Sail](/docs/{{version}}/sail) уже включает это расширение. Кроме того, на официальных платформах приложений Laravel, таких как [Laravel Cloud](https://cloud.laravel.com) и [Laravel Forge](https://forge.laravel.com), расширение PhpRedis установлено по умолчанию.
 
 Для получения дополнительной информации о настройке Redis обратитесь к [документации Laravel по Redis](/docs/{{version}}/redis#configuration).
 

@@ -1,5 +1,5 @@
 ---
-git: 7a5294176d0df3fc64050c667d3809eb66131169
+git: 68f903aca708d7c9070f73127e64468132b1266b
 ---
 
 # Работа с изображениями
@@ -55,10 +55,10 @@ composer require intervention/image:^4.0
 <a name="configuration"></a>
 ### Конфигурирование
 
-Файл конфигурации изображений Laravel находится по адресу `config/image.php`. Если в вашем приложении нет файла конфигурации `image`, вы можете опубликовать его с помощью Artisan-команды `config:publish`:
+Файл конфигурации изображений Laravel находится по адресу `config/images.php`. Если в вашем приложении нет файла конфигурации `images`, вы можете опубликовать его с помощью Artisan-команды `config:publish`:
 
 ```shell
-php artisan config:publish image
+php artisan config:publish images
 ```
 
 Файл конфигурации изображений позволяет указать драйвер изображений по умолчанию для приложения. Также драйвер по умолчанию можно указать с помощью переменной окружения `IMAGE_DRIVER`. Поддерживаемые драйверы: `gd` и `imagick`:
@@ -183,7 +183,10 @@ $image = $image->cover(400, 400);
 ```php
 $image = $image->contain(400, 400);
 $image = $image->contain(400, 400, '#ffffff');
+$image = $image->contain(400, 400, 'dominant');
 ```
+
+Вы можете указать `dominant` в качестве фонового цвета, чтобы заполнить пустое пространство доминирующим цветом изображения.
 
 Вы можете обрезать изображение с помощью метода `crop`. Первые два аргумента - желаемые ширина и высота, а необязательные третий и четвертый аргументы задают координаты `x` и `y` для обрезки:
 
@@ -201,6 +204,7 @@ Laravel также предоставляет множество дополни�
 $image = $image->orient();
 $image = $image->rotate(90);
 $image = $image->rotate(90, '#ffffff');
+$image = $image->rotate(90, 'dominant');
 $image = $image->blur(5);
 $image = $image->grayscale();
 $image = $image->sharpen(10);
@@ -230,6 +234,10 @@ $image = $request->image('avatar')
 $image = $image->toWebp();
 $image = $image->toJpg();
 $image = $image->toJpeg();
+$image = $image->toPng();
+$image = $image->toGif();
+$image = $image->toAvif();
+$image = $image->toBmp();
 ```
 
 Метод `quality` позволяет задать качество вывода. Значение качества будет ограничено диапазоном от `1` до `100`:
@@ -300,7 +308,7 @@ $path = $request->image('avatar')
 <a name="inspecting-images"></a>
 ## Получение сведений об изображениях
 
-Вы можете получить MIME-тип, расширение, размеры, ширину и высоту изображения с помощью следующих методов:
+Вы можете получить MIME-тип, расширение, размеры, ширину, высоту и доминирующий цвет изображения с помощью следующих методов:
 
 ```php
 $mimeType = $image->mimeType();
@@ -309,6 +317,8 @@ $extension = $image->extension();
 [$width, $height] = $image->dimensions();
 $width = $image->width();
 $height = $image->height();
+
+$dominantColor = $image->dominantColor();
 ```
 
 Эти методы работают с обработанным изображением. Например, вызов `width` после `cover(400, 400)` вернет `400`.
@@ -384,7 +394,7 @@ $image = $request->image('avatar')
     ->cover(400, 400);
 ```
 
-Также можно настроить пользовательский драйвер как драйвер изображений по умолчанию для приложения с помощью опции `default` в файле конфигурации `config/image.php` или переменной окружения `IMAGE_DRIVER`:
+Также можно настроить пользовательский драйвер как драйвер изображений по умолчанию для приложения с помощью опции `default` в файле конфигурации `config/images.php` или переменной окружения `IMAGE_DRIVER`:
 
 ```ini
 IMAGE_DRIVER=vips

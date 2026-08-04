@@ -1,5 +1,5 @@
 ---
-git: 7e0ec215e19fda46743ef7eaca7f83c2916db281
+git: 8574413789b7c9fc3602e09407a3146ebaba94cd
 ---
 
 # Laravel AI SDK
@@ -27,10 +27,14 @@ git: 7e0ec215e19fda46743ef7eaca7f83c2916db281
     - [Анонимные агенты](#anonymous-agents)
     - [Конфигурация агента](#agent-configuration)
     - [Опции провайдера](#provider-options)
+- [Подтверждение инструментов человеком](#human-tool-approval)
+    - [Полный процесс подтверждения](#complete-approval-flow)
 - [Изображения](#images)
 - [Аудио (TTS)](#audio)
 - [Транскрипции (STT)](#transcription)
+- [Суммаризация текста](#text-summarization)
 - [Embeddings](#embeddings)
+    - [Мультимодальные embeddings](#multimodal-embeddings)
     - [Запросы по embeddings](#querying-embeddings)
     - [Кеширование embeddings](#caching-embeddings)
 - [Реранжирование](#reranking)
@@ -291,7 +295,7 @@ $agent = SalesCoach::make(user: $user);
 $response = (new SalesCoach)->prompt(
     'Analyze this sales transcript...',
     provider: Lab::Anthropic,
-    model: 'claude-haiku-4-5-20251001',
+    model: 'claude-sonnet-5',
     timeout: 120,
 );
 ```
@@ -321,7 +325,7 @@ public function messages(): iterable
 <a name="remembering-conversations"></a>
 #### Запоминание разговоров
 
-> **Note:** Перед использованием трейта `RemembersConversations` опубликуйте и выполните миграции AI SDK через `vendor:publish`, чтобы создать таблицы для хранения разговоров.
+> **Warning:** Перед использованием трейта `RemembersConversations` опубликуйте и выполните миграции AI SDK через `vendor:publish`, чтобы создать таблицы для хранения разговоров.
 
 Если вы хотите, чтобы Laravel автоматически сохранял и извлекал историю разговоров агента, используйте трейт `RemembersConversations`. Он позволяет сохранять сообщения в базе данных без ручной реализации `Conversational`:
 
@@ -385,6 +389,48 @@ $response = (new SalesCoach)
 ```
 
 При использовании `RemembersConversations` предыдущие сообщения автоматически загружаются и включаются в контекст при prompt. Новые сообщения пользователя и ассистента сохраняются после каждого взаимодействия.
+
+<a name="conversation-participants"></a>
+#### Участники разговоров
+
+Хотя пользователи являются наиболее распространенными участниками разговоров, разговоры могут принадлежать любой модели Eloquent. Используйте метод `forParticipant`, чтобы начать разговор для модели другого типа:
+
+```php
+$response = (new SalesCoach)
+    ->forParticipant($team)
+    ->prompt('Review our latest sales results.');
+```
+
+Morph-класс и первичный ключ участника сохраняются вместе с разговором. Поэтому модели разных типов с одинаковым первичным ключом, например `User` с ID `1` и `Team` с ID `1`, имеют отдельные истории разговоров. Метод `forUser` является псевдонимом `forParticipant`.
+
+Вы можете продолжить самый последний разговор участника с помощью метода `continueLastConversation`:
+
+```php
+$response = (new SalesCoach)
+    ->continueLastConversation($team)
+    ->prompt('Tell me more about that.');
+```
+
+При продолжении конкретного разговора передайте участника в метод `continue`:
+
+```php
+$response = (new SalesCoach)
+    ->continue($conversationId, as: $team)
+    ->prompt('Tell me more about that.');
+```
+
+Трейт `HasConversations` можно добавить к любой модели Eloquent, которая участвует в разговорах. Полученное отношение `conversations` является полиморфным отношением, ограниченным типом и первичным ключом этой модели. Вы также можете получить участника, которому принадлежит разговор, через обратное отношение:
+
+```php
+$conversations = $team->conversations;
+
+$participant = $conversation->participant;
+```
+
+Если ваше приложение использует несколько типов моделей-участников, стоит определить [Eloquent morph map](/docs/{{version}}/eloquent-relationships#custom-polymorphic-types), чтобы сохраненные типы участников не были привязаны к именам классов моделей.
+
+> [!WARNING]
+> Метод `continue` не проверяет, что переданный участник владеет разговором. Ваше приложение должно авторизовать доступ к разговору перед его продолжением.
 
 <a name="structured-output"></a>
 ### Структурированный вывод
@@ -1184,7 +1230,7 @@ use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Promptable;
 
 #[Provider(Lab::Anthropic)]
-#[Model('claude-haiku-4-5-20251001')]
+#[Model('claude-sonnet-5')]
 #[MaxSteps(10)]
 #[MaxTokens(4096)]
 #[Temperature(0.7)]
@@ -1256,6 +1302,221 @@ class SalesCoach implements Agent, HasProviderOptions
 Метод получает текущего провайдера (`Lab` enum или строку), поэтому можно возвращать разные опции для каждого провайдера. Это особенно полезно с [failover](#failover), где каждый fallback-провайдер может иметь свою конфигурацию.
 
 Пример Anthropic выше также включает [prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) через `cache_control`.
+
+<a name="human-tool-approval"></a>
+## Подтверждение инструментов человеком
+
+> [!WARNING]
+> Подтверждение инструментов требует агента `Conversational`, история разговора которого сохраняется, чтобы приостановленный вызов можно было возобновить. Трейт `RemembersConversations` предоставляет необходимое сохранение.
+
+Инструменты, выполняющие чувствительные или необратимые действия, могут требовать подтверждения человеком перед выполнением. Чтобы инструмент можно было подтверждать, реализуйте контракт `Approvable` и используйте трейт `InteractsWithApprovals`. Подтверждаемые инструменты по умолчанию требуют подтверждения:
+
+```php
+<?php
+
+namespace App\Ai\Tools;
+
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Storage;
+use Laravel\Ai\Concerns\InteractsWithApprovals;
+use Laravel\Ai\Contracts\Approvable;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
+use Stringable;
+
+class DeleteFile implements Approvable, Tool
+{
+    use InteractsWithApprovals;
+
+    /**
+     * Get the description of the tool's purpose.
+     */
+    public function description(): Stringable|string
+    {
+        return 'Delete a file from storage.';
+    }
+
+    /**
+     * Execute the tool.
+     */
+    public function handle(Request $request): Stringable|string
+    {
+        Storage::delete($request['path']);
+
+        return "Deleted [{$request['path']}].";
+    }
+
+    /**
+     * Get the tool's schema definition.
+     */
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'path' => $schema->string()->required(),
+        ];
+    }
+}
+```
+
+Чтобы определить, нужно ли подтверждение на основе аргументов вызова инструмента, определите в инструменте метод `needsApproval`. Этот метод может вернуть boolean или экземпляр `Approval`, включающий причину запроса подтверждения:
+
+```php
+use Laravel\Ai\Approvals\Approval;
+
+/**
+ * Determine whether the tool needs approval for the given request.
+ */
+protected function needsApproval(Request $request): Approval|bool
+{
+    return str_starts_with($request['path'], 'temporary/')
+        ? false
+        : Approval::required('This will permanently delete a file.');
+}
+```
+
+Вы можете переопределить требование подтверждения инструмента при возврате его из метода `tools` агента:
+
+```php
+public function tools(): iterable
+{
+    return [
+        (new SendNotification)->withoutApproval(),
+        (new DeleteFile)->requireApproval('Deletion review required.'),
+    ];
+}
+```
+
+Когда вызывается подтверждаемый инструмент, агент приостанавливается перед его выполнением. Pending approvals можно изучить в response: они содержат ID каждого tool call, имя инструмента, аргументы и причину подтверждения:
+
+```php
+$response = (new FileAssistant)
+    ->forUser($user)
+    ->prompt('Delete the old invoice.');
+
+if ($response->hasPendingApprovals()) {
+    foreach ($response->pendingApprovals as $approval) {
+        // $approval->id
+        // $approval->tool
+        // $approval->arguments
+        // $approval->reason
+    }
+}
+```
+
+Чтобы возобновить агента, продолжите разговор и передайте экземпляр `Decisions`, содержащий решение для каждого ожидающего подтверждения tool call. Решения могут подтвердить вызов, отклонить его или изменить аргументы перед выполнением:
+
+```php
+use Laravel\Ai\Approvals\Decision;
+use Laravel\Ai\Approvals\Decisions;
+
+$response = (new FileAssistant)
+    ->continue($conversationId, as: $user)
+    ->prompt(Decisions::from([
+        'call_abc' => Decision::approve(),
+        'call_ghi' => Decision::reject('The invoice must be retained.'),
+    ]));
+```
+
+Boolean-значения `true` и `false` можно использовать как сокращения для подтверждения и отклонения. Каждый ожидающий подтверждения tool call должен получить решение. Неизвестные, отсутствующие или уже разрешенные ID tool call приведут к исключению `ApprovalMismatchException`. Для вызовов без явного решения можно задать значение по умолчанию с помощью методов `approveRemaining` или `rejectRemaining`:
+
+```php
+$decisions = Decisions::from([
+    'call_abc' => true,
+])->rejectRemaining('Not approved.');
+
+$response = (new FileAssistant)
+    ->continue($conversationId, as: $user)
+    ->prompt($decisions);
+```
+
+Отклонение с результатом, например `Decision::reject('Not approved.')`, возвращается модели, чтобы она могла продолжить ответ. Отклонение без результата останавливает цикл генерации после записи отклонения.
+
+Подтверждение инструментов поддерживается методами `prompt`, `stream`, `queue`, `broadcast`, `broadcastNow` и `broadcastOnQueue`.
+
+Во время streaming и broadcasting пауза представляется событием `tool_approval_request`. При использовании [stream protocol Vercel AI SDK](#streaming-using-the-vercel-ai-sdk-protocol) запросы подтверждения и результаты отправляются с помощью нативных частей протокола для подтверждения инструментов.
+
+Для агентов, поставленных в очередь, итоговый response передается в callback `then`, а Laravel также отправляет событие `ToolApprovalRequested`.
+
+Laravel сохраняет результат подтвержденного инструмента перед тем, как попросить модель продолжить. Если после этого генерация завершится ошибкой, подтверждение уже будет разрешено. Продолжайте разговор обычным текстовым prompt вместо повторной отправки тех же решений.
+
+<a name="complete-approval-flow"></a>
+### Полный процесс подтверждения
+
+Следующие маршруты демонстрируют полный процесс подтверждения. Маршрут `GET` возвращает экран чата, а маршрут `POST` принимает либо новый текстовый prompt, либо решения подтверждения с экрана чата. Этот пример предполагает, что модель `User` приложения использует трейт `HasConversations`:
+
+```php
+use App\Ai\Agents\FileAssistant;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
+use Laravel\Ai\Approvals\Decision;
+use Laravel\Ai\Approvals\Decisions;
+use Laravel\Ai\Models\Conversation;
+
+Route::get('/chat/{conversation}', function (Request $request, Conversation $conversation) {
+    Gate::authorize('view', $conversation);
+
+    return view('chat', [
+        'conversation' => $conversation,
+    ]);
+})->middleware('auth');
+
+Route::post('/chat/{conversation}', function (Request $request, Conversation $conversation) {
+    Gate::authorize('view', $conversation);
+
+    $validated = $request->validate([
+        'message' => ['nullable', 'string', 'required_without:decisions', 'prohibited_with:decisions'],
+        'decisions' => ['nullable', 'array', 'required_without:message', 'prohibited_with:message'],
+        'decisions.*.action' => ['required_with:decisions', Rule::in(['approve', 'reject'])],
+        'decisions.*.result' => ['nullable', 'string'],
+    ]);
+
+    $prompt = isset($validated['decisions'])
+        ? Decisions::from($validated->collect('decisions')->map(
+            fn (array $decision) => match ($decision['action']) {
+                'approve' => Decision::approve(),
+                'reject' => Decision::reject($decision['result'] ?? null),
+            }
+        )->all())
+        : $validated['message'];
+
+    $response = (new FileAssistant)
+        ->continue($conversation->id, as: $request->user())
+        ->prompt($prompt);
+
+    return [
+        'conversation_id' => $response->conversationId,
+        'status' => $response->hasPendingApprovals() ? 'awaiting_approval' : 'complete',
+        'message' => $response->text,
+        'approvals' => $response->pendingApprovals,
+    ];
+})->middleware('auth');
+```
+
+Когда статус response равен `awaiting_approval`, экран чата должен отобразить pending approvals и отправить выбор пользователя в тот же endpoint, используя ID tool call как ключ каждого решения:
+
+```json
+{
+    "decisions": {
+        "call_abc": {
+            "action": "approve"
+        },
+        "call_def": {
+            "action": "reject",
+            "result": "The invoice must be retained."
+        }
+    }
+}
+```
+
+Для обычного сообщения чата экран вместо этого может отправить значение `message`:
+
+```json
+{
+    "message": "Delete the old invoice."
+}
+```
 
 <a name="images"></a>
 ## Изображения
@@ -1422,6 +1683,32 @@ Transcription::fromStorage('audio.mp3')
     });
 ```
 
+<a name="text-summarization"></a>
+## Суммаризация текста
+
+Текст можно суммаризировать с помощью метода `summarize`, доступного через класс Laravel `Stringable`. По умолчанию summary будет содержать не более трех предложений и будет сгенерирован с использованием самой дешевой текстовой модели настроенного провайдера:
+
+```php
+use Illuminate\Support\Str;
+
+$summary = Str::of($article)->summarize();
+```
+
+Можно указать максимальное количество предложений, провайдера, модель и timeout, используемые для генерации summary. Класс `Str` также предоставляет статическую версию метода:
+
+```php
+use Laravel\Ai\Enums\Lab;
+
+$summary = Str::of($article)->summarize(
+    sentences: 4,
+    provider: Lab::Anthropic,
+    model: 'claude-sonnet-5',
+    timeout: 30,
+);
+
+$summary = Str::summarize($article, sentences: 4);
+```
+
 <a name="embeddings"></a>
 ## Embeddings
 
@@ -1453,6 +1740,52 @@ $response = Embeddings::for(['Napa Valley has great wine.'])
     ->dimensions(1536)
     ->generate(Lab::OpenAI, 'text-embedding-3-small');
 ```
+
+<a name="multimodal-embeddings"></a>
+### Мультимодальные embeddings
+
+Помимо строк, метод `Embeddings::for` принимает изображения, аудио, документы и видео, позволяя генерировать embeddings для нетекстового контента. Gemini поддерживает embeddings для изображений, аудио, документов и видео, а VoyageAI - для изображений и видео:
+
+```php
+use Laravel\Ai\Embeddings;
+use Laravel\Ai\Enums\Lab;
+use Laravel\Ai\Files\Image;
+use Laravel\Ai\Files\Video;
+
+$response = Embeddings::for([
+    'A vineyard at sunset.',
+    Image::fromStorage('vineyard.jpg'),
+    Video::fromPath('/home/laravel/tour.mp4'),
+])->generate(Lab::Gemini);
+```
+
+Мультимодальные входные данные используют те же [классы файлов, что и attachments](#attachments). Такие файлы можно создать из локального пути, filesystem disk, удаленного URL или Base64-encoded content. Изображения, документы и видео также можно создавать из uploaded files, а документы - из raw string content:
+
+```php
+use Laravel\Ai\Files\Audio;
+use Laravel\Ai\Files\Document;
+use Laravel\Ai\Files\Image;
+use Laravel\Ai\Files\Video;
+
+Image::fromPath('/home/laravel/photo.jpg');
+Image::fromStorage('photo.jpg');
+Image::fromUpload($request->file('photo'));
+
+Audio::fromPath('/home/laravel/clip.mp3');
+Audio::fromStorage('clip.mp3');
+Audio::fromUpload($request->file('clip.mp3'));
+
+Video::fromPath('/home/laravel/video.mp4');
+Video::fromStorage('video.mp4');
+Video::fromUpload($request->file('video'));
+
+Document::fromUrl('https://example.com/report.pdf');
+Document::fromString('Laravel is a PHP framework.', 'text/plain');
+Document::fromUpload($request->file('report'));
+```
+
+> [!NOTE]
+> VoyageAI не позволяет смешивать медиа по удаленным URL и Base64-encoded media в одном запросе. Локальные, сохраненные и загруженные файлы отправляются как Base64-encoded content, а текстовые входные данные можно комбинировать с любым источником медиа. Обратитесь к документации провайдера, чтобы узнать, какие мультимодальные модели и входные данные доступны.
 
 <a name="querying-embeddings"></a>
 ### Запросы по embeddings
@@ -1908,6 +2241,28 @@ SalesCoach::fake([
 ]);
 ```
 
+Также можно подменить response, ожидающий подтверждения инструмента:
+
+```php
+use Laravel\Ai\Approvals\PendingApproval;
+use Laravel\Ai\Responses\AgentResponse;
+
+FileAssistant::fake([
+    AgentResponse::fakeWithPendingApprovals([
+        new PendingApproval(
+            id: 'call_abc',
+            tool: 'DeleteFile',
+            arguments: ['path' => 'invoice.pdf'],
+            reason: 'This will permanently delete a file.',
+        ),
+    ]),
+]);
+
+$response = (new FileAssistant)->prompt('Delete the invoice.');
+
+$response->hasPendingApprovals(); // true
+```
+
 > **Note:** Если `Agent::fake()` вызван для агента со structured output и fake output не был передан явно, Laravel автоматически сгенерирует fake data, соответствующие схеме вывода.
 
 После prompt можно утверждать, какие prompts были получены:
@@ -1926,7 +2281,25 @@ SalesCoach::assertNotPrompted('Missing prompt');
 SalesCoach::assertNeverPrompted();
 ```
 
-Для queued invocations используйте queued assertions:
+При проверке продолжения с подтверждениями можно изучить решения подтверждений в prompt:
+
+```php
+use Laravel\Ai\Approvals\Decisions;
+use Laravel\Ai\Prompts\AgentPrompt;
+
+FileAssistant::fake();
+
+(new FileAssistant)->prompt(Decisions::from([
+    'call_abc' => true,
+]));
+
+FileAssistant::assertPrompted(function (AgentPrompt $prompt) {
+    return $prompt->hasApprovalDecisions()
+        && $prompt->approvalDecisions->get('call_abc')->isApproved();
+});
+```
+
+Для вызовов, поставленных в очередь, используйте queued assertions:
 
 ```php
 use Laravel\Ai\QueuedAgentPrompt;
@@ -2324,6 +2697,8 @@ Laravel AI SDK отправляет разные [события](/docs/{{versio
 - `StoreCreated`
 - `StoringFile`
 - `StreamingAgent`
+- `ToolApprovalRequested`
+- `ToolApprovalResolved`
 - `ToolInvoked`
 - `TranscriptionGenerated`
 

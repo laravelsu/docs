@@ -1,5 +1,5 @@
 ---
-git: 2f0bdfe3fb3fa77fd5ce5ade846459bfe6f8532f
+git: 68f903aca708d7c9070f73127e64468132b1266b
 ---
 
 # Валидация
@@ -57,7 +57,7 @@ class PostController extends Controller
     /**
      * Сохранить новую запись в блоге.
      */
-   public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         // Выполнить валидацию и сохранить сообщение в блоге...
 
@@ -324,7 +324,7 @@ public function store(StorePostRequest $request): RedirectResponse
     $validated = $request->safe()->only(['name', 'email']);
     $validated = $request->safe()->except(['name', 'email']);
 
-    // Сохранить апись в блоге...
+    // Сохранить запись в блоге...
 
     return redirect('/posts');
 }
@@ -1076,6 +1076,7 @@ Validator::make($request->all(), [
 <div class="docs-column-list" markdown="1">
 
 - [Array](#rule-array)
+- [Array Keys](#rule-array-keys)
 - [Between](#rule-between)
 - [Contains](#rule-contains)
 - [Doesnt Contain](#rule-doesnt-contain)
@@ -1185,6 +1186,14 @@ Validator::make($request->all(), [
 #### active_url
 
 Проверяемое поле должно иметь допустимую запись A или AAAA в соответствии с функцией `dns_get_record` PHP. Имя хоста указанного URL извлекается с помощью PHP-функции `parse_url` перед передачей в `dns_get_record`.
+
+При тестировании правил валидации, которые выполняют DNS-запросы, например `active_url` и `email:dns`, вы можете использовать метод `Validator::fakeDnsLookups`. Он подменяет DNS-запросы, сохраняя остальное поведение правил валидации:
+
+```php
+use Illuminate\Support\Facades\Validator;
+
+Validator::fakeDnsLookups();
+```
 
 <a name="rule-after"></a>
 #### after:_date_
@@ -1311,6 +1320,21 @@ Validator::make($input, [
 ```
 
 В общем, вы всегда должны указывать ключи массива, которые могут присутствовать в вашем массиве.
+
+<a name="rule-array-keys"></a>
+#### array_keys:_foo_,_bar_,...
+
+Проверяемое поле должно быть PHP-массивом, ключи которого все входят в переданный список. Необходимо указать хотя бы один ключ:
+
+```php
+'user' => ['array_keys:name,username'],
+```
+
+Для удобства можно использовать метод `Rule::arrayKeys`:
+
+```php
+'user' => [Rule::arrayKeys('name', 'username')],
+```
 
 <a name="rule-ascii"></a>
 #### ascii

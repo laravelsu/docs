@@ -1,5 +1,5 @@
 ---
-git: 371592f092a65d24ce3be61bc6aac974b42be5a5
+git: 7069be16037d772d289b504f5bc878fb384e9238
 ---
 
 # Laravel Octane

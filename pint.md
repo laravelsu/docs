@@ -1,5 +1,5 @@
 ---
-git: 44ab0bd802f679302424bc61e357ce2337917999
+git: e064943bc6d9fe866685eae6e3214fe2f9e0fb5a
 ---
 
 # Laravel Pint
@@ -47,6 +47,12 @@ composer require laravel/pint --dev
 ./vendor/bin/pint app/Models
 
 ./vendor/bin/pint app/Models/User.php
+```
+
+По умолчанию Pint не форматирует шаблоны Blade. Если вы также хотите форматировать файлы `.blade.php`, используйте опцию `--blade`, которая включает правило [`Pint/laravel_blade`](#laravel-blade) для текущего запуска без изменения файла `pint.json`:
+
+```shell
+./vendor/bin/pint --blade
 ```
 
 Pint отобразит подробный список всех файлов, которые он обновляет. Вы можете просмотреть еще больше информации об изменениях сделанных Pint, указав опцию `-v` при вызове Pint:
@@ -142,6 +148,37 @@ Pint построен на основе [PHP CS Fixer](https://github.com/Friend
 #### Пользовательские правила
 
 Помимо правил PHP CS Fixer, Pint предоставляет пользовательские правила с префиксом `Pint/`. Эти правила не включены по умолчанию, но вы можете включить их в файле `pint.json`.
+
+<a name="laravel-blade"></a>
+##### `Pint/laravel_blade`
+
+Это правило форматирует ваши шаблоны Blade, применяя единообразные отступы, пробелы и форматирование атрибутов к файлам `.blade.php`. По умолчанию Pint не форматирует файлы Blade, поэтому для включения этой возможности нужно явно добавить правило в файл `pint.json`:
+
+```json
+{
+    "preset": "laravel",
+    "rules": {
+        "Pint/laravel_blade": true
+    }
+}
+```
+
+После включения правила Pint будет форматировать шаблоны Blade вместе с PHP-файлами при каждом запуске:
+
+```shell
+./vendor/bin/pint
+```
+
+Если вы хотите включить это правило только для одного запуска без изменения файла `pint.json`, используйте опцию `--blade`:
+
+```shell
+./vendor/bin/pint --blade
+```
+
+Внутри это правило использует [Prettier](https://prettier.io) вместе с плагинами `prettier-plugin-blade` и `prettier-plugin-tailwindcss`, поэтому на вашем компьютере должен быть установлен [Node.js](https://nodejs.org). При первом запуске Pint с включенным правилом Pint обнаружит отсутствующие зависимости Prettier и предложит установить их.
+
+> [!NOTE]
+> Это правило автоматически пропускает файлы, которые обычно полагаются на собственное форматирование, например рекомендации [Laravel Boost](https://github.com/laravel/boost) и email-представления, расположенные в каталогах `resources/views/emails` и `resources/views/mail`.
 
 <a name="phpdoc-type-annotations-only"></a>
 ##### `Pint/phpdoc_type_annotations_only`

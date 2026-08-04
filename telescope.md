@@ -1,5 +1,5 @@
 ---
-git: 2d059d1368c5d382c7b76b6d20faf92680b1fbfc
+git: ebeea7cfaf51d77b8101825f3508e1e5ab1a8ad9
 ---
 
 # Пакет Laravel Telescope
@@ -81,6 +81,35 @@ public function register(): void
 'enabled' => env('TELESCOPE_ENABLED', true),
 ```
 
+<a name="content-security-policy-csp-nonce"></a>
+#### Nonce для Content Security Policy (CSP)
+
+Если вы хотите использовать [атрибут nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/nonce) в тегах script и style, используемых в представлениях Telescope, как часть вашей [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), вы можете указать нужное значение nonce с помощью метода `Telescope::cspNonce`. Обычно этот метод следует вызывать внутри посредника, чтобы для каждого запроса назначался новый nonce:
+
+```php
+use Closure;
+use Illuminate\Http\Request;
+use Laravel\Telescope\Telescope;
+use Symfony\Component\HttpFoundation\Response;
+
+public function handle(Request $request, Closure $next): Response
+{
+    Telescope::cspNonce('csp-nonce');
+
+    return $next($request);
+}
+```
+
+Вы можете добавить этот посредник в опцию `middleware` файла конфигурации `config/telescope.php` вашего приложения:
+
+```php
+'middleware' => [
+    'web',
+    App\Http\Middleware\AddTelescopeCspNonce::class,
+    Authorize::class,
+],
+```
+
 <a name="data-pruning"></a>
 ### Очистка накопленных данных
 
@@ -111,7 +140,7 @@ use App\Models\User;
 /**
  * Регистрация шлюза Telescope.
  *
- * Этот шлюз определяют, кто может получить доступ к Telescope в нелокальном окружении.
+ * Этот шлюз определяет, кто может получить доступ к Telescope в нелокальном окружении.
  */
 protected function gate(): void
 {
@@ -234,10 +263,10 @@ public function register(): void
 
     Telescope::tag(function (IncomingEntry $entry) {
         return $entry->type === EntryType::REQUEST
-                    ? ['status:'.$entry->content['response_status']]
-                    : [];
+            ? ['status:'.$entry->content['response_status']]
+            : [];
     });
- }
+}
 ```
 
 <a name="available-watchers"></a>

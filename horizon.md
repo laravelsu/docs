@@ -1,5 +1,5 @@
 ---
-git: 2887d9c578f550445e033569f0650ae546815f5e
+git: 4350436469a91de3600dbeb72de644fe139d2147
 ---
 
 # Laravel Horizon
@@ -149,7 +149,7 @@ public function handle(Request $request, Closure $next): Response
 /**
  * Регистрация шлюза Horizon.
  *
- * Этот шлюз определяют, кто может получить доступ к Horizon во внешней среде.
+ * Этот шлюз определяет, кто может получить доступ к Horizon во внешней среде.
  */
 protected function gate(): void
 {
@@ -203,7 +203,7 @@ protected function gate(): void
 'environments' => [
     'production' => [
         'supervisor-1' => [
-            // ...¨
+            // ...
             'timeout' => 60,
         ],
     ],

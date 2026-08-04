@@ -1,5 +1,5 @@
 ---
-git: 84c5f7f9698007e125e86ddc0140865e8f0a7188
+git: 946622229fa1d90052b7d51614a4a14a7156b9b0
 ---
 
 # HTTP-клиент
@@ -24,7 +24,7 @@ $response = Http::get('http://example.com');
 
 ```php
 $response->body() : string;
-$response->json($key = null, $default = null) : mixed;
+$response->json($key = null, $default = null, $flags = null) : mixed;
 $response->object() : object;
 $response->collect($key = null) : Illuminate\Support\Collection;
 $response->resource() : resource;

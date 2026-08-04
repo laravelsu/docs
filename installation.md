@@ -1,5 +1,5 @@
 ---
-git: 94c3467e621c30e07bc7c9c4d4fd7acfa6b53e87
+git: 632c8dea8aae9e295a1f687d01e33a0a3b75185c
 ---
 
 # Установка
@@ -218,7 +218,15 @@ herd open
 <a name="ide-support"></a>
 ## Поддержка IDE
 
-При разработке приложений Laravel вы можете использовать любой редактор кода по своему усмотрению. Если вы ищете легкие и расширяемые редакторы, [VS Code](https://code.visualstudio.com) или [Cursor](https://cursor.com) в сочетании с официальным [расширением Laravel VS Code](https://marketplace.visualstudio.com/items?itemName=laravel.vscode-laravel) предлагают отличную поддержку Laravel с такими функциями, как подсветка синтаксиса, сниппеты, интеграция команд Artisan и интеллектуальное автодополнение для моделей Eloquent, маршрутов, посредников, ресурсов, конфигураций и Inertia.js.
+При разработке приложений Laravel вы можете использовать любой редактор кода по своему усмотрению. [Laravel LSP](https://github.com/laravel/lsp) предоставляет поддержку редакторов с учетом особенностей фреймворка, включая автодополнение кода, подсказки при наведении, диагностику, ссылки в документах, переход к определению и быстрые исправления для кода Laravel и Blade.
+
+Чтобы установить Laravel LSP, установите его глобально через Composer. Убедитесь, что глобальный каталог Composer `vendor/bin` находится в вашем `PATH`:
+
+```shell
+composer global require laravel/lsp
+```
+
+Если вы ищете легкие и расширяемые редакторы, [VS Code](https://code.visualstudio.com) или [Cursor](https://cursor.com) в сочетании с официальным [расширением Laravel VS Code](https://marketplace.visualstudio.com/items?itemName=laravel.vscode-laravel) предоставляют подсветку синтаксиса, сниппеты, интеграцию команд Artisan и автоматическую поддержку Laravel LSP. Официальные расширения Laravel также доступны для [Sublime Text](https://github.com/laravel/sublime-extension) и [Zed](https://github.com/laravel/zed-extension). Инструкции по настройке других редакторов, совместимых с language server, включая Neovim и OpenCode, смотрите в [репозитории Laravel LSP](https://github.com/laravel/lsp).
 
 Для широкой и надёжной поддержки Laravel обратите внимание на [PhpStorm](https://www.jetbrains.com/phpstorm/laravel/?utm_source=laravel.com&utm_medium=link&utm_campaign=laravel-2025&utm_content=partner&ref=laravel-2025), IDE от JetBrains. Встроенная поддержка Laravel в PhpStorm включает шаблоны Blade, интеллектуальное автодополнение для моделей Eloquent, маршрутов, представлений, переводов и компонентов, а также мощную генерацию кода и навигацию по проектам Laravel.
 

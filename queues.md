@@ -1,5 +1,5 @@
 ---
-git: 7a5294176d0df3fc64050c667d3809eb66131169
+git: ce4a1bf093c2c09e3a029090136d6bea88b07d48
 ---
 
 # Очереди
@@ -136,7 +136,7 @@ Amazon SQS ограничивает максимальный размер payloa
 
 - Amazon SQS: `aws/aws-sdk-php ~3.0`
 - Beanstalkd: `pda/pheanstalk ~5.0`
-- Redis: `predis/predis ~2.0` или PHP-расширение phpredis
+- Redis: `predis/predis ~3.0` или PHP-расширение phpredis
 - [MongoDB](https://www.mongodb.com/docs/drivers/php/laravel-mongodb/current/queues/): `mongodb/laravel-mongodb`
 
 <!-- </div> -->

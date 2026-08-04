@@ -1,5 +1,5 @@
 ---
-git: c53d56ec116e2aeb65c8d4c14d2f7cf2aef86513
+git: 68f903aca708d7c9070f73127e64468132b1266b
 ---
 
 # Отправка электронной почты
@@ -190,6 +190,19 @@ public function headers(): Headers
     return new Headers(
         text: [
             'X-Ses-List-Management-Options' => 'contactListName=MyContactList;topicName=MyTopic',
+        ],
+    );
+}
+```
+
+Чтобы отправить письмо через [tenant](https://docs.aws.amazon.com/ses/latest/dg/tenants.html) SES, вы можете вернуть заголовок `X-Ses-Tenant-Name` из метода `headers`. Laravel передаст значение заголовка как опцию `TenantName` в SES при отправке сообщения:
+
+```php
+public function headers(): Headers
+{
+    return new Headers(
+        text: [
+            'X-Ses-Tenant-Name' => 'tenant-id',
         ],
     );
 }

@@ -1,5 +1,5 @@
 ---
-git: 4da19a5f3f4c14d57d08662b942e3c270fc35af5
+git: ce4a1bf093c2c09e3a029090136d6bea88b07d48
 ---
 
 # Сессия HTTP
@@ -49,7 +49,7 @@ php artisan migrate
 <a name="redis"></a>
 #### Redis
 
-Перед использованием Redis с Laravel вам нужно будет либо установить расширение PHP PhpRedis через PECL, либо установить пакет `predis/predis` (~ 1.0) через Composer. Для получения дополнительной информации о настройке Redis обратитесь к [документации Redis](/docs/{{version}}/redis#configuration) Laravel.
+Перед использованием Redis с Laravel вам нужно будет либо установить расширение PHP PhpRedis через PECL, либо установить пакет `predis/predis` через Composer. Для получения дополнительной информации о настройке Redis обратитесь к [документации Redis](/docs/{{version}}/redis#configuration) Laravel.
 
 > [!NOTE]
 > Переменная среды `SESSION_CONNECTION` или опция `connection` в файле конфигурации `session.php` может использоваться для указания того, какое соединение Redis используется для хранения сеанса.
