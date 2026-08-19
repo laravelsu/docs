@@ -519,6 +519,7 @@ Schema::table('users', function (Blueprint $table) {
 
 </div>
 
+<a name="relationship-method-list"></a>
 #### Типы отношений
 
 <div class="collection-method-list" markdown="1">
@@ -544,21 +545,6 @@ Schema::table('users', function (Blueprint $table) {
 - [ipAddress](#column-method-ipAddress)
 - [rememberToken](#column-method-rememberToken)
 - [vector](#column-method-vector)
-
-</div>
-
-<a name="relationship-method-list"></a>
-#### Типы отношений
-
-<div class="collection-method-list" markdown="1">
-
-- [foreignId](#column-method-foreignId)
-- [foreignIdFor](#column-method-foreignIdFor)
-- [foreignUlid](#column-method-foreignUlid)
-- [foreignUuid](#column-method-foreignUuid)
-- [foreignUuidFor](#column-method-foreignUuidFor)
-- [morphs](#column-method-morphs)
-- [nullableMorphs](#column-method-nullableMorphs)
 
 </div>
 

@@ -1,5 +1,5 @@
 ---
-git: 7b3107424823967e647cf4cd2ea8c9ba5be54839
+git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
 ---
 
 # Процессы
@@ -546,7 +546,7 @@ Route::get('/import', function () {
 });
 ```
 
-To properly fake this process, we need to be able to describe how many times the `running` method should return `true`. In addition, we may want to specify multiple lines of output that should be returned in sequence. To accomplish this, we can use the `Process` facade's `describe` method:
+Чтобы корректно имитировать этот процесс, необходимо указать, сколько раз метод `running` должен вернуть `true`. Кроме того, можно задать несколько строк вывода, которые будут возвращаться последовательно. Для этого используется метод `describe` фасада `Process`:
 
 ```php
 Process::fake([
@@ -559,7 +559,7 @@ Process::fake([
 ]);
 ```
 
-Чтобы корректно подделать этот процесс, нам нужно иметь возможность описать, сколько раз метод `running` должен возвращать `true`. Кроме того, по желанию, мы можем указать несколько строк вывода, которые должны быть возвращены последовательно. Для этого мы можем использовать метод `describe` фасада `Process`:
+Рассмотрим пример подробнее. Методы `output` и `errorOutput` задают несколько строк вывода, возвращаемых последовательно. Метод `exitCode` указывает итоговый код завершения имитируемого процесса, а `iterations` - сколько раз метод `running` должен вернуть `true`.
 
 <a name="available-assertions"></a>
 ### Доступные утверждения
@@ -576,6 +576,14 @@ use Illuminate\Support\Facades\Process;
 
 Process::assertRan('ls -la');
 ```
+
+Если процесс был вызван с массивом аргументов, в проверку можно передать тот же массив:
+
+```php
+Process::assertRan(['php', 'artisan', 'migrate']);
+```
+
+Методы `assertRanTimes` и `assertDidntRun` также принимают команды в виде массивов.
 
 Метод `assertRan` также принимает замыкание, которое получит экземпляр процесса и результат процесса, что позволяет вам проверить настроенные опции процесса. Если это замыкание возвращает `true`, утверждение будет "пройдено":
 
@@ -626,6 +634,20 @@ Process::assertRanTimes(function (PendingProcess $process, ProcessResult $result
     return $process->command === 'ls -la';
 }, times: 3);
 ```
+
+<a name="assert-processes-ran-in-order"></a>
+#### assertRanInOrder
+
+Проверка того, что процессы были вызваны в указанном порядке:
+
+```php
+Process::assertRanInOrder([
+    'git fetch',
+    'composer install',
+]);
+```
+
+Метод `assertRanInOrder`, как и остальные методы проверки процессов, принимает строки команд, массивы аргументов команд или замыкания.
 
 <a name="preventing-stray-processes"></a>
 ### Предотвращение случайных процессов

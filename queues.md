@@ -1,5 +1,5 @@
 ---
-git: ce4a1bf093c2c09e3a029090136d6bea88b07d48
+git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
 ---
 
 # Очереди
@@ -290,7 +290,10 @@ class ProcessPodcast implements ShouldQueue
 ### Уникальные задания
 
 > [!WARNING]
-> Для уникальных заданий требуется драйвер кеша, поддерживающий [блокировки](/docs/{{version}}/cache#atomic-locks). В настоящее время драйверы кеширования `memcached`, `redis`, `dynamodb`, `database`, `file`, and `array` поддерживают атомарные блокировки. Кроме того, уникальность заданий не учитывается при пакетной обработке.
+> Для уникальных заданий требуется драйвер кеша, поддерживающий [блокировки](/docs/{{version}}/cache#atomic-locks). В настоящее время атомарные блокировки поддерживают драйверы `memcached`, `redis`, `dynamodb`, `database`, `file` и `array`.
+
+> [!WARNING]
+> Ограничения уникальности заданий не применяются к заданиям внутри пакетов.
 
 Иногда требуется убедиться, что только один экземпляр определенного задания находится в очереди в любой момент времени. Вы можете сделать это, реализовав интерфейс `ShouldBeUnique` в своем классе задания. Этот интерфейс не требует от вас определения каких-либо дополнительных методов в вашем классе:
 
@@ -632,9 +635,6 @@ public function middleware(): array
 }
 ```
 
-> [!NOTE]
-> Если вы используете Redis, то вы можете использовать посредника `Illuminate\Queue\Middleware\RateLimitedWithRedis`, который лучше настроен для Redis и более эффективен, чем базовый посредник с ограничением частоты.
-
 <a name="rate-limiting-with-redis"></a>
 #### Ограничение частоты с Redis
 
@@ -896,9 +896,6 @@ public function middleware(): array
     )];
 }
 ```
-
-> [!NOTE]
-> Если вы используете Redis в качестве драйвера кеша вашего приложения, то вы можете использовать класс `Illuminate\Queue\Middleware\ThrottlesExceptionsWithRedis`. Этот класс более эффективен при управлении ограничениями исключений с помощью Redis.
 
 <a name="throttling-exceptions-with-redis"></a>
 #### Ограничение исключений с Redis
@@ -1479,6 +1476,25 @@ Queue::route([
 > [!NOTE]
 > Queue routing все еще может быть переопределен самим job для конкретного dispatch.
 
+Метод `forward` позволяет перенаправлять задания из одной очереди в другую очередь и / или подключение. Это удобно при изменении инфраструктуры очередей без правки отдельных заданий или мест их отправки:
+
+```php
+Queue::forward('reports', 'reports.fifo', 'sqs');
+Queue::forward('payments', connection: 'sqs');
+Queue::forward('updates', 'notifications');
+```
+
+Можно также перенаправить сразу несколько очередей, передав массив:
+
+```php
+Queue::forward([
+    'reports' => 'reports.fifo',
+    'emails' => 'emails.fifo',
+], connection: 'sqs');
+```
+
+Явно указанное в задании подключение имеет приоритет над подключением, заданным при перенаправлении.
+
 <a name="max-job-attempts-and-timeout"></a>
 ### Указание максимального количества попыток задания / значений тайм-аута
 
@@ -1837,6 +1853,9 @@ php artisan queue:work database
 
 Когда операция с соединением очереди завершается ошибкой и активируется failover, Laravel отправляет событие `Illuminate\Queue\Events\QueueFailedOver`, которое можно использовать для логирования или отчетности.
 
+> [!NOTE]
+> Если вы используете Laravel Horizon, помните, что Horizon управляет только очередями Redis. Если failover-список включает `database`, параллельно с Horizon следует запустить обычный процесс `php artisan queue:work database`.
+
 <a name="error-handling"></a>
 ### Обработка ошибок
 
@@ -2060,7 +2079,7 @@ $batch = Bus::batch([
 ```
 
 <a name="chains-and-batches"></a>
-#### Цепочки заданий (Chains) и Пакеты (Batches)
+### Цепочки заданий (Chains) и Пакеты (Batches)
 
 Вы можете определить набор [связанных заданий](#job-chaining) в пакете, поместив связанные задания в массив. Например, мы можем выполнить две цепочки заданий параллельно и выполнить замыкание, когда обе цепочки заданий завершат обработку:
 
@@ -2394,27 +2413,6 @@ dispatch(function () use ($podcast) {
 > [!WARNING]
 > Поскольку функции-замыкания в`catch` сериализуются и выполняются очередью Laravel позднее, вам не следует использовать `$this` в обратных вызовах `catch`.
 
-<a name="pausing-and-resuming-queue-workers"></a>
-### Приостановка и возобновление queue workers
-
-Иногда нужно временно запретить queue worker обрабатывать новые задания, не останавливая сам worker полностью. Например, вы можете захотеть приостановить обработку заданий на время обслуживания системы. Laravel предоставляет Artisan-команды `queue:pause` и `queue:continue` для приостановки и возобновления queue workers.
-
-Чтобы приостановить конкретную очередь, передайте имя queue connection и имя очереди:
-
-```shell
-php artisan queue:pause database:default
-```
-
-В этом примере `database` - имя queue connection, а `default` - имя очереди. После приостановки очереди workers, обрабатывающие задания из этой очереди, продолжат выполнять текущее задание, но не будут брать новые задания, пока очередь не будет возобновлена.
-
-Чтобы возобновить обработку заданий в приостановленной очереди, используйте команду `queue:continue`:
-
-```shell
-php artisan queue:continue database:default
-```
-
-После возобновления очереди workers сразу начнут обрабатывать новые задания из этой очереди. Обратите внимание, что приостановка очереди не останавливает сам процесс worker; она только запрещает worker обрабатывать новые задания из указанной очереди.
-
 <a name="running-the-queue-worker"></a>
 ## Запуск обработчика очереди
 
@@ -2552,43 +2550,6 @@ php artisan queue:restart
 > [!NOTE]
 > Очередь использует [кеш](/docs/{{version}}/cache) для хранения сигналов перезапуска, поэтому перед использованием этой функции необходимо убедиться, что драйвер кеша правильно настроен для приложения.
 
-<a name="worker-restart-and-pause-signals"></a>
-#### Сигналы перезапуска и приостановки workers
-
-По умолчанию queue workers проверяют cache driver на наличие сигналов перезапуска и приостановки на каждой итерации задания. Эта проверка необходима для реакции на команды `queue:restart` и `queue:pause`, но она добавляет небольшие накладные расходы.
-
-Если вам нужно оптимизировать производительность и эти interrupt-функции не требуются, вы можете глобально отключить такую проверку, вызвав метод `withoutInterruptionPolling` фасада `Queue`. Обычно это следует делать в методе `boot` вашего `AppServiceProvider`:
-
-```php
-use Illuminate\Support\Facades\Queue;
-
-/**
- * Bootstrap any application services.
- */
-public function boot(): void
-{
-    Queue::withoutInterruptionPolling();
-}
-```
-
-Либо можно отключить polling перезапуска или приостановки отдельно, установив статические свойства `$restartable` или `$pausable` класса `Illuminate\Queue\Worker`:
-
-```php
-use Illuminate\Queue\Worker;
-
-/**
- * Bootstrap any application services.
- */
-public function boot(): void
-{
-    Worker::$restartable = false;
-    Worker::$pausable = false;
-}
-```
-
-> [!WARNING]
-> Когда interruption polling отключен, workers не будут реагировать на команды `queue:restart` или `queue:pause` в зависимости от того, какие функции отключены.
-
 <a name="reacting-to-worker-signals"></a>
 ### Реакция на worker signals
 
@@ -2671,6 +2632,76 @@ php artisan queue:work --timeout=60
 
 > [!WARNING]
 > Значение `--timeout` всегда должно быть как минимум на несколько секунд короче, чем ваше значение конфигурации `retry_after`. Это гарантирует, что обрабатывающий замороженное задание обработчик, всегда завершает работу перед повторной попыткой выполнения задания. Если параметр `--timeout` выше значения конфигурации `retry_after`, то ваши задания могут быть обработаны дважды.
+
+<a name="pausing-and-resuming-queue-workers"></a>
+### Приостановка и возобновление queue workers
+
+Иногда нужно временно запретить queue worker обрабатывать новые задания, не останавливая сам worker полностью. Например, вы можете захотеть приостановить обработку заданий на время обслуживания системы. Laravel предоставляет Artisan-команды `queue:pause` и `queue:continue` для приостановки и возобновления queue workers.
+
+Чтобы приостановить конкретную очередь, передайте имя queue connection и имя очереди:
+
+```shell
+php artisan queue:pause database:default
+```
+
+В этом примере `database` - имя queue connection, а `default` - имя очереди. После приостановки очереди workers, обрабатывающие задания из этой очереди, продолжат выполнять текущее задание, но не будут брать новые задания, пока очередь не будет возобновлена.
+
+Чтобы приостановить обработку заданий во всех очередях всех подключений, используйте опцию `--all`:
+
+```shell
+php artisan queue:pause --all
+```
+
+Чтобы возобновить обработку заданий в приостановленной очереди, используйте команду `queue:continue`:
+
+```shell
+php artisan queue:continue database:default
+```
+
+Чтобы возобновить обработку заданий во всех очередях всех подключений, используйте опцию `--all` с командой `queue:resume`:
+
+```shell
+php artisan queue:resume --all
+```
+
+После возобновления очереди обработчики сразу начнут выполнять новые задания из нее. Возобновление всех очередей не затрагивает очереди, которые были приостановлены по отдельности. Обратите внимание, что приостановка очереди не останавливает сам процесс обработчика, а лишь не позволяет ему получать новые задания из указанной очереди.
+
+<a name="worker-restart-and-pause-signals"></a>
+#### Сигналы перезапуска и приостановки workers
+
+По умолчанию queue workers проверяют cache driver на наличие сигналов перезапуска и приостановки на каждой итерации задания. Эта проверка необходима для реакции на команды `queue:restart` и `queue:pause`, но она добавляет небольшие накладные расходы.
+
+Если вам нужно оптимизировать производительность и эти interrupt-функции не требуются, вы можете глобально отключить такую проверку, вызвав метод `withoutInterruptionPolling` фасада `Queue`. Обычно это следует делать в методе `boot` вашего `AppServiceProvider`:
+
+```php
+use Illuminate\Support\Facades\Queue;
+
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Queue::withoutInterruptionPolling();
+}
+```
+
+Либо можно отключить polling перезапуска или приостановки отдельно, установив статические свойства `$restartable` или `$pausable` класса `Illuminate\Queue\Worker`:
+
+```php
+use Illuminate\Queue\Worker;
+
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Worker::$restartable = false;
+    Worker::$pausable = false;
+}
+```
+
+> [!WARNING]
+> Когда interruption polling отключен, workers не будут реагировать на команды `queue:restart` или `queue:pause` в зависимости от того, какие функции отключены.
 
 <a name="supervisor-configuration"></a>
 ## Конфигурация Supervisor

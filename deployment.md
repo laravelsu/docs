@@ -1,5 +1,5 @@
 ---
-git: ebca9dbb437fb4bcb5b2ae0a0bd48d75e065e697
+git: 5e0a0edf75ca5f9ec60a27cece58fa9997958335
 ---
 
 # Развертывание
@@ -70,6 +70,9 @@ server {
         fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
+        fastcgi_buffer_size 32k;
+        fastcgi_buffers 8 32k;
+        fastcgi_busy_buffers_size 64k;
         fastcgi_hide_header X-Powered-By;
     }
 

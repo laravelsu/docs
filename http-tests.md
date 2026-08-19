@@ -243,7 +243,7 @@ class ExampleTest extends TestCase
 }
 ```
 
-Вы также можете указать, какой гейт должен использоваться для аутентификации конкретного пользователя, передав имя гейта в качестве второго аргумента методу `actingAs`.  Гейт, предоставленный методу actingAs, также станет гейтом по умолчанию на протяжении всего теста::
+Можно также указать guard для аутентификации конкретного пользователя, передав его имя вторым аргументом методу `actingAs`. Переданный guard станет guard по умолчанию на протяжении всего теста:
 
 ```php
 $this->actingAs($user, 'web');
@@ -1127,7 +1127,7 @@ $response->assertBadRequest();
 <a name="assert-client-error"></a>
 #### assertClientError
 
-Утверждает, что ответ имеет код состояния HTTP соответствующий ошибке клиента - `>= 400 , < 500` :
+Проверяет, что HTTP-код состояния ответа соответствует ошибке клиента: `>= 400, < 500`:
 
 ```php
 $response->assertClientError();
@@ -1724,7 +1724,7 @@ $response->assertRedirectToRoute($name, $parameters = []);
 <a name="assert-redirect-to-signed-route"></a>
 #### assertRedirectToSignedRoute
 
-Утвердите, что ответ представляет собой перенаправление на указанный [подписанный маршрут](/docs/{{version}}/urls#signed-urls)::
+Проверяет, что ответ перенаправляет на указанный [подписанный маршрут](/docs/{{version}}/urls#signed-urls):
 
 ```php
 $response->assertRedirectToSignedRoute($name = null, $parameters = []);
@@ -1778,7 +1778,7 @@ $response->assertSeeTextInOrder(array $values, $escaped = true);
 <a name="assert-server-error"></a>
 #### assertServerError
 
-Утверждает, что ответ имеет код состояния HTTP соответствующий ошибке сервера - `>= 500 , < 600` :
+Проверяет, что HTTP-код состояния ответа соответствует ошибке сервера: `>= 500, < 600`:
 
 ```php
 $response->assertServerError();

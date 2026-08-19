@@ -1,5 +1,5 @@
 ---
-git: 80f8da59178673c670d3813068cbbd563a7864e5
+git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
 ---
 
 # База данных · Использование Redis
@@ -221,6 +221,15 @@ Laravel также поддерживает клиентское разделе�
     'backoff_algorithm' => env('REDIS_BACKOFF_ALGORITHM', 'decorrelated_jitter'),
     'backoff_base' => env('REDIS_BACKOFF_BASE', 100),
     'backoff_cap' => env('REDIS_BACKOFF_CAP', 1000),
+],
+```
+
+После временного сбоя соединения Laravel автоматически один раз повторяет безопасные команды чтения. Опция `command_retries` позволяет настроить количество повторных попыток для всех команд Redis:
+
+```php
+'default' => [
+    // ...
+    'command_retries' => env('REDIS_COMMAND_RETRIES', 0),
 ],
 ```
 

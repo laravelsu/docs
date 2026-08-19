@@ -1,5 +1,5 @@
 ---
-git: ce4a1bf093c2c09e3a029090136d6bea88b07d48
+git: b2300431921ec68c8ba31bbef248bff1511e8eff
 ---
 
 # Кэширование

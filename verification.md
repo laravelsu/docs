@@ -111,7 +111,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 <a name="protecting-routes"></a>
 ### Защита маршрутов
 
-[Middleware](/docs/{{version}}/middleware) может использоваться для разрешения доступа только для проверенных пользователей к определенному маршруту. Laravel включает `verified` [псевдоним middleware](/docs/{{version}}/middleware#middleware-alias), который является псевдонимом для класса middleware `Illuminate\Auth\Middleware\EnsureEmailIsVerified`. Поскольку этот псевдоним уже автоматически зарегистрирован Laravel, все, что вам нужно сделать, это прикрепить `verified` middleware к определению маршрута. Обычно этот middleware используется вместе с middleware `auth`:
+[Middleware](/docs/{{version}}/middleware) может использоваться для разрешения доступа только проверенным пользователям к определенному маршруту. Laravel включает псевдоним `verified` [для middleware](/docs/{{version}}/middleware#middleware-aliases), соответствующий классу `Illuminate\Auth\Middleware\EnsureEmailIsVerified`. Поскольку этот псевдоним уже автоматически зарегистрирован Laravel, достаточно прикрепить middleware `verified` к определению маршрута. Обычно он используется вместе с middleware `auth`:
 
 ```php
 Route::get('/profile', function () {

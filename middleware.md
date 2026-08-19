@@ -1,5 +1,5 @@
 ---
-git: 3bbb792708a02c05ac74173acc69fcef865c5dcd
+git: 1dc671fe651a023b4c379ddc2c68158d249301d6
 ---
 
 # Посредники (middleware)
@@ -142,6 +142,24 @@ use App\Http\Middleware\EnsureTokenIsValid;
     ]);
 })
 ```
+
+Чтобы добавить посредника в существующий список приоритетов, не заменяя его целиком, используйте методы `prependToPriorityList` или `appendToPriorityList`. Метод `prependToPriorityList` вставляет переданный посредник перед другим посредником, а `appendToPriorityList` - после него:
+
+```php
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->prependToPriorityList(
+        before: \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        prepend: \App\Http\Middleware\EnsureTokenIsValid::class,
+    );
+
+    $middleware->appendToPriorityList(
+        after: \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        append: \App\Http\Middleware\EnsureUserIsSubscribed::class,
+    );
+})
+```
+
+Аргументы `before` и `after` также могут быть массивами классов посредников.
 
 <a name="assigning-middleware-to-routes"></a>
 ### Назначение посредников маршрутам

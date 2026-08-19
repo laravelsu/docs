@@ -1,5 +1,5 @@
 ---
-git: 0a4a8f425eccb65b5776c9600f28b95963979747
+git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
 ---
 
 # Пакет Laravel Socialite
@@ -209,12 +209,16 @@ use Laravel\Socialite\Socialite;
 $user = Socialite::driver('github')->userFromToken($token);
 ```
 
-Если вы используете ограниченный вход в Facebook через приложение iOS, Facebook вернет токен OIDC вместо токена доступа. Как и токен доступа, токен OIDC может быть предоставлен методу `userFromToken` для получения сведений о пользователе.
+Если вы используете Facebook Limited Login в iOS-приложении, Facebook вернет OIDC-токен вместо токена доступа. Чтобы получить сведения о пользователе по OIDC-токену, передайте методу `userFromToken` значение nonce, использованное при запуске входа:
+
+```php
+$user = Socialite::driver('facebook')->userFromToken($token, $nonce);
+```
 
 <a name="stateless-authentication"></a>
 #### Аутентификация без сохранения состояния
 
-Метод `stateless` используется для отключения проверки состояния сессии. Это полезно при добавлении социальной аутентификации в API без сохранения состояния, не использующему сеансы на основе файлов cookie::
+Метод `stateless` отключает проверку состояния сессии. Это полезно при добавлении социальной аутентификации в API без состояния, который не использует сессии на основе cookie:
 
 ```php
 use Laravel\Socialite\Socialite;

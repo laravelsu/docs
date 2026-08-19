@@ -145,7 +145,7 @@ $request->fullUrlWithoutQuery(['type']);
 <a name="retrieving-the-request-host"></a>
 #### Получение хоста(host) запроса
 
-Вы можете получить "host" входящего запроса с помощью методов `host`, `httpHost`, и `schemeAndHttpHost` :
+Получить имя хоста входящего запроса можно с помощью методов `host`, `httpHost` и `schemeAndHttpHost`:
 
 ```php
 // http://localhost:8000
@@ -576,7 +576,7 @@ $request->whenFilled('name', function (string $input) {
 });
 ```
 
-Второе замыкание может быть передано методу `whenFilled` которое будет выполнено, если указанное значение «не заполнено»:
+Методу `whenFilled` можно передать второе замыкание, которое будет выполнено, если указанное значение не заполнено:
 
 ```php
 $request->whenFilled('name', function (string $input) {

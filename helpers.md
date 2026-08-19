@@ -2214,7 +2214,7 @@ return to_action(
 <a name="method-to-route"></a>
 #### `to_route()`
 
-Функция `to_route` генерирует [HTTP-ответ перенаправления](/docs/{{version}}/responses#redirects) для заданного [именованного маршрута](/docs/{{version}}/routing#named-routes) :
+Функция `to_route` генерирует [HTTP-ответ перенаправления](/docs/{{version}}/responses#redirects) для заданного [именованного маршрута](/docs/{{version}}/routing#named-routes):
 
 ```php
 return to_route('users.show', ['user' => 1]);
@@ -2706,7 +2706,7 @@ logger('Debug message');
 logger('User has logged in.', ['id' => $user->id]);
 ```
 
-Если функции не передано значение, то будет возвращен экземпляр [регистратора](/docs/{{version}}/errors#logging):
+Если функции не передано значение, будет возвращен экземпляр [регистратора](/docs/{{version}}/logging):
 
 ```php
 logger()->error('You are not allowed here.');

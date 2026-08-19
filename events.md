@@ -1,5 +1,5 @@
 ---
-git: d68e6718245c78790aedb070fd6a627f4e930523
+git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
 ---
 
 # События (Events)
@@ -627,6 +627,70 @@ class AcquireProductKey implements ShouldQueue, ShouldBeUnique
 
 > [!NOTE]
 > Если вам нужно только ограничить конкурентную обработку слушателя, используйте middleware задания [WithoutOverlapping](/docs/{{version}}/queues#preventing-job-overlaps).
+
+<a name="debounced-event-listeners"></a>
+### Слушатели событий с подавлением частых вызовов
+
+Иногда требуется обработать только последний экземпляр события, которое многократно отправляется за короткий период. Для этого добавьте атрибут `DebounceFor` к слушателю в очереди:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use App\Events\ProductUpdated;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\DebounceFor;
+
+#[DebounceFor(30)]
+class UpdateProductSearchIndex implements ShouldQueue
+{
+    /**
+     * Обработать событие.
+     */
+    public function handle(ProductUpdated $event): void
+    {
+        // Обновить поисковый индекс товара...
+    }
+
+    /**
+     * Получить идентификатор подавления частых вызовов для слушателя.
+     */
+    public function debounceId(ProductUpdated $event): string
+    {
+        return (string) $event->product->getKey();
+    }
+}
+```
+
+В приведенном примере многократная отправка событий `ProductUpdated` для одного товара в течение `30` секунд откладывает выполнение слушателя так, что будет обработано только последнее событие. События с разными идентификаторами обрабатываются независимо.
+
+Чтобы ограничить время, на которое часто отправляемое событие может откладывать слушателя, передайте атрибуту `DebounceFor` аргумент `maxWait`:
+
+```php
+#[DebounceFor(30, maxWait: 120)]
+class UpdateProductSearchIndex implements ShouldQueue
+{
+    // ...
+}
+```
+
+Хранилище кеша, используемое для отслеживания таких событий, можно настроить, определив в слушателе метод `debounceVia`. Метод получает экземпляр события и должен возвращать репозиторий кеша:
+
+```php
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Facades\Cache;
+
+public function debounceVia(ProductUpdated $event): Repository
+{
+    return Cache::driver('redis');
+}
+```
+
+Подавление частых вызовов и уникальность слушателя взаимоисключающи. Слушатель с атрибутом `DebounceFor` не должен реализовывать `ShouldBeUnique`.
+
+> [!WARNING]
+> Если приложение отправляет события с нескольких веб-серверов или контейнеров, убедитесь, что все серверы взаимодействуют с одним общим центральным сервером кеша.
 
 <a name="handling-failed-jobs"></a>
 ### Обработка невыполненных заданий

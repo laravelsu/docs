@@ -1184,7 +1184,6 @@ $password = Str::password(12);
 // 'qwuar>#V|i]N'
 ```
 
-<a name="method-str-plural"></a>
 <a name="method-str-counted"></a>
 #### `Str::counted()`
 

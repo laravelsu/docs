@@ -1,5 +1,5 @@
 ---
-git: a656f28557de9c3b98926eebd87bc1e578b0436e
+git: b2300431921ec68c8ba31bbef248bff1511e8eff
 ---
 
 # Laravel Scout
@@ -121,7 +121,7 @@ MEILISEARCH_KEY=masterKey
 
 Для получения дополнительной информации обратитесь к [документации MeiliSearch](https://docs.meilisearch.com/learn/getting_started/quick_start.html).
 
-Кроме того, вы должны убедиться, что вы установили версию `meilisearch/meilisearch-php` которая совместима с вашей двоичной версией Meilisearch, просмотрев [документацию Meilisearch относительно двоичной совместимости](https://github.com/meilisearch/meilisearch-php#-compatibility-with-meilisearch).
+Кроме того, по [документации о совместимости Meilisearch](https://github.com/meilisearch/meilisearch-php#-compatibility-with-meilisearch) убедитесь, что установленная версия `meilisearch/meilisearch-php` совместима с версией исполняемого файла Meilisearch.
 
 > [!WARNING]
 > При обновлении Scout в приложении, которое использует MeiliSearch, вы всегда должны [просматривать любые дополнительные критические изменения](https://github.com/meilisearch/MeiliSearch/releases) в самой службе Meilisearch.
@@ -157,92 +157,8 @@ TYPESENSE_PROTOCOL=http
 
 Дополнительные настройки и определения схемы для коллекций Typesense можно найти в конфигурационном файле вашего приложения `config/scout.php`. Для получения дополнительной информации о Typesense, пожалуйста, обратитесь к [документации Typesense](https://typesense.org/docs/guide/#quick-start).
 
-<a name="typesense-configuration"></a>
-### Typesense
-
-<a name="typesense-searchable-data"></a>
-#### Подготовка поисковых данных
-
-При использовании Typesense ваши модели для поиска должны определить метод `toSearchableArray`, который преобразует основной ключ вашей модели в строку и дату создания в метку времени UNIX:
-
-```php
-/**
- * Получить индексируемый массив данных для модели.
- *
- * @return array<string, mixed>
- */
-public function toSearchableArray(): array
-{
-    return array_merge($this->toArray(),[
-        'id' => (string) $this->id,
-        'created_at' => $this->created_at->timestamp,
-    ]);
-}
-```
-
-Вы также должны определить схемы коллекций Typesense в файле конфигурации вашего приложения `config/scout.php`. Схема коллекции описывает типы данных каждого поля, которые можно искать с помощью Typesense. Для получения дополнительной информации о всех доступных параметрах схемы обратитесь к [документации Typesense](https://typesense.org/docs/latest/api/collections.html#schema-parameters).
-
-Если вам необходимо изменить схему коллекции Typesense после её определения, вы можете либо выполнить команды `scout:flush` и `scout:import`, которые удалят все существующие индексированные данные и создадут схему заново. Либо вы можете использовать API Typesense для изменения схемы коллекции без удаления каких-либо индексированных данных.
-
-Если ваша модель для поиска поддерживает мягкое удаление, вы должны определить поле `__soft_deleted` в схеме соответствующей модели Typesense в файле конфигурации вашего приложения `config/scout.php`.
-
-```php
-User::class => [
-    'collection-schema' => [
-        'fields' => [
-            // ...
-            [
-                'name' => '__soft_deleted',
-                'type' => 'int32',
-                'optional' => true,
-            ],
-        ],
-    ],
-],
-```
-
-<a name="typesense-dynamic-search-parameters"></a>
-#### Динамические параметры поиска
-
-Typesense позволяет вам динамически изменять [параметры поиска](https://typesense.org/docs/latest/api/search.html#search-parameters) при выполнении операции поиска с помощью метода `options`:
-
-```php
-use App\Models\Todo;
-
-Todo::search('Groceries')->options([
-    'query_by' => 'title, description'
-])->get();
-```
-
 <a name="configuration"></a>
 ## Настройка
-
-<a name="configuring-model-indexes"></a>
-### Настройка индексов моделей
-
-Каждая модель Eloquent синхронизируется с заданным поисковым «индексом», который содержит все доступные для поиска записи для этой модели. Другими словами, вы можете думать о каждом индексе как о таблице MySQL. По умолчанию каждая модель будет сохранена в индексе, соответствующем типичному «табличному» имени модели. Обычно это форма множественного числа от названия модели; однако вы можете настроить индекс, переопределив метод `searchableAs` в модели:
-
-```php
-<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Laravel\Scout\Searchable;
-
-class Post extends Model
-{
-    use Searchable;
-
-    /**
-     * Переопределение имени индекса модели по умолчанию
-     */
-    public function searchableAs(): string
-    {
-        return 'posts_index';
-    }
-}
-```
 
 <a name="configuring-searchable-data"></a>
 ### Настройка поисковых данных
@@ -277,19 +193,32 @@ class Post extends Model
 }
 ```
 
-<a name="meilisearch-data-types"></a>
-#### Типы поисковых данных
+<a name="configuring-search-engines-per-model"></a>
+#### Настройка поисковых драйверов для каждой модели
 
-Некоторые поисковые движки, такие как Meilisearch, выполнят операции фильтрации (`>`, `<` и т. д.) только для данных правильного типа. Поэтому, при использовании таких поисковых движков и настройке вашего поискового контента, убедитесь, что числовые значения преобразованы в правильный тип:
+При выполнении поиска Scout обычно использует поисковый драйвер, указанный по умолчанию в файле конфигурации `scout` вашего приложения. Однако поисковый движок для определенной модели можно изменить, переопределив метод `searchableUsing` в модели:
 
 ```php
-public function toSearchableArray()
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Engines\Engine;
+use Laravel\Scout\Scout;
+use Laravel\Scout\Searchable;
+
+class User extends Model
 {
-    return [
-        'id' => (int) $this->id,
-        'name' => $this->name,
-        'price' => (float) $this->price,
-    ];
+    use Searchable;
+
+    /**
+     * Используйте движок для индексации модели.
+     */
+    public function searchableUsing(): Engine
+    {
+        return Scout::engine('meilisearch');
+    }
 }
 ```
 
@@ -365,6 +294,74 @@ SCOUT_DRIVER=collection
 
 Следующие параметры конфигурации относятся только к сторонним поисковым движкам, таким как Algolia, Meilisearch или Typesense. Если вы используете [движок базы данных](#database-engine), этот раздел можно пропустить.
 
+<a name="configuring-model-indexes"></a>
+### Настройка индексов моделей
+
+Каждая модель Eloquent синхронизируется с заданным поисковым «индексом», который содержит все доступные для поиска записи для этой модели. Другими словами, вы можете думать о каждом индексе как о таблице MySQL. По умолчанию каждая модель будет сохранена в индексе, соответствующем типичному «табличному» имени модели. Обычно это форма множественного числа от названия модели; однако вы можете настроить индекс, переопределив метод `searchableAs` в модели:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
+
+class Post extends Model
+{
+    use Searchable;
+
+    /**
+     * Переопределение имени индекса модели по умолчанию
+     */
+    public function searchableAs(): string
+    {
+        return 'posts_index';
+    }
+}
+```
+
+> [!NOTE]
+> Метод `searchableAs` не влияет на движок базы данных, который всегда выполняет поиск непосредственно в таблице модели.
+
+<a name="configuring-the-model-id"></a>
+#### Настройка идентификатора модели
+
+По умолчанию Scout будет использовать первичный ключ модели в качестве уникального идентификатора / ключа модели, который хранится в поисковом индексе. Если вам нужно настроить это поведение, вы можете переопределить методы `getScoutKey` и `getScoutKeyName` в модели:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
+
+class User extends Model
+{
+    use Searchable;
+
+    /**
+     * Переопределение значения ключа индекса модели по умолчанию
+     */
+    public function getScoutKey(): mixed
+    {
+        return $this->email;
+    }
+
+    /**
+     * Переопределение имени ключа индекса модели по умолчанию
+     */
+    public function getScoutKeyName(): mixed
+    {
+        return 'email';
+    }
+}
+```
+
+> [!NOTE]
+> Методы `getScoutKey` и `getScoutKeyName` не влияют на движок базы данных, который всегда использует первичный ключ модели.
+
 <a name="algolia-configuration"></a>
 ### Algolia
 
@@ -411,6 +408,17 @@ use App\Models\Flight;
 php artisan scout:sync-index-settings
 ```
 
+<a name="algolia-identifying-users"></a>
+#### Идентификация пользователей
+
+Scout также позволяет автоматически идентифицировать пользователей при использовании [Algolia](https://algolia.com). Связывание аутентифицированного пользователя с операциями поиска может быть полезно при просмотре аналитики поиска на панели инструментов Algolia. Вы можете включить идентификацию пользователя, определив для переменной среды `SCOUT_IDENTIFY` значение `true` в файле `.env` вашего приложения:
+
+```ini
+SCOUT_IDENTIFY=true
+```
+
+Включение этой функции также передаст IP-адрес запроса и основной идентификатор вашего аутентифицированного пользователя в Algolia, поэтому эти данные будут связаны с любым поисковым запросом, сделанным пользователем.
+
 <a name="meilisearch-configuration"></a>
 ### Meilisearch
 
@@ -456,83 +464,84 @@ use App\Models\Flight;
 php artisan scout:sync-index-settings
 ```
 
-<a name="configuring-the-model-id"></a>
-### Настройка идентификатора модели
+<a name="meilisearch-data-types"></a>
+#### Типы поисковых данных
 
-По умолчанию Scout будет использовать первичный ключ модели в качестве уникального идентификатора / ключа модели, который хранится в поисковом индексе. Если вам нужно настроить это поведение, вы можете переопределить методы `getScoutKey` и `getScoutKeyName` в модели:
+Некоторые поисковые движки, такие как Meilisearch, выполнят операции фильтрации (`>`, `<` и т. д.) только для данных правильного типа. Поэтому, при использовании таких поисковых движков и настройке вашего поискового контента, убедитесь, что числовые значения преобразованы в правильный тип:
 
 ```php
-<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Laravel\Scout\Searchable;
-
-class User extends Model
+public function toSearchableArray()
 {
-    use Searchable;
-
-    /**
-     * Переопределение значения ключа индекса модели по умолчанию
-     */
-    public function getScoutKey(): mixed
-    {
-        return $this->email;
-    }
-
-    /**
-     * Переопределение имени ключа индекса модели по умолчанию
-     */
-    public function getScoutKeyName(): mixed
-    {
-        return 'email';
-    }
+    return [
+        'id' => (int) $this->id,
+        'name' => $this->name,
+        'price' => (float) $this->price,
+    ];
 }
 ```
 
-<a name="configuring-search-engines-per-model"></a>
-### Настройка поисковых драйверов для каждой модели
+<a name="typesense-configuration"></a>
+### Typesense
 
-При выполнении поиска Scout обычно использует поисковый драйвер, указанный по умолчанию в файле конфигурации `scout` вашего приложения. Однако поисковый движок для определенной модели можно изменить, переопределив метод `searchableUsing` в модели:
+<a name="typesense-searchable-data"></a>
+#### Подготовка поисковых данных
+
+При использовании Typesense ваши модели для поиска должны определить метод `toSearchableArray`, который преобразует основной ключ вашей модели в строку и дату создания в метку времени UNIX:
 
 ```php
-<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Laravel\Scout\Engines\Engine;
-use Laravel\Scout\Scout;
-use Laravel\Scout\Searchable;
-
-class User extends Model
+/**
+ * Получить индексируемый массив данных для модели.
+ *
+ * @return array<string, mixed>
+ */
+public function toSearchableArray(): array
 {
-    use Searchable;
-
-    /**
-     * Используйте движок для индексации модели.
-     */
-    public function searchableUsing(): Engine
-    {
-        return Scout::engine('meilisearch');
-    }
+    return array_merge($this->toArray(),[
+        'id' => (string) $this->id,
+        'created_at' => $this->created_at->timestamp,
+    ]);
 }
 ```
 
-<a name="algolia-identifying-users"></a>
-### Идентификация пользователей
+Вы также должны определить схемы коллекций Typesense в файле конфигурации вашего приложения `config/scout.php`. Схема коллекции описывает типы данных каждого поля, которые можно искать с помощью Typesense. Для получения дополнительной информации о всех доступных параметрах схемы обратитесь к [документации Typesense](https://typesense.org/docs/latest/api/collections.html#schema-parameters).
 
-Scout также позволяет автоматически идентифицировать пользователей при использовании [Algolia](https://algolia.com). Связывание аутентифицированного пользователя с операциями поиска может быть полезно при просмотре аналитики поиска на панели инструментов Algolia. Вы можете включить идентификацию пользователя, определив для переменной среды `SCOUT_IDENTIFY` значение `true` в файле `.env` вашего приложения:
+Если вам необходимо изменить схему коллекции Typesense после её определения, вы можете либо выполнить команды `scout:flush` и `scout:import`, которые удалят все существующие индексированные данные и создадут схему заново. Либо вы можете использовать API Typesense для изменения схемы коллекции без удаления каких-либо индексированных данных.
 
-```ini
-SCOUT_IDENTIFY=true
+Если ваша модель для поиска поддерживает мягкое удаление, вы должны определить поле `__soft_deleted` в схеме соответствующей модели Typesense в файле конфигурации вашего приложения `config/scout.php`.
+
+```php
+User::class => [
+    'collection-schema' => [
+        'fields' => [
+            // ...
+            [
+                'name' => '__soft_deleted',
+                'type' => 'int32',
+                'optional' => true,
+            ],
+        ],
+    ],
+],
 ```
 
-Включение этой функции также передаст IP-адрес запроса и основной идентификатор вашего аутентифицированного пользователя в Algolia, поэтому эти данные будут связаны с любым поисковым запросом, сделанным пользователем.
+<a name="typesense-dynamic-search-parameters"></a>
+#### Динамические параметры поиска
+
+Typesense позволяет вам динамически изменять [параметры поиска](https://typesense.org/docs/latest/api/search.html#search-parameters) при выполнении операции поиска с помощью метода `options`:
+
+```php
+use App\Models\Todo;
+
+Todo::search('Groceries')->options([
+    'query_by' => 'title, description'
+])->get();
+```
 
 <a name="indexing"></a>
-## Индексирование
+## Индексирование сторонними движками
+
+> [!NOTE]
+> Описанные в этом разделе возможности индексирования относятся прежде всего к сторонним движкам Algolia, Meilisearch и Typesense. Движок базы данных выполняет поиск непосредственно по таблицам, поэтому не требует ручного управления индексами.
 
 <a name="batch-import"></a>
 ### Пакетный импорт
@@ -666,6 +675,21 @@ public function makeSearchableUsing(Collection $models): Collection
 }
 ```
 
+<a name="conditionally-updating-the-search-index"></a>
+#### Условное обновление поискового индекса
+
+По умолчанию Scout переиндексирует обновленную модель независимо от того, какие атрибуты были изменены. Если вы хотите настроить это поведение, определите метод `searchIndexShouldBeUpdated` в модели:
+
+```php
+/**
+ * Определить, должен ли быть обновлен поисковый индекс.
+ */
+public function searchIndexShouldBeUpdated(): bool
+{
+    return $this->wasRecentlyCreated || $this->wasChanged(['title', 'body']);
+}
+```
+
 <a name="removing-records"></a>
 ### Удаление записей
 
@@ -735,21 +759,6 @@ public function shouldBeSearchable(): bool
 
 > [!WARNING]
 > Метод `shouldBeSearchable` не применим при использовании драйвера "database" в Scout, так как все данные для поиска всегда хранятся в базе данных. Для достижения аналогичного поведения при использовании драйвера базы данных следует использовать [Условия Where](#where-clauses) вместо этого.
-
-<a name="conditionally-updating-the-search-index"></a>
-#### Условное обновление поискового индекса
-
-По умолчанию Scout переиндексирует обновленную модель независимо от того, какие атрибуты были изменены. Если вы хотите настроить это поведение, определите метод `searchIndexShouldBeUpdated` в модели:
-
-```php
-/**
- * Определить, должен ли быть обновлен поисковый индекс.
- */
-public function searchIndexShouldBeUpdated(): bool
-{
-    return $this->wasRecentlyCreated || $this->wasChanged(['title', 'body']);
-}
-```
 
 <a name="searching"></a>
 ## Поиск
@@ -833,6 +842,22 @@ $orders = Order::search('Star Trek')->whereNotIn(
 > [!WARNING]
 > Если ваше приложение использует Meilisearch, вам необходимо настроить [фильтруемые атрибуты](#meilisearch-index-settings) перед использованием условий `where` Scout.
 
+<a name="customizing-the-eloquent-results-query"></a>
+#### Настройка Запроса Результатов Eloquent
+
+После того, как Scout получает список соответствующих моделей Eloquent из поискового движка вашего приложения, для извлечения всех соответствующих моделей по их первичным ключам используется Eloquent. Вы можете настроить этот запрос, вызвав метод `query`. Метод `query` принимает замыкание, которое получит экземпляр построителя запросов Eloquent в качестве аргумента:
+
+```php
+use App\Models\Order;
+use Illuminate\Database\Eloquent\Builder;
+
+$orders = Order::search('Star Trek')
+    ->query(fn (Builder $query) => $query->with('invoices'))
+    ->get();
+```
+
+При использовании стороннего движка эта callback-функция вызывается после того, как соответствующие модели уже были получены из поискового движка, поэтому ее не следует использовать для «фильтрации» результатов - используйте [условия where Scout](#where-clauses). Однако при использовании движка базы данных ограничения метода `query` применяются непосредственно к запросу базы данных, поэтому его можно использовать и для фильтрации.
+
 <a name="pagination"></a>
 ### Постраничная разбивка данных (Pagination) (Пагинация)
 
@@ -858,7 +883,7 @@ $orders = Order::search('Star Trek')->simplePaginate(15);
 
 Получив результаты, вы можете отобразить результаты и отобразить ссылки на страницы с помощью [Blade](/docs/{{version}}/blade), как если бы вы разбили на страницы обычный запрос Eloquent:
 
-```blade
+```html
 <div class="container">
     @foreach ($orders as $order)
         {{ $order->price }}
@@ -927,22 +952,6 @@ Order::search(
     }
 )->get();
 ```
-
-<a name="customizing-the-eloquent-results-query"></a>
-#### Настройка Запроса Результатов Eloquent
-
-После того, как Scout получает список соответствующих моделей Eloquent из поискового движка вашего приложения, для извлечения всех соответствующих моделей по их первичным ключам используется Eloquent. Вы можете настроить этот запрос, вызвав метод `query`. Метод `query` принимает замыкание, которое получит экземпляр построителя запросов Eloquent в качестве аргумента:
-
-```php
-use App\Models\Order;
-use Illuminate\Database\Eloquent\Builder;
-
-$orders = Order::search('Star Trek')
-    ->query(fn (Builder $query) => $query->with('invoices'))
-    ->get();
-```
-
-При использовании стороннего движка эта callback-функция вызывается после того, как соответствующие модели уже были получены из поискового движка, поэтому ее не следует использовать для «фильтрации» результатов - используйте [условия where Scout](#where-clauses). Однако при использовании движка базы данных ограничения метода `query` применяются непосредственно к запросу базы данных, поэтому его можно использовать и для фильтрации.
 
 <a name="custom-engines"></a>
 ## Разработка поискового движка

@@ -1,5 +1,5 @@
 ---
-git: d4377acd2d4d63ccb74f81f9da2cfb4144be2ff4
+git: aa041e5fa5519d3bb6b0f1b00c60cc04636e21c9
 ---
 
 # HTTP-ответы
@@ -145,10 +145,16 @@ return response('Hello World')->cookie($cookie);
 <a name="expiring-cookies-early"></a>
 #### Досрочное окончание срока действия файлов Cookies
 
-Вы можете удалить куки, обнулив срок его действия с помощью метода `withoutCookie` исходящего ответа:
+Вы можете удалить файлы cookie, обнулив срок их действия с помощью метода `withoutCookie` или `withoutCookies` исходящего ответа:
 
 ```php
 return response('Hello World')->withoutCookie('name');
+
+return response('Hello World')->withoutCookies([
+    'name',
+    'email',
+    'preferences',
+]);
 ```
 
 Если у вас еще нет экземпляра исходящего ответа, вы можете использовать метод `expire` фасада `Cookie` для обнуления срока действия кук:

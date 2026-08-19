@@ -34,7 +34,7 @@ $names = User::all()->reject(function (User $user) {
 <a name="eloquent-collection-conversion"></a>
 #### Преобразование коллекций Eloquent
 
-В то время как большинство методов коллекции Eloquent возвращают новый экземпляр коллекции Eloquent, методы `collapse`, `flatten`, `flip`, `keys`, `pluck`, и `zip` возвращают экземпляр [базовой коллекции](/docs/{{version}}/collections ). Аналогично, если метод `map` возвращает коллекцию, не содержащую никаких моделей Eloquent, она будет преобразована в экземпляр базовой коллекции.
+Хотя большинство методов коллекции Eloquent возвращают новый экземпляр коллекции Eloquent, методы `collapse`, `flatten`, `flip`, `keys`, `pluck` и `zip` возвращают экземпляр [базовой коллекции](/docs/{{version}}/collections). Аналогично, если метод `map` возвращает коллекцию без моделей Eloquent, она будет преобразована в экземпляр базовой коллекции.
 
 <a name="available-methods"></a>
 ## Доступные методы
