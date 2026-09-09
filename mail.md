@@ -1,5 +1,5 @@
 ---
-git: 68f903aca708d7c9070f73127e64468132b1266b
+git: b6f07c64593f655f75d5b53c4eb8cf21139be7f3
 ---
 
 # Отправка электронной почты
@@ -1295,6 +1295,9 @@ test('orders can be shipped', function () {
     // Утверждение, что почтовое сообщение было отправлено дважды...
     Mail::assertSentTimes(OrderShipped::class, 2);
 
+    // Утверждение, что почтовое сообщение было отправлено ровно один раз...
+    Mail::assertSentOnce(OrderShipped::class);
+
     // Утверждение, что всего было отправлено 3 почтовых сообщения...
     Mail::assertSentCount(3);
 });
@@ -1338,6 +1341,9 @@ class ExampleTest extends TestCase
         // Утверждение, что почтовое сообщение было отправлено дважды...
         Mail::assertSentTimes(OrderShipped::class, 2);
 
+        // Утверждение, что почтовое сообщение было отправлено ровно один раз...
+        Mail::assertSentOnce(OrderShipped::class);
+
         // Утверждение, что всего было отправлено 3 письма...
         Mail::assertSentCount(3);
     }
@@ -1348,6 +1354,7 @@ class ExampleTest extends TestCase
 
 ```php
 Mail::assertQueued(OrderShipped::class);
+Mail::assertQueuedOnce(OrderShipped::class);
 Mail::assertNotQueued(OrderShipped::class);
 Mail::assertNothingQueued();
 Mail::assertQueuedCount(3);

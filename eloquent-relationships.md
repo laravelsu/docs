@@ -1,5 +1,5 @@
 ---
-git: b2f35305ba2c7bbdef417e4603084ac4e39044d7
+git: b6f07c64593f655f75d5b53c4eb8cf21139be7f3
 ---
 
 # Eloquent · Отношения
@@ -974,6 +974,49 @@ class RoleUser extends Pivot
 {
     // ...
 }
+```
+
+<a name="automatically-hydrating-pivot-relationships"></a>
+#### Автоматическое заполнение отношений сводной модели
+
+Если пользовательская сводная модель определяет отношения `belongsTo` к модели, объявившей отношение, и к связанной модели, вызовите метод `chaperone`, чтобы автоматически заполнить эти отношения в каждом экземпляре сводной модели. Это позволяет избежать дополнительных запросов при обращении к моделям через сводную модель:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+class RoleUser extends Pivot
+{
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}
+
+class Role extends Model
+{
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->using(RoleUser::class)
+            ->chaperone();
+    }
+}
+```
+
+Eloquent попытается определить имена отношений сводной модели автоматически. Если в ней используются нестандартные имена, передайте методу `chaperone` имена отношений к объявившей и связанной моделям:
+
+```php
+return $this->belongsToMany(User::class)
+    ->using(RoleUser::class)
+    ->chaperone(declaring: 'role', related: 'user');
 ```
 
 <a name="polymorphic-relationships"></a>

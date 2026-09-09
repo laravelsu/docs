@@ -1,5 +1,5 @@
 ---
-git: 1dc954d01e43f1913fd9d533db0be0db06c18eac
+git: 6dd4aa81ce3e1c695f2f7e11d01c237d88901146
 ---
 
 # Шаблонизатор Blade

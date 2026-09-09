@@ -1,5 +1,5 @@
 ---
-git: b2300431921ec68c8ba31bbef248bff1511e8eff
+git: 8760508f20115194438f6cae7adb20a0a4b83051
 ---
 
 # Laravel Passport

@@ -1,5 +1,5 @@
 ---
-git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
+git: 7c2d03a80ebf884e7f1c0e73cbf7c149b63e4280
 ---
 
 # Очереди
@@ -1468,8 +1468,8 @@ Queue::route(ProcessPodcast::class, connection: 'redis');
 
 ```php
 Queue::route([
-    ProcessPodcast::class => ['podcasts', 'redis'], // Queue and connection
-    ProcessVideo::class => 'videos', // Queue only (uses default connection)
+    ProcessPodcast::class => ['redis', 'podcasts'], // Соединение и очередь
+    ProcessVideo::class => 'videos', // Только очередь (используется соединение по умолчанию)
 ]);
 ```
 

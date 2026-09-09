@@ -1,5 +1,5 @@
 ---
-git: 67f17210b4ba48ec6374f64d9568724b02f10b07
+git: e3f1383674280eebb3ccfc513b6e7bc12ec0e1f8
 ---
 
 # Глобальные помощники (helpers)
@@ -260,7 +260,7 @@ $array = Arr::add(['name' => 'Desk', 'price' => null], 'price', 100);
 
 Метод `Arr::array` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `array`:
 
-```
+```php
 use Illuminate\Support\Arr;
 $array = ['name' => 'Joe', 'languages' => ['PHP', 'Ruby']];
 $value = Arr::array($array, 'languages');
@@ -274,7 +274,7 @@ $value = Arr::array($array, 'name');
 
 Метод `Arr::boolean` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `boolean`:
 
-```
+```php
 use Illuminate\Support\Arr;
 
 $array = ['name' => 'Joe', 'available' => true];
@@ -491,7 +491,7 @@ $flattened = Arr::flatten($array);
 
 Метод `Arr::float` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `float`:
 
-```
+```php
 use Illuminate\Support\Arr;
 
 $array = ['name' => 'Joe', 'balance' => 123.45];
@@ -628,7 +628,7 @@ $contains = Arr::hasAny($array, ['category', 'product.discount']);
 
 Метод `Arr::integer` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `int`:
 
-```
+```php
 use Illuminate\Support\Arr;
 $array = ['name' => 'Joe', 'age' => 42];
 $value = Arr::integer($array, 'age');
@@ -1252,7 +1252,7 @@ $sorted = Arr::sortRecursiveDesc($array);
 
 Метод `Arr::string` извлекает значение из глубоко вложенного массива, используя «точечную» нотацию (так же, как это делает [Arr::get()](#method-array-get)), но выдает `InvalidArgumentException`, если запрошенное значение не является `string`:
 
-```
+```php
 use Illuminate\Support\Arr;
 $array = ['name' => 'Joe', 'languages' => ['PHP', 'Ruby']];
 $value = Arr::string($array, 'name');

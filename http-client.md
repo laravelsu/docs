@@ -1,5 +1,5 @@
 ---
-git: 946622229fa1d90052b7d51614a4a14a7156b9b0
+git: a6b3b3376e4fd144cc208fdf6f555e8a90894e43
 ---
 
 # HTTP-клиент
@@ -533,8 +533,20 @@ $responses = Http::pool(fn (Pool $pool) => [
 ], concurrency: 5);
 ```
 
+Если один из запросов пула завершается ошибкой на уровне соединения, например из-за тайм-аута или ошибки DNS, соответствующий элемент массива `$responses` будет экземпляром `Illuminate\Http\Client\ConnectionException`, а не `Response`:
+
+```php
+foreach ($responses as $response) {
+    if ($response instanceof Throwable) {
+        // Не удалось установить соединение...
+    } elseif ($response->failed()) {
+        // Соединение установлено, но получен ответ с ошибкой...
+    }
+}
+```
+
 <a name="customizing-concurrent-requests"></a>
-#### Customizing Concurrent Requests
+#### Настройка параллельных запросов
 
 Метод `pool` не может быть объединен с другими методами HTTP-клиента, такими как `withHeaders` или `middleware`. Если вы хотите применить пользовательские заголовки или middleware к пулу запросов, вы должны настроить эти параметры для каждого запроса в пуле:
 

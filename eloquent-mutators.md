@@ -1,5 +1,5 @@
 ---
-git: 16384f6f8f408ec84934623a73e4a469f232e8b0
+git: bb48eb2a640f8f91dc6f2452dd3c84a2d4d5a52c
 ---
 
 # Eloquent · Мутаторы и типизация
@@ -203,6 +203,7 @@ protected function address(): Attribute
 - `AsFluent::class`
 - `AsStringable::class`
 - `AsUri::class`
+- `AsVector::class`
 - `boolean`
 - `collection`
 - `date`
@@ -509,6 +510,29 @@ class Option implements Arrayable, JsonSerializable
     }
 }
 ```
+
+<a name="vector-casting"></a>
+### Приведение векторов
+
+Класс приведения `Illuminate\Database\Eloquent\Casts\AsVector` позволяет преобразовывать векторный столбец базы данных в массив PHP и обратно:
+
+```php
+use Illuminate\Database\Eloquent\Casts\AsVector;
+
+/**
+ * Получение атрибутов, которые должны быть приведены к типам.
+ *
+ * @return array<string, string>
+ */
+protected function casts(): array
+{
+    return [
+        'embedding' => AsVector::class,
+    ];
+}
+```
+
+При установке атрибута приведение принимает массив PHP или экземпляр `Arrayable`, например коллекцию Laravel. При получении атрибута возвращается массив чисел с плавающей точкой.
 
 <a name="binary-casting"></a>
 ### Бинарное приведение

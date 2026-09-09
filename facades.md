@@ -1,5 +1,5 @@
 ---
-git: e1a7b2ee320e7c3b54847080311ea4fba7d40fd0
+git: a52b24e4db49e6962e06e88babc55f832e9d4a40
 ---
 
 # Фасады (Facades)
@@ -310,6 +310,7 @@ class PodcastTest extends TestCase
 | Bus                   | [Illuminate\\Contracts\\Bus\\Dispatcher](https://api.laravel.com/docs/{{version}}/Illuminate/Contracts/Bus/Dispatcher.html)                         | &nbsp;                      |
 | Cache (Instance)      | [Illuminate\\Cache\\Repository](https://api.laravel.com/docs/{{version}}/Illuminate/Cache/Repository.html)                                          | `cache.store`               |
 | Cache                 | [Illuminate\\Cache\\CacheManager](https://api.laravel.com/docs/{{version}}/Illuminate/Cache/CacheManager.html)                                      | `cache`                     |
+| Cloud                 | [Illuminate\\Foundation\\Cloud\\CloudManager](https://api.laravel.com/docs/{{version}}/Illuminate/Foundation/Cloud/CloudManager.html)           | &nbsp;                      |
 | Config                | [Illuminate\\Config\\Repository](https://api.laravel.com/docs/{{version}}/Illuminate/Config/Repository.html)                                        | `config`                    |
 | Context               | [Illuminate\\Log\\Context\\Repository](https://api.laravel.com/docs/{{version}}/Illuminate/Log/Context/Repository.html)                             | &nbsp;                      |
 | Cookie                | [Illuminate\\Cookie\\CookieJar](https://api.laravel.com/docs/{{version}}/Illuminate/Cookie/CookieJar.html)                                          | `cookie`                    |

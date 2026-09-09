@@ -1,5 +1,5 @@
 ---
-git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
+git: 6dd4aa81ce3e1c695f2f7e11d01c237d88901146
 ---
 
 # События (Events)

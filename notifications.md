@@ -1,5 +1,5 @@
 ---
-git: 83c4069cfdad631beb8f2de883034179d5727860
+git: b6f07c64593f655f75d5b53c4eb8cf21139be7f3
 ---
 
 # Уведомления
@@ -1753,6 +1753,9 @@ test('orders can be shipped', function () {
     // Утверждаем, что уведомление было отправлено дважды...
     Notification::assertSentTimes(WeeklyReminder::class, 2);
 
+    // Утверждаем, что уведомление было отправлено пользователю ровно один раз...
+    Notification::assertSentToOnce($user, OrderShipped::class);
+
     // Утверждаем, что было отправлено заданное количество уведомлений...
     Notification::assertCount(3);
 });
@@ -1791,6 +1794,9 @@ class ExampleTest extends TestCase
         // Утверждаем, что уведомление было отправлено дважды...
         Notification::assertSentTimes(WeeklyReminder::class, 2);
 
+        // Утверждаем, что уведомление было отправлено пользователю ровно один раз...
+        Notification::assertSentToOnce($user, OrderShipped::class);
+
         // Утверждаем, что было отправлено заданное количество уведомлений...
         Notification::assertCount(3);
     }
@@ -1815,6 +1821,7 @@ Notification::assertSentTo(
 
 ```php
 Notification::assertSentOnDemand(OrderShipped::class);
+Notification::assertSentOnDemandOnce(OrderShipped::class);
 ```
 
 Передав замыкание вторым аргументом метода `assertSentOnDemand`, вы можете определить, отправлено ли уведомление по требованию на правильный "маршрут":

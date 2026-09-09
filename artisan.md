@@ -1,5 +1,5 @@
 ---
-git: 4b1d47263bcde17fd8185f4d1a4c252e840d332e
+git: b89be46b7d4efd44de549377e1d10b682084ff32
 ---
 
 # Консоль Artisan
@@ -996,6 +996,14 @@ DevCommands::only('server', 'vite');
 
 // Запускать все процессы, кроме обработчика очереди...
 DevCommands::except('queue');
+```
+
+Команды, зарегистрированные пакетами, и стандартные команды Laravel можно исключить с помощью методов `withoutVendorCommands` и `withoutDefaultCommands`:
+
+```php
+DevCommands::withoutVendorCommands();
+
+DevCommands::withoutDefaultCommands();
 ```
 
 <a name="stub-customization"></a>

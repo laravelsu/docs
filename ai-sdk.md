@@ -1,5 +1,5 @@
 ---
-git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
+git: ccefc99cd9f671ef3c60b2e1b3ee3188df8fadf2
 ---
 
 # Laravel AI SDK
@@ -19,6 +19,7 @@ git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
     - [Трансляция](#broadcasting)
     - [Очереди](#queueing)
     - [Инструменты](#tools)
+    - [Отложенная загрузка инструментов](#deferred-tool-loading)
     - [Инструменты файлового хранилища](#file-storage-tools)
     - [Инструменты MCP](#mcp-tools)
     - [Инструменты провайдеров](#provider-tools)
@@ -27,6 +28,7 @@ git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
     - [Анонимные агенты](#anonymous-agents)
     - [Конфигурация агента](#agent-configuration)
     - [Опции провайдера](#provider-options)
+    - [Кеширование запросов](#prompt-caching)
 - [Подтверждение инструментов человеком](#human-tool-approval)
     - [Полный процесс подтверждения](#complete-approval-flow)
 - [Изображения](#images)
@@ -34,9 +36,9 @@ git: 57ae1e7dbd4bda3bae24ce93e527f1807ae49a43
 - [Транскрипции (STT)](#transcription)
 - [Суммаризация текста](#text-summarization)
 - [Embeddings](#embeddings)
-    - [Мультимодальные embeddings](#multimodal-embeddings)
-    - [Запросы по embeddings](#querying-embeddings)
-    - [Кеширование embeddings](#caching-embeddings)
+    - [Мультимодальные векторные представления](#multimodal-embeddings)
+    - [Запросы по векторным представлениям](#querying-embeddings)
+    - [Кеширование векторных представлений](#caching-embeddings)
 - [Реранжирование](#reranking)
 - [Файлы](#files)
 - [Векторные хранилища](#vector-stores)
@@ -103,7 +105,7 @@ VOYAGEAI_API_KEY=
 XAI_API_KEY=
 ```
 
-Модели по умолчанию для текста, изображений, аудио, транскрипций и embeddings также настраиваются в `config/ai.php`.
+Модели по умолчанию для текста, изображений, аудио, транскрипций и векторных представлений также настраиваются в `config/ai.php`.
 
 <a name="custom-base-urls"></a>
 ### Пользовательские базовые URL
@@ -181,7 +183,7 @@ agent()->prompt('What is Laravel?', provider: 'local', model: 'local-model');
 ],
 ```
 
-OpenAI-совместимые провайдеры поддерживают генерацию текста, потоковую передачу, инструменты, структурированный вывод, вложения изображений и векторные представления. Если вашему эндпоинту требуются дополнительные поля тела запроса, передайте их с помощью [опций провайдера](#provider-options).
+OpenAI-совместимые провайдеры поддерживают генерацию текста, потоковую передачу, инструменты, структурированный вывод, вложения изображений, векторные представления и транскрипцию. Если вашему эндпоинту требуются дополнительные поля тела запроса, передайте их с помощью [опций провайдера](#provider-options).
 
 <a name="openai-compatible-embeddings"></a>
 #### Векторные представления в OpenAI-совместимых провайдерах
@@ -202,6 +204,27 @@ OpenAI-совместимые провайдеры поддерживают ге
 ],
 ```
 
+<a name="openai-compatible-transcriptions"></a>
+#### Транскрипции в OpenAI-совместимых провайдерах
+
+Аналогично, для использования `Transcription` с OpenAI-совместимым провайдером необходимо настроить модель транскрипции по умолчанию. Аудио будет отправлено стандартным multipart-запросом на маршрут `/audio/transcriptions` этого эндпоинта:
+
+```php
+'local' => [
+    'driver' => 'openai-compatible',
+    'url' => env('LOCAL_AI_URL'),
+    'key' => env('LOCAL_AI_API_KEY'),
+    'models' => [
+        'transcription' => [
+            'default' => 'whisper-1',
+        ],
+    ],
+],
+```
+
+> [!NOTE]
+> OpenAI-совместимые провайдеры и Groq не поддерживают диаризацию. Вызов метода `diarize` при использовании этих провайдеров приведёт к исключению.
+
 <a name="provider-support"></a>
 ### Поддержка провайдеров
 
@@ -213,10 +236,10 @@ AI SDK поддерживает разных провайдеров для ра�
 |---|---|
 | Text | OpenAI, OpenAI Compatible, Anthropic, Gemini, Azure, Bedrock, Groq, xAI, DeepSeek, Mistral, Ollama, OpenRouter |
 | Images | OpenAI, Gemini, xAI, Azure, Bedrock, OpenRouter |
-| TTS | OpenAI, ElevenLabs, Gemini |
-| STT | OpenAI, ElevenLabs, Mistral, Gemini |
-| Embeddings | OpenAI, OpenAI-Compatible, Gemini, Azure, Bedrock, Cohere, Mistral, Jina, VoyageAI, Ollama, OpenRouter |
-| Reranking | Cohere, Jina, VoyageAI |
+| TTS | OpenAI, ElevenLabs, Gemini, Mistral |
+| STT | OpenAI, OpenAI Compatible, ElevenLabs, Groq, Mistral, Gemini |
+| Embeddings | OpenAI, OpenAI Compatible, Gemini, Azure, Bedrock, Cohere, Mistral, Jina, VoyageAI, Ollama, OpenRouter |
+| Reranking | Cohere, Jina, VoyageAI, Bedrock |
 | Files | OpenAI, Anthropic, Gemini, Azure |
 
 </div>
@@ -817,6 +840,25 @@ public function tools(): iterable
 }
 ```
 
+<a name="validating-tool-arguments"></a>
+#### Валидация аргументов инструмента
+
+Хотя схема инструмента ограничивает аргументы, которые может передать модель, входящие аргументы можно дополнительно проверить методом `validate` объекта запроса:
+
+```php
+public function handle(Request $request): Stringable|string
+{
+    $validated = $request->validate([
+        'city' => 'required|string',
+        'days' => 'required|integer|max:7',
+    ]);
+
+    return $this->forecast($validated['city'], $validated['days']);
+}
+```
+
+Если валидация завершается неудачно, сообщения об ошибках возвращаются модели как результат инструмента. Это позволяет ей исправить аргументы и вызвать инструмент повторно.
+
 <a name="repairing-tool-calls"></a>
 #### Исправление вызовов инструментов
 
@@ -898,6 +940,47 @@ public function tools(): iterable
 SimilaritySearch::usingModel(Document::class, 'embedding')
     ->withDescription('Search the knowledge base for relevant articles.'),
 ```
+
+<a name="deferred-tool-loading"></a>
+### Отложенная загрузка инструментов
+
+По умолчанию определения всех доступных агенту инструментов отправляются провайдеру с каждым запросом. Если агент предоставляет много инструментов, это расходует токены и может снизить точность их выбора моделью. С помощью инструмента провайдера `ToolSearch` в OpenAI или Anthropic можно отложить загрузку определений, чтобы провайдер загружал их только при необходимости:
+
+```php
+use App\Ai\Tools\RefundOrder;
+use App\Ai\Tools\SearchInvoices;
+use App\Ai\Tools\Weather;
+use Laravel\Ai\Providers\Tools\ToolSearch;
+
+public function tools(): iterable
+{
+    return [
+        new Weather,
+        new ToolSearch(tools: [
+            new SearchInvoices,
+            new RefundOrder,
+        ]),
+    ];
+}
+```
+
+Обёрнутые инструменты изменять не требуется. Провайдер найдёт и загрузит их, когда они будут соответствовать запросу, после чего агент сможет вызывать их как любые другие инструменты.
+
+При использовании Anthropic аргумент `strategy` определяет способ поиска отложенных инструментов. Поддерживаются стратегии `regex` (по умолчанию) и `bm25`:
+
+```php
+new ToolSearch(tools: [new SearchInvoices], strategy: 'bm25'),
+```
+
+Дополнительные параметры Anthropic можно передать инструменту поиска методом `withProviderOptions`:
+
+```php
+(new ToolSearch(tools: [new SearchInvoices]))
+    ->withProviderOptions(['cache_control' => ['type' => 'ephemeral']]),
+```
+
+> [!WARNING]
+> Провайдеры без поддержки поиска инструментов выбросят исключение, а не проигнорируют отложенные инструменты. Кроме того, Anthropic требует, чтобы хотя бы один инструмент был передан вне обёртки `ToolSearch`.
 
 <a name="file-storage-tools"></a>
 ### Инструменты файлового хранилища
@@ -999,7 +1082,7 @@ public function tools(): iterable
 
 Инструмент провайдера `WebSearch` позволяет агентам искать в интернете актуальную информацию. Это полезно для вопросов о текущих событиях, свежих данных или темах, которые могли измениться после даты обучения модели.
 
-**Поддерживаемые провайдеры:** Anthropic, OpenAI, Azure, Gemini, OpenRouter
+**Поддерживаемые провайдеры:** Anthropic, OpenAI, Azure, Gemini, xAI, OpenRouter
 
 ```php
 use Laravel\Ai\Providers\Tools\WebSearch;
@@ -1033,7 +1116,7 @@ public function tools(): iterable
 
 Инструмент провайдера `WebFetch` позволяет агентам получать и читать содержимое веб-страниц. Это полезно, когда агент должен анализировать конкретные URL или получить подробную информацию с известных страниц.
 
-**Поддерживаемые провайдеры:** Anthropic, Gemini
+**Поддерживаемые провайдеры:** Anthropic, Gemini, OpenRouter
 
 ```php
 use Laravel\Ai\Providers\Tools\WebFetch;
@@ -1057,7 +1140,7 @@ public function tools(): iterable
 
 Инструмент провайдера `FileSearch` позволяет агентам искать по [файлам](#files), сохранённым в [векторных хранилищах](#vector-stores). Это включает сценарии RAG, в которых агент ищет релевантную информацию в загруженных документах.
 
-**Поддерживаемые провайдеры:** OpenAI, Gemini
+**Поддерживаемые провайдеры:** OpenAI, Gemini, xAI
 
 ```php
 use Laravel\Ai\Providers\Tools\FileSearch;
@@ -1385,7 +1468,49 @@ class SalesCoach implements Agent, HasProviderOptions
 
 Метод получает текущего провайдера (вариант перечисления `Lab` или строку), поэтому для каждого провайдера можно возвращать разные опции. Это особенно полезно при [переключении после сбоя](#failover), когда каждый резервный провайдер может иметь собственную конфигурацию.
 
-Пример Anthropic выше также включает [кеширование запросов](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) с помощью `cache_control`.
+Пример Anthropic выше также включает [кеширование запросов](#prompt-caching) с помощью `cache_control`.
+
+<a name="prompt-caching"></a>
+### Кеширование запросов
+
+Большинство провайдеров автоматически кешируют повторяющиеся начальные части запросов и предоставляют скидку на их обработку. OpenAI, Gemini, Groq, DeepSeek и xAI не требуют дополнительной настройки, а экономию можно посмотреть в статистике использования ответа:
+
+```php
+$response->usage->cacheReadInputTokens;
+$response->usage->cacheWriteInputTokens;
+```
+
+Провайдеры `anthropic` и `bedrock` кешируют данные только по явному запросу. Атрибуты `CacheInstructions` и `CacheToolDefinitions` размещают точку кеширования в конце инструкций агента и определений инструментов, поэтому каждый разговор читает этот префикс из кеша вместо его повторной записи:
+
+```php
+use Laravel\Ai\Attributes\CacheInstructions;
+use Laravel\Ai\Attributes\CacheToolDefinitions;
+
+#[CacheInstructions]
+#[CacheToolDefinitions]
+class SalesCoach implements Agent
+{
+    use Promptable;
+
+    // ...
+}
+```
+
+Если инструкции меняются при каждом запросе, например содержат текущую дату, используйте только `CacheToolDefinitions`. Кеширование постоянно изменяющегося префикса при каждом запросе создаёт новую запись, за запись которой придётся платить без возможности повторного использования.
+
+Провайдеры, не поддерживающие эти атрибуты, игнорируют их, поэтому агент может безопасно объявлять их при использовании [переключения после сбоя](#failover).
+
+По умолчанию кешированные префиксы хранятся пять минут. Anthropic может хранить их час, если передать время жизни атрибуту:
+
+```php
+#[CacheInstructions('1h')]
+#[CacheToolDefinitions('1h')]
+```
+
+Кроме того, автоматическое кеширование Anthropic можно включить через верхнеуровневую [опцию провайдера](#provider-options) `cache_control`. При этом единственная точка кеширования размещается после последнего блока запроса; по мере роста разговора она перемещается, и каждый ход читает предыдущие ходы из кеша. Оба механизма можно сочетать.
+
+> [!WARNING]
+> Поскольку провайдеры формируют запрос в порядке «инструменты, инструкции, сообщения», кеширование инструкций на час также требует кеширования определений инструментов на час. Смешение этих настроек приводит к исключению `InvalidArgumentException`.
 
 <a name="human-tool-approval"></a>
 ## Подтверждение инструментов человеком
@@ -1550,14 +1675,14 @@ Route::post('/chat/{conversation}', function (Request $request, Conversation $co
     Gate::authorize('view', $conversation);
 
     $validated = $request->validate([
-        'message' => ['nullable', 'string', 'required_without:decisions', 'prohibited_with:decisions'],
-        'decisions' => ['nullable', 'array', 'required_without:message', 'prohibited_with:message'],
+        'message' => ['nullable', 'string', 'required_without:decisions', 'prohibits:decisions'],
+        'decisions' => ['nullable', 'array', 'required_without:message', 'prohibits:message'],
         'decisions.*.action' => ['required_with:decisions', Rule::in(['approve', 'reject'])],
         'decisions.*.result' => ['nullable', 'string'],
     ]);
 
     $prompt = isset($validated['decisions'])
-        ? Decisions::from($validated->collect('decisions')->map(
+        ? Decisions::from(collect($validated['decisions'])->map(
             fn (array $decision) => match ($decision['action']) {
                 'approve' => Decision::approve(),
                 'reject' => Decision::reject($decision['result'] ?? null),
@@ -1830,9 +1955,9 @@ $response = Embeddings::for(['Napa Valley has great wine.'])
 ```
 
 <a name="multimodal-embeddings"></a>
-### Мультимодальные embeddings
+### Мультимодальные векторные представления
 
-Помимо строк, метод `Embeddings::for` принимает изображения, аудио, документы и видео, позволяя генерировать embeddings для нетекстового контента. Gemini поддерживает embeddings для изображений, аудио, документов и видео, а VoyageAI - для изображений и видео:
+Помимо строк, метод `Embeddings::for` принимает изображения, аудио, документы и видео, позволяя генерировать векторные представления для нетекстового содержимого. Gemini поддерживает векторные представления изображений, аудио, документов и видео, а VoyageAI - изображений и видео:
 
 ```php
 use Laravel\Ai\Embeddings;
@@ -1876,9 +2001,9 @@ Document::fromUpload($request->file('report'));
 > VoyageAI не позволяет смешивать медиа по удаленным URL и Base64-encoded media в одном запросе. Локальные, сохраненные и загруженные файлы отправляются как Base64-encoded content, а текстовые входные данные можно комбинировать с любым источником медиа. Обратитесь к документации провайдера, чтобы узнать, какие мультимодальные модели и входные данные доступны.
 
 <a name="querying-embeddings"></a>
-### Запросы по embeddings
+### Запросы по векторным представлениям
 
-Обычно векторные представления сохраняются в столбце базы данных типа `vector` для последующих запросов. Laravel поддерживает такие столбцы PostgreSQL с помощью расширения `pgvector`:
+Обычно векторные представления сохраняются в столбце базы данных типа `vector` для последующих запросов. Laravel поддерживает такие столбцы в PostgreSQL с расширением `pgvector` и в MariaDB:
 
 ```php
 Schema::ensureVectorExtensionExists();
@@ -1898,18 +2023,20 @@ Schema::create('documents', function (Blueprint $table) {
 $table->vector('embedding', dimensions: 1536)->index();
 ```
 
-В Eloquent-модели приведите векторный столбец к типу `array`:
+В Eloquent-модели используйте для векторного столбца приведение `AsVector`:
 
 ```php
+use Illuminate\Database\Eloquent\Casts\AsVector;
+
 protected function casts(): array
 {
     return [
-        'embedding' => 'array',
+        'embedding' => AsVector::class,
     ];
 }
 ```
 
-Для поиска похожих записей используйте `whereVectorSimilarTo`. Метод фильтрует результаты по минимальному cosine similarity (от `0.0` до `1.0`) и сортирует по сходству:
+Для поиска похожих записей используйте `whereVectorSimilarTo`. Метод фильтрует результаты по минимальному косинусному сходству (от `0.0` до `1.0`) и сортирует их по сходству:
 
 ```php
 use App\Models\Document;
@@ -1920,7 +2047,7 @@ $documents = Document::query()
     ->get();
 ```
 
-`$queryEmbedding` может быть массивом floats или обычной строкой. Если передана строка, Laravel автоматически сгенерирует embeddings:
+`$queryEmbedding` может быть массивом чисел с плавающей точкой или обычной строкой. Если передана строка, Laravel автоматически сгенерирует векторное представление:
 
 ```php
 $documents = Document::query()
@@ -1944,7 +2071,7 @@ $documents = Document::query()
 Если агенту требуется поиск по сходству в виде инструмента, обратитесь к разделу [«Поиск по сходству»](#similarity-search).
 
 > [!NOTE]
-> Векторные запросы сейчас поддерживаются только для соединений PostgreSQL с расширением `pgvector`.
+> Векторные запросы поддерживаются для соединений PostgreSQL с расширением `pgvector`, а также MariaDB 11.7 и новее.
 
 <a name="caching-embeddings"></a>
 ### Кеширование векторных представлений
@@ -1956,12 +2083,15 @@ $documents = Document::query()
     'embeddings' => [
         'cache' => true,
         'store' => env('CACHE_STORE', 'database'),
+        'individually' => true,
         // ...
     ],
 ],
 ```
 
-При включенном кеше embeddings хранятся 30 дней. Ключ кеша строится из провайдера, модели, размерности и входного содержимого, поэтому одинаковые запросы получают кешированные результаты, а разные конфигурации генерируют новые embeddings.
+При включённом кеше векторные представления хранятся 30 дней. Ключ кеша строится из провайдера, модели, размерности и входного содержимого, поэтому одинаковые запросы получают кешированные результаты, а разные конфигурации создают новые векторные представления.
+
+По умолчанию векторное представление каждого входного значения кешируется под отдельным ключом. Поэтому последующий запрос может использовать кеш для ранее встречавшихся значений, даже если набор входных данных или их порядок изменились. Чтобы кешировать весь набор входных данных под одним ключом, установите параметр `ai.caching.embeddings.individually` в `false`.
 
 Кеш можно включить для конкретного запроса методом `cache`, даже если глобально он отключен:
 
@@ -2302,6 +2432,8 @@ $response = (new SalesCoach)->prompt(
 <a name="testing"></a>
 ## Тестирование
 
+При подмене поставленной в очередь генерации изображений, аудио, транскрипций или векторных представлений каждый зарегистрированный обратный вызов `then` будет вызван с подменённым ответом. Это позволяет протестировать содержащуюся в нём логику. Чтобы такие обратные вызовы не выполнялись, дополнительно подмените очередь с помощью `Queue::fake()`.
+
 <a name="testing-agents"></a>
 ### Агенты
 
@@ -2365,6 +2497,8 @@ SalesCoach::assertPrompted('Analyze this...');
 SalesCoach::assertPrompted(function (AgentPrompt $prompt) {
     return $prompt->contains('Analyze');
 });
+
+SalesCoach::assertPromptedTimes(3);
 
 SalesCoach::assertNotPrompted('Missing prompt');
 
@@ -2775,6 +2909,8 @@ $store->assertAdded(fn (StorableFile $file) => $file->content() === 'Hello, Worl
 Laravel AI SDK отправляет разные [события](/docs/{{version}}/events), включая:
 
 - `AddingFileToStore`
+- `AgentFailed`
+- `AgentFailedOver`
 - `AgentPrompted`
 - `AgentStreamed`
 - `AudioGenerated`
@@ -2791,14 +2927,20 @@ Laravel AI SDK отправляет разные [события](/docs/{{versio
 - `ImageGenerated`
 - `InvokingTool`
 - `PromptingAgent`
+- `ProviderFailedOver`
 - `RemovingFileFromStore`
 - `Reranked`
 - `Reranking`
+- `StartingStep`
+- `StepCompleted`
+- `StepFailed`
 - `StoreCreated`
+- `StoreDeleted`
 - `StoringFile`
 - `StreamingAgent`
 - `ToolApprovalRequested`
 - `ToolApprovalResolved`
+- `ToolFailed`
 - `ToolInvoked`
 - `TranscriptionGenerated`
 

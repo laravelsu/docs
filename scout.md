@@ -1,5 +1,5 @@
 ---
-git: b2300431921ec68c8ba31bbef248bff1511e8eff
+git: b6f07c64593f655f75d5b53c4eb8cf21139be7f3
 ---
 
 # Laravel Scout
@@ -11,7 +11,7 @@ git: b2300431921ec68c8ba31bbef248bff1511e8eff
 
 Scout поставляется со встроенным движком `database`, который использует полнотекстовые индексы MySQL / PostgreSQL и условия `LIKE` для поиска по существующей базе данных без внешнего сервиса. Для большинства приложений этого достаточно. Обзор всех возможностей поиска в Laravel доступен в [документации по поиску](/docs/{{version}}/search).
 
-Scout также включает драйверы для [Algolia](https://www.algolia.com/), [Meilisearch](https://www.meilisearch.com) и [Typesense](https://typesense.org), когда вам нужны исправление опечаток, фасетная фильтрация или гео-поиск в большом масштабе. Для локальной разработки доступен драйвер «коллекций», а также можно писать [собственные движки](#custom-engines).
+Scout также включает драйверы для [Algolia](https://www.algolia.com/), [Meilisearch](https://www.meilisearch.com), [Typesense](https://typesense.org) и [Turbopuffer](https://turbopuffer.com), когда вам нужны исправление опечаток, фасетная фильтрация, векторный поиск или гео-поиск в большом масштабе. Для локальной разработки доступен драйвер «коллекций», а также можно писать [собственные движки](#custom-engines).
 
 <a name="installation"></a>
 ## Установка
@@ -47,7 +47,7 @@ class Post extends Model
 <a name="queueing"></a>
 ### Использование очереди
 
-При использовании движка, отличного от отличного от `database` или `collection`, рекомендуется настроить [драйвер очереди](/docs/{{version}}/queues) перед использованием библиотеки. Запуск рабочего процесса очереди позволит Scout помещать все операции, синхронизирующие информацию модели с поисковыми индексами, в очередь, что обеспечит более быстрое время ответа для веб-интерфейса вашего приложения.
+При использовании движка, отличного от `database` или `collection`, рекомендуется настроить [драйвер очереди](/docs/{{version}}/queues) перед использованием библиотеки. Запуск рабочего процесса очереди позволит Scout помещать все операции, синхронизирующие информацию модели с поисковыми индексами, в очередь, что обеспечит более быстрое время ответа для веб-интерфейса вашего приложения.
 
 После настройки драйвера очереди установите значение параметра `queue` в вашем конфигурационном файле `config/scout.php` в `true`:
 
@@ -86,7 +86,7 @@ Scout::makeSearchableUsing(MakeSearchableUniquely::class);
 Scout::removeFromSearchUsing(RemoveFromSearchUniquely::class);
 ```
 
-Эти задания используют [блокировки уникальных заданий](/docs/{{version}}/queues#unique-jobs) Laravel, чтобы избежать отправки повторяющихся операций индексации в очередь для одних и тех же searchable-записей моделей, пока соответствующее задание уже находится в очереди.
+Эти задания используют [блокировки уникальных заданий](/docs/{{version}}/queues#unique-jobs) Laravel, чтобы избежать отправки в очередь повторяющихся операций индексирования одних и тех же записей моделей, пока соответствующее задание уже находится в очереди.
 
 <a name="driver-prerequisites"></a>
 ## Требования к драйверам
@@ -156,6 +156,19 @@ TYPESENSE_PROTOCOL=http
 ```
 
 Дополнительные настройки и определения схемы для коллекций Typesense можно найти в конфигурационном файле вашего приложения `config/scout.php`. Для получения дополнительной информации о Typesense, пожалуйста, обратитесь к [документации Typesense](https://typesense.org/docs/guide/#quick-start).
+
+<a name="turbopuffer"></a>
+### Turbopuffer
+
+[Turbopuffer](https://turbopuffer.com) - поисковый движок с поддержкой полнотекстового, семантического и гибридного поиска. Чтобы использовать драйвер Turbopuffer, задайте переменную окружения `SCOUT_DRIVER` и укажите API-ключ Turbopuffer:
+
+```ini
+SCOUT_DRIVER=turbopuffer
+TURBOPUFFER_API_KEY=tpuf_...
+TURBOPUFFER_REGION=gcp-us-central1
+```
+
+Переменная окружения `TURBOPUFFER_REGION` необязательна; по умолчанию используется `gcp-us-central1`.
 
 <a name="configuration"></a>
 ## Настройка
@@ -240,6 +253,25 @@ SCOUT_DRIVER=database
 ```
 
 После настройки вы можете [определить данные для поиска](#configuring-searchable-data) и начать [выполнять поисковые запросы](#searching) к моделям. В отличие от сторонних движков, движок базы данных не требует отдельного этапа индексации - он ищет напрямую по таблицам базы данных.
+
+<a name="database-semantic-and-hybrid-search"></a>
+#### Семантический и гибридный поиск
+
+Движок базы данных поддерживает семантический и гибридный поиск при использовании PostgreSQL с расширением `pgvector`. Для начала добавьте в таблицу модели векторный столбец, допускающий значение `null`, и полнотекстовый индекс. Векторный столбец должен допускать `null`, поскольку Scout сохраняет векторное представление после сохранения модели:
+
+```php
+Schema::ensureVectorExtensionExists();
+
+Schema::table('articles', function (Blueprint $table) {
+    // ...
+
+    $table->vector('embedding', dimensions: 1536)->nullable();
+    $table->vectorIndex('embedding');
+    $table->fullText(['title', 'body']);
+});
+```
+
+Затем определите в модели метод `toSearchableEmbedding`. Он может возвращать исходный текст, для которого Scout должен создать векторное представление, или предварительно вычисленный массив. По умолчанию Scout сохраняет векторные представления в столбце `embedding`; чтобы использовать другой столбец, определите в модели метод `searchableEmbeddingColumn`.
 
 #### Настройка стратегий поиска в базе данных
 
@@ -464,6 +496,37 @@ use App\Models\Flight;
 php artisan scout:sync-index-settings
 ```
 
+<a name="meilisearch-semantic-and-hybrid-search"></a>
+#### Семантический и гибридный поиск
+
+Чтобы использовать семантический или гибридный поиск с Meilisearch, настройте средство векторизации (embedder) в параметрах индекса и параметры генерации векторных представлений для каждой модели с поддержкой поиска:
+
+```php
+'meilisearch' => [
+    // ...
+    'index-settings' => [
+        Article::class => [
+            'embedders' => [
+                'default' => [
+                    'source' => 'userProvided',
+                    'dimensions' => 1536,
+                ],
+            ],
+        ],
+    ],
+    'model-settings' => [
+        Article::class => [
+            'embedding' => [
+                'embedder' => 'default',
+                'dimensions' => 1536,
+            ],
+        ],
+    ],
+],
+```
+
+Метод модели `toSearchableEmbedding` может возвращать исходный текст, который Scout преобразует с помощью [Laravel AI SDK](/docs/{{version}}/ai-sdk), или предварительно вычисленный массив векторного представления. После изменения конфигурации выполните команду `scout:sync-index-settings`.
+
 <a name="meilisearch-data-types"></a>
 #### Типы поисковых данных
 
@@ -524,6 +587,40 @@ User::class => [
 ],
 ```
 
+<a name="typesense-embeddings"></a>
+#### Векторные представления
+
+Чтобы включить семантический и гибридный поиск, определите настройку `embedding` и векторное поле в конфигурации Typesense для модели. По умолчанию Scout генерирует векторные представления с помощью [Laravel AI SDK](/docs/{{version}}/ai-sdk):
+
+```php
+use App\Models\Article;
+
+'model-settings' => [
+    Article::class => [
+        'collection-schema' => [
+            'fields' => [
+                ['name' => 'title', 'type' => 'string'],
+                ['name' => 'embedding', 'type' => 'float[]', 'num_dim' => 1536],
+            ],
+        ],
+        'search-parameters' => ['query_by' => 'title'],
+        'embedding' => [
+            'attribute' => 'embedding',
+            'dimensions' => 1536,
+        ],
+    ],
+],
+```
+
+Метод модели `toSearchableEmbedding` должен возвращать исходный текст, для которого Scout создаст векторное представление, или предварительно вычисленный массив:
+
+```php
+public function toSearchableEmbedding(): string|array
+{
+    return $this->title.' '.$this->body;
+}
+```
+
 <a name="typesense-dynamic-search-parameters"></a>
 #### Динамические параметры поиска
 
@@ -537,11 +634,89 @@ Todo::search('Groceries')->options([
 ])->get();
 ```
 
+<a name="turbopuffer-configuration"></a>
+### Turbopuffer
+
+Для каждой модели Turbopuffer требуется схема и перечень доступных для поиска атрибутов. Определите их в массиве `model-settings` раздела `turbopuffer` конфигурационного файла `scout`:
+
+```php
+use App\Models\Article;
+
+'turbopuffer' => [
+    // ...
+    'model-settings' => [
+        Article::class => [
+            'searchable-attributes' => [
+                'title' => 3,
+                'body' => 1,
+            ],
+            'schema' => [
+                'title' => ['type' => 'string', 'full_text_search' => true],
+                'body' => ['type' => 'string', 'full_text_search' => true],
+                'status' => ['type' => 'string'],
+            ],
+        ],
+    ],
+],
+```
+
+Числовые значения в `searchable-attributes` задают относительные веса BM25. В приведённом примере совпадения в заголовке статьи дают втрое больший вклад в оценку, чем совпадения в тексте.
+
+Чтобы включить семантический и гибридный поиск, добавьте в конфигурацию модели настройку `embedding` и векторную схему:
+
+```php
+'turbopuffer' => [
+    // ...
+    'model-settings' => [
+        Article::class => [
+            'searchable-attributes' => [
+                'title' => 3,
+                'body' => 1,
+            ],
+            'embedding' => [
+                'attribute' => 'embedding',
+                'dimensions' => 1536,
+            ],
+            'schema' => [
+                'title' => ['type' => 'string', 'full_text_search' => true],
+                'body' => ['type' => 'string', 'full_text_search' => true],
+                'embedding' => ['type' => '[1536]f32', 'ann' => true],
+            ],
+        ],
+    ],
+],
+```
+
+Метод модели `toSearchableEmbedding` должен возвращать исходный текст, для которого Scout создаст векторное представление, или предварительно вычисленный массив. Векторные представления исходного текста Scout генерирует с помощью [Laravel AI SDK](/docs/{{version}}/ai-sdk).
+
+Вместо этого можно использовать встроенные векторные представления Turbopuffer, не устанавливая Laravel AI SDK и не определяя метод `toSearchableEmbedding`. Укажите драйвер `turbopuffer` и настройте параметр `embed` в схеме исходного атрибута, доступного для поиска:
+
+```php
+'embedding' => [
+    'driver' => 'turbopuffer',
+    'attribute' => 'embedding_text',
+],
+
+'schema' => [
+    // ...
+    'embedding_text' => [
+        'type' => 'string',
+        'embed' => [
+            'model' => 'voyage/voyage-4',
+            'dimensions' => 1024,
+            'attribute' => 'embedding',
+        ],
+    ],
+],
+```
+
+Исходный атрибут должен присутствовать в данных, возвращаемых методом модели `toSearchableArray`.
+
 <a name="indexing"></a>
 ## Индексирование сторонними движками
 
 > [!NOTE]
-> Описанные в этом разделе возможности индексирования относятся прежде всего к сторонним движкам Algolia, Meilisearch и Typesense. Движок базы данных выполняет поиск непосредственно по таблицам, поэтому не требует ручного управления индексами.
+> Описанные в этом разделе возможности индексирования относятся прежде всего к сторонним движкам Algolia, Meilisearch, Typesense и Turbopuffer. Движок базы данных выполняет поиск непосредственно по таблицам, поэтому не требует ручного управления индексами.
 
 <a name="batch-import"></a>
 ### Пакетный импорт
@@ -640,7 +815,7 @@ $order = Order::find(1);
 $order->save();
 ```
 
-Вы также можете вызвать метод searchable` в экземпляре запроса Eloquent, чтобы обновить коллекцию моделей. Если моделей нет в поисковом индексе, они будут созданы:
+Вы также можете вызвать метод `searchable` у экземпляра запроса Eloquent, чтобы обновить коллекцию моделей. Если моделей нет в поисковом индексе, они будут созданы:
 
 ```php
 Order::where('price', '>', 100)->searchable();
@@ -788,10 +963,39 @@ Route::get('/search', function (Request $request) {
 $orders = Order::search('Star Trek')->raw();
 ```
 
+<a name="semantic-search"></a>
+### Семантический поиск
+
+Движки базы данных, Meilisearch, Typesense и Turbopuffer поддерживают семантический поиск, который сопоставляет записи по смыслу запроса. Если Scout генерирует векторные представления, для семантического и гибридного поиска требуется [Laravel AI SDK](/docs/{{version}}/ai-sdk). [Встроенные векторные представления Typesense](#typesense-embeddings), [встроенные векторные представления Turbopuffer](#turbopuffer-configuration) и предварительно вычисленные векторы запросов не требуют Laravel AI SDK.
+
+После настройки векторных представлений для выбранного движка вызовите метод `semantic` в поисковом запросе:
+
+```php
+$articles = Article::search('staying cool in the summer')
+    ->semantic()
+    ->get();
+```
+
+Если выбранный движок поддерживает порог минимального сходства, его можно передать методу:
+
+```php
+$articles = Article::search('renewable energy storage')
+    ->semantic(minSimilarity: 0.6)
+    ->get();
+```
+
+Чтобы объединить полнотекстовый и семантический поиск, используйте метод `hybrid`. Его первые два аргумента задают относительный вес текстовых и семантических результатов:
+
+```php
+$articles = Article::search('renewable energy storage')
+    ->hybrid(textWeight: 1, semanticWeight: 2)
+    ->get();
+```
+
 <a name="custom-indexes"></a>
 #### Пользовательский индекс
 
-Поисковые запросы обычно выполняются по индексу, указанному в методе [searchchableAs](#configuring-model-indexes) модели. Однако вы можете использовать метод `within`, чтобы указать индекс, который следует использовать вместо этого:
+Поисковые запросы обычно выполняются по индексу, указанному в методе [searchableAs](#configuring-model-indexes) модели. Однако вы можете использовать метод `within`, чтобы указать индекс, который следует использовать вместо этого:
 
 ```php
 $orders = Order::search('Star Trek')
